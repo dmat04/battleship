@@ -50,12 +50,12 @@ class Board {
 
     switch (orientation) {
       case ShipOrientation.Vertical:
-        if (y < 0 || y >= this.settings.boardHeight) return false;
-        if (x < 0 || x + shipSize > this.settings.boardWidth) return false;
-        return true;
-      case ShipOrientation.Horizontal:
         if (x < 0 || x >= this.settings.boardWidth) return false;
         if (y < 0 || y + shipSize > this.settings.boardHeight) return false;
+        return true;
+      case ShipOrientation.Horizontal:
+        if (x < 0 || x + shipSize > this.settings.boardWidth) return false;
+        if (y < 0 || y >= this.settings.boardHeight) return false;
         return true;
       default:
         return assertNever(orientation);

@@ -8,6 +8,7 @@
     "start:dev": "ts-node-dev ./src/index.ts",
     "build": "rimraf ./build && tsc",
     "test": "jest ./test",
+    "test:debug": "jest --runInBand ./test",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },
