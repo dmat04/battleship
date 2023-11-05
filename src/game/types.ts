@@ -1,11 +1,11 @@
 export type ShipCounts = Map<ShipType, number>;
 
 export enum ShipType {
-  Submarine = 1,
-  Destroyer,
-  Cruiser,
-  Battleship,
-  AircraftCarrier,
+  Submarine = 'Submarine',
+  Destroyer = 'Destroyer',
+  Cruiser = 'Cruiser',
+  Battleship = 'Battleship',
+  AircraftCarrier = 'AircraftCarrier',
 }
 
 export enum ShipOrientation {
