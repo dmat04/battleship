@@ -1,37 +1,11 @@
 import Board, { DefaultSettings } from '../../src/game/Board';
-import {
-  CellState, GameSetting, ShipType, ShipOrientation, ShipPlacement,
-} from '../../src/game/types';
+import { CellState, GameSetting, ShipPlacement } from '../../src/game/types';
+import { validPlacement } from './shipPlacementData.json';
 
 const gameSettings = [
   DefaultSettings,
   new GameSetting(8, 16, DefaultSettings.shipCounts),
   new GameSetting(16, 8, DefaultSettings.shipCounts),
-];
-
-const expectedPopulatedCells = 18;
-const validPlacement: ShipPlacement[] = [
-  {
-    shipType: ShipType.AircraftCarrier, orientation: ShipOrientation.Vertical, x: 9, y: 1,
-  },
-  {
-    shipType: ShipType.Battleship, orientation: ShipOrientation.Vertical, x: 7, y: 4,
-  },
-  {
-    shipType: ShipType.Cruiser, orientation: ShipOrientation.Horizontal, x: 7, y: 9,
-  },
-  {
-    shipType: ShipType.Destroyer, orientation: ShipOrientation.Vertical, x: 1, y: 1,
-  },
-  {
-    shipType: ShipType.Destroyer, orientation: ShipOrientation.Horizontal, x: 3, y: 4,
-  },
-  {
-    shipType: ShipType.Submarine, orientation: ShipOrientation.Vertical, x: 3, y: 2,
-  },
-  {
-    shipType: ShipType.Submarine, orientation: ShipOrientation.Vertical, x: 8, y: 8,
-  },
 ];
 
 describe('Board', () => {
@@ -52,8 +26,8 @@ describe('Board', () => {
   test('Placing a valid configuration of ships populates the correct cells', () => {
     const gameBoard = new Board(DefaultSettings);
 
-    gameBoard.placePlayer1Ships(validPlacement);
-    gameBoard.placePlayer2Ships(validPlacement);
+    gameBoard.placePlayer1Ships(validPlacement.placements as ShipPlacement[]);
+    gameBoard.placePlayer2Ships(validPlacement.placements as ShipPlacement[]);
 
     const playerCells = gameBoard.getPlayerBoardCopies();
 
@@ -66,7 +40,7 @@ describe('Board', () => {
         });
       });
 
-      expect(populatedCellCount).toBe(expectedPopulatedCells);
+      expect(populatedCellCount).toBe(validPlacement.populatedCells);
     });
   });
 });
