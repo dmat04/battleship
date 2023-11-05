@@ -28,7 +28,7 @@ class Board {
 
   private player2Board: PlayerBoard;
 
-  constructor(settings: GameSetting) {
+  constructor(settings: GameSetting = DefaultSettings) {
     this.settings = settings;
     this.totalShips = [...settings.shipCounts.values()]
       .reduce((acc, val) => acc + val);
@@ -49,7 +49,7 @@ class Board {
     const shipSize = Ship.Get(shipType).size;
 
     switch (orientation) {
-      case ShipOrientation.Vertial:
+      case ShipOrientation.Vertical:
         if (y < 0 || y >= this.settings.boardHeight) return false;
         if (x < 0 || x + shipSize > this.settings.boardWidth) return false;
         return true;
@@ -99,7 +99,7 @@ class Board {
     const { orientation } = ship;
 
     switch (orientation) {
-      case ShipOrientation.Vertial:
+      case ShipOrientation.Vertical:
         return Board.placeShipVertical(playerBoard, ship);
       case ShipOrientation.Horizontal:
         return Board.placeShipHorizontal(playerBoard, ship);

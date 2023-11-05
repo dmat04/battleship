@@ -9,8 +9,8 @@ export enum ShipType {
 }
 
 export enum ShipOrientation {
-  Vertial = 1,
-  Horizontal,
+  Vertical = 'Vertical',
+  Horizontal = 'Horizontal',
 }
 
 export interface ShipPlacement {
