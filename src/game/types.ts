@@ -34,3 +34,14 @@ export class GameSetting {
     readonly shipCounts: ShipCounts,
   ) { }
 }
+
+export enum Player {
+  Player1 = 1,
+  Player2 = 2,
+}
+
+export enum MoveResult {
+  Miss = 'Miss',
+  Hit = 'Hit',
+  GameWon = 'GameWon',
+}

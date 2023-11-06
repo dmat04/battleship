@@ -1,6 +1,6 @@
 import Ship from './Ship';
 import {
-  CellState, GameSetting, ShipType, ShipPlacement, ShipOrientation,
+  CellState, GameSetting, ShipType, ShipPlacement, ShipOrientation, MoveResult, Player,
 } from './types';
 import assertNever from '../utils/typeUtils';
 
@@ -22,16 +22,30 @@ export const DefaultSettings: GameSetting = new GameSetting(
 class Board {
   private settings: GameSetting;
 
+  private readonly totalShipCells: number;
+
   private readonly totalShips: number;
 
   private player1Board: PlayerBoard;
 
+  private player1HitCount = 0;
+
   private player2Board: PlayerBoard;
+
+  private player2HitCount = 0;
 
   constructor(settings: GameSetting = DefaultSettings) {
     this.settings = settings;
-    this.totalShips = [...settings.shipCounts.values()]
-      .reduce((acc, val) => acc + val);
+
+    let shipCount = 0;
+    let cellCount = 0;
+    settings.shipCounts.forEach((count, shipType) => {
+      shipCount += count;
+      cellCount += count * Ship.Get(shipType).size;
+    });
+
+    this.totalShips = shipCount;
+    this.totalShipCells = cellCount;
 
     this.player1Board = new Array(settings.boardHeight);
     this.player2Board = new Array(settings.boardHeight);
@@ -61,6 +75,13 @@ class Board {
         return assertNever(orientation);
     }
   };
+
+  private checkCellBounds = (x: number, y: number): boolean => (
+    x >= 0
+    && x < this.settings.boardWidth
+    && y >= 0
+    && y < this.settings.boardHeight
+  );
 
   private static placeShipVertical = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
     const {
@@ -146,6 +167,54 @@ class Board {
     const player2Copy = this.player2Board.map((row) => row.map((it) => it));
 
     return [player1Copy, player2Copy];
+  };
+
+  hitCell = (player: Player, x: number, y: number): MoveResult => {
+    if (!this.checkCellBounds(x, y)) {
+      throw new Error('Hit coordinates out of bounds');
+    }
+
+    const targetBoard = player === Player.Player1
+      ? this.player2Board
+      : this.player1Board;
+
+    const currentState = targetBoard[y][x] as CellState;
+    let newState: CellState;
+
+    switch (currentState) {
+      case CellState.Empty:
+        newState = CellState.Miss;
+        break;
+      case CellState.Populated:
+        newState = CellState.Hit;
+        break;
+      case CellState.Miss:
+      case CellState.Hit:
+        throw new Error('Cell has already been hit');
+      default:
+        return assertNever(currentState);
+    }
+
+    targetBoard[y][x] = newState;
+
+    let moveResult = MoveResult.Miss;
+    if (newState === CellState.Hit) {
+      moveResult = MoveResult.Hit;
+
+      if (player === Player.Player1) {
+        this.player1HitCount += 1;
+        if (this.player1HitCount === this.totalShipCells) {
+          moveResult = MoveResult.GameWon;
+        }
+      } else {
+        this.player2HitCount += 1;
+        if (this.player1HitCount === this.totalShipCells) {
+          moveResult = MoveResult.GameWon;
+        }
+      }
+    }
+
+    return moveResult;
   };
 }
 
