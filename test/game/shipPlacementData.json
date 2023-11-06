@@ -1,49 +1,475 @@
 {
-  "validPlacement": {
-    "populatedCells": 18,
-    "placements": [
-      {
-        "shipType": "AircraftCarrier",
-        "orientation": "Vertical",
-        "x": 9,
-        "y": 1
-      },
-      {
-        "shipType": "Battleship",
-        "orientation": "Vertical",
-        "x": 7,
-        "y": 4
-      },
-      {
-        "shipType": "Cruiser",
-        "orientation": "Horizontal",
-        "x": 7,
-        "y": 9
-      },
-      {
-        "shipType": "Destroyer",
-        "orientation": "Vertical",
-        "x": 1,
-        "y": 1
-      },
-      {
-        "shipType": "Destroyer",
-        "orientation": "Horizontal",
-        "x": 3,
-        "y": 4
-      },
-      {
-        "shipType": "Submarine",
-        "orientation": "Vertical",
-        "x": 3,
-        "y": 2
-      },
-      {
-        "shipType": "Submarine",
-        "orientation": "Vertical",
-        "x": 8,
-        "y": 8
-      }
-    ]
-  }
+  "validPlacements": [
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 4
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Horizontal",
+          "x": 7,
+          "y": 9
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 1
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 8,
+          "y": 8
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 5,
+          "y": 9
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 9
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 6
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 4
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 4,
+          "y": 9
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 0
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 6
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 0
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 0
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 5
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 5,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 5
+        }
+      ]
+    }
+  ],
+  "invalidPlacements": [
+    {
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 6
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Horizontal",
+          "x": 7,
+          "y": 9
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 1
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 8,
+          "y": 8
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 6,
+          "y": 9
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 9
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 6
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 4
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 4,
+          "y": 9
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 2
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 0
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 7
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 0
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 0
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 5
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 6,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 5
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 5
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 5
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 5,
+          "y": 3
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 8
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 2,
+          "y": 5
+        }
+      ]
+    }
+    
+  ]
 }

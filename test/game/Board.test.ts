@@ -1,6 +1,6 @@
 import Board, { DefaultSettings } from '../../src/game/Board';
 import { CellState, GameSetting, ShipPlacement } from '../../src/game/types';
-import { validPlacement } from './shipPlacementData.json';
+import { validPlacements, invalidPlacements } from './shipPlacementData.json';
 
 const gameSettings = [
   DefaultSettings,
@@ -23,24 +23,37 @@ describe('Board', () => {
     });
   });
 
-  test('Placing a valid configuration of ships populates the correct cells', () => {
-    const gameBoard = new Board(DefaultSettings);
+  test.each(validPlacements)
+    ('Placing a valid configuration of ships populates the correct cells',
+      ({ populatedCells, placements }) => {
+        const gameBoard = new Board(DefaultSettings);
 
-    gameBoard.placePlayer1Ships(validPlacement.placements as ShipPlacement[]);
-    gameBoard.placePlayer2Ships(validPlacement.placements as ShipPlacement[]);
+        gameBoard.placePlayer1Ships(placements as ShipPlacement[]);
+        gameBoard.placePlayer2Ships(placements as ShipPlacement[]);
 
-    const playerCells = gameBoard.getPlayerBoardCopies();
+        const playerCells = gameBoard.getPlayerBoardCopies();
 
-    playerCells.forEach((board) => {
-      let populatedCellCount = 0;
-      board.forEach((row) => {
-        row.forEach((cell) => {
-          expect([CellState.Empty, CellState.Populated]).toContain(cell);
-          if (cell === CellState.Populated) populatedCellCount += 1;
+        playerCells.forEach((board) => {
+          let populatedCellCount = 0;
+          board.forEach((row) => {
+            row.forEach((cell) => {
+              expect([CellState.Empty, CellState.Populated]).toContain(cell);
+              if (cell === CellState.Populated) populatedCellCount += 1;
+            });
+          });
+
+          expect(populatedCellCount).toBe(populatedCells);
         });
       });
 
-      expect(populatedCellCount).toBe(validPlacement.populatedCells);
-    });
-  });
+  test.each(invalidPlacements)
+    ('Placing an invalid configuration of ships throws an error',
+      ({ placements }) => {
+        const gameBoard = new Board(DefaultSettings);
+
+        expect(() => gameBoard.placePlayer1Ships(placements as ShipPlacement[]))
+          .toThrow();
+        expect(() => gameBoard.placePlayer2Ships(placements as ShipPlacement[]))
+          .toThrow();
+      });
 });
