@@ -1,0 +1,123 @@
+{
+  "p1Placements": [
+    {
+      "shipType": "AircraftCarrier",
+      "orientation": "Vertical",
+      "x": 9,
+      "y": 1
+    },
+    {
+      "shipType": "Battleship",
+      "orientation": "Vertical",
+      "x": 7,
+      "y": 4
+    },
+    {
+      "shipType": "Cruiser",
+      "orientation": "Horizontal",
+      "x": 7,
+      "y": 9
+    },
+    {
+      "shipType": "Destroyer",
+      "orientation": "Vertical",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "shipType": "Destroyer",
+      "orientation": "Horizontal",
+      "x": 3,
+      "y": 4
+    },
+    {
+      "shipType": "Submarine",
+      "orientation": "Vertical",
+      "x": 3,
+      "y": 2
+    },
+    {
+      "shipType": "Submarine",
+      "orientation": "Vertical",
+      "x": 8,
+      "y": 8
+    }
+  ],
+  "p2Placements": [
+    {
+      "shipType": "AircraftCarrier",
+      "orientation": "Horizontal",
+      "x": 5,
+      "y": 9
+    },
+    {
+      "shipType": "Battleship",
+      "orientation": "Horizontal",
+      "x": 0,
+      "y": 9
+    },
+    {
+      "shipType": "Cruiser",
+      "orientation": "Vertical",
+      "x": 0,
+      "y": 6
+    },
+    {
+      "shipType": "Destroyer",
+      "orientation": "Vertical",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "shipType": "Destroyer",
+      "orientation": "Vertical",
+      "x": 0,
+      "y": 4
+    },
+    {
+      "shipType": "Submarine",
+      "orientation": "Vertical",
+      "x": 4,
+      "y": 9
+    },
+    {
+      "shipType": "Submarine",
+      "orientation": "Vertical",
+      "x": 0,
+      "y": 2
+    }
+  ],
+  "movesFirst": 1,
+  "movesSecond": 2,
+  "moves": [
+    {"player": 1, "x": 0, "y": 3, "result": "Miss"},
+    {"player": 2, "x": 0, "y": 0, "result": "Miss"},
+    {"player": 1, "x": 0, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 1, "y": 8, "result": "Miss"},
+    {"player": 2, "x": 1, "y": 0, "result": "Miss"},
+    {"player": 1, "x": 2, "y": 8, "result": "Miss"},
+    {"player": 2, "x": 1, "y": 1, "result": "Hit"},
+    {"player": 2, "x": 1, "y": 2, "result": "Hit"},
+    {"player": 2, "x": 3, "y": 2, "result": "Hit"},
+    {"player": 2, "x": 3, "y": 1, "result": "Miss"},
+    {"player": 1, "x": 3, "y": 8, "result": "Miss"},
+    {"player": 2, "x": 3, "y": 0, "result": "Miss"},
+    {"player": 1, "x": 0, "y": 0, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 1, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 2, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 4, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 5, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 6, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 7, "result": "Hit"},
+    {"player": 1, "x": 0, "y": 8, "result": "Hit"},
+    {"player": 1, "x": 1, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 2, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 3, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 4, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 5, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 6, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 7, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 9, "y": 9, "result": "GameWon"}
+  ]
+}

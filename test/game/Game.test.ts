@@ -1,10 +1,10 @@
 import { DefaultSettings } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
 import { MoveResult, Player, ShipPlacement } from '../../src/game/types';
-import { validPlacements } from './shipPlacementData.json';
+import { p1Placements, p2Placements, movesFirst, movesSecond, moves } from './gameTestData.json'
 
-const firstPlayer = Player.Player1;
-const secondPlayer = Player.Player2;
+const firstPlayer = movesFirst as Player;
+const secondPlayer = movesSecond as Player;
 let gameSubject: Game;
 
 describe('Game', () => {
@@ -29,16 +29,13 @@ describe('Game', () => {
 describe('An initialized game', () => {
   beforeEach(() => {
     gameSubject = new Game(firstPlayer, DefaultSettings);
-    const p1Placement = validPlacements[0].placements as ShipPlacement[];
-    const p2Placement = validPlacements[1].placements as ShipPlacement[];
-    gameSubject.initialize(p1Placement, p2Placement);
+    gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
   });
 
   test('throws an error when attempting to initialize again', () => {
-    const p1Placement = validPlacements[0].placements as ShipPlacement[];
-    const p2Placement = validPlacements[1].placements as ShipPlacement[];
-    
-    expect(() => gameSubject.initialize(p1Placement, p2Placement)).toThrow();
+    expect(() =>
+      gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[])
+    ).toThrow();
   });
 
   test('has the correct state, and can be started',
@@ -54,9 +51,7 @@ describe('An initialized game', () => {
 describe('A game in progress', () => {
   beforeEach(() => {
     gameSubject = new Game(firstPlayer, DefaultSettings);
-    const p1Placement = validPlacements[0].placements as ShipPlacement[];
-    const p2Placement = validPlacements[1].placements as ShipPlacement[];
-    gameSubject.initialize(p1Placement, p2Placement);
+    gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
     gameSubject.start();
   })
 
@@ -112,5 +107,12 @@ describe('A game in progress', () => {
     gameSubject.finishGame();
 
     expect(() => gameSubject.makeMove(firstPlayer, 0, 0)).toThrow();
+  });
+
+  test('performs a valid seqence of moves as expected', () => {
+    moves.forEach(({ player, x, y, result }) => {
+      const actualResult = gameSubject.makeMove(player as Player, x, y);
+      expect(actualResult).toBe(result as MoveResult);
+    });
   });
 })
