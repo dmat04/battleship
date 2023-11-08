@@ -1,7 +1,9 @@
 import { DefaultSettings } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
 import { MoveResult, Player, ShipPlacement } from '../../src/game/types';
-import { p1Placements, p2Placements, movesFirst, movesSecond, moves } from './gameTestData.json'
+import {
+  p1Placements, p2Placements, movesFirst, movesSecond, moves,
+} from './gameTestData.json';
 
 const firstPlayer = movesFirst as Player;
 const secondPlayer = movesSecond as Player;
@@ -10,7 +12,7 @@ let gameSubject: Game;
 describe('Game', () => {
   beforeEach(() => {
     gameSubject = new Game(firstPlayer, DefaultSettings);
-  })
+  });
 
   test('constructor creates a new Game object', () => {
     expect(gameSubject).toBeDefined();
@@ -23,7 +25,7 @@ describe('Game', () => {
 
   test('making a move in a game that is not in progress throws an error', () => {
     expect(() => gameSubject.makeMove(firstPlayer, 0, 0)).toThrow();
-  })
+  });
 });
 
 describe('An initialized game', () => {
@@ -33,19 +35,22 @@ describe('An initialized game', () => {
   });
 
   test('throws an error when attempting to initialize again', () => {
-    expect(() =>
-      gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[])
-    ).toThrow();
+    expect(() => gameSubject.initialize(
+      p1Placements as ShipPlacement[],
+      p2Placements as ShipPlacement[],
+    )).toThrow();
   });
 
-  test('has the correct state, and can be started',
+  test(
+    'has the correct state, and can be started',
     () => {
       expect(gameSubject.getGameState()).toBe(GameState.Initialized);
 
       gameSubject.start();
 
       expect(gameSubject.getGameState()).toBe(GameState.InProgress);
-    });
+    },
+  );
 });
 
 describe('A game in progress', () => {
@@ -53,7 +58,7 @@ describe('A game in progress', () => {
     gameSubject = new Game(firstPlayer, DefaultSettings);
     gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
     gameSubject.start();
-  })
+  });
 
   test('returns the correct current player', () => {
     expect(gameSubject.getCurrentPlayer()).toBe(firstPlayer);
@@ -110,9 +115,11 @@ describe('A game in progress', () => {
   });
 
   test('performs a valid seqence of moves as expected', () => {
-    moves.forEach(({ player, x, y, result }) => {
+    moves.forEach(({
+      player, x, y, result,
+    }) => {
       const actualResult = gameSubject.makeMove(player as Player, x, y);
       expect(actualResult).toBe(result as MoveResult);
     });
   });
-})
+});
