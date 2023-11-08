@@ -1,2 +1,3 @@
-setInterval(() => console.log('Hello World11'), 1000);
-console.log('done');
+import dotenv from 'dotenv';
+
+dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });

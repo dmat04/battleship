@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node build/index.js",
-    "start:dev": "ts-node-dev ./src/index.ts",
+    "start": "npm run build && NODE_ENV=production node build/index.js",
+    "start:dev": "NODE_ENV=development ts-node-dev ./src/index.ts",
     "build": "rimraf ./build && tsc",
     "test": "jest ./test",
     "test:debug": "jest --runInBand ./test",
@@ -20,6 +20,7 @@
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-typescript": "^7.23.2",
     "@jest/globals": "^29.7.0",
+    "@types/dotenv": "^8.2.0",
     "@types/jest": "^29.5.7",
     "@types/node": "^20.8.10",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
@@ -36,5 +37,8 @@
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
   }
 }
