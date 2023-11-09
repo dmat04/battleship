@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
-import Game from './Game';
-import { Player } from './types';
-import { DefaultSettings } from './Board';
+import Game from '../game/Game';
+import { Player } from '../game/types';
+import { DefaultSettings } from '../game/Board';
 
 const ActiveGames: Map<string, Game> = new Map<string, Game>();
 

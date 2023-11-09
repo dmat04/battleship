@@ -1,4 +1,4 @@
-import GameRegistry from '../../game/GameRegistry';
+import GameService from '../../services/GameService';
 
 export const typeDefs = `#graphql
   extend type Mutation {
@@ -8,7 +8,7 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
   Mutation: {
-    createGameRoom: () => GameRegistry.createNewGame(),
+    createGameRoom: () => GameService.createNewGame(),
   },
 };
 
