@@ -1,4 +1,4 @@
-import assertNever from '../utils/typeUtils';
+import { assertNever } from '../utils/typeUtils';
 import { ShipType } from './types';
 
 /** Maximum ship size (length) */

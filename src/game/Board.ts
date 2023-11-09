@@ -2,7 +2,7 @@ import Ship from './Ship';
 import {
   CellState, GameSetting, ShipType, ShipPlacement, ShipOrientation, MoveResult, Player,
 } from './types';
-import assertNever from '../utils/typeUtils';
+import { assertNever } from '../utils/typeUtils';
 
 type BoardRowType = Uint8Array;
 type PlayerBoard = BoardRowType[];
