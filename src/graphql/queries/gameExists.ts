@@ -1,4 +1,4 @@
-import GameRegistry from '../../game/GameRegistry';
+import GameService from '../../services/GameService';
 
 export interface QueryParams {
   id: string,
@@ -12,7 +12,7 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
   Query: {
-    gameExists: (_: any, args: QueryParams) => GameRegistry.gameExists(args.id),
+    gameExists: (_: any, args: QueryParams) => GameService.gameExists(args.id),
   },
 };
 

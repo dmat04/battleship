@@ -1,15 +1,8 @@
-import jwt from 'jsonwebtoken';
-import { add } from 'date-fns';
-import { generateGuestUsername } from '../../utils/userUtils';
+import { GraphQLError } from 'graphql';
+import AuthService, { GuestUserWithToken, UsernameTakenError } from '../../services/AuthService';
 
 export interface MutationParams {
   username: string | undefined;
-}
-
-export interface MutationResult {
-  accessToken: string,
-  username: string,
-  expiresAt: string
 }
 
 export const typeDefs = `#graphql
@@ -20,27 +13,20 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
   Mutation: {
-    guestLogin: (_: any, args: MutationParams): MutationResult => {
-      // TODO: create auth service !!!
-      const username = args.username ?? generateGuestUsername();
-      const expiresAt = add(Date.now(), { hours: 24 });
-
-      const token = jwt.sign(
-        {
-          username,
-          expiresAt,
-        },
-        process.env.JWT_SECRET as string,
-        {
-          expiresIn: '24h',
-        },
-      );
-
-      return {
-        accessToken: token,
-        username,
-        expiresAt: expiresAt.toString(),
-      };
+    guestLogin: (_: any, args: MutationParams): GuestUserWithToken => {
+      try {
+        return AuthService.createGuestUser(args.username);
+      } catch (e) {
+        if (e instanceof UsernameTakenError) {
+          throw new GraphQLError(`Username ${e.username} is taken`, {
+            extensions: { code: 'BAD_USER_INPUT' },
+          });
+        } else {
+          throw new GraphQLError('An unknown error occured', {
+            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+          });
+        }
+      }
     },
   },
 };
