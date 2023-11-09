@@ -1,14 +1,13 @@
+/* eslint-disable import/first */
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
+import config from './utils/config';
 import { typeDefs, resolvers } from './graphql/schema';
-
-dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -28,7 +27,7 @@ const start = async () => {
     expressMiddleware(apolloServer),
   );
 
-  httpServer.listen({ port: 4000 }, () => {
+  httpServer.listen({ port: config.PORT }, () => {
     console.log('Server is now running on PORT 4000');
   });
 };
