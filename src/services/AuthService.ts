@@ -1,7 +1,8 @@
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { add } from 'date-fns';
+import { Error } from 'mongoose'
 import config from '../utils/config';
-import { GuestUser, RegisteredUser,GuestUserModel } from '../models/User';
+import { GuestUser, GuestUserModel } from '../models/User';
 
 interface AccessToken {
   token: string;
@@ -39,7 +40,7 @@ const encodeToken = (username: string): AccessToken => {
   const token = jwt.sign(
     { username },
     config.JWT_SECRET,
-    { 
+    {
       expiresIn: config.GUEST_LIFETIME_SECONDS,
     },
   );
@@ -92,7 +93,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   if (username) {
     // If a username has been requested, check that it's available
     if (await GuestUserModel.usernameExists(username)) {
-      throw new UsernameTakenError(username);
+      throw new UsernameValidationError(`Username ${username} is already taken`);
     }
 
     name = username;
@@ -108,8 +109,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 
   // Create a user token
   const token = encodeToken(name)
-  // Schedule guest deletion
-  createUserExiprationJob(name);
+
   // Create a GuestUser document ...
   const guestUser = new GuestUserModel({
     username: name,
@@ -117,9 +117,18 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   })
 
   // ... and save it
-  await guestUser.save();
+  try {
+    await guestUser.save();
+  } catch (error) {
+    if (error instanceof Error.ValidationError) {
+      throw new UsernameValidationError(error);
+    }
+  }
 
-  return { 
+  // Schedule guest deletion
+  createUserExiprationJob(name);
+
+  return {
     username: guestUser.username,
     token
   };
@@ -178,11 +187,15 @@ export class AuthServiceError extends Error {
 }
 
 /**
- * Custom Error to indicate that a requested username is taken
+ * Custom Error to indicate username validation errors
  */
-export class UsernameTakenError extends Error {
-  constructor(readonly username: string) {
-    super(`Username ${username} is already taken`);
+export class UsernameValidationError extends Error {
+  constructor(cause: string | Error.ValidationError) {
+    if (typeof cause === 'string') {
+      super(cause);
+    } else {
+      super(cause.errors.username.message);
+    }
   }
 }
 
