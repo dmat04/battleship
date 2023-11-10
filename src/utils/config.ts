@@ -21,13 +21,20 @@ if (!isString(process.env.JWT_SECRET)) {
   JWT_SECRET missing or invalid`);
 }
 
+if (!isString(process.env.MONGODB_URI)) {
+  throw new Error(`Server configuration error: environment var 
+  MONGODB_URI missing or invalid`);
+}
+
 // After asserting the types of the env variables, save them as members
 const GUEST_LIFETIME_SECONDS: number = Number.parseInt(process.env.GUEST_LIFETIME_SECONDS, 10);
 const JWT_SECRET: string = process.env.JWT_SECRET;
 const PORT: number = Number.parseInt(process.env.PORT, 10);
+const MONGODB_URI = process.env.MONGODB_URI;
 
 export default {
   GUEST_LIFETIME_SECONDS,
   JWT_SECRET,
   PORT,
+  MONGODB_URI
 };
