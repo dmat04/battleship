@@ -48,14 +48,14 @@ const usernameExists = async (username: string): Promise<boolean> => {
 /**
  * Registered User schema interface
  */
-interface RegisteredUser extends User {
+export interface RegisteredUser extends User {
   passwordHash: string;
 }
 
 /**
  * Guest User schema interface
  */
-interface GuestUser extends User {
+export interface GuestUser extends User {
   readonly expiresAt: Date;
 }
 

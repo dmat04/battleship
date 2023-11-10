@@ -1,31 +1,17 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { add } from 'date-fns';
 import config from '../utils/config';
+import { GuestUser, RegisteredUser,GuestUserModel } from '../models/User';
 
-/**
- * Interface to define user data to be decoded/encoded to/from
- * jwt tokens
- */
-interface GuestUserData {
-  username: string,
-  expiresAt: Date,
+interface AccessToken {
+  token: string;
+  expiresAt: Date;
 }
 
-export interface GuestUserWithToken extends GuestUserData {
-  accessToken: string,
+interface LoginResult {
+  username: string;
+  token: AccessToken;
 }
-
-/**
- * Custom Error to indicate that a requested username is taken
- */
-export class UsernameTakenError extends Error {
-  constructor(readonly username: string) {
-    super(`Username ${username} is already taken`);
-  }
-}
-
-// Registry of unexipred guest users
-const registeredGuests = new Map<string, GuestUserData>();
 
 /**
  * Generates a username of the format `Guest#${num}` followed
@@ -40,51 +26,41 @@ const generateGuestUsername = (): string => {
 };
 
 /**
- * Sign user data using jsonwebtoken. An expiration filed is added to the
- * provided username and then the object is encoded.
+ * Create a temporary access token for a given username.
  *
- * @param username The username to be encoded.
- * @returns An object containing the username, expiration time and the access token
+ * @param username Username to be encoded in the access token.
+ * @returns An AccessToken containing the access code and expiration timestamp.
  */
-const encodeGuestToken = (username: string): GuestUserWithToken => {
+const encodeToken = (username: string): AccessToken => {
   // record the expiration timestamp
   const expiresAt = add(Date.now(), { seconds: config.GUEST_LIFETIME_SECONDS });
 
-  // sign the username and expiration timestamp using jwt
-  const accessToken = jwt.sign(
-    {
-      username,
-      expiresAt,
-    },
+  // create the 
+  const token = jwt.sign(
+    { username },
     config.JWT_SECRET,
-    {
+    { 
       expiresIn: config.GUEST_LIFETIME_SECONDS,
     },
   );
 
   return {
-    username,
-    expiresAt,
-    accessToken,
+    token,
+    expiresAt
   };
 };
 
 /**
- * Decode user data from an access token.
+ * Decode an access token.
  *
- * @param token The token to be decoded
- * @returns An object containig the username and expiration timestamp, or
- *          throws an error if the token is invalid or already expired
+ * @param token The token to be decoded.
+ * @returns Decoded username, or throws an error if the 
+ *          token is invalid or already expired
  */
-const decodeGuestToken = (token: string): GuestUserData => {
+const decodeToken = (token: string): string => {
   const payload = jwt.verify(token, config.JWT_SECRET);
-  if (typeof payload === 'object') {
-    if ('username' in payload && 'expiresAt' in payload) {
-      return {
-        username: payload.username,
-        expiresAt: payload.expiresAt,
-      };
-    }
+  if (typeof payload === 'object' && 'username' in payload) {
+    return payload.username;
   }
 
   // shouldn't really reach this
@@ -98,37 +74,24 @@ const decodeGuestToken = (token: string): GuestUserData => {
  */
 const createUserExiprationJob = (username: string): void => {
   setTimeout(() => {
-    registeredGuests.delete(username);
+    GuestUserModel.deleteOne({ username });
   }, config.GUEST_LIFETIME_SECONDS * 1000);
 };
 
-// TODO: also check for existing registered user's usernames
-const usernameExists = (username: string): boolean => registeredGuests.has(username);
-
 /**
- * Register the username in the guest user registry.
- *
- * @param username The guest users username
- * @param expiresAt Guest expiration timestamp
- */
-const registerName = (username: string, expiresAt: Date): void => {
-  registeredGuests.set(username, { username, expiresAt });
-};
-
-/**
- * Create a guest user.
+ * Create a guest user and an accompanying access token
  *
  * @param username Username for the guest, if none is provided a random one is generated.
  *                 If a username is specified and it is already taken, a UsernameTakenError
  *                 is thrown.
  * @returns The user data, including: username, expiration timestamp and access token.
  */
-const createGuestUser = (username?: string): GuestUserWithToken => {
+const createGuestUserAndToken = async (username?: string): Promise<LoginResult> => {
   let name;
 
   if (username) {
     // If a username has been requested, check that it's available
-    if (usernameExists(username)) {
+    if (await GuestUserModel.usernameExists(username)) {
       throw new UsernameTakenError(username);
     }
 
@@ -138,30 +101,40 @@ const createGuestUser = (username?: string): GuestUserWithToken => {
     name = generateGuestUsername();
 
     // ...and also make sure it's available
-    while (usernameExists(name)) {
+    while (await GuestUserModel.usernameExists(name)) {
       name = generateGuestUsername();
     }
   }
 
   // Create a user token
-  const userAndToken = encodeGuestToken(name);
+  const token = encodeToken(name)
   // Schedule guest deletion
-  createUserExiprationJob(userAndToken.username);
-  // Register the username
-  registerName(name, userAndToken.expiresAt);
+  createUserExiprationJob(name);
+  // Create a GuestUser document ...
+  const guestUser = new GuestUserModel({
+    username: name,
+    expiresAt: token.expiresAt
+  })
 
-  return userAndToken;
+  // ... and save it
+  await guestUser.save();
+
+  return { 
+    username: guestUser.username,
+    token
+  };
 };
 
 /**
- * Get the guest user object.
+ * Get the an existing Guest user.
  *
- * @param username The name of the guest to be retrieved
- * @returns The user data, or undefined if no user with the given username exists
+ * @param username The name of the guest to be retrieved.
+ * @returns A Promise resolving The user data, or null or undefined if 
+ *          no user with the given username exists.
  */
 // eslint-disable-next-line arrow-body-style
-const getGuestUser = (username: string): GuestUserData | undefined => {
-  return registeredGuests.get(username);
+const getGuestUser = async (username: string): Promise<GuestUser | null | undefined> => {
+  return await GuestUserModel.findOne({ username });
 };
 
 /**
@@ -171,10 +144,69 @@ const getGuestUser = (username: string): GuestUserData | undefined => {
  * @returns An object containig the username and expiration timestamp, or
  *          throws an error if the token is invalid or already expired
  */
-const getUserFromToken = (token: string): GuestUserData => decodeGuestToken(token);
+const getUserFromToken = async (token: string): Promise<GuestUser> => {
+  try {
+    const username = decodeToken(token);
+    const user = await GuestUserModel.findOne({ username });
+    if (user) {
+      return {
+        username: user.username,
+        expiresAt: user.expiresAt
+      }
+    } else {
+      throw new UserNotFoundError(username);
+    }
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      throw new AccesTokenError('has expired');
+    } else if (error instanceof JsonWebTokenError) {
+      throw new AccesTokenError('is invalid')
+    } else {
+      throw new AuthServiceError('An unexpected error has occured')
+    }
+  }
+}
+
+/**
+ * Custom Error to indicate an unexpected authentication 
+ * service error
+ */
+export class AuthServiceError extends Error {
+  constructor(readonly message: string) {
+    super(message);
+  }
+}
+
+/**
+ * Custom Error to indicate that a requested username is taken
+ */
+export class UsernameTakenError extends Error {
+  constructor(readonly username: string) {
+    super(`Username ${username} is already taken`);
+  }
+}
+
+/**
+ * Custom Error to indicate that a requested User hasn't been found
+ */
+export class UserNotFoundError extends Error {
+  constructor(readonly username: string) {
+    super(`User '${username}' couldn't be found`);
+  }
+}
+
+/**
+ * Custom Error to indicate that an access token is invalid
+ * or expired
+ */
+export class AccesTokenError extends Error {
+  constructor(readonly cause: 'has expired' | 'is invalid') {
+    super(`The provided access token ${cause}`);
+  }
+}
 
 export default {
-  createGuestUser,
+  createGuestUserAndToken,
   getGuestUser,
   getUserFromToken,
 };
