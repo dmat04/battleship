@@ -36,5 +36,5 @@ export default {
   GUEST_LIFETIME_SECONDS,
   JWT_SECRET,
   PORT,
-  MONGODB_URI
+  MONGODB_URI,
 };

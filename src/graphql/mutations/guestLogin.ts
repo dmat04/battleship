@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { GuestUser } from '../types/GuestUser';
-import AuthService, { UsernameValidationError } from '../../services/AuthService';
+import AuthService from '../../services/AuthService';
+import ValidationError from '../../services/errors/ValidationError';
 
 export interface MutationParams {
   username: string | undefined;
@@ -21,9 +22,9 @@ export const resolvers = {
           accessToken: guest.token.token,
           expiresAt: guest.token.expiresAt.getTime().toString(),
           username: guest.username,
-        }
+        };
       } catch (e) {
-        if (e instanceof UsernameValidationError) {
+        if (e instanceof ValidationError) {
           throw new GraphQLError(`Username validation error: ${e.message}`, {
             extensions: { code: 'BAD_USER_INPUT' },
           });

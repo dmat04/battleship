@@ -1,8 +1,11 @@
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { add } from 'date-fns';
-import { Error } from 'mongoose'
+import { Error as MongooseError } from 'mongoose';
 import config from '../utils/config';
 import { GuestUser, GuestUserModel } from '../models/User';
+import ValidationError from './errors/ValidationError';
+import EntityNotFoundError from './errors/EntityNotFoundError';
+import AuthenticationError from './errors/AuthenticationError';
 
 interface AccessToken {
   token: string;
@@ -36,7 +39,7 @@ const encodeToken = (username: string): AccessToken => {
   // record the expiration timestamp
   const expiresAt = add(Date.now(), { seconds: config.GUEST_LIFETIME_SECONDS });
 
-  // create the 
+  // create the token with an expiration claim
   const token = jwt.sign(
     { username },
     config.JWT_SECRET,
@@ -47,7 +50,7 @@ const encodeToken = (username: string): AccessToken => {
 
   return {
     token,
-    expiresAt
+    expiresAt,
   };
 };
 
@@ -55,7 +58,7 @@ const encodeToken = (username: string): AccessToken => {
  * Decode an access token.
  *
  * @param token The token to be decoded.
- * @returns Decoded username, or throws an error if the 
+ * @returns Decoded username, or throws an error if the
  *          token is invalid or already expired
  */
 const decodeToken = (token: string): string => {
@@ -93,7 +96,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   if (username) {
     // If a username has been requested, check that it's available
     if (await GuestUserModel.usernameExists(username)) {
-      throw new UsernameValidationError(`Username ${username} is already taken`);
+      throw new ValidationError(`Username ${username} is already taken`);
     }
 
     name = username;
@@ -102,26 +105,27 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
     name = generateGuestUsername();
 
     // ...and also make sure it's available
+    // eslint-disable-next-line no-await-in-loop
     while (await GuestUserModel.usernameExists(name)) {
       name = generateGuestUsername();
     }
   }
 
   // Create a user token
-  const token = encodeToken(name)
+  const token = encodeToken(name);
 
   // Create a GuestUser document ...
   const guestUser = new GuestUserModel({
     username: name,
-    expiresAt: token.expiresAt
-  })
+    expiresAt: token.expiresAt,
+  });
 
   // ... and save it
   try {
     await guestUser.save();
   } catch (error) {
-    if (error instanceof Error.ValidationError) {
-      throw new UsernameValidationError(error);
+    if (error instanceof MongooseError.ValidationError) {
+      throw new ValidationError(error);
     }
   }
 
@@ -130,7 +134,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 
   return {
     username: guestUser.username,
-    token
+    token,
   };
 };
 
@@ -138,12 +142,12 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
  * Get the an existing Guest user.
  *
  * @param username The name of the guest to be retrieved.
- * @returns A Promise resolving The user data, or null or undefined if 
+ * @returns A Promise resolving The user data, or null or undefined if
  *          no user with the given username exists.
  */
 // eslint-disable-next-line arrow-body-style
 const getGuestUser = async (username: string): Promise<GuestUser | null | undefined> => {
-  return await GuestUserModel.findOne({ username });
+  return GuestUserModel.findOne({ username }).exec();
 };
 
 /**
@@ -156,67 +160,24 @@ const getGuestUser = async (username: string): Promise<GuestUser | null | undefi
 const getUserFromToken = async (token: string): Promise<GuestUser> => {
   try {
     const username = decodeToken(token);
-    const user = await GuestUserModel.findOne({ username });
+    const user = await GuestUserModel.findOne({ username }).exec();
     if (user) {
       return {
         username: user.username,
-        expiresAt: user.expiresAt
-      }
-    } else {
-      throw new UserNotFoundError(username);
+        expiresAt: user.expiresAt,
+      };
     }
+    throw new EntityNotFoundError('User', username);
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      throw new AccesTokenError('has expired');
+      throw new AuthenticationError('expired');
     } else if (error instanceof JsonWebTokenError) {
-      throw new AccesTokenError('is invalid')
+      throw new AuthenticationError('invalid');
     } else {
-      throw new AuthServiceError('An unexpected error has occured')
+      throw error;
     }
   }
-}
-
-/**
- * Custom Error to indicate an unexpected authentication 
- * service error
- */
-export class AuthServiceError extends Error {
-  constructor(readonly message: string) {
-    super(message);
-  }
-}
-
-/**
- * Custom Error to indicate username validation errors
- */
-export class UsernameValidationError extends Error {
-  constructor(cause: string | Error.ValidationError) {
-    if (typeof cause === 'string') {
-      super(cause);
-    } else {
-      super(cause.errors.username.message);
-    }
-  }
-}
-
-/**
- * Custom Error to indicate that a requested User hasn't been found
- */
-export class UserNotFoundError extends Error {
-  constructor(readonly username: string) {
-    super(`User '${username}' couldn't be found`);
-  }
-}
-
-/**
- * Custom Error to indicate that an access token is invalid
- * or expired
- */
-export class AccesTokenError extends Error {
-  constructor(readonly cause: 'has expired' | 'is invalid') {
-    super(`The provided access token ${cause}`);
-  }
-}
+};
 
 export default {
   createGuestUserAndToken,
