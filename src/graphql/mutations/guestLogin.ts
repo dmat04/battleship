@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { LoginResult } from '../types/LoginResult';
+import { GuestLoginResult } from '../types/GuestLoginResult';
 import AuthService from '../../services/AuthService';
 import ValidationError from '../../services/errors/ValidationError';
 
@@ -9,13 +9,13 @@ export interface MutationParams {
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    guestLogin(username: String): LoginResult
+    guestLogin(username: String): GuestLoginResult
   }
 `;
 
 export const resolvers = {
   Mutation: {
-    guestLogin: async (_: any, args: MutationParams): Promise<LoginResult> => {
+    guestLogin: async (_: any, args: MutationParams): Promise<GuestLoginResult> => {
       try {
         const guest = await AuthService.createGuestUserAndToken(args.username);
         return {
