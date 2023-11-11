@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import Ping from './queries/ping';
 import CreateGameRoom from './mutations/createGameRoom';
 import GameExists from './queries/gameExists';
-import GuestUserDefs from './types/GuestUser';
+import LoginResultDefs from './types/LoginResult';
 import guestLogin from './mutations/guestLogin';
 
 const rootTypeDefs = `#graphql
@@ -21,7 +21,7 @@ export const typeDefs = [
   Ping.typeDefs,
   CreateGameRoom.typeDefs,
   GameExists.typeDefs,
-  GuestUserDefs.typeDefs,
+  LoginResultDefs.typeDefs,
   guestLogin.typeDefs,
 ];
 
