@@ -26,15 +26,22 @@ if (!isString(process.env.MONGODB_URI)) {
   MONGODB_URI missing or invalid`);
 }
 
+if (!isInteger(process.env.PWD_HASH_SALT_ROUNDS)) {
+  throw new Error(`Server configuration error: environment var 
+  PWD_HASH_SALT_ROUNDS missing or invalid`);
+}
+
 // After asserting the types of the env variables, save them as members
 const GUEST_LIFETIME_SECONDS: number = Number.parseInt(process.env.GUEST_LIFETIME_SECONDS, 10);
 const JWT_SECRET: string = process.env.JWT_SECRET;
 const PORT: number = Number.parseInt(process.env.PORT, 10);
 const MONGODB_URI = process.env.MONGODB_URI;
+const PWD_HASH_SALT_ROUNDS = Number.parseInt(process.env.PWD_HASH_SALT_ROUNDS, 10);
 
 export default {
   GUEST_LIFETIME_SECONDS,
   JWT_SECRET,
   PORT,
   MONGODB_URI,
+  PWD_HASH_SALT_ROUNDS,
 };

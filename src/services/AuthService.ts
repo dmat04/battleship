@@ -1,8 +1,9 @@
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
 import { Error as MongooseError } from 'mongoose';
 import config from '../utils/config';
-import { GuestUser, GuestUserModel } from '../models/User';
+import { GuestUser, GuestUserModel, RegisteredUserModel } from '../models/User';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import AuthenticationError from './errors/AuthenticationError';
@@ -170,9 +171,43 @@ const getUserFromToken = async (token: string): Promise<GuestUser> => {
     throw new EntityNotFoundError('User', username);
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      throw new AuthenticationError('expired');
+      throw new AuthenticationError('token expired');
     } else if (error instanceof JsonWebTokenError) {
-      throw new AuthenticationError('invalid');
+      throw new AuthenticationError('token invalid');
+    } else {
+      throw error;
+    }
+  }
+};
+
+const loginRegisteredUser = async (username: string, password: string): Promise<AccessToken> => {
+  const user = await RegisteredUserModel.findOne({ username }).exec();
+  if (!user) {
+    throw new EntityNotFoundError('User', username);
+  }
+
+  const hash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
+  if (hash !== user.passwordHash) {
+    throw new AuthenticationError('incorrect password');
+  }
+
+  return encodeToken(user.username);
+};
+
+const registerUser = async (username: string, password: string): Promise<AccessToken> => {
+  const passwordHash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
+
+  const user = new RegisteredUserModel({
+    username,
+    passwordHash,
+  });
+
+  try {
+    await user.save();
+    return encodeToken(user.username);
+  } catch (error) {
+    if (error instanceof MongooseError.ValidationError) {
+      throw new ValidationError(error);
     } else {
       throw error;
     }
@@ -183,4 +218,6 @@ export default {
   createGuestUserAndToken,
   getGuestUser,
   getUserFromToken,
+  loginRegisteredUser,
+  registerUser,
 };
