@@ -23,8 +23,8 @@ const userSchema = new Schema<User>({
     type: String,
     required: [true, 'Username missing'],
     unique: true,
-    minLength: [5, 'Username must be at least 5 characters long']
-  }
+    minLength: [5, 'Username must be at least 5 characters long'],
+  },
 });
 
 // Apply the mongoose-unique-valiator plugin
@@ -37,13 +37,14 @@ const userModel = model<User>('User', userSchema);
  * Method to check if a User document exists with a given username.
  * This method is added as a static member to each of the two user
  * Model types.
- * 
+ *
  * @param username The username to be searched for.
  * @returns true if a User exists with the given username, false otherwise.
  */
+// eslint-disable-next-line arrow-body-style
 const usernameExists = async (username: string): Promise<boolean> => {
-  return (await userModel.exists({ username })) !== null
-}
+  return (await userModel.exists({ username })) !== null;
+};
 
 /**
  * Registered User schema interface
@@ -75,7 +76,7 @@ export interface IGuestUserModel extends Model<GuestUser> {
   usernameExists(username: string): Promise<boolean>
 }
 
-// Define the guest user schema 
+// Define the guest user schema
 const guestSchema = new Schema({
   expiresAt: { type: Date, required: true },
 });
@@ -85,24 +86,24 @@ const registeredSchema = new Schema({
   passwordHash: { type: String, required: true },
 });
 
-// Add the usernameExists method as a static member to the 
+// Add the usernameExists method as a static member to the
 // schemas (this will make the method present in the respective
 // mongoose Model classes)
 guestSchema.static('usernameExists', usernameExists);
-registeredSchema.static('usernameExists', usernameExists)
+registeredSchema.static('usernameExists', usernameExists);
 
-// Compile the RegisteredUserModel as a discriminated type 
+// Compile the RegisteredUserModel as a discriminated type
 // on the generic User model
-export const RegisteredUserModel: IRegisteredUserModel =
-  userModel.discriminator<RegisteredUser, IRegisteredUserModel>(
-    'RegisteredUser',
-    registeredSchema,
-  );
+export const RegisteredUserModel: IRegisteredUserModel = userModel
+  .discriminator<RegisteredUser, IRegisteredUserModel>(
+  'RegisteredUser',
+  registeredSchema,
+);
 
-// Compile the GuestUserModel as a discriminated type 
+// Compile the GuestUserModel as a discriminated type
 // on the generic User model
-export const GuestUserModel: IGuestUserModel =
-  userModel.discriminator<GuestUser, IGuestUserModel>(
-    'GuestUser',
-    guestSchema,
-  );
+export const GuestUserModel: IGuestUserModel = userModel
+  .discriminator<GuestUser, IGuestUserModel>(
+  'GuestUser',
+  guestSchema,
+);
