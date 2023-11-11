@@ -186,8 +186,8 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
     throw new EntityNotFoundError('User', username);
   }
 
-  const hash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
-  if (hash !== user.passwordHash) {
+  const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordCorrect) {
     throw new AuthenticationError('incorrect password');
   }
 
