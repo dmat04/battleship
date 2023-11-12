@@ -180,7 +180,7 @@ const getUserFromToken = async (token: string): Promise<GuestUser> => {
   }
 };
 
-const loginRegisteredUser = async (username: string, password: string): Promise<AccessToken> => {
+const loginRegisteredUser = async (username: string, password: string): Promise<LoginResult> => {
   const user = await RegisteredUserModel.findOne({ username }).exec();
   if (!user) {
     throw new EntityNotFoundError('User', username);
@@ -191,10 +191,13 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
     throw new AuthenticationError('incorrect password');
   }
 
-  return encodeToken(user.username);
+  return {
+    username,
+    token: encodeToken(user.username),
+  };
 };
 
-const registerUser = async (username: string, password: string): Promise<AccessToken> => {
+const registerUser = async (username: string, password: string): Promise<LoginResult> => {
   const passwordHash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
 
   const user = new RegisteredUserModel({
@@ -204,7 +207,10 @@ const registerUser = async (username: string, password: string): Promise<AccessT
 
   try {
     await user.save();
-    return encodeToken(user.username);
+    return {
+      username,
+      token: encodeToken(user.username),
+    };
   } catch (error) {
     if (error instanceof MongooseError.ValidationError) {
       throw new ValidationError(error);
