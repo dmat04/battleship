@@ -1,8 +1,8 @@
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
+import type { ExpressContextFunctionArgument } from '@apollo/server/express4';
 
-import { ExpressContextFunctionArgument } from '@apollo/server/express4';
 import { typeDefs, resolvers } from '../graphql/schema';
 
 export interface ApolloContext {

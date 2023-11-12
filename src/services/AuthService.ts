@@ -2,15 +2,16 @@ import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
 import { Error as MongooseError } from 'mongoose';
+
 import config from '../utils/config';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import AuthenticationError from './errors/AuthenticationError';
-import { User } from '../models/User';
-import { LoginResult } from '../graphql/types/LoginResult';
 import UserDbModel from './dbModels/UserDbModel';
 import GuestUserDbModel from './dbModels/GuestUserDbModel';
 import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
+import type { User } from '../models/User';
+import type { LoginResult } from '../graphql/types/LoginResult';
 
 interface AccessToken {
   token: string;

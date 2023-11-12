@@ -1,6 +1,6 @@
 import { Schema, Model } from 'mongoose';
-import { GuestUser } from '../../models/User';
 import UserDbModel, { usernameExists } from './UserDbModel';
+import type { GuestUser } from '../../models/User';
 
 /**
  * Mongoose Model for the GuestUser type is constructed here

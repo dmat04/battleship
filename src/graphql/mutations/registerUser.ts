@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
-import { LoginResult } from '../types/LoginResult';
 import AuthService from '../../services/AuthService';
 import ValidationError from '../../services/errors/ValidationError';
+import type { LoginResult } from '../types/LoginResult';
 
 export interface MutationParams {
   username: string;

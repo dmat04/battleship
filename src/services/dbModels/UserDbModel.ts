@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import { User } from '../../models/User';
+import type { User } from '../../models/User';
 
 /**
  * Mongoose Model for the geenric User type is constructed here.
