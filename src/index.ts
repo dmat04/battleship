@@ -5,7 +5,7 @@ import http from 'http';
 import cors from 'cors';
 
 import config from './utils/config';
-import createApolloServer from './middleware/ApolloMiddleware';
+import createApolloServer, { contextFn } from './middleware/ApolloMiddleware';
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -26,7 +26,7 @@ const start = async () => {
     '/',
     cors<cors.CorsRequest>(),
     express.json(),
-    expressMiddleware(apolloServer),
+    expressMiddleware(apolloServer, { context: contextFn }),
   );
 
   httpServer.listen({ port: config.PORT }, () => {
