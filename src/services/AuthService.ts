@@ -163,17 +163,24 @@ const getUser = async (username: string): Promise<User | null | undefined> => {
  */
 const getUserFromToken = async (token: string): Promise<User> => {
   try {
+    // try to decode the token
     const username = decodeToken(token);
+
+    // try to fetch a db entity for the decoded username
     const user = await GuestUserDbModel.findOne({ username }).exec();
+
     if (user) {
+      // if the user exists, return the id and username
       return {
         // eslint-disable-next-line no-underscore-dangle
         id: user._id.toString(),
         username: user.username,
       };
     }
+    // throw a not found error if no user is found for the decoded username
     throw new EntityNotFoundError('User', username);
   } catch (error) {
+    // throw appropriate service errors
     if (error instanceof TokenExpiredError) {
       throw new AuthenticationError('token expired');
     } else if (error instanceof JsonWebTokenError) {
@@ -184,14 +191,28 @@ const getUserFromToken = async (token: string): Promise<User> => {
   }
 };
 
+/**
+ * Login an existing registered user.
+ * If no user for the given username is found, an EntityNotFoundError is thrown,
+ * if the password is incorrect, an AuthenticationError is thrown.
+ *
+ * @param username Users username.
+ * @param password Users password.
+ * @returns A promise rosolving to a LoginResult, which will contain the users username and
+ *          a temporary access token.
+ */
 const loginRegisteredUser = async (username: string, password: string): Promise<LoginResult> => {
+  // find the db user entity for the provided username
   const user = await RegisteredUserDbModel.findOne({ username }).exec();
   if (!user) {
+    // if no such user exists, throw an entity not found error
     throw new EntityNotFoundError('User', username);
   }
 
+  // if a user is found, compare the password with the saved hash
   const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
   if (!passwordCorrect) {
+    // if the hashes don't match, throw the appropriate error
     throw new AuthenticationError('incorrect password');
   }
 
@@ -201,15 +222,28 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
   };
 };
 
+/**
+ * Register a user.
+ * If the given registration data is invalid, an appropriate error is thrown.
+ *
+ * @param username The new users username.
+ * @param password The new users password
+ * @returns A promise rosolving to a LoginResult, which will contain the users username and
+ *          a temporary access token.
+ */
 const registerUser = async (username: string, password: string): Promise<LoginResult> => {
+  // TODO: validate password before hashing !!!
+  // calculate the password hash to be saved
   const passwordHash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
 
+  // construct a new db entity
   const user = new RegisteredUserDbModel({
     username,
     passwordHash,
   });
 
   try {
+    // save the db entity, and return
     await user.save();
     return {
       username,
