@@ -4,6 +4,7 @@ import LoginResultDefs from './types/LoginResult';
 import GameCreatedResultDefs from './types/GameCreatedResult';
 import Ping from './queries/ping';
 import CreateGame from './mutations/createGame';
+import JoinGame from './mutations/joinGame';
 import guestLogin from './mutations/guestLogin';
 import registerUser from './mutations/registerUser';
 import registeredLogin from './mutations/registeredLogin';
@@ -24,6 +25,7 @@ export const typeDefs = [
   GameCreatedResultDefs.typeDefs,
   Ping.typeDefs,
   CreateGame.typeDefs,
+  JoinGame.typeDefs,
   guestLogin.typeDefs,
   registerUser.typeDefs,
   registeredLogin.typeDefs,
@@ -32,6 +34,7 @@ export const typeDefs = [
 export const resolvers = merge(
   Ping.resolvers,
   CreateGame.resolvers,
+  JoinGame.resolvers,
   guestLogin.resolvers,
   registerUser.resolvers,
   registeredLogin.resolvers,

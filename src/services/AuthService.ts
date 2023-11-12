@@ -165,7 +165,7 @@ const getUserFromToken = async (token: string): Promise<User> => {
     const username = decodeToken(token);
 
     // try to fetch a db entity for the decoded username
-    const user = await GuestUserDbModel.findOne({ username }).exec();
+    const user = await UserDbModel.findOne({ username }).exec();
 
     if (user) {
       // if the user exists, return the id and username
