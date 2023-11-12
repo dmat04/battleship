@@ -3,10 +3,13 @@ import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
 import { Error as MongooseError } from 'mongoose';
 import config from '../utils/config';
-import { GuestUser, GuestUserModel, RegisteredUserModel } from '../models/User';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import AuthenticationError from './errors/AuthenticationError';
+import { User } from '../models/User';
+import UserDbModel from './dbModels/UserDbModel';
+import GuestUserDbModel from './dbModels/GuestUserDbModel';
+import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
 
 interface AccessToken {
   token: string;
@@ -79,7 +82,7 @@ const decodeToken = (token: string): string => {
  */
 const createUserExiprationJob = (username: string): void => {
   setTimeout(() => {
-    GuestUserModel.deleteOne({ username });
+    GuestUserDbModel.deleteOne({ username });
   }, config.GUEST_LIFETIME_SECONDS * 1000);
 };
 
@@ -96,7 +99,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 
   if (username) {
     // If a username has been requested, check that it's available
-    if (await GuestUserModel.usernameExists(username)) {
+    if (await GuestUserDbModel.usernameExists(username)) {
       throw new ValidationError(`Username ${username} is already taken`);
     }
 
@@ -107,7 +110,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 
     // ...and also make sure it's available
     // eslint-disable-next-line no-await-in-loop
-    while (await GuestUserModel.usernameExists(name)) {
+    while (await GuestUserDbModel.usernameExists(name)) {
       name = generateGuestUsername();
     }
   }
@@ -116,7 +119,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   const token = encodeToken(name);
 
   // Create a GuestUser document ...
-  const guestUser = new GuestUserModel({
+  const guestUser = new GuestUserDbModel({
     username: name,
     expiresAt: token.expiresAt,
   });
@@ -140,15 +143,15 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 };
 
 /**
- * Get the an existing Guest user.
+ * Get the an existing User entity.
  *
- * @param username The name of the guest to be retrieved.
- * @returns A Promise resolving The user data, or null or undefined if
+ * @param username The name of the user to be retrieved.
+ * @returns A Promise resolving the user data, or null or undefined if
  *          no user with the given username exists.
  */
 // eslint-disable-next-line arrow-body-style
-const getGuestUser = async (username: string): Promise<GuestUser | null | undefined> => {
-  return GuestUserModel.findOne({ username }).exec();
+const getUser = async (username: string): Promise<User | null | undefined> => {
+  return UserDbModel.findOne({ username }).exec();
 };
 
 /**
@@ -158,14 +161,15 @@ const getGuestUser = async (username: string): Promise<GuestUser | null | undefi
  * @returns An object containig the username and expiration timestamp, or
  *          throws an error if the token is invalid or already expired
  */
-const getUserFromToken = async (token: string): Promise<GuestUser> => {
+const getUserFromToken = async (token: string): Promise<User> => {
   try {
     const username = decodeToken(token);
-    const user = await GuestUserModel.findOne({ username }).exec();
+    const user = await GuestUserDbModel.findOne({ username }).exec();
     if (user) {
       return {
+        // eslint-disable-next-line no-underscore-dangle
+        id: user._id.toString(),
         username: user.username,
-        expiresAt: user.expiresAt,
       };
     }
     throw new EntityNotFoundError('User', username);
@@ -181,7 +185,7 @@ const getUserFromToken = async (token: string): Promise<GuestUser> => {
 };
 
 const loginRegisteredUser = async (username: string, password: string): Promise<LoginResult> => {
-  const user = await RegisteredUserModel.findOne({ username }).exec();
+  const user = await RegisteredUserDbModel.findOne({ username }).exec();
   if (!user) {
     throw new EntityNotFoundError('User', username);
   }
@@ -200,7 +204,7 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
 const registerUser = async (username: string, password: string): Promise<LoginResult> => {
   const passwordHash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);
 
-  const user = new RegisteredUserModel({
+  const user = new RegisteredUserDbModel({
     username,
     passwordHash,
   });
@@ -222,7 +226,7 @@ const registerUser = async (username: string, password: string): Promise<LoginRe
 
 export default {
   createGuestUserAndToken,
-  getGuestUser,
+  getUser,
   getUserFromToken,
   loginRegisteredUser,
   registerUser,
