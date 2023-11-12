@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 import LoginResultDefs from './types/LoginResult';
 import GameCreatedResultDefs from './types/GameCreatedResult';
 import Ping from './queries/ping';
-import CreateGameRoom from './mutations/createGameRoom';
+import CreateGame from './mutations/createGame';
 import guestLogin from './mutations/guestLogin';
 import registerUser from './mutations/registerUser';
 import registeredLogin from './mutations/registeredLogin';
@@ -23,7 +23,7 @@ export const typeDefs = [
   LoginResultDefs.typeDefs,
   GameCreatedResultDefs.typeDefs,
   Ping.typeDefs,
-  CreateGameRoom.typeDefs,
+  CreateGame.typeDefs,
   guestLogin.typeDefs,
   registerUser.typeDefs,
   registeredLogin.typeDefs,
@@ -31,7 +31,7 @@ export const typeDefs = [
 
 export const resolvers = merge(
   Ping.resolvers,
-  CreateGameRoom.resolvers,
+  CreateGame.resolvers,
   guestLogin.resolvers,
   registerUser.resolvers,
   registeredLogin.resolvers,

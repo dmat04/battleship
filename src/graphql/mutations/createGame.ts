@@ -6,13 +6,13 @@ import type { ApolloContext } from '../../middleware/ApolloMiddleware';
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    createGameRoom: GameCreatedResult
+    createGame: GameCreatedResult
   }
 `;
 
 export const resolvers = {
   Mutation: {
-    createGameRoom: async (_: any, __: any, context: ApolloContext): Promise<GameCreatedResult> => {
+    createGame: async (_: any, __: any, context: ApolloContext): Promise<GameCreatedResult> => {
       const accessToken = context.authToken;
 
       if (!accessToken) {
