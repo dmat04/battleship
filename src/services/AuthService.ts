@@ -7,6 +7,7 @@ import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import AuthenticationError from './errors/AuthenticationError';
 import { User } from '../models/User';
+import { LoginResult } from '../graphql/types/LoginResult';
 import UserDbModel from './dbModels/UserDbModel';
 import GuestUserDbModel from './dbModels/GuestUserDbModel';
 import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
@@ -14,11 +15,6 @@ import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
 interface AccessToken {
   token: string;
   expiresAt: Date;
-}
-
-interface LoginResult {
-  username: string;
-  token: AccessToken;
 }
 
 /**
@@ -138,7 +134,8 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 
   return {
     username: guestUser.username,
-    token,
+    accessToken: token.token,
+    expiresAt: token.expiresAt.getTime().toString(),
   };
 };
 
@@ -216,9 +213,12 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
     throw new AuthenticationError('incorrect password');
   }
 
+  const token = encodeToken(user.username);
+
   return {
-    username,
-    token: encodeToken(user.username),
+    username: user.username,
+    accessToken: token.token,
+    expiresAt: token.expiresAt.getTime().toString(),
   };
 };
 
@@ -243,11 +243,16 @@ const registerUser = async (username: string, password: string): Promise<LoginRe
   });
 
   try {
-    // save the db entity, and return
+    // save the db entity
     await user.save();
+    // create an access token
+    const token = encodeToken(user.username);
+
+    // and return the username and access token
     return {
-      username,
-      token: encodeToken(user.username),
+      username: user.username,
+      accessToken: token.token,
+      expiresAt: token.expiresAt.getTime().toString(),
     };
   } catch (error) {
     if (error instanceof MongooseError.ValidationError) {

@@ -17,12 +17,7 @@ export const resolvers = {
   Mutation: {
     guestLogin: async (_: any, args: MutationParams): Promise<LoginResult> => {
       try {
-        const guest = await AuthService.createGuestUserAndToken(args.username);
-        return {
-          username: guest.username,
-          accessToken: guest.token.token,
-          expiresAt: guest.token.expiresAt.getTime().toString(),
-        };
+        return await AuthService.createGuestUserAndToken(args.username);
       } catch (e) {
         if (e instanceof ValidationError) {
           throw new GraphQLError(`Username validation error: ${e.message}`, {

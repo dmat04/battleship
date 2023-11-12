@@ -19,12 +19,7 @@ export const resolvers = {
   Mutation: {
     registeredLogin: async (_: any, args: MutationParams): Promise<LoginResult> => {
       try {
-        const loginResult = await AuthService.loginRegisteredUser(args.username, args.password);
-        return {
-          username: loginResult.username,
-          accessToken: loginResult.token.token,
-          expiresAt: loginResult.token.expiresAt.getTime().toString(),
-        };
+        return await AuthService.loginRegisteredUser(args.username, args.password);
       } catch (e) {
         if (e instanceof EntityNotFoundError) {
           throw new GraphQLError(`User with username '${args.username}' not found.`, {

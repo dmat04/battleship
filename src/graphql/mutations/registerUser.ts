@@ -18,12 +18,7 @@ export const resolvers = {
   Mutation: {
     registerUser: async (_: any, args: MutationParams): Promise<LoginResult> => {
       try {
-        const loginResult = await AuthService.registerUser(args.username, args.password);
-        return {
-          username: loginResult.username,
-          accessToken: loginResult.token.token,
-          expiresAt: loginResult.token.expiresAt.getTime().toString(),
-        };
+        return await AuthService.registerUser(args.username, args.password);
       } catch (e) {
         if (e instanceof ValidationError) {
           throw new GraphQLError(`User registration data invalid: ${e.message}`, {
