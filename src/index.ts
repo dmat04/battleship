@@ -1,23 +1,25 @@
-/* eslint-disable import/first */
-import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
+import mongoose from 'mongoose';
 import http from 'http';
 import cors from 'cors';
 
 import config from './utils/config';
-import { typeDefs, resolvers } from './graphql/schema';
+import createApolloServer from './middleware/ApolloMiddleware';
 
 const app = express();
 const httpServer = http.createServer(app);
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-});
+const apolloServer = createApolloServer(httpServer);
 
 const start = async () => {
+  mongoose.set('strictQuery', false);
+  try {
+    await mongoose.connect(config.MONGODB_URI);
+    console.log('Connected to MongoDB');
+  } catch {
+    console.log('Error connecting to MongoDB');
+  }
+
   await apolloServer.start();
 
   app.use(
