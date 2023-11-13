@@ -14,7 +14,7 @@ import { User } from '../models/User';
 const activeGames: Map<string, ActiveGame> = new Map<string, ActiveGame>();
 
 /**
- * Registry of game invite codes, each key is an invite code, and is mapped to a 
+ * Registry of game invite codes, each key is an invite code, and is mapped to a
  * corresponding game id
  */
 const inviteCodes: Map<string, string> = new Map<string, string>();
@@ -131,8 +131,11 @@ const joinWithInviteCode = (inviteCode: string, user: User): string => {
 
 const gameExists = (id: string): boolean => activeGames.has(id);
 
+const getGame = (id: string): Game | undefined => activeGames.get(id)?.gameInstance;
+
 export default {
   createNewGame,
-  gameExists,
   joinWithInviteCode,
+  gameExists,
+  getGame,
 };
