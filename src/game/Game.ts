@@ -162,6 +162,13 @@ class Game {
    * @returns The current Game state
    */
   getGameState = (): GameState => this.state;
+
+  /**
+   * Get this Game's GameSettings
+   *
+   * @returns The GameSettings
+   */
+  getGameSettings = (): GameSetting => this.board.getSettings();
 }
 
 export default Game;

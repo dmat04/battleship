@@ -35,7 +35,7 @@ export const DefaultSettings: GameSetting = new GameSetting(
 class Board {
   // GameSettings provided by constructor - used to set the grid sizes,
   // and validate the number of ships placed by each player
-  private settings: GameSetting;
+  private readonly settings: GameSetting;
 
   // Total number of cells occupied by ships (per player)
   private readonly totalShipCells: number;
@@ -394,6 +394,13 @@ class Board {
 
     return moveResult;
   };
+
+  /**
+   * Get this boards GameSettings
+   *
+   * @returns The GameSettings
+   */
+  getSettings = (): GameSetting => this.settings;
 }
 
 export default Board;
