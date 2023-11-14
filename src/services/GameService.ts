@@ -1,12 +1,13 @@
 import { randomUUID } from 'crypto';
 
 import Game, { GameState } from '../game/Game';
-import { Player } from '../game/types';
+import { Player, ShipPlacement } from '../game/types';
 import { DefaultSettings } from '../game/Board';
 import type ActiveGame from '../models/ActiveGame';
 import type { GameCreatedResult } from '../graphql/types/GameCreatedResult';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import { User } from '../models/User';
+import ValidationError from './errors/ValidationError';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -19,6 +20,17 @@ const activeGames: Map<string, ActiveGame> = new Map<string, ActiveGame>();
  */
 const inviteCodes: Map<string, string> = new Map<string, string>();
 
+const gameExists = (id: string): boolean => activeGames.has(id);
+
+const getGameInternal = (id: string): ActiveGame => {
+  const game = activeGames.get(id);
+  if (!game) {
+    throw new EntityNotFoundError('Game', id);
+  }
+
+  return game;
+};
+
 /**
  * Generate a new unique game id.
  *
@@ -27,7 +39,7 @@ const inviteCodes: Map<string, string> = new Map<string, string>();
 const generateGameId = (): string => {
   let id = randomUUID();
 
-  while (activeGames.has(id)) {
+  while (gameExists(id)) {
     id = randomUUID();
   }
 
@@ -78,6 +90,8 @@ const createNewGame = (user: User): GameCreatedResult => {
     userOwner: user,
     userP2: null,
     gameInstance,
+    ownerPlacements: null,
+    p2Placements: null,
   };
 
   activeGames.set(id, game);
@@ -108,10 +122,7 @@ const joinWithInviteCode = (inviteCode: string, user: User): string => {
   inviteCodes.delete(inviteCode);
 
   // find the game instance for the retrieved game id
-  const game = activeGames.get(gameId);
-  if (!game) {
-    throw new EntityNotFoundError('Game', gameId);
-  }
+  const game = getGameInternal(gameId);
 
   // check that the game hasn't advanced past the Created state
   if (game.gameInstance.getGameState() !== GameState.Created) {
@@ -129,13 +140,43 @@ const joinWithInviteCode = (inviteCode: string, user: User): string => {
   return game.id;
 };
 
-const gameExists = (id: string): boolean => activeGames.has(id);
+const placeShips = (user: User, gameId: string, shipPlacements: ShipPlacement[]): GameState => {
+  const game = getGameInternal(gameId);
 
-const getGame = (id: string): Game | undefined => activeGames.get(id)?.gameInstance;
+  if (game.gameInstance.getGameState() !== GameState.Created) {
+    throw new Error('Game has already been initialized');
+  }
+
+  const placementErrors = game.gameInstance.verifyShipPlacements(shipPlacements);
+  if (placementErrors.length !== 0) {
+    throw new ValidationError(`Invalid ship placements:\n${placementErrors}`);
+  }
+
+  if (user.id === game.userOwner.id) {
+    if (game.ownerPlacements) throw new Error('Player has already placed their ships');
+
+    game.ownerPlacements = [...shipPlacements];
+  } else if (user.id === game.userP2?.id) {
+    if (game.p2Placements) throw new Error('Player has already placed their ships');
+
+    game.p2Placements = [...shipPlacements];
+  } else {
+    throw new Error(`User '${user.username}' is not part of game id=${gameId}`);
+  }
+
+  if (game.ownerPlacements && game.p2Placements) {
+    game.gameInstance.initialize(game.ownerPlacements, game.p2Placements);
+  }
+
+  return game.gameInstance.getGameState();
+};
+
+const getGame = (gameId: string): Game => getGameInternal(gameId).gameInstance;
 
 export default {
   createNewGame,
   joinWithInviteCode,
   gameExists,
   getGame,
+  placeShips,
 };
