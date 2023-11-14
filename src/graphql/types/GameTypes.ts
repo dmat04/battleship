@@ -1,4 +1,18 @@
-import { GameSetting, ShipType } from '../../game/types';
+import { GameState } from '../../game/Game';
+import { GameSetting, ShipOrientation, ShipType } from '../../game/types';
+
+// export enum GqlShipType {
+//   SUBMARINE = 'SUBMARINE',
+//   DESTROYER = 'DESTROYER',
+//   CRUISER = 'CRUISER',
+//   BATTLESHIP = 'BATTLESHIP',
+//   CARRIER = 'CARRIER',
+// }
+
+// export enum GqlShipOrientation {
+//   VERTICAL = 'VERTICAL',
+//   HORIZONTAL = 'HORIZONTAL',
+// }
 
 export const typeDefs = `#graphql
   enum ShipType {
@@ -14,12 +28,19 @@ export const typeDefs = `#graphql
     HORIZONTAL
   }
 
+  enum GameState {
+    CREATED,
+    INITIALIZED,
+    IN_PROGRESS,
+    FINISHED
+  }
+
   type ShipCount {
     shipType: ShipType!
     count: Int!
   }
 
-  type ShipPlacement {
+  input ShipPlacement {
     shipType: ShipType!
     orientation: ShipOrientation!
     x: Int!
@@ -51,6 +72,16 @@ export const resolvers = {
     CRUISER: ShipType[ShipType.Cruiser],
     BATTLESHIP: ShipType[ShipType.Battleship],
     CARRIER: ShipType[ShipType.AircraftCarrier],
+  },
+  ShipOrientation: {
+    VERTICAL: ShipOrientation[ShipOrientation.Vertical],
+    HORIZONTAL: ShipOrientation[ShipOrientation.Horizontal],
+  },
+  GameState: {
+    CREATED: GameState[GameState.Created],
+    INITIALIZED: GameState[GameState.Initialized],
+    IN_PROGRESS: GameState[GameState.InProgress],
+    FINISHED: GameState[GameState.Finished],
   },
 };
 
