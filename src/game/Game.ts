@@ -4,10 +4,10 @@ import {
 } from './types';
 
 export enum GameState {
-  Created = 'created',
-  Initialized = 'initialized',
-  InProgress = 'inProgress',
-  Finished = 'finished',
+  Created = 'Created',
+  Initialized = 'Initialized',
+  InProgress = 'InProgress',
+  Finished = 'Finished',
 }
 
 /**
