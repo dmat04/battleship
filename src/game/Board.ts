@@ -238,37 +238,56 @@ class Board {
   };
 
   /**
-   * Place all of the ships onto a players board.
-   * This method will check that the exact number of ships as specified
-   * in the constructor provided GameSettings is placed, and will throw
-   * an error if any specified ship is not placed, or any extra unspecified
-   * ship is given. Also checks that all the ShipPlacements are within
-   * board bounds and throws an error when any ship isn't.
+   * Place all of the ships onto a players board. This method will check for
+   * ship placement errors and throw an exception without placing any ship
+   * if any error is found.
    *
    * @param playerBoard The board onto which the ships will be placed
    * @param ships The array of ShipPlacements to be placed
    */
   private placeShips = (playerBoard: PlayerBoard, ships: ShipPlacement[]): void => {
+    const errors = this.verifyShipPlacements(ships);
+
+    if (errors.length !== 0) {
+      throw new Error('Cannot place ships - ship placements are invalid');
+    }
+
+    ships.forEach((placement) => {
+      // Place the ship
+      Board.placeShip(playerBoard, placement);
+    });
+  };
+
+  /**
+   * Verify that the given array of ShipPlacements is valid - the exact 
+   * number of ships of each types as specified in the GameSettings is provided,
+   * and they are all inside Board bounds.
+   *
+   * @param ships The ship placements to validate
+   * @returns An empty array if no errors are found, or an array of string descriptions
+   *          of any found errors.
+   */
+  public verifyShipPlacements = (ships: ShipPlacement[]): string[] => {
     // Create a copy of the specified ship counts provided by the GameSettings
     const shipCounts = new Map<ShipType, number>(this.settings.shipCounts);
     // Counter for number of ships placed
     let placed = 0;
 
+    // Found errors
+    const errors = [];
+
     ships.forEach((placement) => {
       // Check that the ship placement is within board bounds
       if (!this.checkPosition(placement)) {
-        throw new Error('Ship placement error - ship out of bounds');
+        errors.push(`${placement} - out of bounds`);
       }
 
       // Check to make sure that no extra instances of the current ship type
       // are attempted to be placed
-      const remaining = shipCounts.get(placement.shipType);
+      const remaining = shipCounts.get(placement.shipType) ?? 0;
       if (!remaining) {
-        throw new Error('Ship placement error - unexpected ship');
+        errors.push(`Too many ${placement.shipType}s given`);
       }
-
-      // Place the ship
-      Board.placeShip(playerBoard, placement);
 
       // Increase the total counter...
       placed += 1;
@@ -276,10 +295,12 @@ class Board {
       shipCounts.set(placement.shipType, remaining - 1);
     });
 
-    // If not all of the expected ships have been placed, throw
+    // Check that all of the expected ships have been placed
     if (placed !== this.totalShips) {
-      throw new Error('Ship placement error - not all ships placed');
+      errors.push('Not all ships placed');
     }
+
+    return errors;
   };
 
   /**

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 export type ShipCounts = Map<ShipType, number>;
 
 export enum ShipType {
@@ -13,11 +14,15 @@ export enum ShipOrientation {
   Horizontal = 'Horizontal',
 }
 
-export interface ShipPlacement {
-  shipType: ShipType,
-  orientation: ShipOrientation,
-  x: number,
-  y: number
+export class ShipPlacement {
+  constructor(
+    readonly shipType: ShipType,
+    readonly orientation: ShipOrientation,
+    readonly x: number,
+    readonly y: number,
+  ) {}
+
+  public toString = (): string => `${this.shipType} at (${this.x}, ${this.y}) ${this.orientation}`;
 }
 
 export enum CellState {
