@@ -1,13 +1,16 @@
 import { randomUUID } from 'crypto';
-
+import jwt from 'jsonwebtoken';
+import config from '../utils/config';
 import Game, { GameState } from '../game/Game';
 import { Player, ShipPlacement } from '../game/types';
 import { DefaultSettings } from '../game/Board';
+import type { WSAuthTicket } from '../models/WSAuthTicket';
 import type ActiveGame from '../models/ActiveGame';
 import type { GameCreatedResult } from '../graphql/types/GameCreatedResult';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import { User } from '../models/User';
 import ValidationError from './errors/ValidationError';
+import { GameJoinedResult } from '../graphql/types/GameJoinedResult';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -71,12 +74,44 @@ const createInviteCode = (gameId: string): string => {
   return code;
 };
 
+const createWSAuthCode = (ticket: WSAuthTicket): string => {
+  // create the token with an expiration claim
+  const token = jwt.sign(
+    ticket,
+    config.JWT_SECRET,
+    {
+      expiresIn: config.WS_AUTH_TICKET_LIFETIME_SECONDS,
+    },
+  );
+
+  return token;
+};
+
+// const verifyWSAuthCode = (code: string): WSAuthTicket | false => {
+//   try {
+//     const payload = jwt.verify(code, config.JWT_SECRET);
+//     if (typeof payload === 'object'
+//       && 'username' in payload
+//       && 'gameId' in payload) {
+//       return {
+//         username: payload.username,
+//         gameId: payload.gameId,
+//       };
+//     }
+
+//     return false;
+//   } catch {
+//     return false;
+//   }
+// };
+
 /**
  * Create a new game.
  *
  * @param user The User creating the game - will be considered the created games 'owner'
- * @returns A GameCreatedResult which includes the newly created games Id, and an invite
- *          code to invite another user to the created Game
+ * @returns A GameCreatedResult which includes the newly created games Id, an invite
+ *          code to invite another user to the created Game, and a wsAuthCode to initiate
+ *          a websocket connection
  */
 const createNewGame = (user: User): GameCreatedResult => {
   const id = generateGameId();
@@ -96,9 +131,12 @@ const createNewGame = (user: User): GameCreatedResult => {
 
   activeGames.set(id, game);
 
+  const wsAuthCode = createWSAuthCode({ username: user.username, gameId: id });
+
   return {
     gameId: id,
     inviteCode,
+    wsAuthCode,
   };
 };
 
@@ -109,9 +147,10 @@ const createNewGame = (user: User): GameCreatedResult => {
  *
  * @param inviteCode The invite code
  * @param user The user attempting to join the game
- * @returns The game id if the user is successfully joined
+ * @returns A GameJoinedResult which includes the games Id and a wsAuthCode which can be used
+ *          to initiate a websocket connection
  */
-const joinWithInviteCode = (inviteCode: string, user: User): string => {
+const joinWithInviteCode = (inviteCode: string, user: User): GameJoinedResult => {
   // find the corresponding game id for the invite code
   const gameId = inviteCodes.get(inviteCode);
   if (!gameId) {
@@ -137,7 +176,12 @@ const joinWithInviteCode = (inviteCode: string, user: User): string => {
   // 'join' the player to the game
   game.userP2 = user;
 
-  return game.id;
+  const wsAuthCode = createWSAuthCode({ username: user.username, gameId: game.id });
+
+  return {
+    gameId: game.id,
+    wsAuthCode,
+  };
 };
 
 const placeShips = (user: User, gameId: string, shipPlacements: ShipPlacement[]): GameState => {

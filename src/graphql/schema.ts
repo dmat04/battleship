@@ -2,6 +2,7 @@ import { merge } from 'lodash';
 
 import LoginResultDefs from './types/LoginResult';
 import GameCreatedResultDefs from './types/GameCreatedResult';
+import GameJoinedResultDefs from './types/GameJoinedResult';
 import GameSettingsTypes from './types/GameTypes';
 import Ping from './queries/ping';
 import CreateGame from './mutations/createGame';
@@ -26,6 +27,7 @@ export const typeDefs = [
   rootTypeDefs,
   LoginResultDefs.typeDefs,
   GameCreatedResultDefs.typeDefs,
+  GameJoinedResultDefs.typeDefs,
   GameSettingsTypes.typeDefs,
   Ping.typeDefs,
   CreateGame.typeDefs,

@@ -2,6 +2,7 @@ import { GraphQLError } from 'graphql';
 import AuthService from '../../services/AuthService';
 import GameService from '../../services/GameService';
 import type { ApolloContext } from '../../middleware/ApolloMiddleware';
+import { GameJoinedResult } from '../types/GameJoinedResult';
 
 interface MutationParams {
   inviteCode: string;
@@ -9,13 +10,17 @@ interface MutationParams {
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    joinGame(inviteCode: String!): ID!
+    joinGame(inviteCode: String!): GameJoinedResult!
   }
 `;
 
 export const resolvers = {
   Mutation: {
-    joinGame: async (_: any, args: MutationParams, context: ApolloContext): Promise<string> => {
+    joinGame: async (
+      _: any,
+      args: MutationParams,
+      context: ApolloContext,
+    ): Promise<GameJoinedResult> => {
       const accessToken = context.authToken;
 
       if (!accessToken) {
