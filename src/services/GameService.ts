@@ -168,9 +168,14 @@ const joinWithInviteCode = (inviteCode: string, user: User): GameJoinedResult =>
     throw new Error('Cannot join a game which is not in the Created state');
   }
 
+  // make sure that the user who created the game doesn't join as player 2
+  if (game.userOwner.id === user.id) {
+    throw new Error('Cannot join game - you have already joined this game');
+  }
+
   // check that a second player hasn't joined already
   if (game.userP2) {
-    throw new Error('Cannot join game - a pleyer already joine');
+    throw new Error('Cannot join game - a player already joined');
   }
 
   // 'join' the player to the game
