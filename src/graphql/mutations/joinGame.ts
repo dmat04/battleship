@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import AuthService from '../../services/AuthService';
 import GameService from '../../services/GameService';
-import type { ApolloContext } from '../../middleware/ApolloMiddleware';
+import type { ApolloContext } from '../../middleware/ApolloContext';
 import { GameJoinedResult } from '../types/GameJoinedResult';
 
 interface MutationParams {

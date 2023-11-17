@@ -2,7 +2,7 @@ import { GraphQLError } from 'graphql';
 import AuthService from '../../services/AuthService';
 import GameService from '../../services/GameService';
 import type { GameCreatedResult } from '../types/GameCreatedResult';
-import type { ApolloContext } from '../../middleware/ApolloMiddleware';
+import { ApolloContext } from '../../middleware/ApolloContext';
 
 export const typeDefs = `#graphql
   extend type Mutation {

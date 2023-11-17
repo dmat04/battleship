@@ -2,7 +2,7 @@ import { GraphQLError } from 'graphql';
 import GameService from '../../services/GameService';
 import AuthService from '../../services/AuthService';
 import { ShipPlacement } from '../../game/types';
-import type { ApolloContext } from '../../middleware/ApolloMiddleware';
+import type { ApolloContext } from '../../middleware/ApolloContext';
 import type { GameState } from '../../game/Game';
 
 interface MutationParams {

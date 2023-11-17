@@ -6,7 +6,8 @@ import http from 'http';
 import cors from 'cors';
 
 import config from './utils/config';
-import createApolloServer, { contextFn } from './middleware/ApolloMiddleware';
+import createApolloServer from './middleware/ApolloMiddleware';
+import { contextFn } from './middleware/ApolloContext';
 import { WsHandler } from './services/GameService';
 
 const app = express();
