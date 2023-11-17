@@ -1,4 +1,4 @@
 export interface WSAuthTicket {
   username: string;
-  gameId: string;
+  gameID: string;
 }

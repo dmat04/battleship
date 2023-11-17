@@ -25,8 +25,7 @@ export const resolvers = {
       }
 
       try {
-        const game = GameService.getGame(args.gameId);
-        return game.getGameSettings();
+        return GameService.getGameSettings(args.gameId);
       } catch (error) {
         if (error instanceof EntityNotFoundError) {
           throw new GraphQLError(`Game with id '${args.gameId}' not found.`, {
