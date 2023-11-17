@@ -203,7 +203,12 @@ const placeShips = (user: User, gameId: string, shipPlacements: ShipPlacement[])
 
   const placementErrors = game.gameInstance.verifyShipPlacements(shipPlacements);
   if (placementErrors.length !== 0) {
-    throw new ValidationError(`Invalid ship placements:\n${placementErrors}`);
+    throw new ValidationError({
+      property: 'shipPlacements',
+      errorKind: 'gameInput',
+      value: JSON.stringify(shipPlacements),
+      message: `Invalid ship placements: ${placementErrors.join('; ')}`,
+    });
   }
 
   if (user.id === game.userP1.id) {

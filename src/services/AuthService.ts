@@ -97,7 +97,12 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   if (username) {
     // If a username has been requested, check that it's available
     if (await GuestUserDbModel.usernameExists(username)) {
-      throw new ValidationError(`Username ${username} is already taken`);
+      throw new ValidationError({
+        property: 'username',
+        errorKind: 'unique',
+        value: username,
+        message: `Username ${username} is already taken`,
+      });
     }
 
     name = username;
@@ -128,6 +133,8 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
     if (error instanceof MongooseError.ValidationError) {
       throw new ValidationError(error);
     }
+
+    throw error;
   }
 
   // Schedule guest deletion
