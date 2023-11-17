@@ -1,7 +1,6 @@
-import { GraphQLError } from 'graphql';
 import AuthService from '../../services/AuthService';
 import GameService from '../../services/GameService';
-import type { ApolloContext } from '../../middleware/ApolloContext';
+import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
 import { GameJoinedResult } from '../types/GameJoinedResult';
 
 interface MutationParams {
@@ -21,13 +20,7 @@ export const resolvers = {
       args: MutationParams,
       context: ApolloContext,
     ): Promise<GameJoinedResult> => {
-      const accessToken = context.authToken;
-
-      if (!accessToken) {
-        throw new GraphQLError('Acess token missing in request header', {
-          extensions: { code: 'UNAUTHENTICATED' },
-        });
-      }
+      const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
       return GameService.joinWithInviteCode(args.inviteCode, user);

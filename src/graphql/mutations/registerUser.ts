@@ -1,6 +1,4 @@
-import { GraphQLError } from 'graphql';
 import AuthService from '../../services/AuthService';
-import ValidationError from '../../services/errors/ValidationError';
 import type { LoginResult } from '../types/LoginResult';
 
 export interface MutationParams {
@@ -16,20 +14,9 @@ export const typeDefs = `#graphql
 
 export const resolvers = {
   Mutation: {
+    // eslint-disable-next-line arrow-body-style
     registerUser: async (_: any, args: MutationParams): Promise<LoginResult> => {
-      try {
-        return await AuthService.registerUser(args.username, args.password);
-      } catch (e) {
-        if (e instanceof ValidationError) {
-          throw new GraphQLError(`User registration data invalid: ${e.message}`, {
-            extensions: { code: 'BAD_USER_INPUT' },
-          });
-        }
-
-        throw new GraphQLError('An unknown error occured', {
-          extensions: { code: 'INTERNAL_SERVER_ERROR' },
-        });
-      }
+      return AuthService.registerUser(args.username, args.password);
     },
   },
 };

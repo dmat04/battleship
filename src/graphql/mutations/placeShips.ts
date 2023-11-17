@@ -1,8 +1,7 @@
-import { GraphQLError } from 'graphql';
 import GameService from '../../services/GameService';
 import AuthService from '../../services/AuthService';
 import { ShipPlacement } from '../../game/types';
-import type { ApolloContext } from '../../middleware/ApolloContext';
+import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
 import type { GameState } from '../../game/Game';
 
 interface MutationParams {
@@ -21,14 +20,9 @@ export const resolvers = {
     placeShips: async (
       _: any,
       args: MutationParams,
-      context: ApolloContext): Promise<GameState> => {
-      const accessToken = context.authToken;
-
-      if (!accessToken) {
-        throw new GraphQLError('Acess token missing in request header', {
-          extensions: { code: 'UNAUTHENTICATED' },
-        });
-      }
+      context: ApolloContext,
+    ): Promise<GameState> => {
+      const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
       return GameService.placeShips(user, args.gameId, args.shipPlacements);
