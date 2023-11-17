@@ -14,15 +14,11 @@ export enum ShipOrientation {
   Horizontal = 'Horizontal',
 }
 
-export class ShipPlacement {
-  constructor(
-    readonly shipType: ShipType,
-    readonly orientation: ShipOrientation,
-    readonly x: number,
-    readonly y: number,
-  ) {}
-
-  public toString = (): string => `${this.shipType} at (${this.x}, ${this.y}) ${this.orientation}`;
+export interface ShipPlacement {
+  readonly shipType: ShipType;
+  readonly orientation: ShipOrientation;
+  readonly x: number;
+  readonly y: number;
 }
 
 export enum CellState {

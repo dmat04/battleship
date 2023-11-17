@@ -279,7 +279,10 @@ class Board {
     ships.forEach((placement) => {
       // Check that the ship placement is within board bounds
       if (!this.checkPosition(placement)) {
-        errors.push(`${placement} - out of bounds`);
+        errors.push(
+          `${placement.shipType} at (${placement.x}, ${placement.y}) `
+          + `${placement.orientation.charAt(0)} - out of bounds`,
+        );
       }
 
       // Check to make sure that no extra instances of the current ship type
