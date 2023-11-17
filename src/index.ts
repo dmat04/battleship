@@ -1,15 +1,27 @@
 import { expressMiddleware } from '@apollo/server/express4';
 import express from 'express';
+import uWS from 'uWebSockets.js'
 import mongoose from 'mongoose';
 import http from 'http';
 import cors from 'cors';
 
 import config from './utils/config';
 import createApolloServer, { contextFn } from './middleware/ApolloMiddleware';
+import { WsHandler } from './services/GameService';
 
 const app = express();
 const httpServer = http.createServer(app);
 const apolloServer = createApolloServer(httpServer);
+
+uWS.App()
+  .ws('/game/:gameId/:username', WsHandler)
+  .listen(config.WS_PORT, (token) => {
+    if (token) {
+      console.log(`WS server listening on port ${config.WS_PORT}`);
+    } else {
+      throw new Error('Couldn\'t start WS server');
+    }
+  });
 
 const start = async () => {
   mongoose.set('strictQuery', false);
