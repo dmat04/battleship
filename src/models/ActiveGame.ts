@@ -11,8 +11,8 @@ interface ActiveGame {
   userP2?: User;
   p1Placements?: ShipPlacement[];
   p2Placements?: ShipPlacement[];
-  p1socket?: WebSocket<WSData>;
-  p2socket?: WebSocket<WSData>;
+  p1socket: WebSocket<WSData> | null;
+  p2socket: WebSocket<WSData> | null;
 }
 
 export default ActiveGame;

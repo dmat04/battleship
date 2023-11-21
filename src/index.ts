@@ -1,6 +1,6 @@
 import { expressMiddleware } from '@apollo/server/express4';
 import express from 'express';
-import uWS from 'uWebSockets.js'
+import uWS from 'uWebSockets.js';
 import mongoose from 'mongoose';
 import http from 'http';
 import cors from 'cors';
@@ -8,14 +8,14 @@ import cors from 'cors';
 import config from './utils/config';
 import createApolloServer from './middleware/ApolloMiddleware';
 import { contextFn } from './middleware/ApolloContext';
-import { WsHandler } from './services/GameService';
+import WSBehaviour from './services/GameServiceWSBehaviour';
 
 const app = express();
 const httpServer = http.createServer(app);
 const apolloServer = createApolloServer(httpServer);
 
 uWS.App()
-  .ws('/game/:gameId/:username', WsHandler)
+  .ws('/game/:gameId/:username', WSBehaviour)
   .listen(config.WS_PORT, (token) => {
     if (token) {
       console.log(`WS server listening on port ${config.WS_PORT}`);

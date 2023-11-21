@@ -18,6 +18,11 @@ interface AccessToken {
   expiresAt: Date;
 }
 
+interface WSAuthTicket {
+  username: string;
+  gameID: string;
+}
+
 /**
  * Generates a username of the format `Guest#${num}` followed
  * where 'num' is a pseudo-random integer in the range [0, 100_000>.
@@ -70,6 +75,37 @@ const decodeToken = (token: string): string => {
 
   // shouldn't really reach this
   throw new Error('Unexpected error while verifying access token');
+};
+
+const encodeWSToken = (ticket: WSAuthTicket): string => {
+  // create the token with an expiration claim
+  const token = jwt.sign(
+    ticket,
+    config.JWT_SECRET,
+    {
+      expiresIn: config.WS_AUTH_TICKET_LIFETIME_SECONDS,
+    },
+  );
+
+  return token;
+};
+
+const decodeWSToken = (code: string): WSAuthTicket | false => {
+  try {
+    const payload = jwt.verify(code, config.JWT_SECRET);
+    if (typeof payload === 'object'
+      && 'username' in payload
+      && 'gameID' in payload) {
+      return {
+        username: payload.username,
+        gameID: payload.gameID,
+      };
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
 };
 
 /**
@@ -277,4 +313,6 @@ export default {
   getUserFromToken,
   loginRegisteredUser,
   registerUser,
+  encodeWSToken,
+  decodeWSToken,
 };

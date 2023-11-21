@@ -10,6 +10,6 @@ export interface WSData {
   state: WSState;
   gameID: string;
   username: string;
-  opponentWS?: WebSocket<WSData>
+  opponentWS: WebSocket<WSData> | null;
   errorMessage?: string;
 }

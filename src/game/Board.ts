@@ -259,7 +259,7 @@ class Board {
   };
 
   /**
-   * Verify that the given array of ShipPlacements is valid - the exact 
+   * Verify that the given array of ShipPlacements is valid - the exact
    * number of ships of each types as specified in the GameSettings is provided,
    * and they are all inside Board bounds.
    *
