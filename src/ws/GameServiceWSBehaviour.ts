@@ -1,8 +1,8 @@
 import { WebSocket, WebSocketBehavior } from 'uWebSockets.js';
-import AuthService from './AuthService';
+import AuthService from '../services/AuthService';
 import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
-import GameService from './GameService';
+import GameService from '../services/GameService';
 
 const messageDecoder = new TextDecoder();
 
