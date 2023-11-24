@@ -3,7 +3,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import type { User } from '../../models/User';
 
 /**
- * Mongoose Model for the geenric User type is constructed here.
+ * Mongoose Model for the generic User type is constructed here.
  */
 
 /**

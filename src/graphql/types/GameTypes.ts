@@ -1,19 +1,6 @@
 import { GameState } from '../../game/Game';
 import { GameSetting, ShipOrientation, ShipType } from '../../game/types';
 
-// export enum GqlShipType {
-//   SUBMARINE = 'SUBMARINE',
-//   DESTROYER = 'DESTROYER',
-//   CRUISER = 'CRUISER',
-//   BATTLESHIP = 'BATTLESHIP',
-//   CARRIER = 'CARRIER',
-// }
-
-// export enum GqlShipOrientation {
-//   VERTICAL = 'VERTICAL',
-//   HORIZONTAL = 'HORIZONTAL',
-// }
-
 export const typeDefs = `#graphql
   enum ShipType {
     SUBMARINE
