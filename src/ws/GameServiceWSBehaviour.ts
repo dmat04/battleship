@@ -3,6 +3,7 @@ import AuthService from '../services/AuthService';
 import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
 import GameService from '../services/GameService';
+import MessageParser from './MessageParser';
 
 const messageDecoder = new TextDecoder();
 
@@ -66,11 +67,17 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
   const wsData = ws.getUserData();
   const decoded = messageDecoder.decode(message);
-  // for now just pass on the message, not really processing it yet
-  if (wsData.opponentWS) {
-    wsData.opponentWS.send(`Message from ${wsData.username}: '${decoded}'`);
+  const parsedMessage = MessageParser.ParseMessage(decoded);
+
+  if (parsedMessage) {
+    // for now just pass on the message, not really processing it yet
+    if (wsData.opponentWS) {
+      wsData.opponentWS.send(`Message from ${wsData.username}: '${decoded}'`);
+    } else {
+      ws.send('Message received, opponent not connected yet');
+    }
   } else {
-    ws.send('Message received, opponent not connected yet');
+    ws.send('Couldn\'t parse message');
   }
 };
 

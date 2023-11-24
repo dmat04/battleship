@@ -3,28 +3,30 @@ export enum MessageCode {
   Hit = 'Hit',
   Miss = 'Miss',
   Error = 'Error',
+  WaitingForOpponent = 'WaitingForOpponent',
+  OpponentConnected = 'OpponentConnected',
+  OpponentReady = 'OpponentReady',
 }
 
 export interface BaseMessage {
   code: MessageCode;
 }
 
-export interface ShootMessage extends BaseMessage {
+export interface CoordinateMessage {
+  x: number;
+  y: number;
+}
+
+export interface ShootMessage extends BaseMessage, CoordinateMessage {
   code: MessageCode.Shoot;
-  x: number;
-  y: number;
 }
 
-export interface HitMessage extends BaseMessage {
+export interface HitMessage extends BaseMessage, CoordinateMessage {
   code: MessageCode.Hit;
-  x: number;
-  y: number;
 }
 
-export interface MissMessage extends BaseMessage {
+export interface MissMessage extends BaseMessage, CoordinateMessage {
   code: MessageCode.Miss;
-  x: number;
-  y: number;
 }
 
 export interface ErrorMessage extends BaseMessage {
