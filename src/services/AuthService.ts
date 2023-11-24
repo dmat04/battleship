@@ -77,6 +77,12 @@ const decodeToken = (token: string): string => {
   throw new Error('Unexpected error while verifying access token');
 };
 
+/**
+ * Create temporary access token to authenticate a websocket connetion.
+ *
+ * @param ticket The token data to encode
+ * @returns An encoded access token
+ */
 const encodeWSToken = (ticket: WSAuthTicket): string => {
   // create the token with an expiration claim
   const token = jwt.sign(
@@ -90,6 +96,13 @@ const encodeWSToken = (ticket: WSAuthTicket): string => {
   return token;
 };
 
+/**
+ * Decode a websocket access token.
+ *
+ * @param code The access code to be decoded.
+ * @returns A valid WSAuthTicket if the access code is valid, or false if the access
+ *          code is invalid or expired
+ */
 const decodeWSToken = (code: string): WSAuthTicket | false => {
   try {
     const payload = jwt.verify(code, config.JWT_SECRET);
@@ -184,7 +197,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
 };
 
 /**
- * Get the an existing User entity.
+ * Get an existing User entity.
  *
  * @param username The name of the user to be retrieved.
  * @returns A Promise resolving the user data, or null or undefined if

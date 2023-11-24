@@ -23,8 +23,21 @@ const activeGames: Map<string, ActiveGame> = new Map<string, ActiveGame>();
  */
 const inviteCodes: Map<string, string> = new Map<string, string>();
 
+/**
+ * Check if a game exists.
+ *
+ * @param id Id of the game to check.
+ * @returns true if a game with the given Id exists, false otherwise
+ */
 const gameExists = (id: string): boolean => activeGames.has(id);
 
+/**
+ * Get a reference to an ActiveGame containing a Game instance with the
+ * given Id.
+ * @param id Id of the active game to find.
+ * @returns The ActiveGame reference, or throws an EntityNotFoundError if no game is
+ *          found for the given Id.
+ */
 const getGame = (id: string): ActiveGame => {
   const game = activeGames.get(id);
   if (!game) {
@@ -109,7 +122,7 @@ const createNewGame = (user: User): GameCreatedResult => {
 };
 
 /**
- * Let's a User join an existing Game using an invite code.
+ * Lets a User join an existing Game using an invite code.
  * Throws an error if the invite code is invalid, or someone else
  * already joined the game.
  *
@@ -157,18 +170,38 @@ const joinWithInviteCode = (inviteCode: string, user: User): GameJoinedResult =>
   };
 };
 
+/**
+ * Get the GameSettings for a Game instance.
+ * @param gameID Id of the game.
+ * @returns The GameSettings object used to initialize the game instance.
+ */
 // eslint-disable-next-line arrow-body-style
 const getGameSettings = (gameID: string): GameSetting => {
   return getGame(gameID).gameInstance.getGameSettings();
 };
 
+/**
+ * Place a Users ships on the Game board.
+ * Will throw a ValidationError if the placements are invalid.
+ * Will throw an Error if the given User is not part of the Game, or
+ * has already committed their placements.
+ *
+ * @param user The User placing the ships.
+ * @param gameID Id of the game to place the ships in.
+ * @param shipPlacements The ship placements.
+ * @returns The state of the Game after the Users placements are made.
+ */
 const placeShips = (user: User, gameID: string, shipPlacements: ShipPlacement[]): GameState => {
+  // get the game instance
   const game = getGame(gameID);
 
+  // make sure the game isn't started already (or finished)
   if (game.gameInstance.getGameState() !== GameState.Created) {
     throw new Error('Game has already been initialized');
   }
 
+  // validate the ship placements and throw an error if
+  // any placement is invalid
   const placementErrors = game.gameInstance.verifyShipPlacements(shipPlacements);
   if (placementErrors.length !== 0) {
     throw new ValidationError({
@@ -179,6 +212,8 @@ const placeShips = (user: User, gameID: string, shipPlacements: ShipPlacement[])
     });
   }
 
+  // apply the ship placements for the correct user,
+  // or throw an error if user isn't part of the game
   if (user.id === game.userP1.id) {
     if (game.p1Placements) throw new Error('Player has already placed their ships');
 
@@ -191,14 +226,24 @@ const placeShips = (user: User, gameID: string, shipPlacements: ShipPlacement[])
     throw new Error(`User '${user.username}' is not part of game id=${gameID}`);
   }
 
+  // if both players have made heir placements, advance the game state
   if (game.p1Placements && game.p2Placements) {
     game.gameInstance.initialize(game.p1Placements, game.p2Placements);
-    // wsApp.publish(game.id, 'GAME INITIALIZED');
   }
 
   return game.gameInstance.getGameState();
 };
 
+/**
+ * Call when a websocket upgrade has been requested. This method will check
+ * that a websocket for a user/game combination hasn't already been opened,
+ * and that a user is part of the game. Throws an Error if any condition
+ * is not satisfied.
+ *
+ * @param username Username of the user requesting the websocket upgrade.
+ * @param gameID Id of the Game for which a websocket connection is being opened.
+ * @returns A reference to the opponents websocket connection to the same game instance, if any.
+ */
 const playerSocketRequested = (username: string, gameID: string): WebSocket<WSData> | null => {
   // try to find the game for the given gameId
   const game = getGame(gameID);
@@ -226,6 +271,20 @@ const playerSocketRequested = (username: string, gameID: string): WebSocket<WSDa
   throw new Error(`Player '${username}' doesn't seem to be part of game id=${gameID}`);
 };
 
+/**
+ * Call when a websocket access code message has been received and successfully decoded.
+ * This method will check that a websocket connection isn't already opened for a User/Game
+ * combination, also checks that the given user is part of the given game.
+ * Throws an Error if any condition isn't satisfied.
+ * If no errors are encountered, saved the given Websocket reference for the user/game
+ * combination and returns a reference to the opponents Websocket, if one is registered
+ * already.
+ *
+ * @param gameID Id of the Game for which a connection has been authenticated.
+ * @param username Username of the User making the authentication.
+ * @param socket The opened and authenticated websocket connection reference.
+ * @returns The opponents websocket, if one is already opened and authenticated.
+ */
 const playerSocketAuthenticated = (
   gameID: string,
   username: string,
@@ -234,11 +293,19 @@ const playerSocketAuthenticated = (
   const game = getGame(gameID);
 
   if (username === game.userP1.username) {
+    if (game.p1socket) {
+      throw new Error(`Connection already established for ${username} on game ${gameID}`);
+    }
+
     game.p1socket = socket;
     return game.p2socket;
   }
 
   if (username === game.userP2?.username) {
+    if (game.p2socket) {
+      throw new Error(`Connection already established for ${username} on game ${gameID}`);
+    }
+
     game.p2socket = socket;
     return game.p1socket;
   }

@@ -74,6 +74,9 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
   }
 };
 
+/**
+ * The WebsocketBehaviour used to instantiate uWebSockets.js websocket instances.
+ */
 const WsHandler: WebSocketBehavior<WSData> = {
   upgrade: (res, req, context) => {
     // this WebSocketBehaviour should be registered for routes matching the
