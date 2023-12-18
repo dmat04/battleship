@@ -42,6 +42,102 @@
         {
           "shipType": "Submarine",
           "orientation": "Vertical",
+          "x": 0,
+          "y": 9
+        }
+      ]
+    },
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 9
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 8,
+          "y": 3
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 6
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 9
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Horizontal",
+          "x": 9,
+          "y": 9
+        }
+      ]
+    }
+  ],
+  "invalidPlacements": [
+    {
+      "populatedCells": 18,
+      "placements": [
+        {
+          "shipType": "AircraftCarrier",
+          "orientation": "Vertical",
+          "x": 9,
+          "y": 1
+        },
+        {
+          "shipType": "Battleship",
+          "orientation": "Vertical",
+          "x": 7,
+          "y": 4
+        },
+        {
+          "shipType": "Cruiser",
+          "orientation": "Horizontal",
+          "x": 7,
+          "y": 9
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 1
+        },
+        {
+          "shipType": "Destroyer",
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "shipType": "Submarine",
+          "orientation": "Vertical",
           "x": 8,
           "y": 8
         }
@@ -187,9 +283,7 @@
           "y": 5
         }
       ]
-    }
-  ],
-  "invalidPlacements": [
+    },
     {
       "placements": [
         {

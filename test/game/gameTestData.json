@@ -39,32 +39,26 @@
     {
       "shipType": "Submarine",
       "orientation": "Vertical",
-      "x": 8,
-      "y": 8
+      "x": 0,
+      "y": 9
     }
   ],
   "p2Placements": [
     {
       "shipType": "AircraftCarrier",
       "orientation": "Horizontal",
-      "x": 5,
+      "x": 3,
       "y": 9
     },
     {
       "shipType": "Battleship",
-      "orientation": "Horizontal",
-      "x": 0,
-      "y": 9
+      "orientation": "Vertical",
+      "x": 8,
+      "y": 3
     },
     {
       "shipType": "Cruiser",
-      "orientation": "Vertical",
-      "x": 0,
-      "y": 6
-    },
-    {
-      "shipType": "Destroyer",
-      "orientation": "Vertical",
+      "orientation": "Horizontal",
       "x": 0,
       "y": 0
     },
@@ -72,19 +66,25 @@
       "shipType": "Destroyer",
       "orientation": "Vertical",
       "x": 0,
-      "y": 4
+      "y": 6
     },
     {
-      "shipType": "Submarine",
-      "orientation": "Vertical",
-      "x": 4,
+      "shipType": "Destroyer",
+      "orientation": "Horizontal",
+      "x": 0,
       "y": 9
     },
     {
       "shipType": "Submarine",
-      "orientation": "Vertical",
-      "x": 0,
-      "y": 2
+      "orientation": "Horizontal",
+      "x": 8,
+      "y": 1
+    },
+    {
+      "shipType": "Submarine",
+      "orientation": "Horizontal",
+      "x": 9,
+      "y": 9
     }
   ],
   "movesFirst": 1,
@@ -103,21 +103,21 @@
     {"player": 1, "x": 3, "y": 8, "result": "Miss"},
     {"player": 2, "x": 3, "y": 0, "result": "Miss"},
     {"player": 1, "x": 0, "y": 0, "result": "Hit"},
-    {"player": 1, "x": 0, "y": 1, "result": "Hit"},
-    {"player": 1, "x": 0, "y": 2, "result": "Hit"},
-    {"player": 1, "x": 0, "y": 4, "result": "Hit"},
-    {"player": 1, "x": 0, "y": 5, "result": "Hit"},
+    {"player": 1, "x": 1, "y": 0, "result": "Hit"},
+    {"player": 1, "x": 2, "y": 0, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 1, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 3, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 4, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 5, "result": "Hit"},
+    {"player": 1, "x": 8, "y": 6, "result": "Hit"},
     {"player": 1, "x": 0, "y": 6, "result": "Hit"},
     {"player": 1, "x": 0, "y": 7, "result": "Hit"},
-    {"player": 1, "x": 0, "y": 8, "result": "Hit"},
     {"player": 1, "x": 1, "y": 9, "result": "Hit"},
-    {"player": 1, "x": 2, "y": 9, "result": "Hit"},
-    {"player": 1, "x": 3, "y": 9, "result": "Hit"},
     {"player": 1, "x": 4, "y": 9, "result": "Hit"},
     {"player": 1, "x": 5, "y": 9, "result": "Hit"},
     {"player": 1, "x": 6, "y": 9, "result": "Hit"},
     {"player": 1, "x": 7, "y": 9, "result": "Hit"},
-    {"player": 1, "x": 8, "y": 9, "result": "Hit"},
-    {"player": 1, "x": 9, "y": 9, "result": "GameWon"}
+    {"player": 1, "x": 9, "y": 9, "result": "Hit"},
+    {"player": 1, "x": 3, "y": 9, "result": "GameWon"}
   ]
 }
