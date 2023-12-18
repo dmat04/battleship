@@ -146,34 +146,76 @@ class Board {
   );
 
   /**
+   * Check for ship overlap when placing a ship onto a board.
+   * This method checks that a ship isn't placed over another ship,
+   * or within one cell distance of another placed ship.
+   *
+   * @param playerBoard The players board onto which a ship is being placed
+   * @param ship The ship being placed
+   * @returns true if there is no overlap, false is overlap is detected
+   */
+  private checkOverlap = (playerBoard: PlayerBoard, ship: ShipPlacement): boolean => {
+    // Destructure the placement values
+    const {
+      shipType, x, y, orientation,
+    } = ship;
+    const shipSize = Ship.Get(shipType).size;
+    const { boardWidth, boardHeight } = this.settings;
+
+    // Calculate the bounds within which no other ship
+    // should be placed
+    const xStart = Math.max(0, x - 1);
+    const xEnd = orientation === ShipOrientation.Horizontal
+      ? Math.min(boardWidth - 1, x + shipSize)
+      : Math.min(boardWidth - 1, x + 1);
+    const yStart = Math.max(0, y - 1);
+    const yEnd = orientation === ShipOrientation.Vertical
+      ? Math.min(boardHeight - 1, y + shipSize)
+      : Math.min(boardHeight - 1, y + 1);
+
+    // Check that no other ship is placed within the calculated bounds
+    for (let row = yStart; row <= yEnd; row += 1) {
+      const rowArray = playerBoard[row];
+
+      for (let col = xStart; col <= xEnd; col += 1) {
+        if (rowArray[col] !== CellState.Empty) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  /**
    * Place a ship in vertical orientation onto a grid.
    * Sets the state of the cells occupied by the ship to 'Populated'.
    * Checks for ship crossovers - throws an error if an attempt is made
-   * to place a ship onto an already populated cell.
+   * to place a ship onto an already populated cell, or right next to
+   * another ship.
    *
    * @private
-   * @static
    * @param {PlayerBoard} playerBoard The grid onto which the ship should be placed
    * @param {ShipPlacement} ship The ship to be placed
    * @memberof Board
    */
-  private static placeShipVertical = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
+  private placeShipVertical = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
     // Destructure the placement values
     const {
       shipType, x, y,
     } = ship;
     const shipSize = Ship.Get(shipType).size;
 
-    // When placing a ship vertically, in each of the rows within the
-    // range [y, y+shipSize> the cell at position x needsto be marked Populated
-    for (let row = y; row - y < shipSize; row += 1) {
-      // Get the needed row
-      const rowArray = playerBoard[row];
+    // Check for ship overlap before placing the ship
+    if (!this.checkOverlap(playerBoard, ship)) {
+      throw new Error('Ship placement error - ship crossover');
+    }
 
-      // Check for crossover
-      if (rowArray[x] !== CellState.Empty) {
-        throw new Error('Ship placement error - ship crossover');
-      }
+    // After the overlap check is completed, place the ship.
+    // When placing a ship vertically, in each of the rows within the
+    // range [y, y+shipSize> the cell at position x needs to be marked Populated
+    for (let row = y; row - y < shipSize; row += 1) {
+      const rowArray = playerBoard[row];
 
       // Mark the appropriate cell Populated
       rowArray[x] = CellState.Populated;
@@ -184,33 +226,33 @@ class Board {
    * Place a ship in horizontal orientation onto a grid.
    * Sets the state of the cells occupied by the ship to 'Populated'.
    * Checks for ship crossovers - throws an error if an attempt is made
-   * to place a ship onto an already populated cell.
+   * to place a ship onto an already populated cell, or right next to
+   * another ship.
    *
    * @private
-   * @static
    * @param {PlayerBoard} playerBoard The grid onto which the ship should be placed
    * @param {ShipPlacement} ship The ship to be placed
    * @memberof Board
    */
-  private static placeShipHorizontal = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
+  private placeShipHorizontal = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
     // Destructure the placement values
     const {
       shipType, x, y,
     } = ship;
     const shipSize = Ship.Get(shipType).size;
 
+    // Check for ship overlap before placing the ship
+    if (!this.checkOverlap(playerBoard, ship)) {
+      throw new Error('Ship placement error - ship crossover');
+    }
+
     // When placing a ship horizontally, only the appropirate grid row needs
     // to be found...
     const row = playerBoard[y];
 
     // ... and within the row, the cells within the range [x, x+shipSIze> need
-    // to be marked as Populated
+    // to be marked Populated
     for (let pos = x; pos - x < shipSize; pos += 1) {
-      // Check for crossover
-      if (row[pos] !== CellState.Empty) {
-        throw new Error('Ship placement error - ship crossover');
-      }
-
       // Mark the cell Populated
       row[pos] = CellState.Populated;
     }
@@ -222,16 +264,16 @@ class Board {
    * @param playerBoard The board onto which to place the ship
    * @param ship The Ship to be placed
    */
-  private static placeShip = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
+  private placeShip = (playerBoard: PlayerBoard, ship: ShipPlacement): void => {
     // Get the orientation for the placement
     const { orientation } = ship;
 
     // Call the appropriate method for each orientaion
     switch (orientation) {
       case ShipOrientation.Vertical:
-        return Board.placeShipVertical(playerBoard, ship);
+        return this.placeShipVertical(playerBoard, ship);
       case ShipOrientation.Horizontal:
-        return Board.placeShipHorizontal(playerBoard, ship);
+        return this.placeShipHorizontal(playerBoard, ship);
       default:
         return assertNever(orientation);
     }
@@ -254,7 +296,7 @@ class Board {
 
     ships.forEach((placement) => {
       // Place the ship
-      Board.placeShip(playerBoard, placement);
+      this.placeShip(playerBoard, placement);
     });
   };
 
