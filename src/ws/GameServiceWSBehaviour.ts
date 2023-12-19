@@ -4,6 +4,18 @@ import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
 import GameService from '../services/GameService';
 import MessageParser from './MessageParser';
+import {
+  ErrorMessage,
+  GameStartedMessage,
+  HitMessage,
+  Message,
+  MessageCode,
+  MissMessage,
+  OpponentConnectedMessage,
+  OpponentReadyMessage,
+  ShootMessage,
+  WaitingForOpponentMessage,
+} from './MessageTypes';
 
 const messageDecoder = new TextDecoder();
 
@@ -44,11 +56,17 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
         wsData.state = WSState.Open;
         wsData.opponentWS = opponentWS;
 
+        let responseCode: MessageCode = MessageCode.WaitingForOpponent;
+
         if (opponentWS) {
           opponentWS.getUserData().opponentWS = ws;
+          responseCode = GameService.isOpponentReady(wsData.gameID, wsData.username)
+            ? MessageCode.OpponentReady
+            : MessageCode.OpponentConnected;
         }
 
-        ws.send('Auth OK');
+        const response: Message = { code: responseCode };
+        ws.send(JSON.stringify(response));
       } else {
         errorMessage = 'Authentication failed - invalid ticket';
       }
@@ -64,20 +82,62 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   }
 };
 
+const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void => {
+
+};
+
+const handleHitMessage = (ws: WebSocket<WSData>, message: HitMessage): void => {
+
+};
+
+const handleMissMessage = (ws: WebSocket<WSData>, message: MissMessage): void => {
+
+};
+
+const handleErrorMessage = (ws: WebSocket<WSData>, message: ErrorMessage): void => {
+
+};
+
+const handleWaitingForOpponentMessage = (ws: WebSocket<WSData>, message: WaitingForOpponentMessage): void => {
+
+};
+
+const handleOpponentConnectedMessage = (ws: WebSocket<WSData>, message: OpponentConnectedMessage): void => {
+
+};
+
+const handleOpponentReadyMessage = (ws: WebSocket<WSData>, message: OpponentReadyMessage): void => {
+
+};
+
+const handleGameStartedMessage = (ws: WebSocket<WSData>, message: GameStartedMessage): void => {
+
+};
+
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
-  const wsData = ws.getUserData();
   const decoded = messageDecoder.decode(message);
   const parsedMessage = MessageParser.ParseMessage(decoded);
 
-  if (parsedMessage) {
-    // for now just pass on the message, not really processing it yet
-    if (wsData.opponentWS) {
-      wsData.opponentWS.send(`Message from ${wsData.username}: '${decoded}'`);
-    } else {
-      ws.send('Message received, opponent not connected yet');
-    }
-  } else {
-    ws.send('Couldn\'t parse message');
+  if (!parsedMessage) {
+    const response: ErrorMessage = {
+      code: MessageCode.Error,
+      message: 'Couldn\'t parse message',
+    };
+    ws.send(JSON.stringify(response));
+    return;
+  }
+
+  const { code } = parsedMessage;
+  switch (code) {
+    case MessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
+    case MessageCode.Hit: handleHitMessage(ws, parsedMessage); break;
+    case MessageCode.Miss: handleMissMessage(ws, parsedMessage); break;
+    case MessageCode.Error: handleErrorMessage(ws, parsedMessage); break;
+    case MessageCode.WaitingForOpponent: handleWaitingForOpponentMessage(ws, parsedMessage); break;
+    case MessageCode.OpponentConnected: handleOpponentConnectedMessage(ws, parsedMessage); break;
+    case MessageCode.OpponentReady: handleOpponentReadyMessage(ws, parsedMessage); break;
+    case MessageCode.GameStarted: handleGameStartedMessage(ws, parsedMessage); break;
+    default: assertNever(code);
   }
 };
 
