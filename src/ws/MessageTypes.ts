@@ -6,10 +6,7 @@ export enum MessageCode {
   WaitingForOpponent = 'WaitingForOpponent',
   OpponentConnected = 'OpponentConnected',
   OpponentReady = 'OpponentReady',
-}
-
-export interface BaseMessage {
-  code: MessageCode;
+  GameStarted = 'GameStarted',
 }
 
 export interface CoordinateMessage {
@@ -17,19 +14,46 @@ export interface CoordinateMessage {
   y: number;
 }
 
-export interface ShootMessage extends BaseMessage, CoordinateMessage {
+export interface ShootMessage extends CoordinateMessage {
   code: MessageCode.Shoot;
 }
 
-export interface HitMessage extends BaseMessage, CoordinateMessage {
+export interface HitMessage extends CoordinateMessage {
   code: MessageCode.Hit;
 }
 
-export interface MissMessage extends BaseMessage, CoordinateMessage {
+export interface MissMessage extends CoordinateMessage {
   code: MessageCode.Miss;
 }
 
-export interface ErrorMessage extends BaseMessage {
+export interface ErrorMessage {
   code: MessageCode.Error;
   message: string;
 }
+
+export interface WaitingForOpponentMessage {
+  code: MessageCode.WaitingForOpponent;
+}
+
+export interface OpponentConnectedMessage {
+  code: MessageCode.OpponentConnected
+}
+
+export interface OpponentReadyMessage {
+  code: MessageCode.OpponentReady
+}
+
+export interface GameStartedMessage {
+  code: MessageCode.GameStarted;
+  playsFirst: string;
+}
+
+export type Message =
+ | ShootMessage
+ | HitMessage
+ | MissMessage
+ | ErrorMessage
+ | WaitingForOpponentMessage
+ | OpponentConnectedMessage
+ | OpponentReadyMessage
+ | GameStartedMessage;

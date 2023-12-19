@@ -1,8 +1,8 @@
 import { isInteger } from 'lodash';
 import {
-  BaseMessage, CoordinateMessage, ErrorMessage, MessageCode,
+  CoordinateMessage, ErrorMessage, GameStartedMessage, Message, MessageCode,
 } from './MessageTypes';
-import { isString } from '../utils/typeUtils';
+import { assertNever, isString } from '../utils/typeUtils';
 
 const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => {
   if ('x' in message
@@ -29,7 +29,18 @@ const parseErrorMessage = (message: any): ErrorMessage | undefined => {
   return undefined;
 };
 
-const ParseMessage = (jsonMessage: string): BaseMessage | undefined => {
+const parseGameStartedMessage = (message: any): GameStartedMessage | undefined => {
+  if ('playsFirst' in message && isString(message.playsFirst)) {
+    return {
+      playsFirst: message.playsFirst,
+      code: MessageCode.GameStarted,
+    };
+  }
+
+  return undefined;
+};
+
+const ParseMessage = (jsonMessage: string): Message | undefined => {
   let message = null;
 
   try {
@@ -46,7 +57,13 @@ const ParseMessage = (jsonMessage: string): BaseMessage | undefined => {
     return undefined;
   }
 
-  switch (message.code as MessageCode) {
+  if (!Object.values(MessageCode).includes(message.code)) {
+    return undefined;
+  }
+
+  const code: MessageCode = message.code as MessageCode;
+
+  switch (code) {
     case MessageCode.Shoot:
     case MessageCode.Hit:
     case MessageCode.Miss: {
@@ -54,13 +71,20 @@ const ParseMessage = (jsonMessage: string): BaseMessage | undefined => {
       if (coordinates) {
         return {
           ...coordinates,
-          code: message.code,
+          code,
         };
       }
       return undefined;
     }
+
+    case MessageCode.WaitingForOpponent:
+    case MessageCode.OpponentConnected:
+    case MessageCode.OpponentReady: return { code };
+
     case MessageCode.Error: return parseErrorMessage(message);
-    default: return undefined;
+    case MessageCode.GameStarted: return parseGameStartedMessage(message);
+
+    default: return assertNever(code);
   }
 };
 
