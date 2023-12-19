@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { WebSocket } from 'uWebSockets.js';
 import AuthService from './AuthService';
 import Game, { GameState } from '../game/Game';
-import { GameSetting, Player, ShipPlacement } from '../game/types';
+import { GameSetting, MoveResult, Player, ShipPlacement } from '../game/types';
 import { DefaultSettings } from '../game/Board';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
@@ -181,6 +181,17 @@ const getGameSettings = (gameID: string): GameSetting => {
 };
 
 /**
+ * Get a games state.
+ *
+ * @param gameID Id of the game.
+ * @returns The current GameState.
+ */
+// eslint-disable-next-line arrow-body-style
+const getGameState = (gameID: string): GameState => {
+  return getGame(gameID).gameInstance.getGameState();
+};
+
+/**
  * Place a Users ships on the Game board.
  * Will throw a ValidationError if the placements are invalid.
  * Will throw an Error if the given User is not part of the Game, or
@@ -232,6 +243,50 @@ const placeShips = (user: User, gameID: string, shipPlacements: ShipPlacement[])
   }
 
   return game.gameInstance.getGameState();
+};
+
+/**
+ * Perform a game move for the given player.
+ *
+ * @param gameID The Id of the game in which the move is being made.
+ * @param username The username of the player making the move.
+ * @param x x coordinate (column) of the cell being targeted.
+ * @param y y coordinate (row) of the cell being targeted.
+ * @returns A MoveResult indicating the result of hitting the specified cell.
+ */
+const makeMove = (gameID: string, username: string, x: number, y: number): MoveResult => {
+  const game = getGame(gameID);
+
+  let player: Player | null = null;
+  if (username === game.userP1.username) player = Player.Player1;
+  else if (username === game.userP2?.username) player = Player.Player2;
+
+  if (!player) {
+    throw new Error(`User '${username}' is not part of game id=${gameID}`);
+  }
+
+  return game.gameInstance.makeMove(player, x, y);
+};
+
+/**
+ * Check if the opponent player has submitted their ship placements for
+ * some game. Throws an Error if the given username isn't part of the
+ * specified game.
+ *
+ * @param gameID The game's Id.
+ * @param username The player's username.
+ * @returns true if the opposing player has submitted valid ship placements
+ */
+const isOpponentReady = (gameID: string, username: string): boolean => {
+  const game = getGame(gameID);
+
+  if (game.userP1.username === username) {
+    return game.p2Placements !== undefined;
+  } if (game.userP2?.username === username) {
+    return game.p1Placements !== undefined;
+  }
+
+  throw new Error(`User '${username}' isn't part of the game`);
 };
 
 /**
@@ -318,7 +373,10 @@ export default {
   joinWithInviteCode,
   gameExists,
   getGameSettings,
+  getGameState,
   placeShips,
+  makeMove,
+  isOpponentReady,
   playerSocketRequested,
   playerSocketAuthenticated,
 };
