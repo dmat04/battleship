@@ -2,7 +2,9 @@ import { randomUUID } from 'crypto';
 import { WebSocket } from 'uWebSockets.js';
 import AuthService from './AuthService';
 import Game, { GameState } from '../game/Game';
-import { GameSetting, MoveResult, Player, ShipPlacement } from '../game/types';
+import {
+  GameSetting, MoveResult, Player, ShipPlacement,
+} from '../game/types';
 import { DefaultSettings } from '../game/Board';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
@@ -11,6 +13,7 @@ import type { GameCreatedResult } from '../graphql/types/GameCreatedResult';
 import type { User } from '../models/User';
 import type { GameJoinedResult } from '../graphql/types/GameJoinedResult';
 import { WSData } from '../models/WSData';
+import { GameStartedMessage, MessageCode } from '../ws/MessageTypes';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -240,7 +243,41 @@ const placeShips = (user: User, gameID: string, shipPlacements: ShipPlacement[])
   // if both players have made heir placements, advance the game state
   if (game.p1Placements && game.p2Placements) {
     game.gameInstance.initialize(game.p1Placements, game.p2Placements);
+
+    if (game.p1socket && game.p2socket && game.userP2) {
+      game.gameInstance.start();
+
+      const playsFirst = game.gameInstance.getCurrentPlayer() === Player.Player1
+        ? game.userP1.username
+        : game.userP2?.username;
+
+      const gameStartedMessage: GameStartedMessage = {
+        code: MessageCode.GameStarted,
+        playsFirst,
+      };
+
+      const stringified = JSON.stringify(gameStartedMessage);
+      game.p1socket.send(stringified);
+      game.p2socket.send(stringified);
+    }
   }
+
+  return game.gameInstance.getGameState();
+};
+
+/**
+ * Attempt to start the game.
+ *
+ * @param gameID The game to be started.
+ * @returns Returns GameState.InProgress if the game is successfully started, or
+ *          some other GameState if the game couldn't be started.
+ */
+const startGame = (gameID: string): GameState => {
+  const game = getGame(gameID);
+
+  try {
+    game.gameInstance.start();
+  } catch { /* empty */ }
 
   return game.gameInstance.getGameState();
 };
@@ -266,6 +303,22 @@ const makeMove = (gameID: string, username: string, x: number, y: number): MoveR
   }
 
   return game.gameInstance.makeMove(player, x, y);
+};
+
+/**
+ * Get the username of the player whoose turn it is to make a move.
+ *
+ * @param gameID The game Id.
+ * @returns The username of the current player, or undefined if a player
+ *          isn't connected yet.
+ */
+const getCurrentPlayer = (gameID: string): string | undefined => {
+  const game = getGame(gameID);
+  const currentPlayer = game.gameInstance.getCurrentPlayer();
+
+  return currentPlayer === Player.Player1
+    ? game.userP1.username
+    : game.userP2?.username;
 };
 
 /**
@@ -375,7 +428,9 @@ export default {
   getGameSettings,
   getGameState,
   placeShips,
+  startGame,
   makeMove,
+  getCurrentPlayer,
   isOpponentReady,
   playerSocketRequested,
   playerSocketAuthenticated,

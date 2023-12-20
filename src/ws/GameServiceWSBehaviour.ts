@@ -16,6 +16,7 @@ import {
   ShootMessage,
   WaitingForOpponentMessage,
 } from './MessageTypes';
+import { GameState } from '../game/Game';
 
 const messageDecoder = new TextDecoder();
 
@@ -65,8 +66,29 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
             : MessageCode.OpponentConnected;
         }
 
-        const response: Message = { code: responseCode };
-        ws.send(JSON.stringify(response));
+        let responseMessage: Message = { code: responseCode };
+
+        if (
+          GameService.getGameState(wsData.gameID) === GameState.Initialized
+          && wsData.opponentWS
+        ) {
+          const gameState = GameService.startGame(wsData.gameID);
+          const playsFirst = GameService.getCurrentPlayer(wsData.gameID);
+
+          if (gameState === GameState.InProgress && playsFirst) {
+            responseMessage = {
+              code: MessageCode.GameStarted,
+              playsFirst,
+            };
+
+            const stringified = JSON.stringify(responseMessage);
+            ws.send(stringified);
+            wsData.opponentWS.send(stringified);
+            return;
+          }
+        }
+
+        ws.send(JSON.stringify(responseMessage));
       } else {
         errorMessage = 'Authentication failed - invalid ticket';
       }
@@ -82,35 +104,44 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   }
 };
 
-const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void => {
+const handleShootMessage = (_ws: WebSocket<WSData>, _message: ShootMessage): void => {
 
 };
 
-const handleHitMessage = (ws: WebSocket<WSData>, message: HitMessage): void => {
+const handleHitMessage = (_ws: WebSocket<WSData>, _message: HitMessage): void => {
 
 };
 
-const handleMissMessage = (ws: WebSocket<WSData>, message: MissMessage): void => {
+const handleMissMessage = (_ws: WebSocket<WSData>, _message: MissMessage): void => {
 
 };
 
-const handleErrorMessage = (ws: WebSocket<WSData>, message: ErrorMessage): void => {
+const handleErrorMessage = (_ws: WebSocket<WSData>, _message: ErrorMessage): void => {
 
 };
 
-const handleWaitingForOpponentMessage = (ws: WebSocket<WSData>, message: WaitingForOpponentMessage): void => {
+const handleWaitingForOpponentMessage = (
+  _ws: WebSocket<WSData>,
+  _message: WaitingForOpponentMessage,
+): void => {
 
 };
 
-const handleOpponentConnectedMessage = (ws: WebSocket<WSData>, message: OpponentConnectedMessage): void => {
+const handleOpponentConnectedMessage = (
+  _ws: WebSocket<WSData>,
+  _message: OpponentConnectedMessage,
+): void => {
 
 };
 
-const handleOpponentReadyMessage = (ws: WebSocket<WSData>, message: OpponentReadyMessage): void => {
+const handleOpponentReadyMessage = (
+  _ws: WebSocket<WSData>,
+  _message: OpponentReadyMessage,
+): void => {
 
 };
 
-const handleGameStartedMessage = (ws: WebSocket<WSData>, message: GameStartedMessage): void => {
+const handleGameStartedMessage = (_ws: WebSocket<WSData>, _message: GameStartedMessage): void => {
 
 };
 
