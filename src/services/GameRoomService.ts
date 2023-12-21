@@ -7,7 +7,7 @@ import {
 } from '../game/types';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
-import type GameRoom from '../models/GameRoom';
+import type { GameRoom } from '../models/GameRoom';
 import type { RoomCreatedResult } from '../graphql/types/RoomCreatedResult';
 import type { User } from '../models/User';
 import type { RoomJoinedResult } from '../graphql/types/RoomJoinedResult';
@@ -15,7 +15,7 @@ import { WSData } from '../models/WSData';
 import ActiveGameService from './ActiveGameService';
 import Board from '../game/Board';
 import { ShipPlacement } from '../game/Ship';
-import { GameRoomStatus } from '../models/GameRoom';
+import { GameRoomStatus, gameRoomIsActive } from '../models/GameRoom';
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -78,22 +78,6 @@ const generateRoomID = (): string => {
 
   return id;
 };
-
-/**
- * Checks whether a game room has all of it's missing components
- * initialized (an opponent player, both of the players ship
- * placements and websocket connections). If all of the components
- * are initilized, the rooms game instance can be started, and the
- * room transferred to the ActiveGameService.
- *
- * @param roomID ID of the game room to be checked.
- * @returns true if the rooms game instance can be started, false otherwise.
- */
-const isRoomReadyToStart = (room: GameRoom): boolean => room.userP2 !== undefined
-  && room.p1Placements !== undefined
-  && room.p2Placements !== undefined
-  && room.p1socket !== undefined
-  && room.p2socket !== undefined;
 
 /**
  * Remove a game room from this services room registry,
@@ -290,7 +274,7 @@ const placeShips = (user: User, roomID: string, shipPlacements: ShipPlacement[])
     throw new Error(`User '${user.username}' is not part of game room id=${roomID}`);
   }
 
-  if (isRoomReadyToStart(room)) {
+  if (gameRoomIsActive(room)) {
     transferRoomToActiveGames(roomID);
   }
 
@@ -305,9 +289,8 @@ const placeShips = (user: User, roomID: string, shipPlacements: ShipPlacement[])
  *
  * @param username Username of the user requesting the websocket upgrade.
  * @param gameID Id of the Game for which a websocket connection is being opened.
- * @returns A reference to the opponents websocket connection to the same game instance, if any.
  */
-const playerSocketRequested = (username: string, gameID: string): WebSocket<WSData> | null => {
+const playerSocketRequested = (username: string, gameID: string): void => {
   // try to find the game for the given gameId
   const game = getRoom(gameID);
 
@@ -317,8 +300,7 @@ const playerSocketRequested = (username: string, gameID: string): WebSocket<WSDa
       throw new Error('Websocket for player/game combo already open');
     }
 
-    // get a reference to the opponents websocket connetion (might still be null)
-    return game.p2socket ?? null;
+    return;
   }
 
   if (game.userP2?.username === username) {
@@ -327,8 +309,7 @@ const playerSocketRequested = (username: string, gameID: string): WebSocket<WSDa
       throw new Error('Websocket for player/game combo already open');
     }
 
-    // get a reference to the opponents websocket connetion (might still be null)
-    return game.p1socket ?? null;
+    return;
   }
 
   throw new Error(`Player '${username}' doesn't seem to be part of game id=${gameID}`);
@@ -358,7 +339,7 @@ const playerSocketAuthenticated = (
     }
 
     room.p1socket = socket;
-    if (isRoomReadyToStart(room)) {
+    if (gameRoomIsActive(room)) {
       transferRoomToActiveGames(roomID);
     }
 
@@ -371,7 +352,7 @@ const playerSocketAuthenticated = (
     }
 
     room.p2socket = socket;
-    if (isRoomReadyToStart(room)) {
+    if (gameRoomIsActive(room)) {
       transferRoomToActiveGames(roomID);
     }
 

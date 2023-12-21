@@ -97,14 +97,12 @@ const handleRoomStatusRequestMessage = (ws: WebSocket<WSData>) => {
   let roomStatus = null;
 
   try {
-    roomStatus = GameRoomService.getRoomStatus(wsData.roomID);
-  } catch { /* empty */ }
-
-  if (!roomStatus) {
-    try {
+    if (wsData.roomIsActive) {
       roomStatus = ActiveGameService.getRoomStatus(wsData.roomID);
-    } catch { /* empty */ }
-  }
+    } else {
+      roomStatus = GameRoomService.getRoomStatus(wsData.roomID);
+    }
+  } catch { /* empty */ }
 
   if (roomStatus) {
     const response: RoomStatusResponseMessage = {
@@ -154,9 +152,8 @@ const WsHandler: WebSocketBehavior<WSData> = {
 
     // do some checks before upgrading the request to websockets
     let errorMessage: string | null = null;
-    let opponentWS: WebSocket<WSData> | null = null;
     try {
-      opponentWS = GameRoomService.playerSocketRequested(username, gameID);
+      GameRoomService.playerSocketRequested(username, gameID);
     } catch (error) {
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -172,8 +169,8 @@ const WsHandler: WebSocketBehavior<WSData> = {
     const socketData: WSData = {
       state: WSState.Error,
       roomID: gameID,
+      roomIsActive: false,
       username,
-      opponentWS,
     };
 
     if (errorMessage) {

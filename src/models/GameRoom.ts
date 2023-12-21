@@ -14,7 +14,7 @@ export interface GameRoomStatus {
   currentPlayer?: string;
 }
 
-interface GameRoom {
+export interface GameRoom {
   readonly id: string;
   readonly gameSettings: GameSetting;
   readonly userP1: User;
@@ -25,4 +25,30 @@ interface GameRoom {
   p2socket?: WebSocket<WSData>;
 }
 
-export default GameRoom;
+export interface ActiveGameRoom {
+  readonly id: string;
+  readonly gameSettings: GameSetting;
+  readonly userP1: User;
+  readonly userP2: User;
+  readonly p1Placements: ShipPlacement[];
+  readonly p2Placements: ShipPlacement[];
+  readonly p1socket: WebSocket<WSData>;
+  readonly p2socket: WebSocket<WSData>;
+}
+
+/**
+ * Checks whether a game room has all of its missing components
+ * initialized (an opponent player, both of the players ship
+ * placements and websocket connections).
+ *
+ * @param room The GameRoom to be checked
+ * @returns true if the given GameRoom has all of its components initialized and can
+ *          be cast to an ActiveGameRoom object.
+ */
+export const gameRoomIsActive = (room: GameRoom): room is ActiveGameRoom => (
+  room.userP2 !== undefined
+  && room.p1Placements !== undefined
+  && room.p2Placements !== undefined
+  && room.p1socket !== undefined
+  && room.p2socket !== undefined
+);

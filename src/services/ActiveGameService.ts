@@ -1,14 +1,29 @@
-import type GameRoom from '../models/GameRoom';
-import { GameRoomStatus } from '../models/GameRoom';
+import {
+  GameRoom,
+  ActiveGameRoom,
+  GameRoomStatus,
+  gameRoomIsActive,
+} from '../models/GameRoom';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 
 /**
  * Registry of active game instances, indexed by game Id's
  */
-const activeRooms: Map<string, GameRoom> = new Map<string, GameRoom>();
+const activeRooms: Map<string, ActiveGameRoom> = new Map<string, ActiveGameRoom>();
 
 const addGameRoom = (room: GameRoom): void => {
-  activeRooms.set(room.id, room);
+  if (!gameRoomIsActive(room)) {
+    throw new Error('GameRoom has missing members, cannot add it to active game rooms');
+  }
+
+  const activeRoom: ActiveGameRoom = { ...room };
+
+  const p1WSData = activeRoom.p1socket.getUserData();
+  const p2WSData = activeRoom.p2socket.getUserData();
+  p1WSData.roomIsActive = true;
+  p2WSData.roomIsActive = true;
+
+  activeRooms.set(activeRoom.id, activeRoom);
 };
 
 /**

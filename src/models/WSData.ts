@@ -1,5 +1,3 @@
-import { WebSocket } from 'uWebSockets.js';
-
 export enum WSState {
   Error = 'Error',
   Unauthenticated = 'Unauthenticated',
@@ -9,7 +7,7 @@ export enum WSState {
 export interface WSData {
   state: WSState;
   roomID: string;
+  roomIsActive: boolean;
   username: string;
-  opponentWS: WebSocket<WSData> | null;
   errorMessage?: string;
 }
