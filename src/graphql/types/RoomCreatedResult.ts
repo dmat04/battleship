@@ -1,12 +1,12 @@
-export interface GameCreatedResult {
-  readonly gameId: string;
+export interface RoomCreatedResult {
+  readonly roomID: string;
   readonly inviteCode: string;
   readonly wsAuthCode: string;
 }
 
 export const typeDefs = `#graphql
-  type GameCreatedResult {
-    gameId: ID!
+  type RoomCreatedResult {
+    roomID: ID!
     inviteCode: String!
     wsAuthCode: String!
   }

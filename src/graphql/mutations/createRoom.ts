@@ -1,21 +1,21 @@
 import AuthService from '../../services/AuthService';
-import GameService from '../../services/GameService';
-import type { GameCreatedResult } from '../types/GameCreatedResult';
+import GameService from '../../services/GameRoomService';
+import type { RoomCreatedResult } from '../types/RoomCreatedResult';
 import { ApolloContext, assertAuthorized } from '../../middleware/ApolloContext';
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    createGame: GameCreatedResult!
+    createRoom: RoomCreatedResult!
   }
 `;
 
 export const resolvers = {
   Mutation: {
-    createGame: async (_: any, __: any, context: ApolloContext): Promise<GameCreatedResult> => {
+    createRoom: async (_: any, __: any, context: ApolloContext): Promise<RoomCreatedResult> => {
       const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
-      return GameService.createNewGame(user);
+      return GameService.createNewRoom(user);
     },
   },
 };
