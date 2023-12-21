@@ -2,20 +2,17 @@ import { WebSocket, WebSocketBehavior } from 'uWebSockets.js';
 import AuthService, { WSAuthTicket } from '../services/AuthService';
 import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
-import GameService from '../services/GameRoomService';
 import MessageParser from './MessageParser';
 import {
-  AuthenticatedMessage,
+  AuthenticatedResponseMessage,
   ErrorMessage,
-  GameStartedMessage,
-  HitMessage,
-  MessageCode,
-  MissMessage,
-  OpponentConnectedMessage,
-  OpponentReadyMessage,
+  IncomingMessageCode,
+  OutgoingMessageCode,
+  RoomStatusResponseMessage,
   ShootMessage,
-  WaitingForOpponentMessage,
 } from './MessageTypes';
+import GameRoomService from '../services/GameRoomService';
+import ActiveGameService from '../services/ActiveGameService';
 
 const messageDecoder = new TextDecoder();
 
@@ -28,7 +25,12 @@ const handleErrorState = (ws: WebSocket<WSData>): void => {
     code = 500;
   }
 
-  ws.send(JSON.stringify({ error: errorMessage }));
+  const response: ErrorMessage = {
+    code: OutgoingMessageCode.Error,
+    message: errorMessage,
+  };
+
+  ws.send(JSON.stringify(response));
   ws.end(code);
 };
 
@@ -55,7 +57,7 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   // check that the decoded ticket data corresponds to the websocket data
   if (
     !ticket
-    || ticket.roomID !== wsData.gameID
+    || ticket.roomID !== wsData.roomID
     || ticket.username !== wsData.username
   ) {
     errorMessage = 'Authentication failed - invalid ticket';
@@ -64,12 +66,15 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   // if the ticket is valid, and its data corresponds to the websocket
   if (ticket && errorMessage !== null) {
     // let the GameService know that the socket is authenticated
-    GameService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
+    GameRoomService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
     // set the socket state
     wsData.state = WSState.Open;
 
     // send a confirmation message
-    const responseMessage: AuthenticatedMessage = { code: MessageCode.Authenticated };
+    const responseMessage: AuthenticatedResponseMessage = {
+      code: OutgoingMessageCode.AuthenticatedResponse,
+    };
+
     ws.send(JSON.stringify(responseMessage));
   }
 
@@ -86,45 +91,33 @@ const handleShootMessage = (_ws: WebSocket<WSData>, _message: ShootMessage): voi
 
 };
 
-const handleHitMessage = (_ws: WebSocket<WSData>, _message: HitMessage): void => {
+const handleRoomStatusRequestMessage = (ws: WebSocket<WSData>) => {
+  const wsData = ws.getUserData();
 
-};
+  let roomStatus = null;
 
-const handleMissMessage = (_ws: WebSocket<WSData>, _message: MissMessage): void => {
+  try {
+    roomStatus = GameRoomService.getRoomStatus(wsData.roomID);
+  } catch { /* empty */ }
 
-};
+  if (!roomStatus) {
+    try {
+      roomStatus = ActiveGameService.getRoomStatus(wsData.roomID);
+    } catch { /* empty */ }
+  }
 
-const handleErrorMessage = (_ws: WebSocket<WSData>, _message: ErrorMessage): void => {
+  if (roomStatus) {
+    const response: RoomStatusResponseMessage = {
+      code: OutgoingMessageCode.RoomStatusResponse,
+      roomStatus,
+    };
 
-};
-
-const handleAuthenticatedMessage = (_ws: WebSocket<WSData>, _message: AuthenticatedMessage): void => {
-
-};
-
-const handleWaitingForOpponentMessage = (
-  _ws: WebSocket<WSData>,
-  _message: WaitingForOpponentMessage,
-): void => {
-
-};
-
-const handleOpponentConnectedMessage = (
-  _ws: WebSocket<WSData>,
-  _message: OpponentConnectedMessage,
-): void => {
-
-};
-
-const handleOpponentReadyMessage = (
-  _ws: WebSocket<WSData>,
-  _message: OpponentReadyMessage,
-): void => {
-
-};
-
-const handleGameStartedMessage = (_ws: WebSocket<WSData>, _message: GameStartedMessage): void => {
-
+    ws.send(JSON.stringify(response));
+  } else {
+    wsData.state = WSState.Error;
+    wsData.errorMessage = `GameRoom service error: room ${wsData.roomID} not found.`;
+    handleErrorState(ws);
+  }
 };
 
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
@@ -133,8 +126,8 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
 
   if (!parsedMessage) {
     const response: ErrorMessage = {
-      code: MessageCode.Error,
-      message: 'Couldn\'t parse message',
+      code: OutgoingMessageCode.Error,
+      message: 'Couldn\'t parse incoming message',
     };
     ws.send(JSON.stringify(response));
     return;
@@ -142,15 +135,8 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
 
   const { code } = parsedMessage;
   switch (code) {
-    case MessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
-    case MessageCode.Hit: handleHitMessage(ws, parsedMessage); break;
-    case MessageCode.Miss: handleMissMessage(ws, parsedMessage); break;
-    case MessageCode.Error: handleErrorMessage(ws, parsedMessage); break;
-    case MessageCode.Authenticated: handleAuthenticatedMessage(ws, parsedMessage); break;
-    case MessageCode.WaitingForOpponent: handleWaitingForOpponentMessage(ws, parsedMessage); break;
-    case MessageCode.OpponentConnected: handleOpponentConnectedMessage(ws, parsedMessage); break;
-    case MessageCode.OpponentReady: handleOpponentReadyMessage(ws, parsedMessage); break;
-    case MessageCode.GameStarted: handleGameStartedMessage(ws, parsedMessage); break;
+    case IncomingMessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
+    case IncomingMessageCode.RoomStatusRequest: handleRoomStatusRequestMessage(ws); break;
     default: assertNever(code);
   }
 };
@@ -170,7 +156,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
     let errorMessage: string | null = null;
     let opponentWS: WebSocket<WSData> | null = null;
     try {
-      opponentWS = GameService.playerSocketRequested(username, gameID);
+      opponentWS = GameRoomService.playerSocketRequested(username, gameID);
     } catch (error) {
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -185,7 +171,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
     // a ws yet)
     const socketData: WSData = {
       state: WSState.Error,
-      gameID,
+      roomID: gameID,
       username,
       opponentWS,
     };
