@@ -1,12 +1,12 @@
 import { merge } from 'lodash';
 
 import LoginResultDefs from './types/LoginResult';
-import GameCreatedResultDefs from './types/GameCreatedResult';
-import GameJoinedResultDefs from './types/GameJoinedResult';
+import RoomCreatedResultDefs from './types/RoomCreatedResult';
+import RoomJoinedResultDefs from './types/RoomJoinedResult';
 import GameSettingsTypes from './types/GameTypes';
 import Ping from './queries/ping';
-import CreateGame from './mutations/createGame';
-import JoinGame from './mutations/joinGame';
+import CreateRoom from './mutations/createRoom';
+import JoinRoom from './mutations/joinRoom';
 import PlaceShips from './mutations/placeShips';
 import gameSettings from './queries/gameSettings';
 import guestLogin from './mutations/guestLogin';
@@ -26,12 +26,12 @@ const rootTypeDefs = `#graphql
 export const typeDefs = [
   rootTypeDefs,
   LoginResultDefs.typeDefs,
-  GameCreatedResultDefs.typeDefs,
-  GameJoinedResultDefs.typeDefs,
+  RoomCreatedResultDefs.typeDefs,
+  RoomJoinedResultDefs.typeDefs,
   GameSettingsTypes.typeDefs,
   Ping.typeDefs,
-  CreateGame.typeDefs,
-  JoinGame.typeDefs,
+  CreateRoom.typeDefs,
+  JoinRoom.typeDefs,
   PlaceShips.typeDefs,
   gameSettings.typeDefs,
   guestLogin.typeDefs,
@@ -42,8 +42,8 @@ export const typeDefs = [
 export const resolvers = merge(
   GameSettingsTypes.resolvers,
   Ping.resolvers,
-  CreateGame.resolvers,
-  JoinGame.resolvers,
+  CreateRoom.resolvers,
+  JoinRoom.resolvers,
   PlaceShips.resolvers,
   gameSettings.resolvers,
   guestLogin.resolvers,

@@ -1,5 +1,5 @@
 import { ApolloContext, assertAuthorized } from '../../middleware/ApolloContext';
-import GameService from '../../services/GameService';
+import GameService from '../../services/GameRoomService';
 
 interface MutationParams {
   gameId: string;

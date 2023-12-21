@@ -1,5 +1,6 @@
 import { GameState } from '../../game/Game';
-import { GameSetting, ShipOrientation, ShipType } from '../../game/types';
+import { ShipType, ShipOrientation } from '../../game/Ship';
+import { GameSetting } from '../../game/types';
 
 export const typeDefs = `#graphql
   enum ShipType {
