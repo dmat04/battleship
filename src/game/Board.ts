@@ -387,7 +387,14 @@ class Board {
    * @param ships The ships to be placed
    */
   placePlayer1Ships = (ships: ShipPlacement[]): void => {
-    Board.placeShips(this.player1Board, ships, this.settings);
+    try {
+      Board.placeShips(this.player1Board, ships, this.settings);
+    } catch (error) {
+      // If an error has occured during ship placement, reset the
+      // player board before passing on the error
+      this.player1Board = Board.initPlayerBoard(this.settings);
+      throw error;
+    }
   };
 
   /**
@@ -401,7 +408,14 @@ class Board {
    * @param ships The ships to be placed
    */
   placePlayer2Ships = (ships: ShipPlacement[]): void => {
-    Board.placeShips(this.player2Board, ships, this.settings);
+    try {
+      Board.placeShips(this.player2Board, ships, this.settings);
+    } catch (error) {
+      // If an error has occured during ship placement, reset the
+      // player board before passing on the error
+      this.player2Board = Board.initPlayerBoard(this.settings);
+      throw error;
+    }
   };
 
   /**
