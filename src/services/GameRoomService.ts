@@ -15,6 +15,7 @@ import { WSData } from '../models/WSData';
 import ActiveGameService from './ActiveGameService';
 import Board from '../game/Board';
 import { ShipPlacement } from '../game/Ship';
+import { GameRoomStatus } from '../models/GameRoom';
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -218,6 +219,25 @@ const getGameSettings = (roomID: string): GameSetting => {
 };
 
 /**
+ * Get the game rooms status.
+ *
+ * @param roomID Id of the game room.
+ * @returns The status of the specified game room.
+ */
+const getRoomStatus = (roomID: string): GameRoomStatus => {
+  const room = getRoom(roomID);
+  return {
+    player1: room.userP1.username,
+    player2: room.userP2?.username,
+    p1WSOpen: room.p1socket !== undefined,
+    p2WSOpen: room.p2socket !== undefined,
+    p1ShipsPlaced: room.p1Placements !== undefined,
+    p2ShipsPlaced: room.p2Placements !== undefined,
+    currentPlayer: room.userP1.username,
+  };
+};
+
+/**
  * Get a GameRooms game instance state.
  *
  * @param roomID Id of the game room.
@@ -366,6 +386,7 @@ export default {
   joinWithInviteCode,
   roomExists,
   getGameSettings,
+  getRoomStatus,
   placeShips,
   playerSocketRequested,
   playerSocketAuthenticated,

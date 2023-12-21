@@ -1,4 +1,6 @@
 import type GameRoom from '../models/GameRoom';
+import { GameRoomStatus } from '../models/GameRoom';
+import EntityNotFoundError from './errors/EntityNotFoundError';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -7,6 +9,41 @@ const activeRooms: Map<string, GameRoom> = new Map<string, GameRoom>();
 
 const addGameRoom = (room: GameRoom): void => {
   activeRooms.set(room.id, room);
+};
+
+/**
+ * Get a reference to a GameRoom for a given room ID.
+ *
+ * @param id Id of the game room to find.
+ * @returns The GameRoom reference, or throws an EntityNotFoundError if no room is
+ *          found for the given Id.
+ */
+const getRoom = (id: string): GameRoom => {
+  const room = activeRooms.get(id);
+  if (!room) {
+    throw new EntityNotFoundError('GameRoom', id);
+  }
+
+  return room;
+};
+
+/**
+ * Get the game rooms status.
+ *
+ * @param roomID Id of the game room.
+ * @returns The status of the specified game room.
+ */
+const getRoomStatus = (roomID: string): GameRoomStatus => {
+  const room = getRoom(roomID);
+  return {
+    player1: room.userP1.username,
+    player2: room.userP2?.username,
+    p1WSOpen: room.p1socket !== undefined,
+    p2WSOpen: room.p2socket !== undefined,
+    p1ShipsPlaced: room.p1Placements !== undefined,
+    p2ShipsPlaced: room.p2Placements !== undefined,
+    currentPlayer: room.userP1.username,
+  };
 };
 
 // /**
@@ -398,4 +435,5 @@ const addGameRoom = (room: GameRoom): void => {
 
 export default {
   addGameRoom,
+  getRoomStatus,
 };

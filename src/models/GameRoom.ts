@@ -4,6 +4,16 @@ import type { User } from './User';
 import type { WSData } from './WSData';
 import { ShipPlacement } from '../game/Ship';
 
+export interface GameRoomStatus {
+  player1: string;
+  player2?: string;
+  p1WSOpen: boolean;
+  p2WSOpen: boolean;
+  p1ShipsPlaced: boolean;
+  p2ShipsPlaced: boolean;
+  currentPlayer?: string;
+}
+
 interface GameRoom {
   readonly id: string;
   readonly gameSettings: GameSetting;
