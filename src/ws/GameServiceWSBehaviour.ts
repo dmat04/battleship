@@ -1,14 +1,14 @@
 import { WebSocket, WebSocketBehavior } from 'uWebSockets.js';
-import AuthService from '../services/AuthService';
+import AuthService, { WSAuthTicket } from '../services/AuthService';
 import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
-import GameService from '../services/GameService';
+import GameService from '../services/GameRoomService';
 import MessageParser from './MessageParser';
 import {
+  AuthenticatedMessage,
   ErrorMessage,
   GameStartedMessage,
   HitMessage,
-  Message,
   MessageCode,
   MissMessage,
   OpponentConnectedMessage,
@@ -16,7 +16,6 @@ import {
   ShootMessage,
   WaitingForOpponentMessage,
 } from './MessageTypes';
-import { GameState } from '../game/Game';
 
 const messageDecoder = new TextDecoder();
 
@@ -38,66 +37,45 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   const decoded = messageDecoder.decode(message);
   // get the ws UserData
   const wsData = ws.getUserData();
-  let errorMessage;
+
+  let errorMessage = null;
+  let ticket: WSAuthTicket | false = false;
 
   if (wsData.state !== WSState.Unauthenticated) {
     errorMessage = 'Authentication failed - ws connection in wrong state';
-  } else {
-    try {
-      // try to decode the access code
-      const ticket = AuthService.decodeWSToken(decoded);
-      if (ticket
-        && ticket.gameID === wsData.gameID
-        && ticket.username === wsData.username) {
-        const opponentWS = GameService.playerSocketAuthenticated(
-          ticket.gameID,
-          ticket.username,
-          ws,
-        );
-        wsData.state = WSState.Open;
-        wsData.opponentWS = opponentWS;
-
-        let responseCode: MessageCode = MessageCode.WaitingForOpponent;
-
-        if (opponentWS) {
-          opponentWS.getUserData().opponentWS = ws;
-          responseCode = GameService.isOpponentReady(wsData.gameID, wsData.username)
-            ? MessageCode.OpponentReady
-            : MessageCode.OpponentConnected;
-        }
-
-        let responseMessage: Message = { code: responseCode };
-
-        if (
-          GameService.getGameState(wsData.gameID) === GameState.Initialized
-          && wsData.opponentWS
-        ) {
-          const gameState = GameService.startGame(wsData.gameID);
-          const playsFirst = GameService.getCurrentPlayer(wsData.gameID);
-
-          if (gameState === GameState.InProgress && playsFirst) {
-            responseMessage = {
-              code: MessageCode.GameStarted,
-              playsFirst,
-            };
-
-            const stringified = JSON.stringify(responseMessage);
-            ws.send(stringified);
-            wsData.opponentWS.send(stringified);
-            return;
-          }
-        }
-
-        ws.send(JSON.stringify(responseMessage));
-      } else {
-        errorMessage = 'Authentication failed - invalid ticket';
-      }
-    } catch {
-      errorMessage = 'Authentication failed - invalid token';
-    }
   }
 
+  try {
+    // try to decode the access code
+    ticket = AuthService.decodeWSToken(decoded);
+  } catch {
+    errorMessage = 'Authentication failed - invalid token';
+  }
+
+  // check that the decoded ticket data corresponds to the websocket data
+  if (
+    !ticket
+    || ticket.roomID !== wsData.gameID
+    || ticket.username !== wsData.username
+  ) {
+    errorMessage = 'Authentication failed - invalid ticket';
+  }
+
+  // if the ticket is valid, and its data corresponds to the websocket
+  if (ticket && errorMessage !== null) {
+    // let the GameService know that the socket is authenticated
+    GameService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
+    // set the socket state
+    wsData.state = WSState.Open;
+
+    // send a confirmation message
+    const responseMessage: AuthenticatedMessage = { code: MessageCode.Authenticated };
+    ws.send(JSON.stringify(responseMessage));
+  }
+
+  // if any kind of error was encountered
   if (errorMessage) {
+    // set the websocket into an error state, and handle the error state
     wsData.state = WSState.Error;
     wsData.errorMessage = errorMessage;
     handleErrorState(ws);
@@ -117,6 +95,10 @@ const handleMissMessage = (_ws: WebSocket<WSData>, _message: MissMessage): void 
 };
 
 const handleErrorMessage = (_ws: WebSocket<WSData>, _message: ErrorMessage): void => {
+
+};
+
+const handleAuthenticatedMessage = (_ws: WebSocket<WSData>, _message: AuthenticatedMessage): void => {
 
 };
 
@@ -164,6 +146,7 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
     case MessageCode.Hit: handleHitMessage(ws, parsedMessage); break;
     case MessageCode.Miss: handleMissMessage(ws, parsedMessage); break;
     case MessageCode.Error: handleErrorMessage(ws, parsedMessage); break;
+    case MessageCode.Authenticated: handleAuthenticatedMessage(ws, parsedMessage); break;
     case MessageCode.WaitingForOpponent: handleWaitingForOpponentMessage(ws, parsedMessage); break;
     case MessageCode.OpponentConnected: handleOpponentConnectedMessage(ws, parsedMessage); break;
     case MessageCode.OpponentReady: handleOpponentReadyMessage(ws, parsedMessage); break;
