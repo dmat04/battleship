@@ -18,9 +18,9 @@ interface AccessToken {
   expiresAt: Date;
 }
 
-interface WSAuthTicket {
+export interface WSAuthTicket {
   username: string;
-  gameID: string;
+  roomID: string;
 }
 
 /**
@@ -108,10 +108,10 @@ const decodeWSToken = (code: string): WSAuthTicket | false => {
     const payload = jwt.verify(code, config.JWT_SECRET);
     if (typeof payload === 'object'
       && 'username' in payload
-      && 'gameID' in payload) {
+      && 'roomID' in payload) {
       return {
         username: payload.username,
-        gameID: payload.gameID,
+        roomID: payload.roomID,
       };
     }
 
