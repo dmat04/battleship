@@ -77,6 +77,7 @@ const ParseMessage = (jsonMessage: string): Message | undefined => {
       return undefined;
     }
 
+    case MessageCode.Authenticated:
     case MessageCode.WaitingForOpponent:
     case MessageCode.OpponentConnected:
     case MessageCode.OpponentReady: return { code };

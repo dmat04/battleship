@@ -3,6 +3,7 @@ export enum MessageCode {
   Hit = 'Hit',
   Miss = 'Miss',
   Error = 'Error',
+  Authenticated = 'Authenticated',
   WaitingForOpponent = 'WaitingForOpponent',
   OpponentConnected = 'OpponentConnected',
   OpponentReady = 'OpponentReady',
@@ -31,6 +32,10 @@ export interface ErrorMessage {
   message: string;
 }
 
+export interface AuthenticatedMessage {
+  code: MessageCode.Authenticated;
+}
+
 export interface WaitingForOpponentMessage {
   code: MessageCode.WaitingForOpponent;
 }
@@ -53,6 +58,7 @@ export type Message =
  | HitMessage
  | MissMessage
  | ErrorMessage
+ | AuthenticatedMessage
  | WaitingForOpponentMessage
  | OpponentConnectedMessage
  | OpponentReadyMessage
