@@ -1,18 +1,18 @@
 import { WebSocket } from 'uWebSockets.js';
-import Game from '../game/Game';
-import { ShipPlacement } from '../game/types';
+import { GameSetting } from '../game/types';
 import type { User } from './User';
 import type { WSData } from './WSData';
+import { ShipPlacement } from '../game/Ship';
 
-interface ActiveGame {
+interface GameRoom {
   readonly id: string;
-  readonly gameInstance: Game;
+  readonly gameSettings: GameSetting;
   readonly userP1: User;
   userP2?: User;
   p1Placements?: ShipPlacement[];
   p2Placements?: ShipPlacement[];
-  p1socket: WebSocket<WSData> | null;
-  p2socket: WebSocket<WSData> | null;
+  p1socket?: WebSocket<WSData>;
+  p2socket?: WebSocket<WSData>;
 }
 
-export default ActiveGame;
+export default GameRoom;
