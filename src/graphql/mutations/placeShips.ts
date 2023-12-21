@@ -1,17 +1,17 @@
-import GameService from '../../services/GameService';
+import GameService from '../../services/GameRoomService';
 import AuthService from '../../services/AuthService';
-import { ShipPlacement } from '../../game/types';
 import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
 import type { GameState } from '../../game/Game';
+import { ShipPlacement } from '../../game/Ship';
 
 interface MutationParams {
-  gameId: string,
+  roomID: string,
   shipPlacements: ShipPlacement[];
 }
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    placeShips(gameId: ID!, shipPlacements: [ShipPlacement!]!): GameState!
+    placeShips(roomID: ID!, shipPlacements: [ShipPlacement!]!): GameState!
   }
 `;
 
@@ -25,7 +25,7 @@ export const resolvers = {
       const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
-      return GameService.placeShips(user, args.gameId, args.shipPlacements);
+      return GameService.placeShips(user, args.roomID, args.shipPlacements);
     },
   },
 };
