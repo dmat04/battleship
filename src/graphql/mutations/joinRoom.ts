@@ -1,7 +1,7 @@
 import AuthService from '../../services/AuthService';
-import GameService from '../../services/GameService';
+import GameService from '../../services/GameRoomService';
 import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
-import { GameJoinedResult } from '../types/GameJoinedResult';
+import { RoomJoinedResult } from '../types/RoomJoinedResult';
 
 interface MutationParams {
   inviteCode: string;
@@ -9,17 +9,17 @@ interface MutationParams {
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    joinGame(inviteCode: String!): GameJoinedResult!
+    joinRoom(inviteCode: String!): RoomJoinedResult!
   }
 `;
 
 export const resolvers = {
   Mutation: {
-    joinGame: async (
+    joinRoom: async (
       _: any,
       args: MutationParams,
       context: ApolloContext,
-    ): Promise<GameJoinedResult> => {
+    ): Promise<RoomJoinedResult> => {
       const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
