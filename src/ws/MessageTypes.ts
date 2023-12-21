@@ -1,12 +1,17 @@
-export enum MessageCode {
+import { MoveResult } from '../game/types';
+import { GameRoomStatus } from '../models/GameRoom';
+
+export enum IncomingMessageCode {
   Shoot = 'Shoot',
-  Hit = 'Hit',
-  Miss = 'Miss',
+  RoomStatusRequest = 'RoomStatusRequest',
+}
+
+export enum OutgoingMessageCode {
   Error = 'Error',
-  Authenticated = 'Authenticated',
-  WaitingForOpponent = 'WaitingForOpponent',
-  OpponentConnected = 'OpponentConnected',
-  OpponentReady = 'OpponentReady',
+  OpponentMoveResult = 'OpponentMoveResult',
+  OwnMoveResult = 'OwnMoveResult',
+  RoomStatusResponse = 'RoomStatusResponse',
+  AuthenticatedResponse = 'AuthenticatedResponse',
   GameStarted = 'GameStarted',
 }
 
@@ -15,51 +20,54 @@ export interface CoordinateMessage {
   y: number;
 }
 
+interface MoveResultMessage extends CoordinateMessage {
+  result: MoveResult;
+  currentPlayer: string;
+}
+
 export interface ShootMessage extends CoordinateMessage {
-  code: MessageCode.Shoot;
+  code: IncomingMessageCode.Shoot;
 }
 
-export interface HitMessage extends CoordinateMessage {
-  code: MessageCode.Hit;
-}
-
-export interface MissMessage extends CoordinateMessage {
-  code: MessageCode.Miss;
+export interface RoomStatusRequestMessage {
+  code: IncomingMessageCode.RoomStatusRequest;
 }
 
 export interface ErrorMessage {
-  code: MessageCode.Error;
+  code: OutgoingMessageCode.Error;
   message: string;
 }
 
-export interface AuthenticatedMessage {
-  code: MessageCode.Authenticated;
+export interface OpponentMoveResultMessage extends MoveResultMessage {
+  code: OutgoingMessageCode.OpponentMoveResult;
 }
 
-export interface WaitingForOpponentMessage {
-  code: MessageCode.WaitingForOpponent;
+export interface OwnMoveResultMessage extends MoveResultMessage {
+  code: OutgoingMessageCode.OwnMoveResult;
 }
 
-export interface OpponentConnectedMessage {
-  code: MessageCode.OpponentConnected
+export interface RoomStatusResponseMessage {
+  code: OutgoingMessageCode.RoomStatusResponse;
+  roomStatus: GameRoomStatus;
 }
 
-export interface OpponentReadyMessage {
-  code: MessageCode.OpponentReady
+export interface AuthenticatedResponseMessage {
+  code: OutgoingMessageCode.AuthenticatedResponse;
 }
 
 export interface GameStartedMessage {
-  code: MessageCode.GameStarted;
+  code: OutgoingMessageCode.GameStarted;
   playsFirst: string;
 }
 
-export type Message =
- | ShootMessage
- | HitMessage
- | MissMessage
+export type IncommingMessage =
+  | ShootMessage
+  | RoomStatusRequestMessage;
+
+export type OutgoingMessage =
  | ErrorMessage
- | AuthenticatedMessage
- | WaitingForOpponentMessage
- | OpponentConnectedMessage
- | OpponentReadyMessage
+ | OpponentMoveResultMessage
+ | OwnMoveResultMessage
+ | RoomStatusResponseMessage
+ | AuthenticatedResponseMessage
  | GameStartedMessage;

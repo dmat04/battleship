@@ -1,8 +1,6 @@
 import { isInteger } from 'lodash';
-import {
-  CoordinateMessage, ErrorMessage, GameStartedMessage, Message, MessageCode,
-} from './MessageTypes';
-import { assertNever, isString } from '../utils/typeUtils';
+import { assertNever } from '../utils/typeUtils';
+import { CoordinateMessage, IncomingMessageCode, IncommingMessage } from './MessageTypes';
 
 const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => {
   if ('x' in message
@@ -18,29 +16,7 @@ const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => 
   return undefined;
 };
 
-const parseErrorMessage = (message: any): ErrorMessage | undefined => {
-  if ('message' in message && isString(message.message)) {
-    return {
-      message: message.message,
-      code: MessageCode.Error,
-    };
-  }
-
-  return undefined;
-};
-
-const parseGameStartedMessage = (message: any): GameStartedMessage | undefined => {
-  if ('playsFirst' in message && isString(message.playsFirst)) {
-    return {
-      playsFirst: message.playsFirst,
-      code: MessageCode.GameStarted,
-    };
-  }
-
-  return undefined;
-};
-
-const ParseMessage = (jsonMessage: string): Message | undefined => {
+const ParseMessage = (jsonMessage: string): IncommingMessage | undefined => {
   let message = null;
 
   try {
@@ -57,16 +33,14 @@ const ParseMessage = (jsonMessage: string): Message | undefined => {
     return undefined;
   }
 
-  if (!Object.values(MessageCode).includes(message.code)) {
+  if (!Object.values(IncomingMessageCode).includes(message.code)) {
     return undefined;
   }
 
-  const code: MessageCode = message.code as MessageCode;
+  const code: IncomingMessageCode = message.code as IncomingMessageCode;
 
   switch (code) {
-    case MessageCode.Shoot:
-    case MessageCode.Hit:
-    case MessageCode.Miss: {
+    case IncomingMessageCode.Shoot: {
       const coordinates = parseCoordinateMessage(message);
       if (coordinates) {
         return {
@@ -76,15 +50,7 @@ const ParseMessage = (jsonMessage: string): Message | undefined => {
       }
       return undefined;
     }
-
-    case MessageCode.Authenticated:
-    case MessageCode.WaitingForOpponent:
-    case MessageCode.OpponentConnected:
-    case MessageCode.OpponentReady: return { code };
-
-    case MessageCode.Error: return parseErrorMessage(message);
-    case MessageCode.GameStarted: return parseGameStartedMessage(message);
-
+    case IncomingMessageCode.RoomStatusRequest: return { code };
     default: return assertNever(code);
   }
 };
