@@ -1,8 +1,29 @@
 import { assertNever } from '../utils/typeUtils';
-import { ShipType } from './types';
 
 /** Maximum ship size (length) */
 export const MAX_SIZE = 5;
+
+export type ShipCounts = Map<ShipType, number>;
+
+export enum ShipType {
+  Submarine = 'Submarine',
+  Destroyer = 'Destroyer',
+  Cruiser = 'Cruiser',
+  Battleship = 'Battleship',
+  AircraftCarrier = 'AircraftCarrier',
+}
+
+export enum ShipOrientation {
+  Vertical = 'Vertical',
+  Horizontal = 'Horizontal',
+}
+
+export interface ShipPlacement {
+  readonly shipType: ShipType;
+  readonly orientation: ShipOrientation;
+  readonly x: number;
+  readonly y: number;
+}
 
 /**
  * Class modelling a battleship game ship.

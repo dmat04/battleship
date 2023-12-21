@@ -1,6 +1,6 @@
-import { DefaultSettings } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
-import { MoveResult, Player, ShipPlacement } from '../../src/game/types';
+import { ShipPlacement } from '../../src/game/Ship';
+import { MoveResult, Player, DefaultSettings } from '../../src/game/types';
 import {
   p1Placements, p2Placements, movesFirst, movesSecond, moves,
 } from './gameTestData.json';

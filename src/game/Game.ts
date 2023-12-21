@@ -1,6 +1,7 @@
-import Board, { DefaultSettings } from './Board';
+import Board from './Board';
+import { ShipPlacement } from './Ship';
 import {
-  GameSetting, ShipPlacement, Player, MoveResult,
+  GameSetting, Player, MoveResult, DefaultSettings,
 } from './types';
 
 export enum GameState {
@@ -169,11 +170,6 @@ class Game {
    * @returns The GameSettings
    */
   getGameSettings = (): GameSetting => this.board.getSettings();
-
-  // eslint-disable-next-line arrow-body-style
-  verifyShipPlacements = (ships: ShipPlacement[]): string[] => {
-    return this.board.verifyShipPlacements(ships);
-  };
 }
 
 export default Game;

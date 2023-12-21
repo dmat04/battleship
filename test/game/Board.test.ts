@@ -1,5 +1,6 @@
-import Board, { DefaultSettings } from '../../src/game/Board';
-import { CellState, GameSetting, ShipPlacement } from '../../src/game/types';
+import Board, { CellState } from '../../src/game/Board';
+import { ShipPlacement } from '../../src/game/Ship';
+import { DefaultSettings, GameSetting } from '../../src/game/types';
 import { validPlacements, invalidPlacements } from './shipPlacementData.json';
 
 const gameSettings = [
