@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 import { WebSocket } from 'uWebSockets.js';
 import AuthService from './AuthService';
-import { GameState } from '../game/Game';
 import {
   GameSetting, DefaultSettings,
 } from '../game/types';
@@ -232,7 +231,6 @@ const getRoomStatus = (roomID: string): GameRoomStatus => {
 //   return getRoom(roomID).gameInstance.getGameState();
 // };
 
-// TODO: Create a GameRoomState type to replace GameState
 /**
  * Place a Users ships on the Game board.
  * Will throw a ValidationError if the placements are invalid.
@@ -242,9 +240,13 @@ const getRoomStatus = (roomID: string): GameRoomStatus => {
  * @param user The User placing the ships.
  * @param roomID Id of the game to place the ships in.
  * @param shipPlacements The ship placements.
- * @returns The state of the Game after the Users placements are made.
+ * @returns The state of the game room after the Users placements are made.
  */
-const placeShips = (user: User, roomID: string, shipPlacements: ShipPlacement[]): GameState => {
+const placeShips = (
+  user: User,
+  roomID: string,
+  shipPlacements: ShipPlacement[],
+): GameRoomStatus => {
   // get the game instance
   const room = getRoom(roomID);
 
@@ -278,7 +280,7 @@ const placeShips = (user: User, roomID: string, shipPlacements: ShipPlacement[])
     transferRoomToActiveGames(roomID);
   }
 
-  return GameState.Created;
+  return getRoomStatus(roomID);
 };
 
 /**

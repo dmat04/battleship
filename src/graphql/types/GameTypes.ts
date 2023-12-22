@@ -1,4 +1,3 @@
-import { GameState } from '../../game/Game';
 import { ShipType, ShipOrientation } from '../../game/Ship';
 import { GameSetting } from '../../game/types';
 
@@ -14,13 +13,6 @@ export const typeDefs = `#graphql
   enum ShipOrientation {
     VERTICAL
     HORIZONTAL
-  }
-
-  enum GameState {
-    CREATED,
-    INITIALIZED,
-    IN_PROGRESS,
-    FINISHED
   }
 
   type ShipCount {
@@ -40,6 +32,16 @@ export const typeDefs = `#graphql
     boardHeight: Int!
     shipCounts: [ShipCount!]!
   }
+
+  type GameRoomStatus {
+    player1: String!
+    player2: String
+    p1WSOpen: Boolean!
+    p2WSOpen: Boolean!
+    p1ShipsPlaced: Boolean!
+    p2ShipsPlaced: Boolean!
+    currentPlayer: String
+}
 `;
 
 export const resolvers = {
@@ -64,12 +66,6 @@ export const resolvers = {
   ShipOrientation: {
     VERTICAL: ShipOrientation[ShipOrientation.Vertical],
     HORIZONTAL: ShipOrientation[ShipOrientation.Horizontal],
-  },
-  GameState: {
-    CREATED: GameState[GameState.Created],
-    INITIALIZED: GameState[GameState.Initialized],
-    IN_PROGRESS: GameState[GameState.InProgress],
-    FINISHED: GameState[GameState.Finished],
   },
 };
 

@@ -1,8 +1,8 @@
 import GameService from '../../services/GameRoomService';
 import AuthService from '../../services/AuthService';
 import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
-import type { GameState } from '../../game/Game';
 import { ShipPlacement } from '../../game/Ship';
+import { GameRoomStatus } from '../../models/GameRoom';
 
 interface MutationParams {
   roomID: string,
@@ -11,7 +11,7 @@ interface MutationParams {
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    placeShips(roomID: ID!, shipPlacements: [ShipPlacement!]!): GameState!
+    placeShips(roomID: ID!, shipPlacements: [ShipPlacement!]!): GameRoomStatus!
   }
 `;
 
@@ -21,7 +21,7 @@ export const resolvers = {
       _: any,
       args: MutationParams,
       context: ApolloContext,
-    ): Promise<GameState> => {
+    ): Promise<GameRoomStatus> => {
       const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
