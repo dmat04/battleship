@@ -1,17 +1,15 @@
 import Game, { GameState } from '../../src/game/Game';
 import { ShipPlacement } from '../../src/game/Ship';
-import { MoveResult, Player, DefaultSettings } from '../../src/game/types';
+import { MoveResult, DefaultSettings } from '../../src/game/types';
 import {
-  p1Placements, p2Placements, movesFirst, movesSecond, moves,
+  p1Placements, p2Placements, firstPlayer, secondPlayer, moves,
 } from './gameTestData.json';
 
-const firstPlayer = movesFirst as Player;
-const secondPlayer = movesSecond as Player;
 let gameSubject: Game;
 
 describe('Game', () => {
   beforeEach(() => {
-    gameSubject = new Game(firstPlayer, DefaultSettings);
+    gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
   });
 
   test('constructor creates a new Game object', () => {
@@ -30,7 +28,7 @@ describe('Game', () => {
 
 describe('An initialized game', () => {
   beforeEach(() => {
-    gameSubject = new Game(firstPlayer, DefaultSettings);
+    gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
     gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
   });
 
@@ -55,7 +53,7 @@ describe('An initialized game', () => {
 
 describe('A game in progress', () => {
   beforeEach(() => {
-    gameSubject = new Game(firstPlayer, DefaultSettings);
+    gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
     gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
     gameSubject.start();
   });
@@ -118,7 +116,7 @@ describe('A game in progress', () => {
     moves.forEach(({
       player, x, y, result,
     }) => {
-      const actualResult = gameSubject.makeMove(player as Player, x, y);
+      const actualResult = gameSubject.makeMove(player, x, y);
       expect(actualResult).toBe(result as MoveResult);
     });
   });
