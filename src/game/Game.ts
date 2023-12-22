@@ -1,4 +1,5 @@
 import Board, { Player } from './Board';
+import GameplayError from './GameplayError';
 import { ShipPlacement } from './Ship';
 import {
   GameSetting, MoveResult, DefaultSettings,
@@ -132,7 +133,7 @@ class Game {
 
     // Check that it is the specified players move
     if (player !== this.currentPlayer) {
-      throw new Error('Game error - not the players turn');
+      throw new GameplayError('Game error - not the players turn');
     }
 
     // Perform the cell hit - this will throw if coords are out of

@@ -3,6 +3,7 @@ import {
   GameSetting, MoveResult, DefaultSettings,
 } from './types';
 import { assertNever } from '../utils/typeUtils';
+import GameplayError from './GameplayError';
 
 export enum CellState {
   Empty = 1,
@@ -450,7 +451,7 @@ class Board {
   hitCell = (player: Player, x: number, y: number): MoveResult => {
     // Check if hit is within bounds
     if (!this.checkCellBounds(x, y)) {
-      throw new Error('Hit coordinates out of bounds');
+      throw new GameplayError('Hit coordinates out of bounds');
     }
 
     // Get the opponents board
@@ -475,7 +476,7 @@ class Board {
       case CellState.Miss:
       case CellState.Hit:
         // If the cell had already been hit on, throw an error
-        throw new Error('Cell has already been hit');
+        throw new GameplayError('Cell has already been hit');
       default:
         return assertNever(currentState);
     }
