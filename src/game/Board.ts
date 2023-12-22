@@ -1,6 +1,6 @@
 import Ship, { ShipOrientation, ShipPlacement, ShipType } from './Ship';
 import {
-  GameSetting, MoveResult, Player, DefaultSettings,
+  GameSetting, MoveResult, DefaultSettings,
 } from './types';
 import { assertNever } from '../utils/typeUtils';
 
@@ -9,6 +9,11 @@ export enum CellState {
   Populated,
   Miss,
   Hit,
+}
+
+export enum Player {
+  Player1 = 1,
+  Player2 = 2,
 }
 
 type BoardRowType = Uint8Array;

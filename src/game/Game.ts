@@ -1,7 +1,7 @@
-import Board from './Board';
+import Board, { Player } from './Board';
 import { ShipPlacement } from './Ship';
 import {
-  GameSetting, Player, MoveResult, DefaultSettings,
+  GameSetting, MoveResult, DefaultSettings,
 } from './types';
 
 export enum GameState {
@@ -38,32 +38,39 @@ class Game {
   private round: number;
 
   // The current player - the player who can make the next move
-  private currentPlayer: Player;
+  private currentPlayer: string;
+
+  private player1: string;
+
+  private player2: string;
 
   /**
    * Game constructor.
    *
-   * @param firstPlayer The player to make the first move
+   * @param player1 Name of Player 1 (makes the first move)
+   * @param player2 Name of Player 2
    * @param settings The GameSettings which will dictate the Board dimension and
    *                 the numbers of available ships
    */
-  constructor(firstPlayer: Player, settings: GameSetting = DefaultSettings) {
+  constructor(player1: string, player2: string, settings: GameSetting = DefaultSettings) {
     // set the initial state to Created
     this.state = GameState.Created;
     // create a Board instance with the provided GameSettings
     this.board = new Board(settings);
     // initialize the round number and current player
     this.round = 0;
-    this.currentPlayer = firstPlayer;
+    this.player1 = player1;
+    this.player2 = player2;
+    this.currentPlayer = player1;
   }
 
   /**
    * Changes the currentPlayer property to the next player based on the current value.
    */
   private nextPlayer = (): void => {
-    this.currentPlayer = this.currentPlayer === Player.Player1
-      ? Player.Player2
-      : Player.Player1;
+    this.currentPlayer = this.currentPlayer === this.player1
+      ? this.player2
+      : this.player1;
   };
 
   /**
@@ -112,12 +119,12 @@ class Game {
    * If the result of the move is a Hit, the current player has another turn,
    * otherwise the opposing player makes their next move.
    *
-   * @param player The Player making the move
+   * @param player The name of the player making the move
    * @param x The x coordinate of the opposing players grid to hit
    * @param y The y coordinate of the opposing players grid to hit
    * @returns A MoveResult indicating the result of the move.
    */
-  makeMove = (player: Player, x: number, y: number): MoveResult => {
+  makeMove = (player: string, x: number, y: number): MoveResult => {
     // Check that the Game is in the appropriate state
     if (this.state !== GameState.InProgress) {
       throw new Error('Game error - game is not in progress');
@@ -130,7 +137,11 @@ class Game {
 
     // Perform the cell hit - this will throw if coords are out of
     // bounds, or cell has already been hit
-    const result = this.board.hitCell(player, x, y);
+    const result = this.board.hitCell(
+      player === this.player1 ? Player.Player1 : Player.Player2,
+      x,
+      y,
+    );
 
     // Advance the round number
     this.round += 1;
@@ -155,7 +166,7 @@ class Game {
    *
    * @returns The current Player
    */
-  getCurrentPlayer = (): Player => this.currentPlayer;
+  getCurrentPlayer = (): string => this.currentPlayer;
 
   /**
    * Get the current Game state.
