@@ -64,7 +64,7 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   }
 
   // if the ticket is valid, and its data corresponds to the websocket
-  if (ticket && errorMessage !== null) {
+  if (ticket && errorMessage === null) {
     // let the GameService know that the socket is authenticated
     GameRoomService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
     // set the socket state
