@@ -7,12 +7,15 @@ import {
   AuthenticatedResponseMessage,
   ErrorMessage,
   IncomingMessageCode,
+  OpponentMoveResultMessage,
   OutgoingMessageCode,
+  OwnMoveResultMessage,
   RoomStatusResponseMessage,
   ShootMessage,
 } from './MessageTypes';
 import GameRoomService from '../services/GameRoomService';
 import ActiveGameService from '../services/ActiveGameService';
+import GameplayError from '../game/GameplayError';
 
 const messageDecoder = new TextDecoder();
 
@@ -87,8 +90,65 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   }
 };
 
-const handleShootMessage = (_ws: WebSocket<WSData>, _message: ShootMessage): void => {
+const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void => {
+  const { roomIsActive, roomID, username } = ws.getUserData();
 
+  if (!roomIsActive) {
+    const response: ErrorMessage = {
+      code: OutgoingMessageCode.Error,
+      message: 'Can\'t make move, game is not active.',
+    };
+
+    ws.send(JSON.stringify(response));
+    return;
+  }
+
+  try {
+    const { x, y } = message;
+    const {
+      result,
+      currentPlayer,
+      opponentWS,
+    } = ActiveGameService.makeMove(roomID, username, x, y);
+
+    const ownResponse: OwnMoveResultMessage = {
+      code: OutgoingMessageCode.OwnMoveResult,
+      x,
+      y,
+      result,
+      currentPlayer,
+    };
+
+    const opponentResponse: OpponentMoveResultMessage = {
+      code: OutgoingMessageCode.OpponentMoveResult,
+      x,
+      y,
+      result,
+      currentPlayer,
+    };
+
+    ws.send(JSON.stringify(ownResponse));
+    opponentWS.send(JSON.stringify(opponentResponse));
+  } catch (error) {
+    if (error instanceof GameplayError) {
+      const response: ErrorMessage = {
+        code: OutgoingMessageCode.Error,
+        message: error.message,
+      };
+
+      ws.send(JSON.stringify(response));
+    } else {
+      let errorMessage = 'An unknown error has occured';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      const wsData = ws.getUserData();
+      wsData.errorMessage = errorMessage;
+      wsData.state = WSState.Error;
+      handleErrorState(ws);
+    }
+  }
 };
 
 const handleRoomStatusRequestMessage = (ws: WebSocket<WSData>) => {

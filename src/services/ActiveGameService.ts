@@ -1,3 +1,6 @@
+import { WebSocket } from 'uWebSockets.js';
+import Game from '../game/Game';
+import { MoveResult } from '../game/types';
 import {
   GameRoom,
   ActiveGameRoom,
@@ -5,6 +8,7 @@ import {
   gameRoomIsActive,
 } from '../models/GameRoom';
 import EntityNotFoundError from './errors/EntityNotFoundError';
+import { WSData } from '../models/WSData';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -16,7 +20,11 @@ const addGameRoom = (room: GameRoom): void => {
     throw new Error('GameRoom has missing members, cannot add it to active game rooms');
   }
 
-  const activeRoom: ActiveGameRoom = { ...room };
+  const gameInstance = new Game(room.userP1.username, room.userP2.username, room.gameSettings);
+  gameInstance.initialize(room.p1Placements, room.p2Placements);
+  gameInstance.start();
+
+  const activeRoom: ActiveGameRoom = { ...room, gameInstance };
 
   const p1WSData = activeRoom.p1socket.getUserData();
   const p2WSData = activeRoom.p2socket.getUserData();
@@ -33,7 +41,7 @@ const addGameRoom = (room: GameRoom): void => {
  * @returns The GameRoom reference, or throws an EntityNotFoundError if no room is
  *          found for the given Id.
  */
-const getRoom = (id: string): GameRoom => {
+const getRoom = (id: string): ActiveGameRoom => {
   const room = activeRooms.get(id);
   if (!room) {
     throw new EntityNotFoundError('GameRoom', id);
@@ -58,6 +66,24 @@ const getRoomStatus = (roomID: string): GameRoomStatus => {
     p1ShipsPlaced: room.p1Placements !== undefined,
     p2ShipsPlaced: room.p2Placements !== undefined,
     currentPlayer: room.userP1.username,
+  };
+};
+
+const makeMove = (
+  roomID: string,
+  username: string,
+  x: number,
+  y: number,
+): { result: MoveResult, currentPlayer: string, opponentWS: WebSocket<WSData> } => {
+  const room = getRoom(roomID);
+
+  const result = room.gameInstance.makeMove(username, x, y);
+  const currentPlayer = room.gameInstance.getCurrentPlayer();
+
+  return {
+    result,
+    currentPlayer,
+    opponentWS: username === room.userP1.username ? room.p2socket : room.p1socket,
   };
 };
 
@@ -451,4 +477,5 @@ const getRoomStatus = (roomID: string): GameRoomStatus => {
 export default {
   addGameRoom,
   getRoomStatus,
+  makeMove,
 };

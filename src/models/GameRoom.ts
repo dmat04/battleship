@@ -3,6 +3,7 @@ import { GameSetting } from '../game/types';
 import type { User } from './User';
 import type { WSData } from './WSData';
 import { ShipPlacement } from '../game/Ship';
+import Game from '../game/Game';
 
 export interface GameRoomStatus {
   player1: string;
@@ -34,6 +35,7 @@ export interface ActiveGameRoom {
   readonly p2Placements: ShipPlacement[];
   readonly p1socket: WebSocket<WSData>;
   readonly p2socket: WebSocket<WSData>;
+  gameInstance: Game;
 }
 
 /**
