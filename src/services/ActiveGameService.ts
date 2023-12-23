@@ -15,25 +15,6 @@ import { WSData } from '../models/WSData';
  */
 const activeRooms: Map<string, ActiveGameRoom> = new Map<string, ActiveGameRoom>();
 
-const addGameRoom = (room: GameRoom): void => {
-  if (!gameRoomIsActive(room)) {
-    throw new Error('GameRoom has missing members, cannot add it to active game rooms');
-  }
-
-  const gameInstance = new Game(room.userP1.username, room.userP2.username, room.gameSettings);
-  gameInstance.initialize(room.p1Placements, room.p2Placements);
-  gameInstance.start();
-
-  const activeRoom: ActiveGameRoom = { ...room, gameInstance };
-
-  const p1WSData = activeRoom.p1socket.getUserData();
-  const p2WSData = activeRoom.p2socket.getUserData();
-  p1WSData.roomIsActive = true;
-  p2WSData.roomIsActive = true;
-
-  activeRooms.set(activeRoom.id, activeRoom);
-};
-
 /**
  * Get a reference to a GameRoom for a given room ID.
  *
@@ -67,6 +48,26 @@ const getRoomStatus = (roomID: string): GameRoomStatus => {
     p2ShipsPlaced: room.p2Placements !== undefined,
     currentPlayer: room.userP1.username,
   };
+};
+
+const addGameRoom = (room: GameRoom): GameRoomStatus => {
+  if (!gameRoomIsActive(room)) {
+    throw new Error('GameRoom has missing members, cannot add it to active game rooms');
+  }
+
+  const gameInstance = new Game(room.userP1.username, room.userP2.username, room.gameSettings);
+  gameInstance.initialize(room.p1Placements, room.p2Placements);
+  gameInstance.start();
+
+  const activeRoom: ActiveGameRoom = { ...room, gameInstance };
+
+  const p1WSData = activeRoom.p1socket.getUserData();
+  const p2WSData = activeRoom.p2socket.getUserData();
+  p1WSData.roomIsActive = true;
+  p2WSData.roomIsActive = true;
+
+  activeRooms.set(activeRoom.id, activeRoom);
+  return getRoomStatus(room.id);
 };
 
 const makeMove = (

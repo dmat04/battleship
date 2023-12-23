@@ -84,9 +84,9 @@ const generateRoomID = (): string => {
  *
  * @param roomID ID of the game room to be transferred.
  */
-const transferRoomToActiveGames = (roomID: string): void => {
+const transferRoomToActiveGames = (roomID: string): GameRoomStatus => {
   const room = removeRoom(roomID);
-  ActiveGameService.addGameRoom(room);
+  return ActiveGameService.addGameRoom(room);
 };
 
 /**
@@ -277,7 +277,7 @@ const placeShips = (
   }
 
   if (gameRoomIsActive(room)) {
-    transferRoomToActiveGames(roomID);
+    return transferRoomToActiveGames(roomID);
   }
 
   return getRoomStatus(roomID);
