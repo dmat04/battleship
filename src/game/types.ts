@@ -42,9 +42,3 @@ export const DefaultSettings: GameSetting = new GameSetting(
     [ShipType.AircraftCarrier, 1],
   ]),
 );
-
-export enum MoveResult {
-  Miss = 'Miss',
-  Hit = 'Hit',
-  GameWon = 'GameWon',
-}

@@ -1,7 +1,5 @@
 import Ship, { ShipOrientation, ShipPlacement, ShipType } from './Ship';
-import {
-  GameSetting, MoveResult, DefaultSettings,
-} from './types';
+import { GameSetting, DefaultSettings } from './types';
 import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
 
@@ -15,6 +13,17 @@ export enum CellState {
 export enum Player {
   Player1 = 1,
   Player2 = 2,
+}
+
+export interface MoveResult {
+  hit: boolean,
+  gameWon: boolean,
+  shipSunk?: ShipPlacement,
+}
+
+interface ShipState {
+  ship: ShipPlacement;
+  aliveCells: number;
 }
 
 type BoardRowType = Uint8Array;
@@ -36,14 +45,14 @@ class Board {
   // Player 1's cell grid
   private player1Board: PlayerBoard;
 
-  // Player 1's count of hits against Player 2's ships
-  private player1HitCount = 0;
+  // Player 1's ship states - counters for number of 'alive' cells for each ship
+  private p1Ships: ShipState[] = [];
 
   // Player 2's cell grid
   private player2Board: PlayerBoard;
 
-  // Player 2's count of hits against Player 1's ships
-  private player2HitCount = 0;
+  // Player 2's ship states - counters for number of 'alive' cells for each ship
+  private p2Ships: ShipState[] = [];
 
   /**
    * Creates an instance of Board. Initializes each players grids with
@@ -78,6 +87,11 @@ class Board {
 
     return board;
   };
+
+  private static initShipStates = (ships: ShipPlacement[]): ShipState[] => ships.map((ship) => ({
+    ship,
+    aliveCells: Ship.Get(ship.shipType).size,
+  }));
 
   /**
    * Check if a ShipPlacement has coordinates within the grid.
@@ -395,10 +409,12 @@ class Board {
   placePlayer1Ships = (ships: ShipPlacement[]): void => {
     try {
       Board.placeShips(this.player1Board, ships, this.settings);
+      this.p1Ships = Board.initShipStates(ships);
     } catch (error) {
       // If an error has occured during ship placement, reset the
       // player board before passing on the error
       this.player1Board = Board.initPlayerBoard(this.settings);
+      this.p1Ships = [];
       throw error;
     }
   };
@@ -416,10 +432,12 @@ class Board {
   placePlayer2Ships = (ships: ShipPlacement[]): void => {
     try {
       Board.placeShips(this.player2Board, ships, this.settings);
+      this.p2Ships = Board.initShipStates(ships);
     } catch (error) {
       // If an error has occured during ship placement, reset the
       // player board before passing on the error
       this.player2Board = Board.initPlayerBoard(this.settings);
+      this.p2Ships = [];
       throw error;
     }
   };
@@ -434,6 +452,37 @@ class Board {
     const player2Copy = this.player2Board.map((row) => row.map((it) => it));
 
     return [player1Copy, player2Copy];
+  };
+
+  /**
+   * Get the state of the ship occupying the cell at (col, row), if any.
+   *
+   * @param player The player whoose board is being checked.
+   * @param col The board column.
+   * @param row The board row.
+   * @returns The ShipState of a ship which is occupying the given cell position, or
+   *          undefined if the specified cell isn't occupied by a ship.
+   */
+  private getShip = (player: Player, col: number, row: number): ShipState => {
+    const ships = player === Player.Player1
+      ? this.p1Ships
+      : this.p2Ships;
+
+    const found = ships.find(((ship) => {
+      const {
+        x, y, orientation, shipType,
+      } = ship.ship;
+      const { size } = Ship.Get(shipType);
+
+      if (orientation === ShipOrientation.Horizontal) {
+        return row === y && col >= x && col < x + size;
+      }
+      return col === x && row >= y && row < y + size;
+    }));
+
+    if (!found) throw new Error(`No ship at coordinates (${col}, ${row})`);
+
+    return found;
   };
 
   /**
@@ -454,10 +503,12 @@ class Board {
       throw new GameplayError('Hit coordinates out of bounds');
     }
 
+    const opponent: Player = player === Player.Player1 ? Player.Player2 : Player.Player1;
+
     // Get the opponents board
-    const targetBoard = player === Player.Player1
-      ? this.player2Board
-      : this.player1Board;
+    const targetBoard = opponent === Player.Player1
+      ? this.player1Board
+      : this.player2Board;
 
     // Read the current state of the cell to be hit
     const currentState = targetBoard[y][x] as CellState;
@@ -484,29 +535,34 @@ class Board {
     // Set the new state
     targetBoard[y][x] = newState;
 
-    // Decide what to return, Miss by default...
-    let moveResult = MoveResult.Miss;
-    // ... but, if a ship has been hit ...
-    if (newState === CellState.Hit) {
-      // ... the result is MoveResult.Hit ...
-      moveResult = MoveResult.Hit;
+    // Construct a default return value
+    const result: MoveResult = {
+      hit: false,
+      gameWon: false,
+      shipSunk: undefined,
+    };
 
-      // ... or if the last 'alive' cell has been hit,
-      // the result is GameWon
-      if (player === Player.Player1) {
-        this.player1HitCount += 1;
-        if (this.player1HitCount === this.settings.totalShipCells) {
-          moveResult = MoveResult.GameWon;
-        }
+    // If a ship has been hit...
+    if (newState === CellState.Hit) {
+      // Set the return property to true
+      result.hit = true;
+
+      // Check if a ship has been copletely sunk
+      const shipState = this.getShip(opponent, x, y);
+      shipState.aliveCells -= 1;
+      if (shipState.aliveCells === 0) {
+        result.shipSunk = shipState.ship;
+      }
+
+      // Check if all of the ships are sunk
+      if (opponent === Player.Player1) {
+        result.gameWon = this.p1Ships.every((state) => state.aliveCells === 0);
       } else {
-        this.player2HitCount += 1;
-        if (this.player1HitCount === this.settings.totalShipCells) {
-          moveResult = MoveResult.GameWon;
-        }
+        result.gameWon = this.p2Ships.every((state) => state.aliveCells === 0);
       }
     }
 
-    return moveResult;
+    return result;
   };
 
   /**

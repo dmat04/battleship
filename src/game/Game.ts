@@ -1,8 +1,8 @@
-import Board, { Player } from './Board';
+import Board, { MoveResult, Player } from './Board';
 import GameplayError from './GameplayError';
 import { ShipPlacement } from './Ship';
 import {
-  GameSetting, MoveResult, DefaultSettings,
+  GameSetting, DefaultSettings,
 } from './types';
 
 export enum GameState {
@@ -147,7 +147,7 @@ class Game {
     // Advance the round number
     this.round += 1;
     // If a hit is made, the current player gets another round, ...
-    if (result !== MoveResult.Hit) {
+    if (!result.hit) {
       // .. otherwise move on to the next player
       this.nextPlayer();
     }
