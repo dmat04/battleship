@@ -1,4 +1,4 @@
-import { MoveResult } from '../game/types';
+import { MoveResult } from '../game/Board';
 import { GameRoomStatus } from '../models/GameRoom';
 
 export enum IncomingMessageCode {

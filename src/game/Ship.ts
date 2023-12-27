@@ -3,8 +3,6 @@ import { assertNever } from '../utils/typeUtils';
 /** Maximum ship size (length) */
 export const MAX_SIZE = 5;
 
-export type ShipCounts = Map<ShipType, number>;
-
 export enum ShipType {
   Submarine = 'Submarine',
   Destroyer = 'Destroyer',

@@ -1,4 +1,4 @@
-import Ship, { ShipCounts, ShipType } from './Ship';
+import Ship, { ShipType } from './Ship';
 
 export class GameSetting {
   // Total number of cells occupied by ships (per player)
@@ -11,7 +11,7 @@ export class GameSetting {
   constructor(
     readonly boardWidth: number,
     readonly boardHeight: number,
-    readonly shipCounts: ShipCounts,
+    readonly shipCounts: Map<ShipType, number>,
   ) {
     // count the total number of ships and ship cells
     let shipCount = 0;

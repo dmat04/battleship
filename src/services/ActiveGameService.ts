@@ -1,6 +1,5 @@
 import { WebSocket } from 'uWebSockets.js';
 import Game from '../game/Game';
-import { MoveResult } from '../game/types';
 import {
   GameRoom,
   ActiveGameRoom,
@@ -9,6 +8,7 @@ import {
 } from '../models/GameRoom';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import { WSData } from '../models/WSData';
+import { MoveResult } from '../game/Board';
 
 /**
  * Registry of active game instances, indexed by game Id's
