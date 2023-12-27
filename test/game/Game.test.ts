@@ -1,6 +1,7 @@
+import { MoveResult } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
 import { ShipPlacement } from '../../src/game/Ship';
-import { MoveResult, DefaultSettings } from '../../src/game/types';
+import { DefaultSettings } from '../../src/game/types';
 import {
   p1Placements, p2Placements, firstPlayer, secondPlayer, moves,
 } from './gameTestData.json';
@@ -74,8 +75,12 @@ describe('A game in progress', () => {
         and moves on to the next player`, () => {
     const result = gameSubject.makeMove(firstPlayer, 5, 5);
     const currentPlayer = gameSubject.getCurrentPlayer();
+    const expectedResult: MoveResult = {
+      hit: false,
+      gameWon: false,
+    };
 
-    expect(result).toBe(MoveResult.Miss);
+    expect(result).toEqual(expectedResult);
     expect(currentPlayer).toBe(secondPlayer);
   });
 
@@ -84,7 +89,12 @@ describe('A game in progress', () => {
     const result = gameSubject.makeMove(firstPlayer, 0, 0);
     const currentPlayer = gameSubject.getCurrentPlayer();
 
-    expect(result).toBe(MoveResult.Hit);
+    const expectedResult: MoveResult = {
+      hit: true,
+      gameWon: false,
+    };
+
+    expect(result).toEqual(expectedResult);
     expect(currentPlayer).toBe(firstPlayer);
   });
 
@@ -117,7 +127,7 @@ describe('A game in progress', () => {
       player, x, y, result,
     }) => {
       const actualResult = gameSubject.makeMove(player, x, y);
-      expect(actualResult).toBe(result as MoveResult);
+      expect(actualResult).toEqual(result as MoveResult);
     });
   });
 });
