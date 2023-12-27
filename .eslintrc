@@ -17,7 +17,7 @@
   "extends": [
     "airbnb-base",
     "airbnb-typescript/base",
-    "plugin:jest/recommended",
+    "plugin:jest/recommended"
   ],
   "rules": {
     "no-console": 1
