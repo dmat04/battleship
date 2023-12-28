@@ -5,14 +5,17 @@
 	},
 	"extends": [
 		"airbnb",
+		"airbnb-typescript",
 		"airbnb/hooks",
 		"plugin:import/recommended",
-		"plugin:import/typescript"
+		"plugin:import/typescript",
+		"plugin:react/jsx-runtime"
 	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": "latest",
-		"sourceType": "module"
+		"sourceType": "module",
+		"project": "./tsconfig.json"
 	},
 	"plugins": [
 		"@typescript-eslint",
@@ -27,6 +30,7 @@
 			"unnamedComponents": "arrow-function"
 		}],
 		"react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
+		"react/jsx-props-no-spreading": [0],
 		"import/extensions": [1, "never"]
 	}
 }
