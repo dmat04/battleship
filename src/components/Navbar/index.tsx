@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import IconMenu from './assets/ic_menu.svg';
+import IconClose from './assets/ic_close.svg'
 
 const NavContainer = styled.nav`
   display: flex;
@@ -43,7 +45,7 @@ const NavItem = styled.a`
 
 const NavLogo = styled.div`
   aspect-ratio: 1;
-  width: 5rem;
+  width: calc(3 * 8rem / 5);
   margin: 1.5rem;
   background-color: blueviolet;
 `;
@@ -53,12 +55,22 @@ const MobileToggle = styled.button<{ $navOpen: boolean }>`
 
   @media (max-width: 35em) {
     display: block;
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
+    /* position: absolute; */
+    /* top: 2rem;
+    right: 2rem; */
+    margin: 1.5rem;
     z-index: 9999;
-    background: ${(props) => (props.$navOpen ? 'red' : 'blue')};
-    width: 2rem;
+    border: 2px solid #444cf7;
+    border-radius: 50%;
+    background: ${(props) => (
+    props.$navOpen
+      ? `url(${IconClose}), hsl(0 0% 100% / 1)`
+      : `url(${IconMenu}), hsl(0 0% 100% / 1)`
+  )};
+    background-size: 2em 2em;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 3rem;
     aspect-ratio: 1;
   }
 `;
