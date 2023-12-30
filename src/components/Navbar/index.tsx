@@ -2,29 +2,35 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import IconMenu from '../assets/icons/ic_menu.svg';
 import IconClose from '../assets/icons/ic_close.svg';
+import { Theme } from '../assets/themes/themeDefault';
 
-const NavContainer = styled.nav`
-  --bgColor: ${(props) => props.theme.colorBg};
-  --borderColor: ${(props) => props.theme.colorBorder};
+const NavContainer = styled.nav<{ theme: Theme }>`
+  --bg-color: ${(props) => props.theme.colorBg};
+  --border-color: ${(props) => props.theme.colorBorder};
+  --gap: ${(props) => props.theme.paddingSm};
+  --border-size: ${(props) => props.theme.dimensionBorderSm};
+  --nav-height: 8rem;
 
   display: flex;
-  gap: 2rem;
+  gap: var(--gap);
   align-items: center;
   justify-content: space-between;
-  height: calc(8rem + 1px);
-  background-color: var(--bgColor);
+  height: calc(var(--nav-height) + var(--border-size));
+  background-color: var(--bg-color);
   background-image:  
-    linear-gradient(var(--borderColor) 1px, transparent 1px),
-    linear-gradient(to right, var(--borderColor) 1px, transparent 1px);
-  background-size: calc(8rem / 5) calc(8rem / 5);
+    linear-gradient(var(--border-color) var(--border-size), transparent var(--border-size)),
+    linear-gradient(to right, var(--border-color) var(--border-size), transparent var(--border-size));
+  background-size: calc(var(--nav-height) / 5) calc(var(--nav-height) / 5);
   background-position: center top;
 `;
 
-// primary-navigation
-const NavList = styled.ul<{ $navOpen: boolean }>`
+const NavList = styled.ul<{ theme: Theme, navOpen: boolean }>`
+  --gap: ${(props) => props.theme.paddingSm};
+  --duration: ${(props) => props.theme.durationTransitionDefault};
+  
   display: flex;
-  gap: 2rem;
-  padding: 1rem;
+  gap: var(--gap);
+  padding: ${(props) => props.theme.paddingMin};;
   list-style: none;
   background: hsl(0 0% 100% / 0.1);
   backdrop-filter: blur(0.1rem);
@@ -34,9 +40,9 @@ const NavList = styled.ul<{ $navOpen: boolean }>`
     z-index: 1000;
     inset: 0 0 0 20%;
     flex-direction: column;
-    padding: min(20vh, 10rem) 2em;
-    ${(props) => (props.$navOpen ? '' : 'transform: translateX(100%);')}
-    transition: transform 250ms ease-out;
+    padding: min(20vh, 10rem) var(--gap);
+    ${(props) => (props.navOpen ? '' : 'transform: translateX(100%);')}
+    transition: transform var(--duration) ease-out;
   }
 `;
 
@@ -51,32 +57,31 @@ const NavItem = styled.a`
 const NavLogo = styled.div`
   aspect-ratio: 1;
   width: calc(3 * 8rem / 5);
-  margin: 1.5rem;
+  margin: 2rem;
   background-color: blueviolet;
 `;
 
-const MobileToggle = styled.button<{ $navOpen: boolean }>`
+const MobileToggle = styled.button<{ theme: Theme, navOpen: boolean }>`
   display: none;
 
   @media (max-width: 35em) {
+    --border-size: ${(props) => props.theme.dimensionBorder};
+
     display: block;
-    /* position: absolute; */
-    /* top: 2rem;
-    right: 2rem; */
-    margin: 1.5rem;
+    width: 3rem;
+    aspect-ratio: 1;
     z-index: 9999;
-    border: 2px solid #444cf7;
+    margin: ${(props) => props.theme.paddingSm};
+    border: var(--border-size) solid #444cf7;
     border-radius: 50%;
     background: ${(props) => (
-    props.$navOpen
+    props.navOpen
       ? `url(${IconClose}), hsl(0 0% 100% / 1)`
       : `url(${IconMenu}), hsl(0 0% 100% / 1)`
   )};
-    background-size: 2em 2em;
+    background-size: 2rem 2rem;
     background-position: center;
     background-repeat: no-repeat;
-    width: 3rem;
-    aspect-ratio: 1;
   }
 `;
 
@@ -86,8 +91,8 @@ const Navbar = () => {
   return (
     <NavContainer>
       <NavLogo />
-      <MobileToggle $navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
-      <NavList $navOpen={navOpen}>
+      <MobileToggle navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
+      <NavList navOpen={navOpen}>
         <NavListItem>
           <NavItem>
             Link1

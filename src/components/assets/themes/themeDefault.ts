@@ -1,4 +1,14 @@
-const themeDefault = {
+export interface Theme {
+  paddingMin: string;
+  paddingSm: string;
+  colorBg: string;
+  colorBorder: string;
+  durationTransitionDefault: string;
+  dimensionBorderSm: string;
+  dimensionBorder: string;
+}
+
+const themeDefault: Theme = {
   paddingMin: '1rem',
   paddingSm: '2rem',
   colorBg: '#e5e5f7',
