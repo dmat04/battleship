@@ -23,7 +23,7 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   background-position: center top;
 `;
 
-const NavList = styled.ul<{ theme: Theme, navOpen: boolean }>`
+const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
   --gap: ${(props) => props.theme.paddingSm};
   --duration: ${(props) => props.theme.durationTransitionDefault};
   
@@ -40,7 +40,7 @@ const NavList = styled.ul<{ theme: Theme, navOpen: boolean }>`
     inset: 0 0 0 20%;
     flex-direction: column;
     padding: min(20vh, 10rem) var(--gap);
-    ${(props) => (props.navOpen ? '' : 'transform: translateX(100%);')}
+    ${(props) => (props.$navOpen ? '' : 'transform: translateX(100%);')}
     transition: transform var(--duration) ease-out;
   }
 `;
@@ -63,7 +63,7 @@ const NavLogo = styled.div`
   background-color: #4e2e82;
 `;
 
-const MobileToggle = styled.button<{ theme: Theme, navOpen: boolean }>`
+const MobileToggle = styled.button<{ theme: Theme, $navOpen: boolean }>`
   display: none;
 
   @media (max-width: 35em) {
@@ -77,7 +77,7 @@ const MobileToggle = styled.button<{ theme: Theme, navOpen: boolean }>`
     border: var(--border-size) solid #444cf7;
     border-radius: 50%;
     background: ${(props) => (
-    props.navOpen
+    props.$navOpen
       ? `url(${IconClose}), hsl(0 0% 100% / 1)`
       : `url(${IconMenu}), hsl(0 0% 100% / 1)`
   )};
@@ -93,8 +93,8 @@ const Navbar = () => {
   return (
     <NavContainer>
       <NavLogo>Battleship</NavLogo>
-      <MobileToggle navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
-      <NavList navOpen={navOpen}>
+      <MobileToggle $navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
+      <NavList $navOpen={navOpen}>
         <NavListItem>
           <NavItem>
             Link1
