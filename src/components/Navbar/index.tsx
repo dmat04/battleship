@@ -12,7 +12,6 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   --nav-height: 8rem;
 
   display: flex;
-  gap: var(--gap);
   align-items: center;
   justify-content: space-between;
   height: calc(var(--nav-height) + var(--border-size));
@@ -55,10 +54,13 @@ const NavItem = styled.a`
 `;
 
 const NavLogo = styled.div`
-  aspect-ratio: 1;
-  width: calc(3 * 8rem / 5);
+  font-size: x-large;
+  font-weight: bolder;
   margin: 2rem;
-  background-color: blueviolet;
+  padding: 1rem 2rem;
+  color: white;
+  border-radius: 10px;
+  background-color: #4e2e82;
 `;
 
 const MobileToggle = styled.button<{ theme: Theme, navOpen: boolean }>`
@@ -71,7 +73,7 @@ const MobileToggle = styled.button<{ theme: Theme, navOpen: boolean }>`
     width: 3rem;
     aspect-ratio: 1;
     z-index: 9999;
-    margin: ${(props) => props.theme.paddingSm};
+    margin-right: ${(props) => props.theme.paddingSm};
     border: var(--border-size) solid #444cf7;
     border-radius: 50%;
     background: ${(props) => (
@@ -90,7 +92,7 @@ const Navbar = () => {
 
   return (
     <NavContainer>
-      <NavLogo />
+      <NavLogo>Battleship</NavLogo>
       <MobileToggle navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
       <NavList navOpen={navOpen}>
         <NavListItem>
