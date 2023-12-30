@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import IconMenu from './assets/ic_menu.svg';
-import IconClose from './assets/ic_close.svg'
+import IconMenu from '../assets/icons/ic_menu.svg';
+import IconClose from '../assets/icons/ic_close.svg';
 
 const NavContainer = styled.nav`
+  --bgColor: ${(props) => props.theme.colorBg};
+  --borderColor: ${(props) => props.theme.colorBorder};
+
   display: flex;
   gap: 2rem;
   align-items: center;
   justify-content: space-between;
   height: calc(8rem + 1px);
-  background-color: #e5e5f7;
-  background-image:  linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(to right, #444cf7 1px, #e5e5f7 1px);
+  background-color: var(--bgColor);
+  background-image:  
+    linear-gradient(var(--borderColor) 1px, transparent 1px),
+    linear-gradient(to right, var(--borderColor) 1px, transparent 1px);
   background-size: calc(8rem / 5) calc(8rem / 5);
   background-position: center top;
 `;
@@ -100,7 +105,7 @@ const Navbar = () => {
         </NavListItem>
       </NavList>
     </NavContainer>
-  )
+  );
 };
 
 export default Navbar;
