@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import App from './App';
 import { store } from './store/store';
+
+const apolloClient = new ApolloClient({
+  uri: 'http://localhost:4000',
+  cache: new InMemoryCache(),
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -10,8 +16,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <ApolloProvider client={apolloClient}>
+      <ReduxProvider store={store}>
+        <App />
+      </ReduxProvider>
+    </ApolloProvider>
   </React.StrictMode>,
 );
