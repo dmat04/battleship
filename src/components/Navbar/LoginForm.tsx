@@ -4,15 +4,20 @@ import { Theme } from '../assets/themes/themeDefault';
 
 const FormContainer = styled.form<{ theme: Theme }>`
   display: flex;
+  align-items: flex-start;
   gap: ${(props) => props.theme.paddingMin};
+
+  @media (max-width: 35em) {
+    flex-direction: column;
+  }
 `;
 
 const Input = styled.input`
-  
+  width: 100%;
 `;
 
 const SubmitButton = styled.button`
-  
+
 `;
 
 export interface PropTypes {

@@ -104,12 +104,12 @@ const Navbar = () => {
         </NavListItem>
         <NavListItem>
           <NavItem>
-            Link2
+            Link A
           </NavItem>
         </NavListItem>
         <NavListItem>
           <NavItem>
-            Link3
+            Link B
           </NavItem>
         </NavListItem>
       </NavList>
