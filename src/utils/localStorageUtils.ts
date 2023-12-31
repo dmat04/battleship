@@ -3,7 +3,7 @@ import { isString } from './typeUtils';
 
 const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
 
-export const saveAccessToken = (loginResult: LoginResult): boolean => {
+const saveAccessToken = (loginResult: LoginResult): boolean => {
   try {
     const value = JSON.stringify(loginResult);
     localStorage.setItem(KEY_AUTH_TOKEN, value);
@@ -13,7 +13,7 @@ export const saveAccessToken = (loginResult: LoginResult): boolean => {
   }
 };
 
-export const getAccessToken = (): LoginResult | null => {
+const getAccessToken = (): LoginResult | null => {
   const value = localStorage.getItem(KEY_AUTH_TOKEN);
   if (value === null) return null;
 
@@ -34,4 +34,14 @@ export const getAccessToken = (): LoginResult | null => {
 
   localStorage.removeItem(KEY_AUTH_TOKEN);
   return null;
+};
+
+const clearAccessToken = (): void => {
+  localStorage.removeItem(KEY_AUTH_TOKEN);
+};
+
+export default {
+  saveAccessToken,
+  getAccessToken,
+  clearAccessToken
 };
