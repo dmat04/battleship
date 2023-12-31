@@ -6,6 +6,7 @@ export interface Theme {
   durationTransitionDefault: string;
   dimensionBorderSm: string;
   dimensionBorder: string;
+  dimensionIconSize: string;
 }
 
 const themeDefault: Theme = {
@@ -16,6 +17,7 @@ const themeDefault: Theme = {
   durationTransitionDefault: '250ms',
   dimensionBorderSm: '1px',
   dimensionBorder: '2px',
+  dimensionIconSize: '2rem',
 };
 
 export default themeDefault;

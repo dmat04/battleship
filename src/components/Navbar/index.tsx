@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import IconMenu from '../assets/icons/ic_menu.svg';
 import IconClose from '../assets/icons/ic_close.svg';
 import { Theme } from '../assets/themes/themeDefault';
+import UserItem from './UserItem';
 
 const NavContainer = styled.nav<{ theme: Theme }>`
   --bg-color: ${(props) => props.theme.colorBg};
@@ -37,7 +38,7 @@ const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
   @media (max-width: 35em) {
     position: fixed;
     z-index: 1000;
-    inset: 0 0 0 20%;
+    inset: 0 0 0 0;
     flex-direction: column;
     padding: min(20vh, 10rem) var(--gap);
     ${(props) => (props.$navOpen ? '' : 'transform: translateX(100%);')}
@@ -68,6 +69,7 @@ const MobileToggle = styled.button<{ theme: Theme, $navOpen: boolean }>`
 
   @media (max-width: 35em) {
     --border-size: ${(props) => props.theme.dimensionBorder};
+    --bg-size: ${(props) => props.theme.dimensionIconSize};
 
     display: block;
     width: 3rem;
@@ -81,7 +83,7 @@ const MobileToggle = styled.button<{ theme: Theme, $navOpen: boolean }>`
       ? `url(${IconClose}), hsl(0 0% 100% / 1)`
       : `url(${IconMenu}), hsl(0 0% 100% / 1)`
   )};
-    background-size: 2rem 2rem;
+    background-size: var(--bg-size) var(--bg-size);
     background-position: center;
     background-repeat: no-repeat;
   }
@@ -97,7 +99,7 @@ const Navbar = () => {
       <NavList $navOpen={navOpen}>
         <NavListItem>
           <NavItem>
-            Link1
+            <UserItem />
           </NavItem>
         </NavListItem>
         <NavListItem>
