@@ -1,12 +1,12 @@
-import { CaseReducer, PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getAccessToken } from "../utils/localStorageUtils";
-import { LoginResult } from "../types/ServerTypes";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { LoginResult } from '../types/ServerTypes';
+import LocalStorage from '../utils/localStorageUtils';
 
 export type AuthSliceState = LoginResult | null;
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: null as AuthSliceState,
+  initialState: LocalStorage.getAccessToken(),
   reducers: {
     setAuth: (_, action: PayloadAction<LoginResult>) => action.payload,
     clearAuth: () => null,
