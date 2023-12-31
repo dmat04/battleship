@@ -25,7 +25,9 @@ const LoginForm = ({ login }: PropTypes) => {
 
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    login(username, password);
+    if (username.length > 0 && password.length > 0) {
+      login(username, password);
+    }
   };
 
   return (
@@ -34,13 +36,13 @@ const LoginForm = ({ login }: PropTypes) => {
         type="text"
         placeholder="Username"
         value={username}
-        onChange={(ev) => setUsername(ev.target.value)}
+        onChange={(ev) => setUsername(ev.target.value.trim())}
       />
       <Input
         type="password"
         placeholder="Password"
         value={password}
-        onChange={(ev) => setPassword(ev.target.value)}
+        onChange={(ev) => setPassword(ev.target.value.trim())}
       />
       <SubmitButton type="submit">Login</SubmitButton>
     </FormContainer>

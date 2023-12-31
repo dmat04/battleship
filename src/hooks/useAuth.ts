@@ -21,7 +21,7 @@ const useAuth = () => {
   const login = async (username: string, password: string): Promise<void> => {
     const response = await doLogin({ variables: { username, password } });
 
-    if (response.data) {
+    if (response.data.registeredLogin !== null) {
       const newToken = response.data.registeredLogin as LoginResult;
       LocalStorage.saveAccessToken(newToken);
       setError(null);
