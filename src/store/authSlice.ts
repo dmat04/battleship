@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { LoginResult } from '../types/ServerTypes';
+import { LoginResult } from '../__generated__/graphql';
 import LocalStorage from '../utils/localStorageUtils';
 
 export type AuthSliceState = LoginResult | null;

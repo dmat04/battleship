@@ -1,4 +1,4 @@
-import { LoginResult } from '../types/ServerTypes';
+import { LoginResult } from '../__generated__/graphql';
 import { isString } from './typeUtils';
 
 const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
@@ -43,5 +43,5 @@ const clearAccessToken = (): void => {
 export default {
   saveAccessToken,
   getAccessToken,
-  clearAccessToken
+  clearAccessToken,
 };
