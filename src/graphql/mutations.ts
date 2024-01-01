@@ -9,3 +9,22 @@ export const REGISTERED_LOGIN = gql`
     }
 }
 `;
+
+export const CREATE_ROOM = gql`
+mutation createRoom {
+  createRoom {
+    roomID
+    inviteCode
+    wsAuthCode
+  }
+}
+`;
+
+export const JOIN_ROOM = gql`
+mutation joinRoom($inviteCode: String!) {
+  joinRoom(inviteCode: $inviteCode) {
+    roomID
+    wsAuthCode
+  }
+}
+`;
