@@ -1,15 +1,6 @@
-export interface Theme {
-  paddingMin: string;
-  paddingSm: string;
-  colorBg: string;
-  colorBorder: string;
-  durationTransitionDefault: string;
-  dimensionBorderSm: string;
-  dimensionBorder: string;
-  dimensionIconSize: string;
-}
+export type Theme = typeof themeDefault;
 
-const themeDefault: Theme = {
+const themeDefault = {
   paddingMin: '1rem',
   paddingSm: '2rem',
   colorBg: '#e5e5f7',
