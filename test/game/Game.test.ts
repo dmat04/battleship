@@ -1,7 +1,7 @@
 import { MoveResult } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
 import { ShipPlacement } from '../../src/game/Ship';
-import { DefaultSettings } from '../../src/game/types';
+import { DefaultSettings } from '../../src/game/GameSettings';
 import {
   p1Placements, p2Placements, firstPlayer, secondPlayer, moves,
 } from './gameTestData.json';

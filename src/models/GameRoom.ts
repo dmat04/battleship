@@ -1,5 +1,5 @@
 import { WebSocket } from 'uWebSockets.js';
-import { GameSetting } from '../game/types';
+import { GameSetting } from '../game/GameSettings';
 import type { User } from './User';
 import type { WSData } from './WSData';
 import { ShipPlacement } from '../game/Ship';

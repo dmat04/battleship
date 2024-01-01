@@ -3,7 +3,7 @@ import GameplayError from './GameplayError';
 import { ShipPlacement } from './Ship';
 import {
   GameSetting, DefaultSettings,
-} from './types';
+} from './GameSettings';
 
 export enum GameState {
   Created = 'Created',

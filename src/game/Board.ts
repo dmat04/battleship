@@ -1,5 +1,5 @@
-import Ship, { ShipOrientation, ShipPlacement, ShipType } from './Ship';
-import { GameSetting, DefaultSettings } from './types';
+import { ShipOrientation, ShipPlacement, ShipClassName } from './Ship';
+import { GameSetting, DefaultSettings } from './GameSettings';
 import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
 
@@ -90,7 +90,7 @@ class Board {
 
   private static initShipStates = (ships: ShipPlacement[]): ShipState[] => ships.map((ship) => ({
     ship,
-    aliveCells: Ship.Get(ship.shipType).size,
+    aliveCells: ship.shipClass.size,
   }));
 
   /**
@@ -109,11 +109,8 @@ class Board {
   private static checkPosition = (placement: ShipPlacement, settings: GameSetting): boolean => {
     // Destructure the member properties
     const {
-      shipType, orientation, x, y,
+      shipClass, orientation, x, y,
     } = placement;
-
-    // Get the ship size for the given ship type
-    const shipSize = Ship.Get(shipType).size;
 
     // Check that the whole ship is within bounds according to its orientation.
     // The coordinates (x, y) of the ship mark the topmost part of the ship when
@@ -127,12 +124,12 @@ class Board {
         // ... and the topmost part (y) is >0 and the bottom-most part (y+shipSize)
         // is not greater than the board height (also means y by itself cannot be
         // greater than board height).
-        if (y < 0 || y + shipSize > settings.boardHeight) return false;
+        if (y < 0 || y + shipClass.size > settings.boardHeight) return false;
         return true;
       case ShipOrientation.Horizontal:
         // Analogous to the case for vartical orientation, same checks but
         // the directions are switched
-        if (x < 0 || x + shipSize > settings.boardWidth) return false;
+        if (x < 0 || x + shipClass.size > settings.boardWidth) return false;
         if (y < 0 || y >= settings.boardHeight) return false;
         return true;
       default:
@@ -167,20 +164,19 @@ class Board {
   ): boolean => {
     // Destructure the placement values
     const {
-      shipType, x, y, orientation,
+      shipClass, x, y, orientation,
     } = ship;
-    const shipSize = Ship.Get(shipType).size;
     const { boardWidth, boardHeight } = settings;
 
     // Calculate the bounds within which no other ship
     // should be placed
     const xStart = Math.max(0, x - 1);
     const xEnd = orientation === ShipOrientation.Horizontal
-      ? Math.min(boardWidth - 1, x + shipSize)
+      ? Math.min(boardWidth - 1, x + shipClass.size)
       : Math.min(boardWidth - 1, x + 1);
     const yStart = Math.max(0, y - 1);
     const yEnd = orientation === ShipOrientation.Vertical
-      ? Math.min(boardHeight - 1, y + shipSize)
+      ? Math.min(boardHeight - 1, y + shipClass.size)
       : Math.min(boardHeight - 1, y + 1);
 
     // Check that no other ship is placed within the calculated bounds
@@ -217,9 +213,8 @@ class Board {
   ): void => {
     // Destructure the placement values
     const {
-      shipType, x, y,
+      shipClass, x, y,
     } = ship;
-    const shipSize = Ship.Get(shipType).size;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, ship, settings)) {
@@ -229,7 +224,7 @@ class Board {
     // After the overlap check is completed, place the ship.
     // When placing a ship vertically, in each of the rows within the
     // range [y, y+shipSize> the cell at position x needs to be marked Populated
-    for (let row = y; row - y < shipSize; row += 1) {
+    for (let row = y; row - y < shipClass.size; row += 1) {
       const rowArray = playerBoard[row];
 
       // Mark the appropriate cell Populated
@@ -257,9 +252,8 @@ class Board {
   ): void => {
     // Destructure the placement values
     const {
-      shipType, x, y,
+      shipClass, x, y,
     } = ship;
-    const shipSize = Ship.Get(shipType).size;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, ship, settings)) {
@@ -272,7 +266,7 @@ class Board {
 
     // ... and within the row, the cells within the range [x, x+shipSIze> need
     // to be marked Populated
-    for (let pos = x; pos - x < shipSize; pos += 1) {
+    for (let pos = x; pos - x < shipClass.size; pos += 1) {
       // Mark the cell Populated
       row[pos] = CellState.Populated;
     }
@@ -346,7 +340,7 @@ class Board {
     settings: GameSetting,
   ): string[] => {
     // Create a copy of the specified ship counts provided by the GameSettings
-    const shipCounts = new Map<ShipType, number>(settings.shipCounts);
+    const shipCounts = new Map<ShipClassName, number>(settings.shipCounts);
     // Counter for number of ships placed
     let placed = 0;
 
@@ -359,16 +353,16 @@ class Board {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
-          `${placement.shipType} at (${placement.x}, ${placement.y}) `
+          `${placement.shipClass.type} at (${placement.x}, ${placement.y}) `
           + `${placement.orientation.charAt(0)} - out of bounds`,
         );
       }
 
       // Check to make sure that no extra instances of the current ship type
       // are attempted to be placed
-      const remaining = shipCounts.get(placement.shipType) ?? 0;
+      const remaining = shipCounts.get(placement.shipClass.type) ?? 0;
       if (!remaining) {
-        errors.push(`Too many ${placement.shipType}s given`);
+        errors.push(`Too many ${placement.shipClass.type}s given`);
       }
 
       // Attempt to place the ship onto a test board
@@ -377,7 +371,7 @@ class Board {
       } catch {
         // If ship placement failed, ship overlap has been detected.
         errors.push(
-          `${placement.shipType} at (${placement.x}, ${placement.y}) `
+          `${placement.shipClass.type} at (${placement.x}, ${placement.y}) `
           + `${placement.orientation.charAt(0)} - ship overlap`,
         );
       }
@@ -385,7 +379,7 @@ class Board {
       // Increase the total counter...
       placed += 1;
       // ... and decrease the remaining ships of the placed type
-      shipCounts.set(placement.shipType, remaining - 1);
+      shipCounts.set(placement.shipClass.type, remaining - 1);
     });
 
     // Check that all of the expected ships have been placed
@@ -470,14 +464,13 @@ class Board {
 
     const found = ships.find(((ship) => {
       const {
-        x, y, orientation, shipType,
+        x, y, orientation, shipClass,
       } = ship.ship;
-      const { size } = Ship.Get(shipType);
 
       if (orientation === ShipOrientation.Horizontal) {
-        return row === y && col >= x && col < x + size;
+        return row === y && col >= x && col < x + shipClass.size;
       }
-      return col === x && row >= y && row < y + size;
+      return col === x && row >= y && row < y + shipClass.size;
     }));
 
     if (!found) throw new Error(`No ship at coordinates (${col}, ${row})`);

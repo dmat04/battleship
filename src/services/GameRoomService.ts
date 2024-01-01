@@ -3,7 +3,7 @@ import { WebSocket } from 'uWebSockets.js';
 import AuthService from './AuthService';
 import {
   GameSetting, DefaultSettings,
-} from '../game/types';
+} from '../game/GameSettings';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import type { GameRoom } from '../models/GameRoom';

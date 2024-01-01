@@ -3,7 +3,7 @@ import { assertNever } from '../utils/typeUtils';
 /** Maximum ship size (length) */
 export const MAX_SIZE = 5;
 
-export enum ShipType {
+export enum ShipClassName {
   Submarine = 'Submarine',
   Destroyer = 'Destroyer',
   Cruiser = 'Cruiser',
@@ -17,7 +17,7 @@ export enum ShipOrientation {
 }
 
 export interface ShipPlacement {
-  readonly shipType: ShipType;
+  readonly shipClass: ShipClass;
   readonly orientation: ShipOrientation;
   readonly x: number;
   readonly y: number;
@@ -32,27 +32,27 @@ export interface ShipPlacement {
  *
  * @class Ship
  */
-class Ship {
+class ShipClass {
   // The five available ship type instances
-  private static submarineInstance: Ship;
+  private static submarineInstance: ShipClass;
 
-  private static destroyerInstance: Ship;
+  private static destroyerInstance: ShipClass;
 
-  private static cruiserInstance: Ship;
+  private static cruiserInstance: ShipClass;
 
-  private static battleshipInstance: Ship;
+  private static battleshipInstance: ShipClass;
 
-  private static aircraftCarrierInstance: Ship;
+  private static aircraftCarrierInstance: ShipClass;
 
   /**
    * Creates an instance of Ship.
-   * @param {ShipType} type - The type of the ship
+   * @param {ShipClassName} type - The type of the ship
    * @param {number} size - The size of the ship, must be 0 < size <= MAX_SIZE
    * @memberof Ship
    */
   private constructor(
-    readonly type: ShipType,
-    readonly size: number,
+    public readonly type: ShipClassName,
+    public readonly size: number,
   ) {
     if (
       !Number.isInteger(size)
@@ -67,21 +67,21 @@ class Ship {
    * Get the ship instance for a given ship type
    *
    * @static
-   * @param {ShipType} type - The type of the ship
+   * @param {ShipClassName} type - The type of the ship
    * @memberof Ship
-   * @returns {Ship}
+   * @returns {ShipClass}
    */
-  public static Get = (type: ShipType): Ship => {
+  public static Get = (type: ShipClassName): ShipClass => {
     switch (type) {
-      case ShipType.Submarine:
+      case ShipClassName.Submarine:
         return this.Submarine();
-      case ShipType.Destroyer:
+      case ShipClassName.Destroyer:
         return this.Destroyer();
-      case ShipType.Cruiser:
+      case ShipClassName.Cruiser:
         return this.Cruiser();
-      case ShipType.Battleship:
+      case ShipClassName.Battleship:
         return this.Battleship();
-      case ShipType.AircraftCarrier:
+      case ShipClassName.AircraftCarrier:
         return this.AircraftCarrier();
       default:
         return assertNever(type);
@@ -94,9 +94,9 @@ class Ship {
    * @static
    * @memberof Ship
    */
-  public static Submarine = (): Ship => {
+  public static Submarine = (): ShipClass => {
     if (!this.submarineInstance) {
-      this.submarineInstance = new Ship(ShipType.Submarine, 1);
+      this.submarineInstance = new ShipClass(ShipClassName.Submarine, 1);
     }
 
     return this.submarineInstance;
@@ -108,9 +108,9 @@ class Ship {
   * @static
   * @memberof Ship
   */
-  public static Destroyer = (): Ship => {
+  public static Destroyer = (): ShipClass => {
     if (!this.destroyerInstance) {
-      this.destroyerInstance = new Ship(ShipType.Destroyer, 2);
+      this.destroyerInstance = new ShipClass(ShipClassName.Destroyer, 2);
     }
 
     return this.destroyerInstance;
@@ -122,9 +122,9 @@ class Ship {
   * @static
   * @memberof Ship
   */
-  public static Cruiser = (): Ship => {
+  public static Cruiser = (): ShipClass => {
     if (!this.cruiserInstance) {
-      this.cruiserInstance = new Ship(ShipType.Cruiser, 3);
+      this.cruiserInstance = new ShipClass(ShipClassName.Cruiser, 3);
     }
 
     return this.cruiserInstance;
@@ -136,9 +136,9 @@ class Ship {
   * @static
   * @memberof Ship
   */
-  public static Battleship = (): Ship => {
+  public static Battleship = (): ShipClass => {
     if (!this.battleshipInstance) {
-      this.battleshipInstance = new Ship(ShipType.Battleship, 4);
+      this.battleshipInstance = new ShipClass(ShipClassName.Battleship, 4);
     }
 
     return this.battleshipInstance;
@@ -150,13 +150,13 @@ class Ship {
   * @static
   * @memberof Ship
   */
-  public static AircraftCarrier = (): Ship => {
+  public static AircraftCarrier = (): ShipClass => {
     if (!this.aircraftCarrierInstance) {
-      this.aircraftCarrierInstance = new Ship(ShipType.AircraftCarrier, 5);
+      this.aircraftCarrierInstance = new ShipClass(ShipClassName.AircraftCarrier, 5);
     }
 
     return this.aircraftCarrierInstance;
   };
 }
 
-export default Ship;
+export default ShipClass;

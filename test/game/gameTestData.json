@@ -1,43 +1,64 @@
 {
   "p1Placements": [
     {
-      "shipType": "AircraftCarrier",
+      "shipClass": {
+        "type": "AircraftCarrier",
+        "size": 5
+      },
       "orientation": "Vertical",
       "x": 9,
       "y": 1
     },
     {
-      "shipType": "Battleship",
+      "shipClass": {
+        "type": "Battleship",
+        "size": 4
+      },
       "orientation": "Vertical",
       "x": 7,
       "y": 4
     },
     {
-      "shipType": "Cruiser",
+      "shipClass": {
+        "type": "Cruiser",
+        "size": 3
+      },
       "orientation": "Horizontal",
       "x": 7,
       "y": 9
     },
     {
-      "shipType": "Destroyer",
+      "shipClass": {
+        "type": "Destroyer",
+        "size": 2
+      },
       "orientation": "Vertical",
       "x": 1,
       "y": 1
     },
     {
-      "shipType": "Destroyer",
+      "shipClass": {
+        "type": "Destroyer",
+        "size": 2
+      },
       "orientation": "Horizontal",
       "x": 3,
       "y": 4
     },
     {
-      "shipType": "Submarine",
+      "shipClass": {
+        "type": "Submarine",
+        "size": 1
+      },
       "orientation": "Vertical",
       "x": 3,
       "y": 2
     },
     {
-      "shipType": "Submarine",
+      "shipClass": {
+        "type": "Submarine",
+        "size": 1
+      },
       "orientation": "Vertical",
       "x": 0,
       "y": 9
@@ -45,43 +66,64 @@
   ],
   "p2Placements": [
     {
-      "shipType": "AircraftCarrier",
+      "shipClass": {
+        "type": "AircraftCarrier",
+        "size": 5
+      },
       "orientation": "Horizontal",
       "x": 3,
       "y": 9
     },
     {
-      "shipType": "Battleship",
+      "shipClass": {
+        "type": "Battleship",
+        "size": 4
+      },
       "orientation": "Vertical",
       "x": 8,
       "y": 3
     },
     {
-      "shipType": "Cruiser",
+      "shipClass": {
+        "type": "Cruiser",
+        "size": 3
+      },
       "orientation": "Horizontal",
       "x": 0,
       "y": 0
     },
     {
-      "shipType": "Destroyer",
+      "shipClass": {
+        "type": "Destroyer",
+        "size": 2
+      },
       "orientation": "Vertical",
       "x": 0,
       "y": 6
     },
     {
-      "shipType": "Destroyer",
+      "shipClass": {
+        "type": "Destroyer",
+        "size": 2
+      },
       "orientation": "Horizontal",
       "x": 0,
       "y": 9
     },
     {
-      "shipType": "Submarine",
+      "shipClass": {
+        "type": "Submarine",
+        "size": 1
+      },
       "orientation": "Horizontal",
       "x": 8,
       "y": 1
     },
     {
-      "shipType": "Submarine",
+      "shipClass": {
+        "type": "Submarine",
+        "size": 1
+      },
       "orientation": "Horizontal",
       "x": 9,
       "y": 9
@@ -90,34 +132,347 @@
   "firstPlayer": "playerA",
   "secondPlayer": "playerB",
   "moves": [
-    {"player": "playerA", "x": 0, "y": 3, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerB", "x": 0, "y": 0, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerA", "x": 0, "y": 9, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerB", "x": 1, "y": 0, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerA", "x": 1, "y": 8, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerA", "x": 2, "y": 8, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerB", "x": 1, "y": 1, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerB", "x": 1, "y": 2, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Destroyer", "orientation": "Vertical", "x": 1, "y": 1 }}},
-    {"player": "playerB", "x": 3, "y": 2, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Submarine", "orientation": "Vertical", "x": 3, "y": 2 }}},
-    {"player": "playerB", "x": 3, "y": 1, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerA", "x": 3, "y": 8, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerB", "x": 3, "y": 0, "result": { "hit": false, "gameWon": false }},
-    {"player": "playerA", "x": 0, "y": 0, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 1, "y": 0, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 2, "y": 0, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Cruiser", "orientation": "Horizontal", "x": 0, "y": 0 }}},
-    {"player": "playerA", "x": 8, "y": 1, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Submarine", "orientation": "Horizontal", "x": 8, "y": 1 }}},
-    {"player": "playerA", "x": 8, "y": 3, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 8, "y": 4, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 8, "y": 5, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 8, "y": 6, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Battleship", "orientation": "Vertical", "x": 8, "y": 3 }}},
-    {"player": "playerA", "x": 0, "y": 6, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 0, "y": 7, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Destroyer", "orientation": "Vertical", "x": 0, "y": 6 }}},
-    {"player": "playerA", "x": 1, "y": 9, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Destroyer", "orientation": "Horizontal", "x": 0, "y": 9 }}},
-    {"player": "playerA", "x": 4, "y": 9, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 5, "y": 9, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 6, "y": 9, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 7, "y": 9, "result": { "hit": true, "gameWon": false }},
-    {"player": "playerA", "x": 9, "y": 9, "result": { "hit": true, "gameWon": false, "shipSunk": { "shipType": "Submarine", "orientation": "Horizontal", "x": 9, "y": 9 }}},
-    {"player": "playerA", "x": 3, "y": 9, "result": { "hit": true, "gameWon": true, "shipSunk": { "shipType": "AircraftCarrier", "orientation": "Horizontal", "x": 3, "y": 9 }}}
+    {
+      "player": "playerA",
+      "x": 0,
+      "y": 3,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 0,
+      "y": 0,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 0,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 1,
+      "y": 8,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 1,
+      "y": 0,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 2,
+      "y": 8,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 1,
+      "y": 1,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 1,
+      "y": 2,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Destroyer",
+            "size": 2
+          },
+          "orientation": "Vertical",
+          "x": 1,
+          "y": 1
+        }
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 3,
+      "y": 2,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Submarine",
+            "size": 1
+          },
+          "orientation": "Vertical",
+          "x": 3,
+          "y": 2
+        }
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 3,
+      "y": 1,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 3,
+      "y": 8,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerB",
+      "x": 3,
+      "y": 0,
+      "result": {
+        "hit": false,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 0,
+      "y": 0,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 1,
+      "y": 0,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 2,
+      "y": 0,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Cruiser",
+            "size": 3
+          },
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 8,
+      "y": 1,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Submarine",
+            "size": 1
+          },
+          "orientation": "Horizontal",
+          "x": 8,
+          "y": 1
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 8,
+      "y": 3,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 8,
+      "y": 4,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 8,
+      "y": 5,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 8,
+      "y": 6,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Battleship",
+            "size": 4
+          },
+          "orientation": "Vertical",
+          "x": 8,
+          "y": 3
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 0,
+      "y": 6,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 0,
+      "y": 7,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Destroyer",
+            "size": 2
+          },
+          "orientation": "Vertical",
+          "x": 0,
+          "y": 6
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 1,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Destroyer",
+            "size": 2
+          },
+          "orientation": "Horizontal",
+          "x": 0,
+          "y": 9
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 4,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 5,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 6,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 7,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 9,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": false,
+        "shipSunk": {
+          "shipClass": {
+            "type": "Submarine",
+            "size": 1
+          },
+          "orientation": "Horizontal",
+          "x": 9,
+          "y": 9
+        }
+      }
+    },
+    {
+      "player": "playerA",
+      "x": 3,
+      "y": 9,
+      "result": {
+        "hit": true,
+        "gameWon": true,
+        "shipSunk": {
+          "shipClass": {
+            "type": "AircraftCarrier",
+            "size": 5
+          },
+          "orientation": "Horizontal",
+          "x": 3,
+          "y": 9
+        }
+      }
+    }
   ]
 }

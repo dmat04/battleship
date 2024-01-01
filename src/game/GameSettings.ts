@@ -1,4 +1,4 @@
-import Ship, { ShipType } from './Ship';
+import ShipClass, { ShipClassName } from './Ship';
 
 export class GameSetting {
   // Total number of cells occupied by ships (per player)
@@ -8,17 +8,22 @@ export class GameSetting {
   // Will be calculated whe constructing from the provided GameSettings.
   public readonly totalShips: number;
 
+  public readonly shipClasses: Map<ShipClassName, ShipClass> = new Map();
+
   constructor(
     readonly boardWidth: number,
     readonly boardHeight: number,
-    readonly shipCounts: Map<ShipType, number>,
+    readonly shipCounts: Map<ShipClassName, number>,
+
   ) {
     // count the total number of ships and ship cells
+    // and initialize the ship sizes
     let shipCount = 0;
     let cellCount = 0;
     shipCounts.forEach((count, shipType) => {
       shipCount += count;
-      cellCount += count * Ship.Get(shipType).size;
+      cellCount += count * ShipClass.Get(shipType).size;
+      this.shipClasses.set(shipType, ShipClass.Get(shipType));
     });
 
     this.totalShips = shipCount;
@@ -34,11 +39,11 @@ export class GameSetting {
 export const DefaultSettings: GameSetting = new GameSetting(
   10,
   10,
-  new Map<ShipType, number>([
-    [ShipType.Submarine, 2],
-    [ShipType.Destroyer, 2],
-    [ShipType.Cruiser, 1],
-    [ShipType.Battleship, 1],
-    [ShipType.AircraftCarrier, 1],
+  new Map<ShipClassName, number>([
+    [ShipClassName.Submarine, 2],
+    [ShipClassName.Destroyer, 2],
+    [ShipClassName.Cruiser, 1],
+    [ShipClassName.Battleship, 1],
+    [ShipClassName.AircraftCarrier, 1],
   ]),
 );
