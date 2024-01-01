@@ -5,7 +5,6 @@ import {
   useAppSelector as useSelector,
 } from '../store/store';
 import { REGISTERED_LOGIN } from '../graphql/mutations';
-import { LoginResult } from '../types/ServerTypes';
 import { clearAuth, setAuth } from '../store/authSlice';
 import LocalStorage from '../utils/localStorageUtils';
 
@@ -21,8 +20,8 @@ const useAuth = () => {
   const login = async (username: string, password: string): Promise<void> => {
     const response = await doLogin({ variables: { username, password } });
 
-    if (response.data.registeredLogin !== null) {
-      const newToken = response.data.registeredLogin as LoginResult;
+    if (response.data?.registeredLogin) {
+      const newToken = response.data.registeredLogin;
       LocalStorage.saveAccessToken(newToken);
       setError(null);
       dispatch(setAuth(newToken));
