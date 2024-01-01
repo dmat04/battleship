@@ -39,4 +39,6 @@ const createApolloClient = () => {
   return client;
 };
 
-export default createApolloClient;
+const apolloClient = createApolloClient();
+
+export default apolloClient;

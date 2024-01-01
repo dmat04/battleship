@@ -4,9 +4,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { ApolloProvider } from '@apollo/client';
 import App from './App';
 import { store } from './store/store';
-import createApolloClient from './utils/apolloClient';
+import apolloClient from './utils/apolloClient';
 
-const apolloClient = createApolloClient();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
