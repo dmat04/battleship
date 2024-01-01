@@ -1,12 +1,16 @@
 import GameService from '../../services/GameRoomService';
 import AuthService from '../../services/AuthService';
 import { assertAuthorized, type ApolloContext } from '../../middleware/ApolloContext';
-import { ShipPlacement } from '../../game/Ship';
+import ShipClass, { ShipClassName, ShipPlacement } from '../../game/Ship';
 import { GameRoomStatus } from '../../models/GameRoom';
+
+type InputShipPlacement = Omit<ShipPlacement, 'shipClass'> & {
+  shipClass: ShipClassName;
+};
 
 interface MutationParams {
   roomID: string,
-  shipPlacements: ShipPlacement[];
+  shipPlacements: InputShipPlacement[];
 }
 
 export const typeDefs = `#graphql
@@ -25,7 +29,12 @@ export const resolvers = {
       const accessToken = assertAuthorized(context);
 
       const user = await AuthService.getUserFromToken(accessToken);
-      return GameService.placeShips(user, args.roomID, args.shipPlacements);
+      const shipPlacements = args.shipPlacements.map((placement) => ({
+        ...placement,
+        shipClass: ShipClass.Get(placement.shipClass),
+      }));
+
+      return GameService.placeShips(user, args.roomID, shipPlacements);
     },
   },
 };

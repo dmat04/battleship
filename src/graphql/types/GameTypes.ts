@@ -1,8 +1,8 @@
-import { ShipType, ShipOrientation } from '../../game/Ship';
-import { GameSetting } from '../../game/types';
+import { ShipClassName, ShipOrientation } from '../../game/Ship';
+import { GameSetting } from '../../game/GameSettings';
 
 export const typeDefs = `#graphql
-  enum ShipType {
+  enum ShipClassName {
     SUBMARINE
     DESTROYER
     CRUISER
@@ -15,13 +15,18 @@ export const typeDefs = `#graphql
     HORIZONTAL
   }
 
+  type ShipClass {
+    type: ShipClassName!
+    size: Int!
+  }
+
   type ShipCount {
-    shipType: ShipType!
+    class: ShipClassName!
     count: Int!
   }
 
   input ShipPlacement {
-    shipType: ShipType!
+    shipClass: ShipClassName!
     orientation: ShipOrientation!
     x: Int!
     y: Int!
@@ -30,6 +35,7 @@ export const typeDefs = `#graphql
   type GameSettings {
     boardWidth: Int!
     boardHeight: Int!
+    shipClasses: [ShipClass!]!
     shipCounts: [ShipCount!]!
   }
 
@@ -44,24 +50,43 @@ export const typeDefs = `#graphql
 }
 `;
 
+interface ShipCount {
+  class: ShipClassName;
+  count: number;
+}
+
+interface IShipClass {
+  type: ShipClassName;
+  size: number;
+}
+
 export const resolvers = {
   GameSettings: {
-    shipCounts: (root: GameSetting) => {
-      const arr: { shipType: ShipType, count: number }[] = [];
+    shipClasses: (root: GameSetting): IShipClass[] => {
+      const arr: IShipClass[] = [];
+
+      root.shipClasses.forEach((shipClass) => {
+        arr.push({ ...shipClass });
+      });
+
+      return arr;
+    },
+    shipCounts: (root: GameSetting): ShipCount[] => {
+      const arr: ShipCount[] = [];
 
       root.shipCounts.forEach((count, shipType) => {
-        arr.push({ shipType, count });
+        arr.push({ class: shipType, count });
       });
 
       return arr;
     },
   },
-  ShipType: {
-    SUBMARINE: ShipType[ShipType.Submarine],
-    DESTROYER: ShipType[ShipType.Destroyer],
-    CRUISER: ShipType[ShipType.Cruiser],
-    BATTLESHIP: ShipType[ShipType.Battleship],
-    CARRIER: ShipType[ShipType.AircraftCarrier],
+  ShipClassName: {
+    SUBMARINE: ShipClassName[ShipClassName.Submarine],
+    DESTROYER: ShipClassName[ShipClassName.Destroyer],
+    CRUISER: ShipClassName[ShipClassName.Cruiser],
+    BATTLESHIP: ShipClassName[ShipClassName.Battleship],
+    CARRIER: ShipClassName[ShipClassName.AircraftCarrier],
   },
   ShipOrientation: {
     VERTICAL: ShipOrientation[ShipOrientation.Vertical],
