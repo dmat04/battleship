@@ -10,7 +10,7 @@ interface PropTypes {
 }
 
 const DNDContext = ({ children }: PropTypes) => {
-  const { gridContainerRef } = useContext(PlacementGridContext);
+  const { componentContainerRef, gridContainerRef } = useContext(PlacementGridContext);
 
   const activationConstraint = {
     delay: 250,
@@ -29,7 +29,7 @@ const DNDContext = ({ children }: PropTypes) => {
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 
   const modifiers = [
-    CustomGridModifier(10, 10, gridContainerRef),
+    CustomGridModifier(10, 10, componentContainerRef, gridContainerRef),
   ];
 
   return (

@@ -8,7 +8,6 @@ import PlacementGridContext, { IPlacementGridContext } from './PlacementGridCont
 
 const NavyGrid = styled.div`
   display: grid;
-  background-color: palegreen;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(8, 1fr);
   grid-auto-flow: dense;
@@ -16,7 +15,6 @@ const NavyGrid = styled.div`
 `;
 
 const RightSpacer = styled.div`
-  background-color: aliceblue;
   grid-area: 1 / 10 / span 10 / span 1;
 `;
 
@@ -24,7 +22,6 @@ const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean, 
   display: grid;
   grid-template-rows: subgrid;
   grid-template-columns: subgrid;
-  background-color: ${(props) => props.$color};
   grid-row-end: ${(props) => (props.$vertical ? `span ${props.$shipSize + 1}` : 'span 2')};
   grid-column-end: ${(props) => (props.$vertical ? 'span 2' : `span ${props.$shipSize + 1}`)};
 `;
@@ -54,14 +51,19 @@ const NavyHolder = ({ shipSize, color }: NavyHolderProps) => {
 const cells = createDroppableCells(10, 10);
 
 const PlacementGrid = () => {
+  const componentContainerRef = useRef<HTMLDivElement | null>(null);
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
-  const contextValue: IPlacementGridContext = useMemo(() => ({ gridContainerRef }), []);
+
+  const contextValue: IPlacementGridContext = useMemo(() => ({
+    componentContainerRef,
+    gridContainerRef,
+  }), []);
 
   return (
     <PlacementGridContext.Provider value={contextValue}>
       <DNDContext>
-        <div ref={gridContainerRef}>
-          <GameGrid>
+        <div ref={componentContainerRef}>
+          <GameGrid ref={gridContainerRef} $cols={10} $rows={10}>
             {cells}
           </GameGrid>
           <NavyGrid>

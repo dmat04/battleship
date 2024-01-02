@@ -1,5 +1,4 @@
 import { useDraggable } from '@dnd-kit/core';
-import { useState } from 'react';
 import styled from 'styled-components';
 
 const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $vertical: boolean }>`
@@ -21,6 +20,12 @@ interface PropTypes {
   setVertical: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface ShipDragData {
+  size: number;
+  vertical: boolean;
+  id: string;
+}
+
 const DraggableShip = ({
   col, row, size, color, vertical, setVertical,
 }: PropTypes) => {
@@ -29,8 +34,9 @@ const DraggableShip = ({
   } = useDraggable({
     id: `Ship-${color}`,
     data: {
-      id: 'SomeShip in data',
-      color,
+      size,
+      vertical,
+      id: `Ship-${color}`,
     },
   });
 
@@ -38,7 +44,6 @@ const DraggableShip = ({
     zIndex: 1,
     boxShadow: '',
     backgroundColor: color,
-    border: '2px solid black',
     transform: transform !== null
       ? `translate(${transform?.x}px, ${transform?.y}px)`
       : 'translate(0, 0)',

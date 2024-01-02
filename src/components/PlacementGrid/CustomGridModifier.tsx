@@ -1,53 +1,85 @@
-import { Modifier } from '@dnd-kit/core';
+/* eslint-disable arrow-body-style */
+import type { Modifier } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
 import React from 'react';
+import { ShipDragData } from './DraggableShip';
 
 const CustomGridModifier = (
   rows: number,
   columns: number,
-  containerRef: React.MutableRefObject<HTMLDivElement | null>,
-): Modifier => (
-  //   {
-  //   containerNodeRect,
-  //   activeNodeRect,
-  //   transform,
-  //   active,
-  // }
-  args,
-) => {
-    console.log(containerRef.current?.getBoundingClientRect());
-    console.log(args);
-    //if (activeNodeRect === null || active === null) return;
+  componentRef: React.MutableRefObject<HTMLDivElement | null>,
+  gridRef: React.MutableRefObject<HTMLDivElement | null>,
+): Modifier => {
+  return ({
+    activeNodeRect,
+    transform,
+    active,
+  }) => {
+    const componentRect = componentRef.current?.getBoundingClientRect();
+    const gridRect = gridRef.current?.getBoundingClientRect();
 
-    // const boundingRect = boundingNodeRef.current?.getBoundingClientRect();
-    // const gridRect = gridContainer.current?.getBoundingClientRect();
-    // const ship = active.data.current.shipPlacement;
-    // const extraHeight = ship.orientation === 'horizontal'
-    //   ? 0
-    //   : ship.shipType.size - 1;
+    if (
+      activeNodeRect === null
+      || active === null
+      || active.data.current === undefined
+      || componentRect === undefined
+      || gridRect === undefined
+    ) {
+      return {
+        x: 0,
+        y: 0,
+        scaleX: 1,
+        scaleY: 1,
+      };
+    }
 
-    // if (transform.x + activeNodeRect.left < boundingRect.left) {
-    //   transform.x = boundingRect.left - activeNodeRect.left;
-    // } else if (transform.x + activeNodeRect.right > boundingRect.right) {
-    //   transform.x = boundingRect.right - activeNodeRect.right;
-    // }
+    const cellSize = gridRect.width / columns;
+    let { x: dx, y: dy } = transform;
 
-    // if (transform.y + activeNodeRect.top < boundingRect.top) {
-    //   transform.y = boundingRect.top - activeNodeRect.top;
-    // } else if (transform.y + activeNodeRect.bottom > boundingRect.bottom) {
-    //   transform.y = boundingRect.bottom - activeNodeRect.bottom;
-    // }
+    // const transformedNode = {
+    //   top: activeNodeRect.top + dy,
+    //   bottom: activeNodeRect.bottom + dy,
+    //   left: activeNodeRect.left + dx,
+    //   right: activeNodeRect.right + dx,
+    // };
 
-    // const [row, col] = [
-    //   Math.round((activeNodeRect.top + transform.y - gridRect.top) / cellSize),
-    //   Math.round((activeNodeRect.left + transform.x - gridRect.left) / cellSize),
-    // ];
+    // console.log('\n');
+    // console.log('CONTAINER', containerRect);
+    // console.log('NODE', activeNodeRect);
+    // console.log('TRANSFORMED NODE', transformedNode);
 
-    // if (row >= 0 && (row + extraHeight) < rows && col >= 0 && col < columns) {
-    //   transform.x = col * cellSize - activeNodeRect.left + boundingRect.left;
-    //   transform.y = (row - rows) * cellSize - activeNodeRect.top + gridRect.bottom;
-    // }
+    const shipData = active.data.current as ShipDragData;
+    const extraHeight = shipData.vertical ? (shipData.size - 1) : 0;
 
-    return args.transform;
+    // Bound within containerRect on horizontal axis
+    if (dx + activeNodeRect.left < componentRect.left) {
+      dx = componentRect.left - activeNodeRect.left;
+    } else if (dx + activeNodeRect.right > componentRect.right) {
+      dx = componentRect.right - activeNodeRect.right;
+    }
+
+    // Bound within containerRect on vertical axis
+    if (dy + activeNodeRect.top < componentRect.top) {
+      dy = componentRect.top - activeNodeRect.top;
+    } else if (dy + activeNodeRect.bottom > componentRect.bottom) {
+      dy = componentRect.bottom - activeNodeRect.bottom;
+    }
+
+    const snapRow = Math.round((activeNodeRect.top + dy - gridRect.top) / cellSize);
+    const snapCol = Math.round((activeNodeRect.left + dx - gridRect.left) / cellSize);
+
+    if (snapRow >= 0 && (snapRow + extraHeight) < rows && snapCol >= 0 && snapCol < columns) {
+      dx = snapCol * cellSize - activeNodeRect.left + gridRect.left;
+      dy = (snapRow - rows) * cellSize - activeNodeRect.top + gridRect.bottom;
+    }
+
+    return {
+      x: dx,
+      y: dy,
+      scaleX: transform.scaleX,
+      scaleY: transform.scaleY,
+    };
   };
+};
 
 export default CustomGridModifier;
