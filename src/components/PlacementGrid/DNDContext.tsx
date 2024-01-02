@@ -1,14 +1,17 @@
 import {
   DndContext, KeyboardSensor, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors,
 } from '@dnd-kit/core';
+import { useContext } from 'react';
 import CustomGridModifier from './CustomGridModifier';
-import CustomGridColisionDetection from './CustomGridColisionDetection';
+import PlacementGridContext from './PlacementGridContext';
 
 interface PropTypes {
   children: React.ReactNode;
 }
 
 const DNDContext = ({ children }: PropTypes) => {
+  const { gridContainerRef } = useContext(PlacementGridContext);
+
   const activationConstraint = {
     delay: 250,
     distance: 0,
@@ -26,7 +29,7 @@ const DNDContext = ({ children }: PropTypes) => {
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 
   const modifiers = [
-    CustomGridModifier(10, 10),
+    CustomGridModifier(10, 10, gridContainerRef),
   ];
 
   return (

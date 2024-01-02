@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import GameGrid from '../GameGrid';
 import DNDContext from './DNDContext';
 import DraggableShip from './DraggableShip';
 import { createDroppableCells } from './utils';
+import PlacementGridContext, { IPlacementGridContext } from './PlacementGridContext';
 
 const NavyGrid = styled.div`
   display: grid;
@@ -52,22 +53,31 @@ const NavyHolder = ({ shipSize, color }: NavyHolderProps) => {
 
 const cells = createDroppableCells(10, 10);
 
-const PlacementGrid = () => (
-  <DNDContext>
-    <GameGrid>
-      {cells}
-    </GameGrid>
-    <NavyGrid>
-      <NavyHolder shipSize={5} color="red" />
-      <NavyHolder shipSize={4} color="green" />
-      <NavyHolder shipSize={3} color="blue" />
-      <NavyHolder shipSize={2} color="yellow" />
-      <NavyHolder shipSize={2} color="purple" />
-      <NavyHolder shipSize={1} color="orange" />
-      <NavyHolder shipSize={1} color="brown" />
-      <RightSpacer />
-    </NavyGrid>
-  </DNDContext>
-);
+const PlacementGrid = () => {
+  const gridContainerRef = useRef<HTMLDivElement | null>(null);
+  const contextValue: IPlacementGridContext = useMemo(() => ({ gridContainerRef }), []);
+
+  return (
+    <PlacementGridContext.Provider value={contextValue}>
+      <DNDContext>
+        <div ref={gridContainerRef}>
+          <GameGrid>
+            {cells}
+          </GameGrid>
+          <NavyGrid>
+            <NavyHolder shipSize={5} color="red" />
+            <NavyHolder shipSize={4} color="green" />
+            <NavyHolder shipSize={3} color="blue" />
+            <NavyHolder shipSize={2} color="yellow" />
+            <NavyHolder shipSize={2} color="purple" />
+            <NavyHolder shipSize={1} color="orange" />
+            <NavyHolder shipSize={1} color="brown" />
+            <RightSpacer />
+          </NavyGrid>
+        </div>
+      </DNDContext>
+    </PlacementGridContext.Provider>
+  );
+};
 
 export default PlacementGrid;

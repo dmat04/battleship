@@ -1,8 +1,10 @@
 import { Modifier } from '@dnd-kit/core';
+import React from 'react';
 
 const CustomGridModifier = (
   rows: number,
   columns: number,
+  containerRef: React.MutableRefObject<HTMLDivElement | null>,
 ): Modifier => (
   //   {
   //   containerNodeRect,
@@ -12,6 +14,7 @@ const CustomGridModifier = (
   // }
   args,
 ) => {
+    console.log(containerRef.current?.getBoundingClientRect());
     console.log(args);
     //if (activeNodeRect === null || active === null) return;
 
