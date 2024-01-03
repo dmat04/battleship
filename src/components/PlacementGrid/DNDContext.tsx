@@ -1,11 +1,12 @@
 import {
-  DndContext, DragEndEvent, KeyboardSensor, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors,
+  DndContext, DragEndEvent, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors,
 } from '@dnd-kit/core';
 import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import CustomGridModifier from './CustomGridModifier';
 import PlacementGridContext from './PlacementGridContext';
 import { placeShip } from '../../store/shipPlacementSlice';
+import customCollisionDetector from './CustomCollisionDetector';
 
 interface PropTypes {
   children: React.ReactNode;
@@ -51,7 +52,8 @@ const DNDContext = ({ children }: PropTypes) => {
     <DndContext
       sensors={sensors}
       modifiers={modifiers}
-      collisionDetection={closestCenter}
+      collisionDetection={customCollisionDetector}
+      // collisionDetection={closestCenter}
       // onDragStart={(ev) => console.log('START', ev)}
       // onDragMove={(ev) => console.log('MOVE', ev)}
       // onDragOver={(ev) => console.log('OVER', ev)}
