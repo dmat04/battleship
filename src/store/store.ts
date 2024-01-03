@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './authSlice';
-import gameRoomReducer from './gameRoomSlice';
+import shipPlacementReducer from './shipPlacementSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    gameRoom: gameRoomReducer,
+    shipPlacement: shipPlacementReducer,
   },
 });
 
