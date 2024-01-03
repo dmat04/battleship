@@ -10,15 +10,15 @@ const CustomGridModifier = (
   gridRef: React.MutableRefObject<HTMLDivElement | null>,
 ): Modifier => {
   return ({
-    activeNodeRect,
-    transform,
     active,
+    containerNodeRect,
+    transform,
   }) => {
     const componentRect = componentRef.current?.getBoundingClientRect();
     const gridRect = gridRef.current?.getBoundingClientRect();
 
     if (
-      activeNodeRect === null
+      containerNodeRect === null
       || active === null
       || active.data.current === undefined
       || componentRect === undefined
@@ -39,25 +39,25 @@ const CustomGridModifier = (
     const extraHeight = shipData.vertical ? (shipData.size - 1) : 0;
 
     // Bound within containerRect on horizontal axis
-    if (dx + activeNodeRect.left < componentRect.left) {
-      dx = componentRect.left - activeNodeRect.left;
-    } else if (dx + activeNodeRect.right > componentRect.right) {
-      dx = componentRect.right - activeNodeRect.right;
+    if (dx + containerNodeRect.left < componentRect.left) {
+      dx = componentRect.left - containerNodeRect.left;
+    } else if (dx + containerNodeRect.right > componentRect.right) {
+      dx = componentRect.right - containerNodeRect.right;
     }
 
     // Bound within containerRect on vertical axis
-    if (dy + activeNodeRect.top < componentRect.top) {
-      dy = componentRect.top - activeNodeRect.top;
-    } else if (dy + activeNodeRect.bottom > componentRect.bottom) {
-      dy = componentRect.bottom - activeNodeRect.bottom;
+    if (dy + containerNodeRect.top < componentRect.top) {
+      dy = componentRect.top - containerNodeRect.top;
+    } else if (dy + containerNodeRect.bottom > componentRect.bottom) {
+      dy = componentRect.bottom - containerNodeRect.bottom;
     }
 
-    const snapRow = Math.round((activeNodeRect.top + dy - gridRect.top) / cellSize);
-    const snapCol = Math.round((activeNodeRect.left + dx - gridRect.left) / cellSize);
+    const snapRow = Math.round((containerNodeRect.top + dy - gridRect.top) / cellSize);
+    const snapCol = Math.round((containerNodeRect.left + dx - gridRect.left) / cellSize);
 
     if (snapRow >= 0 && (snapRow + extraHeight) < rows && snapCol >= 0 && snapCol < columns) {
-      dx = snapCol * cellSize - activeNodeRect.left + gridRect.left;
-      dy = (snapRow - rows) * cellSize - activeNodeRect.top + gridRect.bottom;
+      dx = snapCol * cellSize - containerNodeRect.left + gridRect.left;
+      dy = (snapRow - rows) * cellSize - containerNodeRect.top + gridRect.bottom;
     }
 
     return {
