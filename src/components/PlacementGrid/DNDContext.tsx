@@ -1,9 +1,11 @@
 import {
-  DndContext, KeyboardSensor, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors,
+  DndContext, DragEndEvent, KeyboardSensor, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors,
 } from '@dnd-kit/core';
 import { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import CustomGridModifier from './CustomGridModifier';
 import PlacementGridContext from './PlacementGridContext';
+import { placeShip } from '../../store/shipPlacementSlice';
 
 interface PropTypes {
   children: React.ReactNode;
@@ -11,6 +13,7 @@ interface PropTypes {
 
 const DNDContext = ({ children }: PropTypes) => {
   const { componentContainerRef, gridContainerRef } = useContext(PlacementGridContext);
+  const dispatch = useDispatch();
 
   const activationConstraint = {
     delay: 250,
@@ -32,6 +35,18 @@ const DNDContext = ({ children }: PropTypes) => {
     CustomGridModifier(10, 10, componentContainerRef, gridContainerRef),
   ];
 
+  const handleDragEnd = (ev: DragEndEvent) => {
+    if (!ev.over?.data.current) return;
+
+    const { id } = ev.active.data.current;
+    const { row, column } = ev.over.data.current;
+
+    dispatch(placeShip({
+      shipID: id,
+      position: { x: column, y: row },
+    }));
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -40,9 +55,9 @@ const DNDContext = ({ children }: PropTypes) => {
       // onDragStart={(ev) => console.log('START', ev)}
       // onDragMove={(ev) => console.log('MOVE', ev)}
       // onDragOver={(ev) => console.log('OVER', ev)}
-      // onDragEnd={(ev) => console.log('END', ev)}
+      onDragEnd={handleDragEnd}
     >
-      { children }
+      {children}
     </DndContext>
   );
 };
