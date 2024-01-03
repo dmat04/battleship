@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import CustomGridModifier from './CustomGridModifier';
 import PlacementGridContext from './PlacementGridContext';
-import { placeShip } from '../../store/shipPlacementSlice';
+import { placeShip, resetShip } from '../../store/shipPlacementSlice';
 import customCollisionDetector from './CustomCollisionDetector';
 
 interface PropTypes {
@@ -37,15 +37,18 @@ const DNDContext = ({ children }: PropTypes) => {
   ];
 
   const handleDragEnd = (ev: DragEndEvent) => {
-    if (!ev.over?.data.current) return;
-
     const { id } = ev.active.data.current;
-    const { row, column } = ev.over.data.current;
 
-    dispatch(placeShip({
-      shipID: id,
-      position: { x: column, y: row },
-    }));
+    if (!ev.over?.data.current) {
+      dispatch(resetShip(id));
+    } else {
+      const { row, column } = ev.over.data.current;
+
+      dispatch(placeShip({
+        shipID: id,
+        position: { x: column, y: row },
+      }));
+    }
   };
 
   return (
