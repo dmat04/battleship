@@ -2,8 +2,8 @@ import { useDroppable } from '@dnd-kit/core';
 import styled from 'styled-components';
 
 const Cell = styled.div<{ $row: number, $column: number }>`
-  grid-row: ${(props) => props.$row};
-  grid-column: ${(props) => props.$column};
+  grid-row: ${(props) => props.$row + 1};
+  grid-column: ${(props) => props.$column + 1};
 `;
 
 interface PropTypes {
