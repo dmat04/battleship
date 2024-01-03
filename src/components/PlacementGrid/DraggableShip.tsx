@@ -1,9 +1,10 @@
 import { useDraggable } from '@dnd-kit/core';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import { ShipOrientation } from '../../__generated__/graphql';
 import { ShipState } from '../../store/shipPlacementSlice/types';
+import { rotateShip } from '../../store/shipPlacementSlice';
 
 const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $vertical: boolean }>`
   background-color: lightslategray;
@@ -31,6 +32,7 @@ const DraggableShip = ({ id, color }: PropTypes) => {
   const shipState = useSelector(({ shipPlacement }: RootState) => {
     return shipPlacement.shipStates.find((el) => el.shipID === id);
   });
+  const dispatch = useDispatch();
 
   const {
     shipID,
@@ -54,8 +56,10 @@ const DraggableShip = ({ id, color }: PropTypes) => {
 
   if (!shipState) return null;
 
-  const setVertical = () => {
-    console.log('Dispatch orientation change');
+  const dispatchRotate = () => {
+    if (shipClass.size > 1) {
+      dispatch(rotateShip(shipID));
+    }
   };
 
   const style = {
@@ -77,7 +81,7 @@ const DraggableShip = ({ id, color }: PropTypes) => {
       style={style}
       {...listeners}
       {...attributes}
-      onDoubleClick={setVertical}
+      onDoubleClick={dispatchRotate}
     />
   );
 };
