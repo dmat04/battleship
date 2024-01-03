@@ -2,29 +2,21 @@ import { ShipClass, ShipOrientation } from '../../__generated__/graphql';
 
 export type ShipID = string;
 
-export interface PlaceShipArgs {
-  shipID: ShipID;
+export interface Coordinates {
   x: number;
   y: number;
 }
+export interface PlaceShipArgs {
+  shipID: ShipID;
+  position: Coordinates;
+}
 
-export interface ShipStateBase {
+export interface ShipState {
   shipID: ShipID;
   shipClass: ShipClass;
   orientation: ShipOrientation;
+  position: Coordinates | null;
 }
-
-export interface ShipStateNotPlaced extends ShipStateBase {
-  placed: false;
-}
-
-export interface ShipStatePlaced extends ShipStateBase {
-  placed: true;
-  x: number;
-  y: number;
-}
-
-export type ShipState = ShipStatePlaced | ShipStateNotPlaced;
 
 export interface GridState {
   columns: number;
@@ -33,8 +25,6 @@ export interface GridState {
 }
 
 export interface SliceState {
-  allShips: ShipState[];
-  nonPlacedShips: ShipStateNotPlaced[];
-  placedShips: ShipStatePlaced[];
+  shipStates: ShipState[];
   grid: GridState;
 }

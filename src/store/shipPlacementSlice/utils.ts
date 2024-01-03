@@ -1,11 +1,11 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
-  PlaceShipArgs, GridState, ShipState, SliceState, ShipID, ShipStatePlaced, ShipStateNotPlaced,
+  PlaceShipArgs, GridState, ShipState, SliceState, ShipID, Coordinates
 } from './types';
 import { ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
 
-const canPlaceShip = (grid: GridState, ship: ShipState, x: number, y: number): boolean => {
+const canPlaceShip = (grid: GridState, ship: ShipState, { x, y }: Coordinates): boolean => {
   const { columns, rows, cellStates } = grid;
   const { shipID, shipClass, orientation } = ship;
   const { size } = shipClass;
@@ -42,93 +42,25 @@ const canPlaceShip = (grid: GridState, ship: ShipState, x: number, y: number): b
   return true;
 };
 
-const shipIdentityPredicate = (wantedID: ShipID) => ({ shipID }: ShipState) => shipID === wantedID;
-
-const transferShipToPlaced = (state: SliceState, id: ShipID, x: number, y: number) => {
-  const predicate = shipIdentityPredicate(id);
-
-  const allIndex = state.allShips.findIndex(predicate);
-  if (allIndex < 0) return;
-
-  const placedIndex = state.placedShips.findIndex(predicate);
-  if (placedIndex >= 0) return;
-
-  const nonPlacedIndex = state.nonPlacedShips.findIndex(predicate);
-  if (nonPlacedIndex < 0) return;
-
-  const oldState = state.allShips[allIndex];
-  const placedState: ShipStatePlaced = {
-    placed: true,
-    orientation: oldState.orientation,
-    shipClass: oldState.shipClass,
-    shipID: oldState.shipID,
-    x,
-    y,
-  };
-
-  // eslint-disable-next-line no-param-reassign
-  state.allShips[allIndex] = placedState;
-  state.placedShips.push(placedState);
-  // eslint-disable-next-line no-param-reassign
-  state.nonPlacedShips = state.nonPlacedShips.filter(({ shipID }) => shipID !== id);
-};
-
-const transferShipToNonPlaced = (state: SliceState, id: ShipID) => {
-  const predicate = shipIdentityPredicate(id);
-
-  const allIndex = state.allShips.findIndex(predicate);
-  if (allIndex < 0) return;
-
-  const placedIndex = state.placedShips.findIndex(predicate);
-  if (placedIndex < 0) return;
-
-  const nonPlacedIndex = state.nonPlacedShips.findIndex(predicate);
-  if (nonPlacedIndex <= 0) return;
-
-  const oldState = state.allShips[allIndex];
-  const nonPlacedState: ShipStateNotPlaced = {
-    placed: false,
-    orientation: oldState.orientation,
-    shipClass: oldState.shipClass,
-    shipID: oldState.shipID,
-  };
-
-  // eslint-disable-next-line no-param-reassign
-  state.allShips[allIndex] = nonPlacedState;
-  state.nonPlacedShips.push(nonPlacedState);
-  // eslint-disable-next-line no-param-reassign
-  state.placedShips = state.placedShips.filter(({ shipID }) => shipID !== id);
-};
-
-const clearShipFromGrid = (grid: GridState, ship: ShipID): void => {
-  // eslint-disable-next-line arrow-body-style, no-param-reassign
-  grid.cellStates = grid.cellStates.map((row) => {
-    return row.map((cell) => (cell === ship ? null : cell));
-  });
-};
-
-const placeShip = (state: SliceState, ship: ShipState, x: number, y: number) => {
-  if (ship.placed) {
-    clearShipFromGrid(state.grid, ship.shipID);
-  }
-
-  transferShipToPlaced(state, ship.shipID, x, y);
-
-  const { shipID, shipClass, orientation } = ship;
-  const { size } = shipClass;
-
+const fillGrid = (
+  { cellStates }: GridState,
+  { x, y }: Coordinates,
+  orientation: ShipOrientation,
+  size: number,
+  value: ShipID | null,
+) => {
   switch (orientation) {
     case ShipOrientation.Horizontal: {
-      for (let column = x; column < size; column += 1) {
-        // eslint-disable-next-line no-param-reassign
-        state.grid.cellStates[y][column] = shipID;
+      const row = cellStates[y];
+      for (let col = 0; col < size; col += 1) {
+        row[x + col] = value;
       }
       break;
     }
     case ShipOrientation.Vertical: {
-      for (let row = y; row < size; row += 1) {
+      for (let row = 0; row < size; row += 1) {
         // eslint-disable-next-line no-param-reassign
-        state.grid.cellStates[row][x] = shipID;
+        cellStates[y + row][x] = value;
       }
       break;
     }
@@ -136,29 +68,68 @@ const placeShip = (state: SliceState, ship: ShipState, x: number, y: number) => 
   }
 };
 
+const clearShipFromGrid = (grid: GridState, ship: ShipState): void => {
+  if (!ship.position) return;
+
+  fillGrid(grid, ship.position, ship.orientation, ship.shipClass.size, null);
+};
+
+const populateGridWithShip = (grid: GridState, ship: ShipState): void => {
+  if (!ship.position) return;
+
+  fillGrid(grid, ship.position, ship.orientation, ship.shipClass.size, ship.shipID);
+};
+
+const placeShip = (state: SliceState, shipIndex: number, { x, y }: Coordinates) => {
+  const oldState = state.shipStates[shipIndex];
+  if (oldState.position) {
+    clearShipFromGrid(state.grid, oldState);
+  }
+
+  const newState: ShipState = {
+    ...oldState,
+    position: { x, y },
+  };
+
+  // eslint-disable-next-line no-param-reassign
+  state.shipStates[shipIndex] = newState;
+  populateGridWithShip(state.grid, newState);
+};
+
+const displaceShip = (state: SliceState, shipIndex: number) => {
+  const oldState = state.shipStates[shipIndex];
+
+  const newState: ShipState = {
+    ...oldState,
+    position: null,
+  };
+
+  // eslint-disable-next-line no-param-reassign
+  state.shipStates[shipIndex] = newState;
+  clearShipFromGrid(state.grid, oldState);
+};
+
 export const processPlaceShipAction = (
   state: SliceState,
   { payload }: PayloadAction<PlaceShipArgs>,
 ) => {
-  const shipState = state.allShips.find((item) => item.shipID === payload.shipID);
+  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
+  if (shipIndex < 0) return;
 
-  if (!shipState) return;
-  if (!canPlaceShip(state.grid, shipState, payload.x, payload.y)) return;
+  const shipState = state.shipStates[shipIndex];
+  if (!canPlaceShip(state.grid, shipState, payload.position)) return;
 
-  placeShip(state, shipState, payload.x, payload.y);
+  placeShip(state, shipIndex, payload.position);
 };
 
 export const processResetShipAction = (
   state: SliceState,
   { payload }: PayloadAction<ShipID>,
 ) => {
-  const ship = state.allShips.find((item) => item.shipID === payload);
+  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload);
+  if (shipIndex < 0) return;
 
-  if (ship?.placed) {
-    transferShipToNonPlaced(state, payload);
-  }
-
-  clearShipFromGrid(state.grid, payload);
+  displaceShip(state, shipIndex);
 };
 
 export default {};

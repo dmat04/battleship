@@ -3,9 +3,7 @@ import { SliceState } from './types';
 import { processPlaceShipAction, processResetShipAction } from './utils';
 
 const initialState: SliceState = {
-  allShips: [],
-  nonPlacedShips: [],
-  placedShips: [],
+  shipStates: [],
   grid: {
     columns: 0,
     rows: 0,
