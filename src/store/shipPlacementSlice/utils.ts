@@ -5,9 +5,14 @@ import {
 import { ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
 
-const canPlaceShip = (grid: GridState, ship: ShipState, { x, y }: Coordinates): boolean => {
+const canPlaceShip = (
+  grid: GridState,
+  ship: ShipState,
+  { x, y }: Coordinates,
+  orientation: ShipOrientation = ship.orientation,
+): boolean => {
   const { columns, rows, cellStates } = grid;
-  const { shipID, shipClass, orientation } = ship;
+  const { shipID, shipClass } = ship;
   const { size } = shipClass;
 
   let vSize = 0;
@@ -80,7 +85,12 @@ const populateGridWithShip = (grid: GridState, ship: ShipState): void => {
   fillGrid(grid, ship.position, ship.orientation, ship.shipClass.size, ship.shipID);
 };
 
-const placeShip = (state: SliceState, shipIndex: number, { x, y }: Coordinates) => {
+const placeShip = (
+  state: SliceState,
+  shipIndex: number,
+  { x, y }: Coordinates,
+  orientation: ShipOrientation | null = null,
+) => {
   const oldState = state.shipStates[shipIndex];
   if (oldState.position) {
     clearShipFromGrid(state.grid, oldState);
@@ -89,6 +99,7 @@ const placeShip = (state: SliceState, shipIndex: number, { x, y }: Coordinates) 
   const newState: ShipState = {
     ...oldState,
     position: { x, y },
+    orientation: orientation ?? oldState.orientation,
   };
 
   // eslint-disable-next-line no-param-reassign
@@ -130,6 +141,57 @@ export const processResetShipAction = (
   if (shipIndex < 0) return;
 
   displaceShip(state, shipIndex);
+};
+
+export const processRotateShipAction = (
+  state: SliceState,
+  { payload }: PayloadAction<ShipID>,
+) => {
+  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload);
+  if (shipIndex < 0) return;
+
+  const oldState = state.shipStates[shipIndex];
+  const { shipClass, orientation, position } = oldState;
+
+  let newOrientation = orientation;
+  switch (orientation) {
+    case ShipOrientation.Horizontal: newOrientation = ShipOrientation.Vertical; break;
+    case ShipOrientation.Vertical: newOrientation = ShipOrientation.Horizontal; break;
+    default: assertNever(orientation);
+  }
+
+  const newState: ShipState = {
+    shipID: payload,
+    shipClass,
+    orientation: newOrientation,
+    position: null,
+  };
+
+  if (position) {
+    const center: Coordinates = { ...position };
+    const halfLength = Math.floor(shipClass.size / 2);
+
+    switch (orientation) {
+      case ShipOrientation.Horizontal: center.y += halfLength; break;
+      case ShipOrientation.Vertical: center.x += halfLength; break;
+      default: assertNever(orientation);
+    }
+
+    const rotatedPosition: Coordinates = {
+      x: Math.max(0, center.x - halfLength),
+      y: Math.min(state.grid.rows - 1, center.y + halfLength),
+    };
+
+    if (canPlaceShip(state.grid, newState, rotatedPosition, newOrientation)) {
+      placeShip(state, shipIndex, rotatedPosition, newOrientation);
+      return;
+    }
+
+    clearShipFromGrid(state.grid, oldState);
+  }
+
+  // eslint-disable-next-line no-param-reassign
+  state.shipStates[shipIndex] = newState;
 };
 
 export default {};
