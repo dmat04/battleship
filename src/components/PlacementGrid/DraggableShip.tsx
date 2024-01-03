@@ -9,11 +9,17 @@ import { rotateShip } from '../../store/shipPlacementSlice';
 const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $vertical: boolean }>`
   background-color: lightslategray;
   touch-action: none;
+  display: flex;
   grid-row-start: ${(props) => (props.$row < 0 ? 'initial' : props.$row + 1)};
   grid-row-end: ${(props) => (props.$vertical ? `span ${props.$size}` : 'span 1')};
   grid-column-start: ${(props) => (props.$col < 0 ? 'initial' : props.$col + 1)};
   grid-column-end: ${(props) => (props.$vertical ? 'span 1' : `span ${props.$size}`)};
   transform: translate()
+`;
+
+const DragNode = styled.div<{ $shipSize: number, $vertical: boolean }>`
+  width: ${(props) => (props.$vertical ? '100%' : `calc(100% / ${props.$shipSize})`)};
+  height: ${(props) => (props.$vertical ? `calc(100% / ${props.$shipSize})` : '100%')};
 `;
 
 interface PropTypes {
@@ -73,7 +79,6 @@ const DraggableShip = ({ id, color }: PropTypes) => {
 
   return (
     <ShipContainer
-      ref={setNodeRef}
       $row={position?.y ?? -1}
       $col={position?.x ?? -1}
       $size={shipClass.size}
@@ -82,7 +87,13 @@ const DraggableShip = ({ id, color }: PropTypes) => {
       {...listeners}
       {...attributes}
       onDoubleClick={dispatchRotate}
-    />
+    >
+      <DragNode
+        ref={setNodeRef}
+        $shipSize={shipClass.size}
+        $vertical={orientation === ShipOrientation.Vertical}
+      />
+    </ShipContainer>
   );
 };
 
