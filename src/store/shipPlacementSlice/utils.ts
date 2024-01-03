@@ -1,9 +1,13 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
-  PlaceShipArgs, GridState, ShipState, SliceState, ShipID, Coordinates
+  PlaceShipArgs, GridState, ShipState, SliceState, ShipID, Coordinates,
 } from './types';
 import { ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
+
+const minmax = (min: number, value: number, max: number): number =>
+  // eslint-disable-next-line implicit-arrow-linebreak
+  Math.max(min, Math.min(max, value));
 
 const canPlaceShip = (
   grid: GridState,
@@ -168,19 +172,23 @@ export const processRotateShipAction = (
   };
 
   if (position) {
-    const center: Coordinates = { ...position };
-    const halfLength = Math.floor(shipClass.size / 2);
+    const { rows, columns } = state.grid;
+    const halfSize = Math.floor(shipClass.size / 2);
+    const rotatedPosition = { ...position };
 
     switch (orientation) {
-      case ShipOrientation.Horizontal: center.y += halfLength; break;
-      case ShipOrientation.Vertical: center.x += halfLength; break;
+      case ShipOrientation.Horizontal: {
+        rotatedPosition.x = minmax(0, rotatedPosition.x + halfSize, columns - 1);
+        rotatedPosition.y = minmax(0, rotatedPosition.y - halfSize, rows - shipClass.size);
+        break;
+      }
+      case ShipOrientation.Vertical: {
+        rotatedPosition.x = minmax(0, rotatedPosition.x - halfSize, columns - shipClass.size);
+        rotatedPosition.y = minmax(0, rotatedPosition.y + halfSize, rows - 1);
+        break;
+      }
       default: assertNever(orientation);
     }
-
-    const rotatedPosition: Coordinates = {
-      x: Math.max(0, center.x - halfLength),
-      y: Math.min(state.grid.rows - 1, center.y + halfLength),
-    };
 
     if (canPlaceShip(state.grid, newState, rotatedPosition, newOrientation)) {
       placeShip(state, shipIndex, rotatedPosition, newOrientation);
