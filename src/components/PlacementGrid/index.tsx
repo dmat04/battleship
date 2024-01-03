@@ -1,10 +1,14 @@
 import styled from 'styled-components';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import GameGrid from '../GameGrid';
 import DNDContext from './DNDContext';
 import DraggableShip from './DraggableShip';
 import { createDroppableCells } from './utils';
 import PlacementGridContext, { IPlacementGridContext } from './PlacementGridContext';
+import { RootState } from '../../store/store';
+import { ShipState } from '../../store/shipPlacementSlice/types';
+import { ShipOrientation } from '../../__generated__/graphql';
 
 const NavyGrid = styled.div`
   display: grid;
@@ -27,30 +31,33 @@ const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean, 
 `;
 
 interface NavyHolderProps {
-  shipSize: number;
-  color: string
+  shipState: ShipState;
 }
 
-const NavyHolder = ({ shipSize, color }: NavyHolderProps) => {
-  const [vertical, setVertical] = useState<boolean>(false);
+const NavyHolder = ({ shipState }: NavyHolderProps) => (
+  <NavyHolderContainer
+    $shipSize={shipState.shipClass.size}
+    $vertical={shipState.orientation === ShipOrientation.Vertical}
+    $color="red"
+  >
+    <div style={{ gridArea: '1 / 1 / 1 / -1' }} />
+    <div style={{ gridArea: '2 / 1 / 2 / 1' }} />
+    <DraggableShip id={shipState.shipID} color="red" />
+  </NavyHolderContainer>
+);
 
-  return (
-    <NavyHolderContainer $shipSize={shipSize} $vertical={vertical} $color={color}>
-      <DraggableShip
-        col={2}
-        row={2}
-        size={5}
-        color={color}
-        vertical={vertical}
-        setVertical={setVertical}
-      />
-    </NavyHolderContainer>
-  );
-};
-
-const cells = createDroppableCells(10, 10);
+const Cells = ({ rows, columns }: { rows: number, columns: number }) => (
+  <>
+    {createDroppableCells(rows, columns)}
+  </>
+);
 
 const PlacementGrid = () => {
+  // eslint-disable-next-line arrow-body-style
+  const columns = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid.columns);
+  const rows = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid.rows);
+  const shipStates = useSelector(({ shipPlacement }: RootState) => shipPlacement.shipStates);
+
   const componentContainerRef = useRef<HTMLDivElement | null>(null);
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -63,17 +70,20 @@ const PlacementGrid = () => {
     <PlacementGridContext.Provider value={contextValue}>
       <DNDContext>
         <div ref={componentContainerRef}>
-          <GameGrid ref={gridContainerRef} $cols={10} $rows={10}>
-            {cells}
+          <GameGrid ref={gridContainerRef} $cols={columns} $rows={rows}>
+            <Cells rows={rows} columns={columns} />
+            {
+              shipStates
+                .filter((ship) => ship.position !== null)
+                .map(({ shipID }) => <DraggableShip key={shipID} id={shipID} color="black" />)
+            }
           </GameGrid>
           <NavyGrid>
-            <NavyHolder shipSize={5} color="red" />
-            <NavyHolder shipSize={4} color="green" />
-            <NavyHolder shipSize={3} color="blue" />
-            <NavyHolder shipSize={2} color="yellow" />
-            <NavyHolder shipSize={2} color="purple" />
-            <NavyHolder shipSize={1} color="orange" />
-            <NavyHolder shipSize={1} color="brown" />
+            {
+              shipStates
+                .filter((ship) => ship.position === null)
+                .map((ship) => <NavyHolder key={ship.shipID} shipState={ship} />)
+            }
             <RightSpacer />
           </NavyGrid>
         </div>

@@ -1,6 +1,5 @@
 /* eslint-disable arrow-body-style */
 import type { Modifier } from '@dnd-kit/core';
-import type { Transform } from '@dnd-kit/utilities';
 import React from 'react';
 import { ShipDragData } from './DraggableShip';
 
@@ -35,18 +34,6 @@ const CustomGridModifier = (
 
     const cellSize = gridRect.width / columns;
     let { x: dx, y: dy } = transform;
-
-    // const transformedNode = {
-    //   top: activeNodeRect.top + dy,
-    //   bottom: activeNodeRect.bottom + dy,
-    //   left: activeNodeRect.left + dx,
-    //   right: activeNodeRect.right + dx,
-    // };
-
-    // console.log('\n');
-    // console.log('CONTAINER', containerRect);
-    // console.log('NODE', activeNodeRect);
-    // console.log('TRANSFORMED NODE', transformedNode);
 
     const shipData = active.data.current as ShipDragData;
     const extraHeight = shipData.vertical ? (shipData.size - 1) : 0;
