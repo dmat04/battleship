@@ -35,29 +35,42 @@ const CustomGridModifier = (
     const cellSize = gridRect.width / columns;
     let { x: dx, y: dy } = transform;
 
-    const shipData = active.data.current as ShipDragData;
-    const extraHeight = shipData.vertical ? (shipData.size - 1) : 0;
+    const { size, vertical, scale } = active.data.current as ShipDragData;
+    const extraHeight = vertical ? (size - 1) : 0;
+    const computedContainerRect = { ...containerNodeRect };
+
+    if (Math.abs(1 - scale) > Number.EPSILON) {
+      computedContainerRect.width /= scale;
+      computedContainerRect.height /= scale;
+      const dWidthHalf = 0.5 * (containerNodeRect.width - computedContainerRect.width);
+      const dHeightHalf = 0.5 * (containerNodeRect.height - computedContainerRect.height);
+
+      computedContainerRect.left += dWidthHalf;
+      computedContainerRect.right -= dWidthHalf;
+      computedContainerRect.top += dHeightHalf;
+      computedContainerRect.bottom -= dHeightHalf;
+    }
 
     // Bound within containerRect on horizontal axis
-    if (dx + containerNodeRect.left < componentRect.left) {
-      dx = componentRect.left - containerNodeRect.left;
-    } else if (dx + containerNodeRect.right > componentRect.right) {
-      dx = componentRect.right - containerNodeRect.right;
+    if (dx + computedContainerRect.left < componentRect.left) {
+      dx = componentRect.left - computedContainerRect.left;
+    } else if (dx + computedContainerRect.right > componentRect.right) {
+      dx = componentRect.right - computedContainerRect.right;
     }
 
     // Bound within containerRect on vertical axis
-    if (dy + containerNodeRect.top < componentRect.top) {
-      dy = componentRect.top - containerNodeRect.top;
-    } else if (dy + containerNodeRect.bottom > componentRect.bottom) {
-      dy = componentRect.bottom - containerNodeRect.bottom;
+    if (dy + computedContainerRect.top < componentRect.top) {
+      dy = componentRect.top - computedContainerRect.top;
+    } else if (dy + computedContainerRect.bottom > componentRect.bottom) {
+      dy = componentRect.bottom - computedContainerRect.bottom;
     }
 
-    const snapRow = Math.round((containerNodeRect.top + dy - gridRect.top) / cellSize);
-    const snapCol = Math.round((containerNodeRect.left + dx - gridRect.left) / cellSize);
+    const snapRow = Math.round((computedContainerRect.top + dy - gridRect.top) / cellSize);
+    const snapCol = Math.round((computedContainerRect.left + dx - gridRect.left) / cellSize);
 
     if (snapRow >= 0 && (snapRow + extraHeight) < rows && snapCol >= 0 && snapCol < columns) {
-      dx = snapCol * cellSize - containerNodeRect.left + gridRect.left;
-      dy = (snapRow - rows) * cellSize - containerNodeRect.top + gridRect.bottom;
+      dx = snapCol * cellSize - computedContainerRect.left + gridRect.left;
+      dy = (snapRow - rows) * cellSize - computedContainerRect.top + gridRect.bottom;
     }
 
     return {
