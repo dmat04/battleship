@@ -28,9 +28,10 @@ interface PropTypes {
 }
 
 export interface ShipDragData {
+  id: string;
   size: number;
   vertical: boolean;
-  id: string;
+  scale: number;
 }
 
 const DraggableShip = ({ id, color }: PropTypes) => {
@@ -51,10 +52,11 @@ const DraggableShip = ({ id, color }: PropTypes) => {
     id: shipID,
     size: shipClass.size,
     vertical: orientation === ShipOrientation.Vertical,
+    scale: 1,
   };
 
   const {
-    attributes, listeners, setNodeRef, transform,
+    attributes, listeners, setNodeRef, transform, isDragging,
   } = useDraggable({
     id: shipID ?? '',
     data: draggableData,
@@ -72,10 +74,18 @@ const DraggableShip = ({ id, color }: PropTypes) => {
     zIndex: 1,
     boxShadow: '',
     backgroundColor: color,
-    transform: transform !== null
-      ? `translate(${transform?.x}px, ${transform?.y}px)`
-      : 'translate(0, 0)',
+    transform: '',
   };
+
+  if (isDragging) {
+    draggableData.scale = 1.1;
+    style.transform = `
+      translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)
+      scale(${draggableData.scale})
+    `;
+    style.zIndex = 10;
+    style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px'
+  }
 
   return (
     <ShipContainer

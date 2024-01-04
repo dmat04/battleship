@@ -17,7 +17,7 @@ const DNDContext = ({ children }: PropTypes) => {
   const dispatch = useDispatch();
 
   const activationConstraint = {
-    delay: 250,
+    delay: 150,
     distance: 0,
     tolerance: 100,
   };
