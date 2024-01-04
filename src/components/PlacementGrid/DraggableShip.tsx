@@ -8,7 +8,6 @@ import { rotateShip } from '../../store/shipPlacementSlice';
 
 const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $vertical: boolean }>`
   background-color: lightslategray;
-  touch-action: none;
   display: flex;
   grid-row-start: ${(props) => (props.$row < 0 ? 'initial' : props.$row + 1)};
   grid-row-end: ${(props) => (props.$vertical ? `span ${props.$size}` : 'span 1')};
@@ -84,7 +83,7 @@ const DraggableShip = ({ id, color }: PropTypes) => {
       scale(${draggableData.scale})
     `;
     style.zIndex = 10;
-    style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px'
+    style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px';
   }
 
   return (
