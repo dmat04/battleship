@@ -1,6 +1,13 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
-  PlaceShipArgs, GridState, ShipState, SliceState, ShipID, Coordinates,
+  PlaceShipArgs,
+  GridState,
+  ShipState,
+  SliceState,
+  ShipID,
+  Coordinates,
+  DragEndArgs,
+  DragPostionUpdateAgrs,
 } from './types';
 import { ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
@@ -155,7 +162,12 @@ export const processRotateShipAction = (
   if (shipIndex < 0) return;
 
   const oldState = state.shipStates[shipIndex];
-  const { shipClass, orientation, position } = oldState;
+  const {
+    shipClass,
+    orientation,
+    position,
+    dragState,
+  } = oldState;
 
   let newOrientation = orientation;
   switch (orientation) {
@@ -169,6 +181,7 @@ export const processRotateShipAction = (
     shipClass,
     orientation: newOrientation,
     position: null,
+    dragState,
   };
 
   if (position) {
@@ -202,4 +215,70 @@ export const processRotateShipAction = (
   state.shipStates[shipIndex] = newState;
 };
 
-export default {};
+export const processDragStartAction = (
+  { shipStates }: SliceState,
+  { payload }: PayloadAction<ShipID>,
+) => {
+  const shipIndex = shipStates.findIndex(({ shipID }) => shipID === payload);
+  if (shipIndex < 0) return;
+
+  const shipState = shipStates[shipIndex];
+  shipState.dragState = { canBeDropped: false, draggingOver: null };
+};
+
+export const processDragPositionUpdateAction = (
+  state: SliceState,
+  { payload }: PayloadAction<DragPostionUpdateAgrs>,
+) => {
+  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
+  if (shipIndex < 0) return;
+
+  const shipState = state.shipStates[shipIndex];
+
+  const { position } = payload;
+  const { dragState } = shipState;
+
+  if (dragState !== null) {
+    const oldPosition = dragState.draggingOver;
+
+    if (oldPosition === null && position !== null) {
+      dragState.draggingOver = position;
+      dragState.canBeDropped = canPlaceShip(state.grid, shipState, position);
+    } else if (oldPosition !== null && position === null) {
+      dragState.draggingOver = null;
+      dragState.canBeDropped = false;
+    } else if (
+      oldPosition !== null
+      && position !== null
+      && oldPosition.x !== position.x
+      && oldPosition.y !== position.y
+    ) {
+      dragState.draggingOver = { ...position };
+      dragState.canBeDropped = canPlaceShip(state.grid, shipState, position);
+    }
+  }
+};
+
+export const processDragEndAction = (
+  state: SliceState,
+  { payload }: PayloadAction<DragEndArgs>,
+) => {
+  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
+  if (shipIndex < 0) return;
+
+  const shipState = state.shipStates[shipIndex];
+
+  const { position } = payload;
+
+  const canBePlaced = (
+    position !== null
+    && canPlaceShip(state.grid, shipState, position)
+  );
+
+  shipState.dragState = null;
+  if (canBePlaced) {
+    placeShip(state, shipIndex, position);
+  } else {
+    displaceShip(state, shipIndex);
+  }
+};
