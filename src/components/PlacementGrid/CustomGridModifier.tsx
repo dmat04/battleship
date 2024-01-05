@@ -9,6 +9,8 @@ const CustomGridModifier = (
   componentRef: React.MutableRefObject<HTMLDivElement | null>,
   gridRef: React.MutableRefObject<HTMLDivElement | null>,
 ): Modifier => {
+  let initialScroll: { scrollX: number, scrollY: number } | null = null;
+
   return ({
     active,
     containerNodeRect,
@@ -16,6 +18,17 @@ const CustomGridModifier = (
   }) => {
     const componentRect = componentRef.current?.getBoundingClientRect();
     const gridRect = gridRef.current?.getBoundingClientRect();
+
+    if (initialScroll === null && active !== null) {
+      initialScroll = {
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+      };
+    }
+
+    if (initialScroll !== null && active === null) {
+      initialScroll = null;
+    }
 
     if (
       containerNodeRect === null
@@ -31,6 +44,9 @@ const CustomGridModifier = (
         scaleY: 1,
       };
     }
+
+    const dScrollY = (initialScroll?.scrollY ?? 0) - window.scrollY;
+    const dScrollX = (initialScroll?.scrollX ?? 0) - window.scrollX;
 
     const cellSize = gridRect.width / columns;
     let { x: dx, y: dy } = transform;
@@ -52,17 +68,17 @@ const CustomGridModifier = (
     }
 
     // Bound within containerRect on horizontal axis
-    if (dx + computedContainerRect.left < componentRect.left) {
-      dx = componentRect.left - computedContainerRect.left;
-    } else if (dx + computedContainerRect.right > componentRect.right) {
-      dx = componentRect.right - computedContainerRect.right;
+    if (dx + computedContainerRect.left - dScrollX < componentRect.left) {
+      dx = componentRect.left - computedContainerRect.left + dScrollX;
+    } else if (dx + computedContainerRect.right - dScrollX > componentRect.right) {
+      dx = componentRect.right - computedContainerRect.right + dScrollX;
     }
 
     // Bound within containerRect on vertical axis
-    if (dy + computedContainerRect.top < componentRect.top) {
-      dy = componentRect.top - computedContainerRect.top;
-    } else if (dy + computedContainerRect.bottom > componentRect.bottom) {
-      dy = componentRect.bottom - computedContainerRect.bottom;
+    if (dy + computedContainerRect.top - dScrollY < componentRect.top) {
+      dy = componentRect.top - computedContainerRect.top + dScrollY;
+    } else if (dy + computedContainerRect.bottom - dScrollY> componentRect.bottom) {
+      dy = componentRect.bottom - computedContainerRect.bottom + dScrollY;
     }
 
     const snapRow = Math.round((computedContainerRect.top + dy - gridRect.top) / cellSize);
