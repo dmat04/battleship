@@ -1,12 +1,21 @@
 import {
-  DndContext, DragEndEvent, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors,
+  DndContext,
+  DragEndEvent,
+  DragStartEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core';
 import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import CustomGridModifier from './CustomGridModifier';
 import PlacementGridContext from './PlacementGridContext';
-import { placeShip, resetShip } from '../../store/shipPlacementSlice';
+import { dragEnd, dragStart } from '../../store/shipPlacementSlice';
 import customCollisionDetector from './CustomCollisionDetector';
+import { Coordinates } from '../../store/shipPlacementSlice/types';
+import { ShipDragData } from './DraggableShip';
 
 interface PropTypes {
   children: React.ReactNode;
@@ -33,21 +42,27 @@ const DNDContext = ({ children }: PropTypes) => {
   const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 
   const modifiers = [
-    CustomGridModifier(10, 10, componentContainerRef, gridContainerRef),
+    CustomGridModifier(10, 10, componentContainerRef, gridContainerRef, dispatch),
   ];
 
   const handleDragEnd = (ev: DragEndEvent) => {
-    const { id } = ev.active.data.current;
+    const { id } = ev.active.data.current as ShipDragData;
+    let position: Coordinates | null = null;
 
-    if (!ev.over?.data.current) {
-      dispatch(resetShip(id));
-    } else {
-      const { row, column } = ev.over.data.current;
+    const { column, row } = ev.over?.data.current ?? {};
+    if (column !== undefined && row !== undefined) {
+      position = {
+        x: column,
+        y: row,
+      };
+    }
 
-      dispatch(placeShip({
-        shipID: id,
-        position: { x: column, y: row },
-      }));
+    dispatch(dragEnd({ shipID: id, position }));
+  };
+
+  const handleDragStart = (ev: DragStartEvent) => {
+    if (ev.active?.data?.current?.id !== undefined) {
+      dispatch(dragStart(ev.active.data.current.id));
     }
   };
 
@@ -57,7 +72,7 @@ const DNDContext = ({ children }: PropTypes) => {
       modifiers={modifiers}
       collisionDetection={customCollisionDetector}
       // collisionDetection={closestCenter}
-      // onDragStart={(ev) => console.log('START', ev)}
+      onDragStart={handleDragStart}
       // onDragMove={(ev) => console.log('MOVE', ev)}
       // onDragOver={(ev) => console.log('OVER', ev)}
       onDragEnd={handleDragEnd}

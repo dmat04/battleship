@@ -1,13 +1,18 @@
 /* eslint-disable arrow-body-style */
 import type { Modifier } from '@dnd-kit/core';
 import React from 'react';
+import { Dispatch } from '@reduxjs/toolkit';
+import { Coordinates } from '@dnd-kit/core/dist/types';
 import { ShipDragData } from './DraggableShip';
+import { dragPositionUpdate } from '../../store/shipPlacementSlice';
+import { isString } from '../../utils/typeUtils';
 
 const CustomGridModifier = (
   rows: number,
   columns: number,
   componentRef: React.MutableRefObject<HTMLDivElement | null>,
   gridRef: React.MutableRefObject<HTMLDivElement | null>,
+  dispatch: Dispatch,
 ): Modifier => {
   let initialScroll: { scrollX: number, scrollY: number } | null = null;
 
@@ -77,17 +82,24 @@ const CustomGridModifier = (
     // Bound within containerRect on vertical axis
     if (dy + computedContainerRect.top - dScrollY < componentRect.top) {
       dy = componentRect.top - computedContainerRect.top + dScrollY;
-    } else if (dy + computedContainerRect.bottom - dScrollY> componentRect.bottom) {
+    } else if (dy + computedContainerRect.bottom - dScrollY > componentRect.bottom) {
       dy = componentRect.bottom - computedContainerRect.bottom + dScrollY;
     }
 
     const snapRow = Math.round((computedContainerRect.top + dy - gridRect.top) / cellSize);
     const snapCol = Math.round((computedContainerRect.left + dx - gridRect.left) / cellSize);
 
+    const shipID = active.data.current.id;
+    let position: Coordinates | null = null;
+
     if (snapRow >= 0 && (snapRow + extraHeight) < rows && snapCol >= 0 && snapCol < columns) {
       dx = snapCol * cellSize - computedContainerRect.left + gridRect.left;
       dy = (snapRow - rows) * cellSize - computedContainerRect.top + gridRect.bottom;
+
+      position = { x: snapCol, y: snapRow };
     }
+
+    if (isString(shipID)) dispatch(dragPositionUpdate({ shipID, position }));
 
     return {
       x: dx,
