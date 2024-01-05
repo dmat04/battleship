@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
+import { Transform } from '@dnd-kit/utilities';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
@@ -13,7 +14,6 @@ const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $v
   grid-row-end: ${(props) => (props.$vertical ? `span ${props.$size}` : 'span 1')};
   grid-column-start: ${(props) => (props.$col < 0 ? 'initial' : props.$col + 1)};
   grid-column-end: ${(props) => (props.$vertical ? 'span 1' : `span ${props.$size}`)};
-  transform: translate()
 `;
 
 const DragNode = styled.div<{ $shipSize: number, $vertical: boolean }>`
@@ -23,7 +23,6 @@ const DragNode = styled.div<{ $shipSize: number, $vertical: boolean }>`
 
 interface PropTypes {
   id: string;
-  color: string;
 }
 
 export interface ShipDragData {
@@ -33,7 +32,44 @@ export interface ShipDragData {
   scale: number;
 }
 
-const DraggableShip = ({ id, color }: PropTypes) => {
+const generateStyle = (
+  { dragState }: ShipState,
+  transform: Transform | null,
+  isDragging: boolean,
+  draggableData: ShipDragData,
+) => {
+  // eslint-disable-next-line no-param-reassign
+  draggableData.scale = isDragging ? 1.1 : 1;
+  const boxShadow = isDragging
+    ? 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px'
+    : 'none';
+
+  const style = {
+    transform: `
+      translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)
+      scale(${draggableData.scale})
+    `,
+    border: 'none',
+    zIndex: isDragging ? 10 : 5,
+    boxShadow,
+  };
+
+  if (dragState === null) {
+    return style;
+  }
+
+  if (dragState.draggingOver !== null) {
+    if (dragState.canBeDropped) {
+      style.border = '2px solid green';
+    } else {
+      style.border = '2px solid red';
+    }
+  }
+
+  return style;
+};
+
+const DraggableShip = ({ id }: PropTypes) => {
   // eslint-disable-next-line arrow-body-style
   const shipState = useSelector(({ shipPlacement }: RootState) => {
     return shipPlacement.shipStates.find((el) => el.shipID === id);
@@ -55,7 +91,11 @@ const DraggableShip = ({ id, color }: PropTypes) => {
   };
 
   const {
-    attributes, listeners, setNodeRef, transform, isDragging,
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
   } = useDraggable({
     id: shipID ?? '',
     data: draggableData,
@@ -69,22 +109,23 @@ const DraggableShip = ({ id, color }: PropTypes) => {
     }
   };
 
-  const style = {
-    zIndex: 1,
-    boxShadow: '',
-    backgroundColor: color,
-    transform: '',
-  };
+  // const style = {
+  //   zIndex: 1,
+  //   boxShadow: '',
+  //   transform: '',
+  // };
 
-  if (isDragging) {
-    draggableData.scale = 1.1;
-    style.transform = `
-      translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)
-      scale(${draggableData.scale})
-    `;
-    style.zIndex = 10;
-    style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px';
-  }
+  // if (isDragging) {
+  //   draggableData.scale = 1.1;
+  //   style.transform = `
+  //     translate(${transform?.x ?? 0}px, ${transform?.y ?? 0}px)
+  //     scale(${draggableData.scale})
+  //   `;
+  //   style.zIndex = 10;
+  //   style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px';
+  // }
+
+  const style = generateStyle(shipState, transform, isDragging, draggableData);
 
   return (
     <ShipContainer

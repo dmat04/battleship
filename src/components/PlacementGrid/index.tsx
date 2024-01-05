@@ -22,7 +22,7 @@ const RightSpacer = styled.div`
   grid-area: 1 / 10 / span 10 / span 1;
 `;
 
-const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean, $color: string }>`
+const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }>`
   display: grid;
   grid-template-rows: subgrid;
   grid-template-columns: subgrid;
@@ -38,11 +38,10 @@ const NavyHolder = ({ shipState }: NavyHolderProps) => (
   <NavyHolderContainer
     $shipSize={shipState.shipClass.size}
     $vertical={shipState.orientation === ShipOrientation.Vertical}
-    $color="red"
   >
     <div style={{ gridArea: '1 / 1 / 1 / -1' }} />
     <div style={{ gridArea: '2 / 1 / 2 / 1' }} />
-    <DraggableShip id={shipState.shipID} color="red" />
+    <DraggableShip id={shipState.shipID} />
   </NavyHolderContainer>
 );
 
@@ -75,7 +74,7 @@ const PlacementGrid = () => {
             {
               shipStates
                 .filter((ship) => ship.position !== null)
-                .map(({ shipID }) => <DraggableShip key={shipID} id={shipID} color="black" />)
+                .map(({ shipID }) => <DraggableShip key={shipID} id={shipID} />)
             }
           </GameGrid>
           <NavyGrid>
