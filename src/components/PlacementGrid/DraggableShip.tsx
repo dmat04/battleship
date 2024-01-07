@@ -7,6 +7,29 @@ import { ShipOrientation } from '../../__generated__/graphql';
 import { ShipState } from '../../store/shipPlacementSlice/types';
 import { rotateShip } from '../../store/shipPlacementSlice';
 
+const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }>`
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+  grid-row-end: ${(props) => (props.$vertical ? `span ${props.$shipSize + 1}` : 'span 2')};
+  grid-column-end: ${(props) => (props.$vertical ? 'span 2' : `span ${props.$shipSize + 1}`)};
+`;
+
+interface NavyHolderProps {
+  shipState: ShipState;
+}
+
+const NavyHolder = ({ shipState }: NavyHolderProps) => (
+  <NavyHolderContainer
+    $shipSize={shipState.shipClass.size}
+    $vertical={shipState.orientation === ShipOrientation.Vertical}
+  >
+    <div style={{ gridArea: '1 / 1 / 1 / -1' }} />
+    <div style={{ gridArea: '2 / 1 / 2 / 1' }} />
+    <DraggableShip id={shipState.shipID} />
+  </NavyHolderContainer>
+);
+
 const ShipContainer = styled.div<{ $row: number, $col: number, $size: number, $vertical: boolean }>`
   background-color: lightslategray;
   display: flex;
