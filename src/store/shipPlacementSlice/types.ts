@@ -39,6 +39,8 @@ export interface GridState {
 }
 
 export interface SliceState {
+  placedIDs: string[];
+  nonPlacedIDs: string[];
   shipStates: ShipState[];
   grid: GridState;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
   PlaceShipArgs,
@@ -113,6 +114,9 @@ const placeShip = (
     orientation: orientation ?? oldState.orientation,
   };
 
+  state.nonPlacedIDs = state.nonPlacedIDs.filter((id) => id !== newState.shipID);
+  state.placedIDs.push(newState.shipID);
+
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
   populateGridWithShip(state.grid, newState);
@@ -125,6 +129,9 @@ const displaceShip = (state: SliceState, shipIndex: number) => {
     ...oldState,
     position: null,
   };
+
+  state.placedIDs = state.placedIDs.filter((id) => id !== newState.shipID);
+  state.nonPlacedIDs.push(newState.shipID);
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;

@@ -11,6 +11,16 @@ import {
 import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
 
 const stateStub: SliceState = {
+  placedIDs: [],
+  nonPlacedIDs: [
+    'CARRIER-1',
+    'BATTLESHIP-1',
+    'CRUISER-1',
+    'DESTROYER-1',
+    'DESTROYER-2',
+    'SUBMARINE-1',
+    'SUBMARINE-2',
+  ],
   shipStates: [
     { orientation: ShipOrientation.Horizontal, shipClass: { size: 5, type: ShipClassName.Carrier }, position: null, shipID: 'CARRIER-1', dragState: null },
     { orientation: ShipOrientation.Horizontal, shipClass: { size: 4, type: ShipClassName.Battleship }, position: null, shipID: 'BATTLESHIP-1', dragState: null },
@@ -39,6 +49,8 @@ const stateStub: SliceState = {
 };
 
 const initialState: SliceState = {
+  placedIDs: [],
+  nonPlacedIDs: [],
   shipStates: [],
   grid: {
     columns: 0,
