@@ -7,29 +7,16 @@ export interface Coordinates {
   y: number;
 }
 
-export interface ShipDragState {
-  draggingOver: Coordinates | null;
-  canBeDropped: boolean;
-}
-
 export interface PlaceShipArgs {
   shipID: ShipID;
   position: Coordinates;
 }
-
-export interface DragEndArgs {
-  shipID: ShipID;
-  position: Coordinates | null;
-}
-
-export type DragPostionUpdateAgrs = DragEndArgs;
 
 export interface ShipState {
   shipID: ShipID;
   shipClass: ShipClass;
   orientation: ShipOrientation;
   position: Coordinates | null;
-  dragState: ShipDragState | null;
 }
 
 export interface GridState {
