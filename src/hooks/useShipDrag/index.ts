@@ -1,11 +1,15 @@
-import { useSelector } from 'react-redux';
-import { useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { useSpring, config } from '@react-spring/web';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  useCallback, useContext, useMemo, useRef,
+} from 'react';
+import { useSpring } from '@react-spring/web';
 import type { RootState } from '../../store/store';
 import { Coordinates, ShipState } from '../../store/shipPlacementSlice/types';
 import useBoundingRects from '../useBoundingRects';
 import PlacementGridContext from '../../components/PlacementGrid/PlacementGridContext';
 import { canPlaceShip } from '../../store/shipPlacementSlice/utils';
+import { placeShip, resetShip, rotateShip } from '../../store/shipPlacementSlice';
+import { calculateGridPosition, calculateTranslation, isWithinGrid } from './utils';
 
 interface UseShipDragArgs {
   id: string;
@@ -14,13 +18,17 @@ interface UseShipDragArgs {
 
 const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   const [springProps, springAPI] = useSpring(() => ({
-    from: { x: 0, y: 0, scale: 1, borderColor: 'transparent' },
+    from: {
+      x: 0, y: 0, scale: 1, borderColor: 'transparent',
+    },
     config: {
       mass: 0.5,
       tension: 500,
       friction: 15,
     },
   }));
+
+  const dispatch = useDispatch();
 
   // eslint-disable-next-line arrow-body-style
   const shipState = useSelector(({ shipPlacement }: RootState) => {
@@ -38,14 +46,20 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     shipRect,
     containerRect,
     gridRect,
-  ] = useBoundingRects(shipContainerRef, componentContainerRef, gridContainerRef);
+  ] = useBoundingRects(
+    [shipContainerRef, componentContainerRef, gridContainerRef],
+    gridState,
+    shipState,
+  );
 
   const pointerId = useRef<number | null>(null);
+  const pointerDownTime = useRef<number>(Number.MAX_VALUE);
   const startPos = useRef<Coordinates>({ x: 0, y: 0 });
 
   const onPointerDown = useCallback((ev: React.PointerEvent) => {
     ev.currentTarget.setPointerCapture(ev.pointerId);
     pointerId.current = ev.pointerId;
+    pointerDownTime.current = ev.timeStamp;
     startPos.current.x = ev.clientX;
     startPos.current.y = ev.clientY;
   }, []);
@@ -54,10 +68,37 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     ev.currentTarget.releasePointerCapture(ev.pointerId);
     pointerId.current = null;
 
-    springAPI.start({
-      to: { x: 0, y: 0, scale: 1 },
-    });
-  }, [springAPI]);
+    if (ev.timeStamp - pointerDownTime.current < 500) return;
+
+    if (
+      shipRect === null
+      || containerRect === null
+      || gridRect === null
+    ) return;
+
+    const { dx, dy } = calculateTranslation(startPos.current, ev, shipRect, containerRect);
+
+    const {
+      gridPosition,
+    } = calculateGridPosition(gridState, shipRect, gridRect, dx, dy);
+
+    const isPlaced = shipState.position !== null;
+    const isOutsideGrid = !isWithinGrid(gridPosition, gridState);
+    const canBePlaced = canPlaceShip(gridState, shipState, gridPosition);
+
+    if (canBePlaced) {
+      springAPI.start({
+        to: { scale: 1, borderColor: 'transparent' },
+      });
+      dispatch(placeShip({ position: gridPosition, shipID: id }));
+    } else if (isPlaced && isOutsideGrid) {
+      dispatch(resetShip(id));
+    } else {
+      springAPI.start({
+        to: { x: 0, y: 0, scale: 1 },
+      });
+    }
+  }, [containerRect, dispatch, gridRect, gridState, id, shipRect, shipState, springAPI]);
 
   const onPointerMove = useCallback((ev: React.PointerEvent) => {
     if (
@@ -67,42 +108,20 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       || gridRect === null
     ) return;
 
-    const cellSize = gridRect.width / gridState.columns;
-    let dx = ev.clientX - startPos.current.x;
-    let dy = ev.clientY - startPos.current.y;
+    let { dx, dy } = calculateTranslation(startPos.current, ev, shipRect, containerRect);
 
-    if (shipRect.left + dx < containerRect.left) {
-      dx = containerRect.left - shipRect.left;
-    } else if (shipRect.right + dx > containerRect.right) {
-      dx = containerRect.right - shipRect.right;
-    }
-
-    if (shipRect.top + dy < containerRect.top) {
-      dy = containerRect.top - shipRect.top;
-    } else if (shipRect.bottom + dy > containerRect.bottom) {
-      dy = containerRect.bottom - shipRect.bottom;
-    }
-
-    const gridX = shipRect.left + dx - gridRect.left;
-    const gridY = shipRect.top + dy - gridRect.top;
-
-    const snapCol = Math.round(gridX / cellSize);
-    const snapRow = Math.round(gridY / cellSize);
+    const {
+      gridPosition,
+      dxSnapped,
+      dySnapped,
+    } = calculateGridPosition(gridState, shipRect, gridRect, dx, dy);
 
     let borderColor = 'transparent';
-
-    if (
-      snapCol >= 0
-      && snapCol < gridState.columns
-      && snapRow >= 0
-      && snapRow < gridState.rows) {
-      dx = (cellSize * snapCol) - shipRect.left + gridRect.left;
-      dy = (cellSize * snapRow) - shipRect.top + gridRect.top;
-      borderColor = canPlaceShip(
-        gridState,
-        shipState,
-        { x: snapCol, y: snapRow },
-      ) ? 'green'
+    if (isWithinGrid(gridPosition, gridState)) {
+      dx = dxSnapped;
+      dy = dySnapped;
+      borderColor = canPlaceShip(gridState, shipState, gridPosition)
+        ? 'green'
         : 'red';
     }
 
@@ -116,6 +135,10 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     });
   }, [containerRect, gridRect, gridState, shipRect, shipState, springAPI]);
 
+  const onDoubleClick = useCallback(() => {
+    dispatch(rotateShip(id));
+  }, [dispatch, id]);
+
   // eslint-disable-next-line arrow-body-style
   const listeners = useMemo(() => {
     return {
@@ -123,8 +146,9 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       onPointerUp,
       onPointerCancel: onPointerUp,
       onPointerMove,
+      onDoubleClick,
     };
-  }, [onPointerDown, onPointerMove, onPointerUp]);
+  }, [onPointerDown, onPointerMove, onPointerUp, onDoubleClick]);
 
   if (shipState === undefined) return null;
 
