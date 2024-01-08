@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 
-const useBoundingRects = (...refs: React.MutableRefObject<HTMLElement | null>[]) => {
+const useBoundingRects = (
+  refs: React.MutableRefObject<HTMLElement | null>[],
+  ...dependencies
+) => {
   const [rects, setRects] = useState<(DOMRect | null)[]>(Array(refs.length).fill(null));
 
   useEffect(() => {
     const updateRects = () => {
+      console.log('updating rects')
       setRects(refs.map((ref) => ref.current?.getBoundingClientRect() ?? null));
     };
 
@@ -17,7 +21,8 @@ const useBoundingRects = (...refs: React.MutableRefObject<HTMLElement | null>[])
       window.visualViewport?.removeEventListener('resize', updateRects);
       window.removeEventListener('scrollend', updateRects);
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies);
 
   return rects;
 };
