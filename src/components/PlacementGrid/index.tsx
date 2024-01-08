@@ -5,8 +5,6 @@ import GameGrid from '../GameGrid';
 import DraggableShip from './DraggableShip';
 import PlacementGridContext, { IPlacementGridContext } from './PlacementGridContext';
 import { RootState } from '../../store/store';
-import { ShipState } from '../../store/shipPlacementSlice/types';
-import { ShipOrientation } from '../../__generated__/graphql';
 
 const NavyGrid = styled.div`
   display: grid;
