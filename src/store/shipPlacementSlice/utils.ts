@@ -15,7 +15,7 @@ const minmax = (min: number, value: number, max: number): number =>
   // eslint-disable-next-line implicit-arrow-linebreak
   Math.max(min, Math.min(max, value));
 
-const canPlaceShip = (
+export const canPlaceShip = (
   grid: GridState,
   ship: ShipState,
   { x, y }: Coordinates,

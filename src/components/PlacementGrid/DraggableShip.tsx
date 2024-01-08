@@ -15,6 +15,9 @@ const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }
 const generateStyle = (row: number, col: number, size: number, vertical: boolean) => ({
   backgroundColor: 'lightslategray',
   display: 'flex',
+  borderStyle: 'solid',
+  borderWidth: '3px',
+  borderColor: 'transparent',
   gridRowStart: row >= 0 ? `${row + 1}` : 'initial',
   gridRowEnd: vertical ? `span ${size}` : 'span 1',
   gridColumnStart: col >= 0 ? `${col + 1}` : 'initial',
