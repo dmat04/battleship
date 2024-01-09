@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 const useBoundingRects = (
-  ...refs: React.MutableRefObject<HTMLElement | null>[]
+  refs: React.MutableRefObject<HTMLElement | null>[],
+  dependencies: React.DependencyList,
 ) => {
   const [rects, setRects] = useState<(DOMRect | null)[]>(Array(refs.length).fill(null));
 
