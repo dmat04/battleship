@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { useSpring } from '@react-spring/web';
 import type { RootState } from '../../store/store';
-import { Coordinates, ShipState } from '../../store/shipPlacementSlice/types';
+import { Coordinates } from '../../store/shipPlacementSlice/types';
 import useBoundingRects from '../useBoundingRects';
 import PlacementGridContext from '../../components/PlacementGrid/PlacementGridContext';
 import { canPlaceShip } from '../../store/shipPlacementSlice/utils';
@@ -17,25 +17,16 @@ interface UseShipDragArgs {
 }
 
 const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
-  const [springProps, springAPI] = useSpring(() => ({
-    from: {
-      x: 0, y: 0, scale: 1, borderColor: 'transparent',
-    },
-    config: {
-      mass: 0.5,
-      tension: 500,
-      friction: 15,
-    },
-  }));
-
   const dispatch = useDispatch();
 
   // eslint-disable-next-line arrow-body-style
-  const shipState = useSelector(({ shipPlacement }: RootState) => {
-    return shipPlacement.shipStates.find(({ shipID }: ShipState) => shipID === id);
-  }) as ShipState;
+  const shipStates = useSelector(({ shipPlacement }: RootState) => {
+    return shipPlacement.shipStates;
+  });
 
   const gridState = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid);
+
+  const shipState = shipStates.find((ship) => ship.shipID === id);
 
   const {
     componentContainerRef,
@@ -48,18 +39,35 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     gridRect,
   ] = useBoundingRects(
     [shipContainerRef, componentContainerRef, gridContainerRef],
-    gridState,
-    shipState,
+    [gridState, shipStates, shipState?.position],
+  );
+
+  const springStart = useMemo(() => ({
+    x: 0,
+    y: 0,
+    scale: 1,
+    borderColor: 'transparent',
+  }), []);
+
+  const [springProps, springAPI] = useSpring(
+    () => ({
+      from: springStart,
+      config: {
+        mass: 0.5,
+        tension: 500,
+        friction: 15,
+        precision: 0.0001,
+      },
+    }),
+    [shipState],
   );
 
   const pointerId = useRef<number | null>(null);
-  const pointerDownTime = useRef<number>(Number.MAX_VALUE);
   const startPos = useRef<Coordinates>({ x: 0, y: 0 });
 
   const onPointerDown = useCallback((ev: React.PointerEvent) => {
     ev.currentTarget.setPointerCapture(ev.pointerId);
     pointerId.current = ev.pointerId;
-    pointerDownTime.current = ev.timeStamp;
     startPos.current.x = ev.clientX;
     startPos.current.y = ev.clientY;
   }, []);
@@ -68,10 +76,9 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     ev.currentTarget.releasePointerCapture(ev.pointerId);
     pointerId.current = null;
 
-    if (ev.timeStamp - pointerDownTime.current < 500) return;
-
     if (
-      shipRect === null
+      shipState === undefined
+      || shipRect === null
       || containerRect === null
       || gridRect === null
     ) return;
@@ -86,23 +93,35 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     const isOutsideGrid = !isWithinGrid(gridPosition, gridState);
     const canBePlaced = canPlaceShip(gridState, shipState, gridPosition);
 
-    if (canBePlaced) {
-      springAPI.start({
-        to: { scale: 1, borderColor: 'transparent' },
-      });
+    if (isPlaced) {
+      if (canBePlaced) {
+        dispatch(placeShip({ position: gridPosition, shipID: id }));
+      } else if (isOutsideGrid) {
+        dispatch(resetShip(id));
+      } else {
+        springAPI.start({ to: springStart });
+      }
+    } else if (canBePlaced) {
       dispatch(placeShip({ position: gridPosition, shipID: id }));
-    } else if (isPlaced && isOutsideGrid) {
-      dispatch(resetShip(id));
     } else {
-      springAPI.start({
-        to: { x: 0, y: 0, scale: 1 },
-      });
+      springAPI.start({ to: springStart });
     }
-  }, [containerRect, dispatch, gridRect, gridState, id, shipRect, shipState, springAPI]);
+  }, [
+    containerRect,
+    dispatch,
+    gridRect,
+    gridState,
+    id,
+    shipRect,
+    shipState,
+    springAPI,
+    springStart,
+  ]);
 
   const onPointerMove = useCallback((ev: React.PointerEvent) => {
     if (
       pointerId.current === null
+      || shipState === undefined
       || shipRect === null
       || containerRect === null
       || gridRect === null
