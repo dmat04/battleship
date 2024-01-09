@@ -22,8 +22,7 @@ const PlacementGrid = () => {
   // eslint-disable-next-line arrow-body-style
   const columns = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid.columns);
   const rows = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid.rows);
-  const placedIDs = useSelector(({ shipPlacement }: RootState) => shipPlacement.placedIDs);
-  const notPlacedIDs = useSelector(({ shipPlacement }: RootState) => shipPlacement.nonPlacedIDs);
+  const ships = useSelector(({ shipPlacement }: RootState) => shipPlacement.shipStates);
 
   const componentContainerRef = useRef<HTMLDivElement | null>(null);
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
@@ -38,14 +37,26 @@ const PlacementGrid = () => {
       <div ref={componentContainerRef}>
         <GameGrid ref={gridContainerRef} $cols={columns} $rows={rows}>
           {
-            placedIDs
-              .map((shipID) => <DraggableShip key={shipID} id={shipID} />)
+            ships
+              .filter(({ position }) => position !== null)
+              .map(({ shipID, orientation, position }) => (
+                <DraggableShip
+                  key={`${shipID}-${position?.x}-${position?.y}-${orientation}`}
+                  id={shipID}
+                />
+              ))
           }
         </GameGrid>
         <NavyGrid>
           {
-            notPlacedIDs
-              .map((shipID) => <DraggableShip key={shipID} id={shipID} />)
+            ships
+              .filter(({ position }) => position === null)
+              .map(({ shipID, orientation }) => (
+                <DraggableShip
+                  key={`${shipID}-${orientation}`}
+                  id={shipID}
+                />
+              ))
           }
           <RightSpacer />
         </NavyGrid>
