@@ -113,7 +113,9 @@ const placeShip = (
   };
 
   state.nonPlacedIDs = state.nonPlacedIDs.filter((id) => id !== newState.shipID);
-  state.placedIDs.push(newState.shipID);
+  if (state.placedIDs.findIndex((val) => val === newState.shipID) < 0) {
+    state.placedIDs.push(newState.shipID);
+  }
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
@@ -129,7 +131,9 @@ const displaceShip = (state: SliceState, shipIndex: number) => {
   };
 
   state.placedIDs = state.placedIDs.filter((id) => id !== newState.shipID);
-  state.nonPlacedIDs.push(newState.shipID);
+  if (state.nonPlacedIDs.findIndex((val) => val === newState.shipID) < 0) {
+    state.nonPlacedIDs.push(newState.shipID);
+  }
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
