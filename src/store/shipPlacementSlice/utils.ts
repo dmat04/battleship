@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
   PlaceShipArgs,
@@ -6,8 +7,6 @@ import {
   SliceState,
   ShipID,
   Coordinates,
-  DragEndArgs,
-  DragPostionUpdateAgrs,
 } from './types';
 import { ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
@@ -16,7 +15,7 @@ const minmax = (min: number, value: number, max: number): number =>
   // eslint-disable-next-line implicit-arrow-linebreak
   Math.max(min, Math.min(max, value));
 
-const canPlaceShip = (
+export const canPlaceShip = (
   grid: GridState,
   ship: ShipState,
   { x, y }: Coordinates,
@@ -113,6 +112,11 @@ const placeShip = (
     orientation: orientation ?? oldState.orientation,
   };
 
+  state.nonPlacedIDs = state.nonPlacedIDs.filter((id) => id !== newState.shipID);
+  if (state.placedIDs.findIndex((val) => val === newState.shipID) < 0) {
+    state.placedIDs.push(newState.shipID);
+  }
+
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
   populateGridWithShip(state.grid, newState);
@@ -125,6 +129,11 @@ const displaceShip = (state: SliceState, shipIndex: number) => {
     ...oldState,
     position: null,
   };
+
+  state.placedIDs = state.placedIDs.filter((id) => id !== newState.shipID);
+  if (state.nonPlacedIDs.findIndex((val) => val === newState.shipID) < 0) {
+    state.nonPlacedIDs.push(newState.shipID);
+  }
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
@@ -166,7 +175,6 @@ export const processRotateShipAction = (
     shipClass,
     orientation,
     position,
-    dragState,
   } = oldState;
 
   let newOrientation = orientation;
@@ -181,7 +189,6 @@ export const processRotateShipAction = (
     shipClass,
     orientation: newOrientation,
     position: null,
-    dragState,
   };
 
   if (position) {
@@ -213,72 +220,4 @@ export const processRotateShipAction = (
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
-};
-
-export const processDragStartAction = (
-  { shipStates }: SliceState,
-  { payload }: PayloadAction<ShipID>,
-) => {
-  const shipIndex = shipStates.findIndex(({ shipID }) => shipID === payload);
-  if (shipIndex < 0) return;
-
-  const shipState = shipStates[shipIndex];
-  shipState.dragState = { canBeDropped: false, draggingOver: null };
-};
-
-export const processDragPositionUpdateAction = (
-  state: SliceState,
-  { payload }: PayloadAction<DragPostionUpdateAgrs>,
-) => {
-  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
-  if (shipIndex < 0) return;
-
-  const shipState = state.shipStates[shipIndex];
-
-  const { position } = payload;
-  const { dragState } = shipState;
-
-  if (dragState !== null) {
-    const oldPosition = dragState.draggingOver;
-
-    if (oldPosition === null && position !== null) {
-      dragState.draggingOver = position;
-      dragState.canBeDropped = canPlaceShip(state.grid, shipState, position);
-    } else if (oldPosition !== null && position === null) {
-      dragState.draggingOver = null;
-      dragState.canBeDropped = false;
-    } else if (
-      oldPosition !== null
-      && position !== null
-      && oldPosition.x !== position.x
-      && oldPosition.y !== position.y
-    ) {
-      dragState.draggingOver = { ...position };
-      dragState.canBeDropped = canPlaceShip(state.grid, shipState, position);
-    }
-  }
-};
-
-export const processDragEndAction = (
-  state: SliceState,
-  { payload }: PayloadAction<DragEndArgs>,
-) => {
-  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
-  if (shipIndex < 0) return;
-
-  const shipState = state.shipStates[shipIndex];
-
-  const { position } = payload;
-
-  const canBePlaced = (
-    position !== null
-    && canPlaceShip(state.grid, shipState, position)
-  );
-
-  shipState.dragState = null;
-  if (canBePlaced) {
-    placeShip(state, shipIndex, position);
-  } else {
-    displaceShip(state, shipIndex);
-  }
 };
