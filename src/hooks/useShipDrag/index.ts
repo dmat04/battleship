@@ -19,14 +19,13 @@ interface UseShipDragArgs {
 const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   const dispatch = useDispatch();
 
-  // eslint-disable-next-line arrow-body-style
-  const shipStates = useSelector(({ shipPlacement }: RootState) => {
-    return shipPlacement.shipStates;
-  });
-
+  const allShips = useSelector((state: RootState) => state.shipPlacement.shipStates);
   const gridState = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid);
-
-  const shipState = shipStates.find((ship) => ship.shipID === id);
+  const shipState = useSelector(
+    ({ shipPlacement }: RootState) => shipPlacement.shipStates.find(
+      ({ shipID }) => shipID === id,
+    ),
+  );
 
   const {
     componentContainerRef,
@@ -39,7 +38,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     gridRect,
   ] = useBoundingRects(
     [shipContainerRef, componentContainerRef, gridContainerRef],
-    [gridState, shipStates, shipState?.position],
+    [gridState, allShips],
   );
 
   const springStart = useMemo(() => ({
@@ -47,6 +46,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     y: 0,
     scale: 1,
     borderColor: 'transparent',
+    zIndex: 5,
   }), []);
 
   const [springProps, springAPI] = useSpring(
@@ -59,7 +59,6 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         precision: 0.0001,
       },
     }),
-    [shipState],
   );
 
   const pointerId = useRef<number | null>(null);
@@ -107,12 +106,12 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       springAPI.start({ to: springStart });
     }
   }, [
-    containerRect,
-    dispatch,
-    gridRect,
-    gridState,
     id,
+    dispatch,
+    containerRect,
+    gridRect,
     shipRect,
+    gridState,
     shipState,
     springAPI,
     springStart,
@@ -158,16 +157,13 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     dispatch(rotateShip(id));
   }, [dispatch, id]);
 
-  // eslint-disable-next-line arrow-body-style
-  const listeners = useMemo(() => {
-    return {
-      onPointerDown,
-      onPointerUp,
-      onPointerCancel: onPointerUp,
-      onPointerMove,
-      onDoubleClick,
-    };
-  }, [onPointerDown, onPointerMove, onPointerUp, onDoubleClick]);
+  const listeners = useMemo(() => ({
+    onPointerDown,
+    onPointerUp,
+    onPointerCancel: onPointerUp,
+    onPointerMove,
+    onDoubleClick,
+  }), [onPointerDown, onPointerMove, onPointerUp, onDoubleClick]);
 
   if (shipState === undefined) return null;
 
