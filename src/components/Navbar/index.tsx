@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import IconMenu from '../assets/icons/ic_menu.svg';
 import IconClose from '../assets/icons/ic_close.svg';
 import { Theme } from '../assets/themes/themeDefault';
-import UserItem from './UserItem';
 
 const NavContainer = styled.nav<{ theme: Theme }>`
   --bg-color: ${(props) => props.theme.colorBg};

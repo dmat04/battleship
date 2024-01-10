@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import themeDefault, { Theme } from './components/assets/themes/themeDefault';
+import themeDefault from './components/assets/themes/themeDefault';
 import Navbar from './components/Navbar';
 import PlacementGrid from './components/PlacementGrid';
 import Menu from './components/MainMenu';
