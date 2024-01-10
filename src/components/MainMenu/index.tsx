@@ -1,8 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import { RootState } from "../../store/store";
-import Button from "./Button";
-import { Theme } from "../assets/themes/themeDefault";
+import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { useState } from 'react';
+import type { RootState } from '../../store/store';
+import Button from './Button';
+import { Theme } from '../assets/themes/themeDefault';
+import ButtonForm from './ButtonForm';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -29,6 +31,8 @@ const Menu = () => {
 
   return (
     <MenuContainer>
+      <ButtonForm label="test" />
+      <ButtonForm label="test2" />
       <Button label="Continue as guest" onClick={handleGuestLogin} />
       <Button label="Login" onClick={handleLogin} />
       <Button label="Register" onClick={handleRegister} />
