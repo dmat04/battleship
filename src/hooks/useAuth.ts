@@ -37,7 +37,13 @@ const useAuth = () => {
     dispatch(clearAuth());
   };
 
-  return [token, login, logout, loading, error] as const;
+  return {
+    token,
+    login,
+    logout,
+    loading,
+    error,
+  };
 };
 
 export default useAuth;

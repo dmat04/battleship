@@ -30,7 +30,7 @@ const LogoutButton = styled.button`
 `;
 
 const UserItem = () => {
-  const [token, login, logout] = useAuth();
+  const { token, login, logout } = useAuth();
 
   if (!token) {
     return <LoginForm login={login} />;
