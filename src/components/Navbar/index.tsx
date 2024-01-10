@@ -9,19 +9,21 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   --bg-color: ${(props) => props.theme.colorBg};
   --border-color: ${(props) => props.theme.colorBorder};
   --gap: ${(props) => props.theme.paddingSm};
+  --gap-smaller: ${(props) => props.theme.paddingMin};
   --border-size: ${(props) => props.theme.dimensionBorderSm};
-  --nav-height: 8rem;
 
+  grid-area: navbar;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: calc(var(--nav-height) + var(--border-size));
+  padding: var(--gap) var(--gap-smaller);
   background-color: var(--bg-color);
   background-image:  
     linear-gradient(var(--border-color) var(--border-size), transparent var(--border-size)),
     linear-gradient(to right, var(--border-color) var(--border-size), transparent var(--border-size));
-  background-size: calc(var(--nav-height) / 5) calc(var(--nav-height) / 5);
-  background-position: center top;
+  background-size: 2.5vh 2.5vh;
+  background-position: center center;
+  border: var(--border-size) solid var(--border-color);
 `;
 
 const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
@@ -30,7 +32,6 @@ const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
   
   display: flex;
   gap: var(--gap);
-  padding: ${(props) => props.theme.paddingMin};;
   list-style: none;
   background: hsl(0 0% 100% / 0.1);
   backdrop-filter: blur(0.1rem);
@@ -55,10 +56,12 @@ const NavItem = styled.a`
 `;
 
 const NavLogo = styled.div`
+  --gap: ${(props) => props.theme.paddingSm};
+  --gap-smaller: ${(props) => props.theme.paddingMin};
+  
   font-size: x-large;
   font-weight: bolder;
-  margin: 2rem;
-  padding: 1rem 2rem;
+  padding: var(--gap);
   color: white;
   border-radius: 10px;
   background-color: #4e2e82;
@@ -75,7 +78,6 @@ const MobileToggle = styled.button<{ theme: Theme, $navOpen: boolean }>`
     width: 3rem;
     aspect-ratio: 1;
     z-index: 9999;
-    margin-right: ${(props) => props.theme.paddingSm};
     border: var(--border-size) solid #444cf7;
     border-radius: 50%;
     background: ${(props) => (
@@ -97,7 +99,7 @@ const Navbar = () => {
       <NavLogo>Battleship</NavLogo>
       <MobileToggle $navOpen={navOpen} onClick={() => setNavOpen(!navOpen)} />
       <NavList $navOpen={navOpen}>
-        <NavListItem>
+        {/* <NavListItem>
           <NavItem>
             <UserItem />
           </NavItem>
@@ -111,7 +113,7 @@ const Navbar = () => {
           <NavItem>
             Link B
           </NavItem>
-        </NavListItem>
+        </NavListItem> */}
       </NavList>
     </NavContainer>
   );

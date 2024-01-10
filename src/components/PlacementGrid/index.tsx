@@ -6,6 +6,11 @@ import DraggableShip from './DraggableShip';
 import PlacementGridContext, { IPlacementGridContext } from './PlacementGridContext';
 import { RootState } from '../../store/store';
 
+const Container = styled.div`
+  width: 35vh;
+  margin: auto;
+`;
+
 const NavyGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -34,7 +39,7 @@ const PlacementGrid = () => {
 
   return (
     <PlacementGridContext.Provider value={contextValue}>
-      <div ref={componentContainerRef}>
+      <Container ref={componentContainerRef}>
         <GameGrid ref={gridContainerRef} $cols={columns} $rows={rows}>
           {
             ships
@@ -60,7 +65,7 @@ const PlacementGrid = () => {
           }
           <RightSpacer />
         </NavyGrid>
-      </div>
+      </Container>
     </PlacementGridContext.Provider>
   );
 };
