@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { RootState } from '../../store/store';
 import Button from './Button';
 import { Theme } from '../assets/themes/themeDefault';
-import ButtonForm from './ButtonForm';
+import ButtonForm, { MyComponent } from './ButtonForm';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -31,11 +31,20 @@ const Menu = () => {
 
   return (
     <MenuContainer>
-      <ButtonForm label="test" />
-      <ButtonForm label="test2" />
-      <Button label="Continue as guest" onClick={handleGuestLogin} />
-      <Button label="Login" onClick={handleLogin} />
-      <Button label="Register" onClick={handleRegister} />
+      <ButtonForm label="Continue as guest">
+        <form>
+          <input type="text" placeholder="Pick a username?" />
+          <button type="button">Continue</button>
+        </form>
+      </ButtonForm>
+      <ButtonForm label="Login">
+        <form>
+          <input type="text" placeholder="Username" />
+          <input type="password" placeholder="Password" />
+          <button type="button">Log in</button>
+        </form>
+      </ButtonForm>
+      <ButtonForm label="Register" />
     </MenuContainer>
   );
 };

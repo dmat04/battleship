@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { Theme } from '../assets/themes/themeDefault';
 
@@ -8,6 +8,7 @@ const Container = styled.div<{ theme: Theme }>`
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   width: 20rem;
+  overflow: clip;
 
   &:hover {
     background-color: ${(props) => props.theme.colorBg};
@@ -20,24 +21,15 @@ interface Props {
   label: string;
 }
 
-const ButtonForm = ({ label }: Props) => {
-  const containerRef = useRef<HTMLElement | null>(null);
-  const labelRef = useRef<HTMLElement | null>(null);
+const ButtonForm = ({ label, children }: React.PropsWithChildren<Props>) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLParagraphElement>(null);
+  const childrenContainerRef = useRef<HTMLDivElement>(null);
 
   const isCollapsed = useRef<boolean>(true);
 
-  const collapsedConfig = {
-    opacity: 0,
-    maxHeight: '0px',
-  };
-
-  const expandedConfig = {
-    opacity: 1,
-    maxHeight: '150px',
-  };
-
   const [springStyle, springAPI] = useSpring(() => ({
-    from: collapsedConfig,
+    from: { height: '0px', opacity: 0 },
     config: { duration: 300 },
   }));
 
@@ -45,16 +37,29 @@ const ButtonForm = ({ label }: Props) => {
     if (ev.target !== containerRef.current
       && ev.target !== labelRef.current) return;
 
-    let from = collapsedConfig;
-    let to = expandedConfig;
-
-    if (isCollapsed.current === false) {
-      from = expandedConfig;
-      to = collapsedConfig;
+    if (isCollapsed.current === true) {
+      springAPI.start({
+        from: {
+          height: '0px', opacity: 0,
+        },
+        to: {
+          height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+          opacity: 1,
+        },
+      });
+    } else {
+      springAPI.start({
+        from: {
+          height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+          opacity: 1,
+        },
+        to: {
+          height: '0px', opacity: 0,
+        },
+      });
     }
 
     isCollapsed.current = !isCollapsed.current;
-    springAPI.start({ from, to });
   };
 
   return (
@@ -64,13 +69,9 @@ const ButtonForm = ({ label }: Props) => {
     >
       <p ref={labelRef}>{label}</p>
       <animated.div style={springStyle}>
-        <form>
-          <input type="text" placeholder="hello" />
-          <input type="text" placeholder="hello" />
-          <input type="text" placeholder="hello" />
-          <input type="text" placeholder="hello" />
-          <input type="text" placeholder="hello" />
-        </form>
+        <div ref={childrenContainerRef}>
+          {children}
+        </div>
       </animated.div>
     </Container>
   );
