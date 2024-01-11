@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { useCallback, useRef } from 'react';
 import { Theme } from '../assets/themes/themeDefault';
-import ButtonForm, { ButtonFormAPI } from './ButtonForm';
+import CollapsibleContainer, { CollapsibleAPI } from './CollapsibleContainer';
+import GuestForm from './GuestForm';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -10,43 +11,40 @@ const MenuContainer = styled.div<{ theme: Theme }>`
   gap: ${(props) => props.theme.paddingMin};
 `;
 
-interface ButtonHandles {
+interface CollapsibleHandles {
   key: string;
-  formButton: ButtonFormAPI;
+  collapsible: CollapsibleAPI;
 }
 
 const Menu = () => {
-  const btnRefs = useRef<ButtonHandles[]>([]);
+  const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
 
-  const addBtnRef = useCallback((key: string, handle: ButtonFormAPI | null) => {
+  const addCollapsibleRef = useCallback((key: string, handle: CollapsibleAPI | null) => {
     if (!handle) return;
-    if (btnRefs.current.findIndex((item) => item.key === key) >= 0) return;
+    if (collapsibleRefs.current.findIndex((item) => item.key === key) >= 0) return;
 
-    btnRefs.current.push({ key, formButton: handle });
+    collapsibleRefs.current.push({ key, collapsible: handle });
   }, []);
 
   const closeOthers = useCallback((key: string) => {
-    btnRefs.current.forEach((handle) => {
-      if (handle.key !== key) handle.formButton.setCollapsed(true);
+    collapsibleRefs.current.forEach((handle) => {
+      if (handle.key !== key) handle.collapsible.setCollapsed(true);
     });
   }, []);
 
   return (
     <MenuContainer>
-      <ButtonForm
+      <CollapsibleContainer
         label="Continue as guest"
-        ref={(api) => addBtnRef('guest', api)}
+        ref={(api) => addCollapsibleRef('guest', api)}
         onClick={(collapsed) => { if (!collapsed) closeOthers('guest'); }}
       >
-        <form>
-          <input type="text" placeholder="Pick a username?" />
-          <button type="button">Continue</button>
-        </form>
-      </ButtonForm>
+        <GuestForm />
+      </CollapsibleContainer>
 
-      <ButtonForm
+      <CollapsibleContainer
         label="Login"
-        ref={(api) => addBtnRef('login', api)}
+        ref={(api) => addCollapsibleRef('login', api)}
         onClick={(collapsed) => { if (!collapsed) closeOthers('login'); }}
       >
         <form>
@@ -54,11 +52,11 @@ const Menu = () => {
           <input type="password" placeholder="Password" />
           <button type="button">Log in</button>
         </form>
-      </ButtonForm>
+      </CollapsibleContainer>
 
-      <ButtonForm
+      <CollapsibleContainer
         label="Register"
-        ref={(api) => addBtnRef('register', api)}
+        ref={(api) => addCollapsibleRef('register', api)}
         onClick={(collapsed) => { if (!collapsed) closeOthers('register'); }}
       >
         <form>
@@ -66,7 +64,7 @@ const Menu = () => {
           <input type="password" placeholder="Password" />
           <button type="button">Log in</button>
         </form>
-      </ButtonForm>
+      </CollapsibleContainer>
     </MenuContainer>
   );
 };

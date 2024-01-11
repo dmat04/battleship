@@ -27,11 +27,11 @@ interface Props {
   onClick?: (collapsed: boolean) => void;
 }
 
-export interface ButtonFormAPI {
+export interface CollapsibleAPI {
   setCollapsed: (collapsed: boolean) => void;
 }
 
-const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
+const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
   ({ label, onClick, children }: React.PropsWithChildren<Props>, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const labelRef = useRef<HTMLParagraphElement>(null);
@@ -114,4 +114,4 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
   },
 );
 
-export default ButtonForm;
+export default CollapsibleContainer;
