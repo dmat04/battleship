@@ -3,9 +3,10 @@ export type Theme = typeof themeDefault;
 const themeDefault = {
   paddingMin: '1rem',
   paddingSm: '2rem',
-  colorBg: '#e5e5f7',
-  colorBorder: '#444cf7',
-  durationTransitionDefault: '250ms',
+  colorBg: 'white',
+  colorSecondary: '#e5e5f7',
+  colorPrimary: '#444cf7',
+  durationTransitionDefault: 250,
   dimensionBorderSm: '1px',
   dimensionBorder: '2px',
   dimensionIconSize: '2rem',

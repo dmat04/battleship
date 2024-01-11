@@ -5,8 +5,8 @@ import IconClose from '../assets/icons/ic_close.svg';
 import { Theme } from '../assets/themes/themeDefault';
 
 const NavContainer = styled.nav<{ theme: Theme }>`
-  --bg-color: ${(props) => props.theme.colorBg};
-  --border-color: ${(props) => props.theme.colorBorder};
+  --bg-color: ${(props) => props.theme.colorSecondary};
+  --border-color: ${(props) => props.theme.colorPrimary};
   --gap: ${(props) => props.theme.paddingSm};
   --gap-smaller: ${(props) => props.theme.paddingMin};
   --border-size: ${(props) => props.theme.dimensionBorderSm};
@@ -27,7 +27,7 @@ const NavContainer = styled.nav<{ theme: Theme }>`
 
 const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
   --gap: ${(props) => props.theme.paddingSm};
-  --duration: ${(props) => props.theme.durationTransitionDefault};
+  --duration: ${(props) => `${props.theme.durationTransitionDefault}ms`};
   
   display: flex;
   gap: var(--gap);

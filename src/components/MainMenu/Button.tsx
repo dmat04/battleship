@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import { Theme } from '../assets/themes/themeDefault';
 
 const ButtonContainer = styled.button<{ theme: Theme }>`
-  background-color: white;
+  background-color: ${(props) => props.theme.colorBg};
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   width: 20rem;
 
   &:hover {
-    background-color: ${(props) => props.theme.colorBg};
+    background-color: ${(props) => props.theme.colorSecondary};
   }
 `;
 
