@@ -1,10 +1,7 @@
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { useState } from 'react';
-import type { RootState } from '../../store/store';
-import Button from './Button';
+import { useCallback, useRef } from 'react';
 import { Theme } from '../assets/themes/themeDefault';
-import ButtonForm, { MyComponent } from './ButtonForm';
+import ButtonForm, { ButtonFormAPI } from './ButtonForm';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -13,38 +10,63 @@ const MenuContainer = styled.div<{ theme: Theme }>`
   gap: ${(props) => props.theme.paddingMin};
 `;
 
+interface ButtonHandles {
+  key: string;
+  formButton: ButtonFormAPI;
+}
+
 const Menu = () => {
-  const dispatch = useDispatch();
-  const auth = useSelector((state: RootState) => state.auth);
+  const btnRefs = useRef<ButtonHandles[]>([]);
 
-  const handleGuestLogin = () => {
+  const addBtnRef = useCallback((key: string, handle: ButtonFormAPI | null) => {
+    if (!handle) return;
+    if (btnRefs.current.findIndex((item) => item.key === key) >= 0) return;
 
-  };
+    btnRefs.current.push({ key, formButton: handle });
+  }, []);
 
-  const handleLogin = () => {
-
-  };
-
-  const handleRegister = () => {
-
-  };
+  const closeOthers = useCallback((key: string) => {
+    btnRefs.current.forEach((handle) => {
+      if (handle.key !== key) handle.formButton.setCollapsed(true);
+    });
+  }, []);
 
   return (
     <MenuContainer>
-      <ButtonForm label="Continue as guest">
+      <ButtonForm
+        label="Continue as guest"
+        ref={(api) => addBtnRef('guest', api)}
+        onClick={(collapsed) => { if (!collapsed) closeOthers('guest'); }}
+      >
         <form>
           <input type="text" placeholder="Pick a username?" />
           <button type="button">Continue</button>
         </form>
       </ButtonForm>
-      <ButtonForm label="Login">
+
+      <ButtonForm
+        label="Login"
+        ref={(api) => addBtnRef('login', api)}
+        onClick={(collapsed) => { if (!collapsed) closeOthers('login'); }}
+      >
         <form>
           <input type="text" placeholder="Username" />
           <input type="password" placeholder="Password" />
           <button type="button">Log in</button>
         </form>
       </ButtonForm>
-      <ButtonForm label="Register" />
+
+      <ButtonForm
+        label="Register"
+        ref={(api) => addBtnRef('register', api)}
+        onClick={(collapsed) => { if (!collapsed) closeOthers('register'); }}
+      >
+        <form>
+          <input type="text" placeholder="Username" />
+          <input type="password" placeholder="Password" />
+          <button type="button">Log in</button>
+        </form>
+      </ButtonForm>
     </MenuContainer>
   );
 };

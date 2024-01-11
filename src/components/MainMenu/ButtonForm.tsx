@@ -1,5 +1,7 @@
 import styled from 'styled-components';
-import { useRef } from 'react';
+import React, {
+  forwardRef, useCallback, useImperativeHandle, useRef,
+} from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { Theme } from '../assets/themes/themeDefault';
 
@@ -19,62 +21,81 @@ const Container = styled.div<{ theme: Theme }>`
 
 interface Props {
   label: string;
+  // eslint-disable-next-line react/require-default-props
+  onClick?: (collapsed: boolean) => void;
 }
 
-const ButtonForm = ({ label, children }: React.PropsWithChildren<Props>) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLParagraphElement>(null);
-  const childrenContainerRef = useRef<HTMLDivElement>(null);
+export interface ButtonFormAPI {
+  setCollapsed: (collapsed: boolean) => void;
+}
 
-  const isCollapsed = useRef<boolean>(true);
+const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
+  ({ label, onClick, children }: React.PropsWithChildren<Props>, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const labelRef = useRef<HTMLParagraphElement>(null);
+    const childrenContainerRef = useRef<HTMLDivElement>(null);
 
-  const [springStyle, springAPI] = useSpring(() => ({
-    from: { height: '0px', opacity: 0 },
-    config: { duration: 300 },
-  }));
+    const isCollapsed = useRef<boolean>(true);
 
-  const onClickHandler = (ev: React.MouseEvent) => {
-    if (ev.target !== containerRef.current
-      && ev.target !== labelRef.current) return;
+    const [springStyle, springAPI] = useSpring(() => ({
+      from: { height: '0px', opacity: 0 },
+      config: { duration: 300 },
+    }));
 
-    if (isCollapsed.current === true) {
-      springAPI.start({
-        from: {
-          height: '0px', opacity: 0,
-        },
-        to: {
-          height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
-          opacity: 1,
-        },
-      });
-    } else {
-      springAPI.start({
-        from: {
-          height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
-          opacity: 1,
-        },
-        to: {
-          height: '0px', opacity: 0,
-        },
-      });
-    }
+    const setCollapsed = useCallback((collapsed: boolean) => {
+      if (collapsed === isCollapsed.current) return;
 
-    isCollapsed.current = !isCollapsed.current;
-  };
+      isCollapsed.current = collapsed;
 
-  return (
-    <Container
-      ref={containerRef}
-      onClick={onClickHandler}
-    >
-      <p ref={labelRef}>{label}</p>
-      <animated.div style={springStyle}>
-        <div ref={childrenContainerRef}>
-          {children}
-        </div>
-      </animated.div>
-    </Container>
-  );
-};
+      if (isCollapsed.current) {
+        springAPI.start({
+          from: {
+            height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+            opacity: 1,
+          },
+          to: {
+            height: '0px', opacity: 0,
+          },
+        });
+      } else {
+        springAPI.start({
+          from: {
+            height: '0px', opacity: 0,
+          },
+          to: {
+            height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+            opacity: 1,
+          },
+        });
+      }
+    }, [springAPI]);
+
+    useImperativeHandle(ref, () => ({
+      setCollapsed,
+    }));
+
+    const onClickHandler = (ev: React.MouseEvent) => {
+      if (ev.target !== containerRef.current
+        && ev.target !== labelRef.current) return;
+
+      setCollapsed(!isCollapsed.current);
+      if (onClick) onClick(isCollapsed.current);
+    };
+
+    return (
+      <Container
+        ref={containerRef}
+        onClick={onClickHandler}
+      >
+        <p ref={labelRef}>{label}</p>
+        <animated.div style={springStyle}>
+          <div ref={childrenContainerRef}>
+            {children}
+          </div>
+        </animated.div>
+      </Container>
+    );
+  },
+);
 
 export default ButtonForm;
