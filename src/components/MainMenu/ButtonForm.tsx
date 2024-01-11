@@ -1,22 +1,18 @@
-import styled from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import React, {
-  forwardRef, useCallback, useImperativeHandle, useRef,
+  forwardRef, useCallback, useContext, useImperativeHandle, useRef,
 } from 'react';
-import { animated, useSpring } from '@react-spring/web';
-import { Theme } from '../assets/themes/themeDefault';
+import {
+  animated, easings, useSpring, useSpringValue,
+} from '@react-spring/web';
+import themeDefault, { Theme } from '../assets/themes/themeDefault';
 
-const Container = styled.div<{ theme: Theme }>`
-  background-color: white;
+const Container = styled(animated.div) <{ theme: Theme }>`
+  background-color: ${(props) => props.theme.colorBg};
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   width: 20rem;
   overflow: clip;
-
-  &:hover {
-    background-color: ${(props) => props.theme.colorBg};
-  }
-
-  transition: background-color 200ms ease-out;
 `;
 
 const Label = styled.p<{ theme: Theme }>`
@@ -43,9 +39,18 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
 
     const isCollapsed = useRef<boolean>(true);
 
+    const theme = useContext(ThemeContext) ?? themeDefault;
+
+    const backgroundColor = useSpringValue(theme.colorBg, {
+      config: {
+        duration: theme.durationTransitionDefault,
+        easing: easings.easeOutCubic,
+      },
+    });
+
     const [springStyle, springAPI] = useSpring(() => ({
       from: { height: '0px', opacity: 0 },
-      config: { duration: 300 },
+      config: { duration: theme.durationTransitionDefault },
     }));
 
     const setCollapsed = useCallback((collapsed: boolean) => {
@@ -63,6 +68,7 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
             height: '0px', opacity: 0,
           },
         });
+        backgroundColor.start(theme.colorBg);
       } else {
         springAPI.start({
           from: {
@@ -73,8 +79,9 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
             opacity: 1,
           },
         });
+        backgroundColor.start(theme.colorSecondary);
       }
-    }, [springAPI]);
+    }, [backgroundColor, springAPI, theme.colorBg, theme.colorSecondary]);
 
     useImperativeHandle(ref, () => ({
       setCollapsed,
@@ -92,6 +99,9 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
       <Container
         ref={containerRef}
         onClick={onClickHandler}
+        onPointerEnter={() => backgroundColor.start(theme.colorSecondary)}
+        onPointerLeave={() => isCollapsed.current && backgroundColor.start(theme.colorBg)}
+        style={{ backgroundColor }}
       >
         <Label ref={labelRef}>{label}</Label>
         <animated.div style={springStyle}>
