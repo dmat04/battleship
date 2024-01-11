@@ -12,6 +12,8 @@ import gameSettings from './queries/gameSettings';
 import guestLogin from './mutations/guestLogin';
 import registerUser from './mutations/registerUser';
 import registeredLogin from './mutations/registeredLogin';
+import checkUsername from './queries/checkUsername';
+import UsernameQueryDefs from './types/UsernameQueryResult';
 
 const rootTypeDefs = `#graphql
   type Query {
@@ -29,6 +31,7 @@ export const typeDefs = [
   RoomCreatedResultDefs.typeDefs,
   RoomJoinedResultDefs.typeDefs,
   GameSettingsTypes.typeDefs,
+  UsernameQueryDefs.typeDefs,
   Ping.typeDefs,
   CreateRoom.typeDefs,
   JoinRoom.typeDefs,
@@ -37,6 +40,7 @@ export const typeDefs = [
   guestLogin.typeDefs,
   registerUser.typeDefs,
   registeredLogin.typeDefs,
+  checkUsername.typeDefs,
 ];
 
 export const resolvers = merge(
@@ -49,4 +53,5 @@ export const resolvers = merge(
   guestLogin.resolvers,
   registerUser.resolvers,
   registeredLogin.resolvers,
+  checkUsername.resolvers,
 );

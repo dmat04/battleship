@@ -1,7 +1,7 @@
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
-import { Error as MongooseError } from 'mongoose';
+import { Error, Error as MongooseError } from 'mongoose';
 
 import config from '../utils/config';
 import ValidationError from './errors/ValidationError';
@@ -12,6 +12,7 @@ import GuestUserDbModel from './dbModels/GuestUserDbModel';
 import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
 import type { User } from '../models/User';
 import type { LoginResult } from '../graphql/types/LoginResult';
+import { UsernameQueryResult } from '../graphql/types/UsernameQueryResult';
 
 interface AccessToken {
   token: string;
@@ -130,6 +131,45 @@ const createUserExiprationJob = (username: string): void => {
   setTimeout(() => {
     GuestUserDbModel.deleteOne({ username });
   }, config.GUEST_LIFETIME_SECONDS * 1000);
+};
+
+/**
+ * Check if a uername is not taken.
+ *
+ * @param username The username to be checked.
+ * @returns A UsernameQueryResult containing the passed username and properties
+ *          indicating whether the username is taken already, or is valid.
+ */
+const checkUsername = async (username: string): Promise<UsernameQueryResult> => {
+  let validationError: string | undefined;
+  let taken: boolean = false;
+
+  const newUser = new GuestUserDbModel({ username });
+
+  try {
+    await newUser.validate('username');
+  } catch (error) {
+    if (error instanceof Error.ValidationError) {
+      const usernameError = error.errors.username ?? {};
+      const { kind } = usernameError;
+
+      if (kind !== 'unique') {
+        validationError = usernameError.message;
+      } else {
+        taken = true;
+      }
+    }
+  }
+
+  if (!taken && validationError === undefined) {
+    taken = await GuestUserDbModel.usernameExists(username);
+  }
+
+  return {
+    username,
+    taken,
+    validationError,
+  };
 };
 
 /**
@@ -321,6 +361,7 @@ const registerUser = async (username: string, password: string): Promise<LoginRe
 };
 
 export default {
+  checkUsername,
   createGuestUserAndToken,
   getUser,
   getUserFromToken,
