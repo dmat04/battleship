@@ -19,6 +19,12 @@ const Container = styled.div<{ theme: Theme }>`
   transition: background-color 200ms ease-out;
 `;
 
+const Label = styled.p<{ theme: Theme }>`
+  font-size: large;
+  font-weight: bolder;
+  text-align: center;
+`;
+
 interface Props {
   label: string;
   // eslint-disable-next-line react/require-default-props
@@ -87,7 +93,7 @@ const ButtonForm = forwardRef<ButtonFormAPI, React.PropsWithChildren<Props>>(
         ref={containerRef}
         onClick={onClickHandler}
       >
-        <p ref={labelRef}>{label}</p>
+        <Label ref={labelRef}>{label}</Label>
         <animated.div style={springStyle}>
           <div ref={childrenContainerRef}>
             {children}
