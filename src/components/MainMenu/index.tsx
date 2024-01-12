@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Theme } from '../assets/themes/themeDefault';
 import CollapsibleContainer, { CollapsibleAPI } from './CollapsibleContainer';
 import GuestForm from './GuestForm';
@@ -18,6 +18,7 @@ interface CollapsibleHandles {
 
 const Menu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
+  const [opened, setOpened] = useState<string | null>(null);
 
   const addCollapsibleRef = useCallback((key: string, handle: CollapsibleAPI | null) => {
     if (!handle) return;
@@ -30,6 +31,8 @@ const Menu = () => {
     collapsibleRefs.current.forEach((handle) => {
       if (handle.key !== key) handle.collapsible.setCollapsed(true);
     });
+
+    setOpened(key);
   }, []);
 
   return (
@@ -37,15 +40,15 @@ const Menu = () => {
       <CollapsibleContainer
         label="Continue as guest"
         ref={(api) => addCollapsibleRef('guest', api)}
-        onClick={(collapsed) => { if (!collapsed) closeOthers('guest'); }}
+        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('guest'))}
       >
-        <GuestForm />
+        <GuestForm disabled={opened !== 'guest'} />
       </CollapsibleContainer>
 
       <CollapsibleContainer
         label="Login"
         ref={(api) => addCollapsibleRef('login', api)}
-        onClick={(collapsed) => { if (!collapsed) closeOthers('login'); }}
+        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('login'))}
       >
         <form>
           <input type="text" placeholder="Username" />
@@ -57,7 +60,7 @@ const Menu = () => {
       <CollapsibleContainer
         label="Register"
         ref={(api) => addCollapsibleRef('register', api)}
-        onClick={(collapsed) => { if (!collapsed) closeOthers('register'); }}
+        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('register'))}
       >
         <form>
           <input type="text" placeholder="Username" />
