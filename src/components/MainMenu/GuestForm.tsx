@@ -1,12 +1,12 @@
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import TextInput from './TextInput';
 import { Theme } from '../assets/themes/themeDefault';
 import FormButton from './FormButton';
+import useUsernameChecker from '../../hooks/useUsernameChecker';
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;
-  grid-template-rows: 0.75fr 0.75fr 1fr;
+  grid-template-rows: 0.75fr 0.5fr 1fr;
   grid-template-areas: 
     "username username"
     "status status"
@@ -18,10 +18,34 @@ const Container = styled.form<{ theme: Theme }>`
 
 const Status = styled.p`
   grid-area: status;
+  font-size: smaller;
 `;
 
-const GuestForm = () => {
-  const dispatch = useDispatch();
+interface Props {
+  disabled: boolean;
+}
+
+const GuestForm = ({ disabled }: Props) => {
+  const {
+    username,
+    setUsername,
+    checkIsPending,
+    taken,
+    error,
+  } = useUsernameChecker();
+
+  let statusMessage = '';
+  if (username.length > 0) {
+    statusMessage = taken
+      ? 'Username is taken'
+      : error ?? '';
+
+    if (!statusMessage && !checkIsPending) {
+      statusMessage = 'Good to go!';
+    }
+  } else {
+    statusMessage = 'Pick a username or skip and have one picked for you.';
+  }
 
   return (
     <Container>
@@ -29,10 +53,25 @@ const GuestForm = () => {
         type="text"
         placeholder="Pick a username?"
         style={{ gridArea: 'username' }}
+        value={username}
+        onChange={(ev) => setUsername(ev.target.value)}
+        disabled={disabled}
       />
-      <Status>error</Status>
-      <FormButton $variant="submit" style={{ gridArea: 'pick' }}>Pick</FormButton>
-      <FormButton $variant="skip" style={{ gridArea: 'skip' }}>Skip</FormButton>
+      <Status>{statusMessage}</Status>
+      <FormButton
+        $variant="submit"
+        style={{ gridArea: 'pick' }}
+        disabled={disabled}
+      >
+        Pick
+      </FormButton>
+      <FormButton
+        $variant="skip"
+        style={{ gridArea: 'skip' }}
+        disabled={disabled}
+      >
+        Skip
+      </FormButton>
     </Container>
   );
 };
