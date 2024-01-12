@@ -9,7 +9,7 @@ import { clearAuth, setAuth } from '../store/authSlice';
 import LocalStorage from '../utils/localStorageUtils';
 
 const useAuth = () => {
-  const token = useSelector((state) => state.auth);
+  const token = useSelector((state) => state.auth.loginResult);
   const dispatch = useDispatch();
   const [doLogin, { loading }] = useMutation(
     REGISTERED_LOGIN,
