@@ -1,15 +1,81 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { LoginResult } from '../__generated__/graphql';
+/* eslint-disable no-param-reassign */
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { LoginResult, UsernameQueryResult } from '../__generated__/graphql';
 import LocalStorage from '../utils/localStorageUtils';
+import { GUEST_LOGIN } from '../graphql/mutations';
+import { CHECK_USERNAME } from '../graphql/queries';
+import Dependencies from '../utils/Dependencies';
 
-export type AuthSliceState = LoginResult | null;
+const guestLogin = createAsyncThunk(
+  'auth/guestLogin',
+  async (username: string | null) => Dependencies.getApolloClient()?.mutate({
+    mutation: GUEST_LOGIN,
+    fetchPolicy: 'no-cache',
+    variables: {
+      username,
+    },
+  }),
+);
+
+const checkUsername = createAsyncThunk(
+  'auth/checkUsername',
+  async (username: string) => Dependencies.getApolloClient()?.query({
+    query: CHECK_USERNAME,
+    variables: {
+      username,
+    },
+  }),
+);
+
+export interface AuthSliceState {
+  loginResult: LoginResult | null;
+  loginRequestPending: boolean;
+  checkUsernameResult: UsernameQueryResult | null;
+  checkUsernamePending: boolean;
+}
+
+const initialState: AuthSliceState = {
+  loginResult: LocalStorage.getAccessToken(),
+  loginRequestPending: false,
+  checkUsernameResult: null,
+  checkUsernamePending: false,
+};
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: LocalStorage.getAccessToken(),
+  initialState,
   reducers: {
-    setAuth: (_, action: PayloadAction<LoginResult>) => action.payload,
-    clearAuth: () => null,
+    setAuth: (state, action: PayloadAction<LoginResult>) => {
+      state.loginResult = action.payload;
+      state.loginRequestPending = false;
+    },
+    clearAuth: (state) => {
+      state.loginResult = null;
+      state.loginRequestPending = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(guestLogin.pending, (state) => {
+      state.loginRequestPending = true;
+    });
+    builder.addCase(guestLogin.fulfilled, (state, action) => {
+      state.loginRequestPending = false;
+      state.loginResult = action.payload?.data?.guestLogin ?? null;
+    });
+    builder.addCase(guestLogin.rejected, (state) => {
+      state.loginRequestPending = false;
+    });
+    builder.addCase(checkUsername.pending, (state) => {
+      state.checkUsernamePending = true;
+    });
+    builder.addCase(checkUsername.fulfilled, (state, action) => {
+      state.checkUsernamePending = false;
+      state.checkUsernameResult = action.payload?.data.checkUsername ?? null;
+    });
+    builder.addCase(checkUsername.rejected, (state) => {
+      state.checkUsernamePending = false;
+      state.checkUsernameResult = null;
+    });
   },
 });
 
