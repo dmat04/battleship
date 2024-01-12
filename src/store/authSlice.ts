@@ -6,7 +6,7 @@ import { GUEST_LOGIN } from '../graphql/mutations';
 import { CHECK_USERNAME } from '../graphql/queries';
 import Dependencies from '../utils/Dependencies';
 
-const guestLogin = createAsyncThunk(
+export const guestLogin = createAsyncThunk(
   'auth/guestLogin',
   async (username: string | null) => Dependencies.getApolloClient()?.mutate({
     mutation: GUEST_LOGIN,
@@ -17,10 +17,11 @@ const guestLogin = createAsyncThunk(
   }),
 );
 
-const checkUsername = createAsyncThunk(
+export const checkUsername = createAsyncThunk(
   'auth/checkUsername',
   async (username: string) => Dependencies.getApolloClient()?.query({
     query: CHECK_USERNAME,
+    fetchPolicy: 'no-cache',
     variables: {
       username,
     },
