@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { store } from '../store/store';
+import Dependencies from './Dependencies';
 
 const createApolloClient = () => {
   const httpLink = createHttpLink({
@@ -8,7 +8,7 @@ const createApolloClient = () => {
   });
 
   const authLink = setContext((_, { headers }) => {
-    const token = store.getState().auth?.accessToken;
+    const token = Dependencies.getStore()?.getState().auth?.loginResult?.accessToken;
 
     if (!token) {
       return { headers };
@@ -39,6 +39,4 @@ const createApolloClient = () => {
   return client;
 };
 
-const apolloClient = createApolloClient();
-
-export default apolloClient;
+export default createApolloClient;
