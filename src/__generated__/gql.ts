@@ -18,6 +18,7 @@ const documents = {
     "\n  mutation createRoom {\n    createRoom {\n      roomID\n      inviteCode\n      wsAuthCode\n    }\n  }\n": types.CreateRoomDocument,
     "\n  mutation joinRoom($inviteCode: String!) {\n    joinRoom(inviteCode: $inviteCode) {\n      roomID\n      wsAuthCode\n    }\n  }\n": types.JoinRoomDocument,
     "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n": types.GameSettingsDocument,
+    "\n  query checkUsername($username: String!) {\n    checkUsername(username: $username) {\n      taken\n      username\n      validationError\n    }\n  }\n": types.CheckUsernameDocument,
 };
 
 /**
@@ -54,6 +55,10 @@ export function gql(source: "\n  mutation joinRoom($inviteCode: String!) {\n    
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n"): (typeof documents)["\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query checkUsername($username: String!) {\n    checkUsername(username: $username) {\n      taken\n      username\n      validationError\n    }\n  }\n"): (typeof documents)["\n  query checkUsername($username: String!) {\n    checkUsername(username: $username) {\n      taken\n      username\n      validationError\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
