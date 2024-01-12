@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { GameRoomStatus, GameSettings } from '../__generated__/graphql';
 import { CREATE_ROOM, GET_GAME_SETTINGS } from '../graphql/mutations';
-import apolloClient from '../utils/apolloClient';
+import Dependencies from '../utils/Dependencies';
 
 export type GameRoomSliceState = {
   roomID?: string;
@@ -18,9 +18,9 @@ const initialState: GameRoomSliceState = {
 export const createGameRoom = createAsyncThunk(
   'gameRoom/create',
   async () => {
-    const roomResponse = await apolloClient.mutate({ mutation: CREATE_ROOM });
-    const roomID = roomResponse.data?.createRoom.roomID ?? '';
-    const settingsResponse = await apolloClient.query({
+    const roomResponse = await Dependencies.getApolloClient()?.mutate({ mutation: CREATE_ROOM });
+    const roomID = roomResponse?.data?.createRoom.roomID ?? '';
+    const settingsResponse = await Dependencies.getApolloClient()?.query({
       query: GET_GAME_SETTINGS,
       variables: { gameId: roomID },
     });
@@ -28,7 +28,7 @@ export const createGameRoom = createAsyncThunk(
     return {
       roomID,
       roomStatus: undefined,
-      gameSettings: settingsResponse.data.gameSettings ?? null,
+      gameSettings: settingsResponse?.data.gameSettings ?? null,
     };
   },
 );
