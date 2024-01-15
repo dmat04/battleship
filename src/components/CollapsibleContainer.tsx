@@ -6,6 +6,7 @@ import {
   animated, easings, useSpring, useSpringValue,
 } from '@react-spring/web';
 import themeDefault, { Theme } from './assets/themes/themeDefault';
+import MenuItemLabel from './MemuItemLabel';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   background-color: ${(props) => props.theme.colorBg};
@@ -13,12 +14,6 @@ const Container = styled(animated.div) <{ theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};
   width: 20rem;
   overflow: clip;
-`;
-
-const Label = styled.p<{ theme: Theme }>`
-  font-size: large;
-  font-weight: bolder;
-  text-align: center;
 `;
 
 interface Props {
@@ -103,7 +98,7 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
         onPointerLeave={() => isCollapsed.current && backgroundColor.start(theme.colorBg)}
         style={{ backgroundColor }}
       >
-        <Label ref={labelRef}>{label}</Label>
+        <MenuItemLabel ref={labelRef}>{label}</MenuItemLabel>
         <animated.div style={springStyle}>
           <div ref={childrenContainerRef}>
             {children}
