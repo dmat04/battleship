@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Theme } from '../assets/themes/themeDefault';
-import { assertNever } from '../../utils/typeUtils';
+import { Theme } from './assets/themes/themeDefault';
+import { assertNever } from '../utils/typeUtils';
 
 export type FormButtonVariant = 'submit' | 'cancel' | 'skip';
 

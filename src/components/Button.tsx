@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from '../assets/themes/themeDefault';
+import { Theme } from './assets/themes/themeDefault';
 
 const ButtonContainer = styled.button<{ theme: Theme }>`
   background-color: ${(props) => props.theme.colorBg};

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import TextInput from './TextInput';
+import TextInput from '../TextInput';
 import { Theme } from '../assets/themes/themeDefault';
-import FormButton from './FormButton';
+import FormButton from '../FormButton';
 import useUsernameChecker from '../../hooks/useUsernameChecker';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { guestLogin } from '../../store/authSlice';

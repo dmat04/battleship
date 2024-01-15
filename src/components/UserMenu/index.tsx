@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useRef, useState } from 'react';
 import { Theme } from '../assets/themes/themeDefault';
-import CollapsibleContainer, { CollapsibleAPI } from './CollapsibleContainer';
+import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
 import GuestForm from './GuestForm';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
@@ -16,7 +16,7 @@ interface CollapsibleHandles {
   collapsible: CollapsibleAPI;
 }
 
-const Menu = () => {
+const UserMenu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
   const [opened, setOpened] = useState<string | null>(null);
 
@@ -72,4 +72,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default UserMenu;

@@ -3,7 +3,9 @@ import styled, { ThemeProvider } from 'styled-components';
 import themeDefault from './components/assets/themes/themeDefault';
 import Navbar from './components/Navbar';
 import PlacementGrid from './components/PlacementGrid';
-import Menu from './components/MainMenu';
+import UserMenu from './components/UserMenu';
+import GameRoomMenu from './components/GameRoomMenu';
+import { useAppSelector } from './store/store';
 
 const ScreenContainer = styled.div`
   height: 100vh;
@@ -28,23 +30,34 @@ const TempFooter = styled.footer`
   grid-area: footer;
 `;
 
-const App = () => (
-  <ThemeProvider theme={themeDefault}>
-    <div className="App">
-      <BrowserRouter>
-        <ScreenContainer>
-          <Navbar />
-          <MainContentContainer>
-            <Routes>
-              <Route path="/" element={<Menu />} />
-              <Route path="/startGame" element={<PlacementGrid />} />
-            </Routes>
-          </MainContentContainer>
-          <TempFooter />
-        </ScreenContainer>
-      </BrowserRouter>
-    </div>
-  </ThemeProvider>
-);
+const App = () => {
+  const auth = useAppSelector((state) => state.auth.loginResult);
+
+  let menuComponent;
+  if (!auth?.accessToken) {
+    menuComponent = <UserMenu />;
+  } else {
+    menuComponent = <GameRoomMenu />;
+  }
+
+  return (
+    <ThemeProvider theme={themeDefault}>
+      <div className="App">
+        <BrowserRouter>
+          <ScreenContainer>
+            <Navbar />
+            <MainContentContainer>
+              <Routes>
+                <Route path="/" element={menuComponent} />
+                <Route path="/startGame" element={<PlacementGrid />} />
+              </Routes>
+            </MainContentContainer>
+            <TempFooter />
+          </ScreenContainer>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
+  );
+};
 
 export default App;

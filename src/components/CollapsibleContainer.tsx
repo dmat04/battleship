@@ -5,7 +5,7 @@ import React, {
 import {
   animated, easings, useSpring, useSpringValue,
 } from '@react-spring/web';
-import themeDefault, { Theme } from '../assets/themes/themeDefault';
+import themeDefault, { Theme } from './assets/themes/themeDefault';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   background-color: ${(props) => props.theme.colorBg};
