@@ -30,22 +30,12 @@ const GuestForm = ({ disabled }: Props) => {
     username,
     setUsername,
     checkIsPending,
-    taken,
-    error,
-  } = useUsernameChecker();
-
-  let statusMessage = '';
-  if (username.length > 0) {
-    statusMessage = taken
-      ? 'Username is taken'
-      : error ?? '';
-
-    if (!statusMessage && !checkIsPending) {
-      statusMessage = 'Good to go!';
-    }
-  } else {
-    statusMessage = 'Pick a username or skip and have one picked for you.';
-  }
+    errorMessage,
+  } = useUsernameChecker(
+    'Pick a username or skip and have one picked for you',
+    'Good to go!',
+    'Username is taken',
+  );
 
   return (
     <Container>
@@ -57,7 +47,7 @@ const GuestForm = ({ disabled }: Props) => {
         onChange={(ev) => setUsername(ev.target.value)}
         disabled={disabled}
       />
-      <Status>{statusMessage}</Status>
+      <Status>{errorMessage}</Status>
       <FormButton
         $variant="submit"
         style={{ gridArea: 'pick' }}

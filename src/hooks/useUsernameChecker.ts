@@ -2,28 +2,30 @@ import {
   useEffect, useMemo, useRef, useState,
 } from 'react';
 import _ from 'lodash';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { checkUsername } from '../store/authSlice';
+import { useLazyQuery } from '@apollo/client';
+import { CHECK_USERNAME } from '../graphql/queries';
 
-const useUsernameChecker = () => {
-  const dispatch = useAppDispatch();
+const useUsernameChecker = (
+  emptyStateMessage: string,
+  usernameValidMessage: string,
+  usernameTakenMessage: string,
+) => {
   const [username, setUsername] = useState<string>('');
   const [checkIsPending, setCheckIsPending] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>(emptyStateMessage);
 
-  const requestResult = useAppSelector(({ auth }) => auth.checkUsernameResult);
-  const requestSender = useRef<(() => void) | null>(() => dispatch(checkUsername(username)));
+  const [checkUsername, { data, loading }] = useLazyQuery(
+    CHECK_USERNAME,
+    { fetchPolicy: 'no-cache' },
+  );
+
+  const requestSender = useRef<(() => void) | null>(() => {
+    checkUsername({ variables: { username } });
+  });
 
   useEffect(() => {
-    if (requestResult !== null) setCheckIsPending(false);
-  }, [requestResult]);
-
-  useEffect(() => {
-    if (username.length > 0) {
-      requestSender.current = () => dispatch(checkUsername(username));
-    } else {
-      requestSender.current = null;
-    }
-  }, [username, dispatch]);
+    requestSender.current = () => checkUsername({ variables: { username } });
+  }, [checkUsername, username]);
 
   const debouncedRequestSender = useMemo(() => {
     const fn = () => {
@@ -34,18 +36,34 @@ const useUsernameChecker = () => {
   }, []);
 
   const setUsernameExternal = (value: string) => {
-    if (value.length > 0 && !checkIsPending) setCheckIsPending(true);
-    if (value.length === 0) setCheckIsPending(false);
     setUsername(value);
-    debouncedRequestSender();
+    if (value.length > 0) {
+      setCheckIsPending(true);
+      debouncedRequestSender();
+    }
   };
+
+  useEffect(() => {
+    if (loading === false) setCheckIsPending(false);
+  }, [loading]);
+
+  useEffect(() => {
+    if (username.length === 0) {
+      setErrorMessage(emptyStateMessage);
+    } else if (data?.checkUsername?.taken) {
+      setErrorMessage(usernameTakenMessage);
+    } else if (data?.checkUsername.validationError) {
+      setErrorMessage(data.checkUsername.validationError);
+    } else if (!loading) {
+      setErrorMessage(usernameValidMessage);
+    }
+  }, [data, loading, username, emptyStateMessage, usernameTakenMessage, usernameValidMessage]);
 
   return {
     username,
     setUsername: setUsernameExternal,
     checkIsPending,
-    taken: Boolean(requestResult?.taken),
-    error: requestResult?.validationError ?? null,
+    errorMessage,
   };
 };
 
