@@ -21,10 +21,12 @@ const FormButton = styled.button<{ $variant: FormButtonVariant, theme: Theme }>`
       default: return assertNever(props.$variant);
     }
   }};
-  
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: var(--colorBg);
   border: 2px solid black;
-  padding: ${(props) => props.theme.paddingMin};
   transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
 
   &:hover {
