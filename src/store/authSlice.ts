@@ -45,6 +45,7 @@ const authSlice = createSlice({
     setAuth: (state, action: PayloadAction<LoginResult>) => {
       state.loginResult = action.payload;
       state.loginRequestPending = false;
+      LocalStorage.saveAccessToken(action.payload);
     },
     clearAuth: (state) => {
       state.loginResult = null;
@@ -57,7 +58,13 @@ const authSlice = createSlice({
     });
     builder.addCase(guestLogin.fulfilled, (state, action) => {
       state.loginRequestPending = false;
-      state.loginResult = action.payload?.data?.guestLogin ?? null;
+
+      const loginResult = action.payload?.data?.guestLogin;
+      state.loginResult = loginResult ?? null;
+
+      if (loginResult) {
+        LocalStorage.saveAccessToken(loginResult);
+      }
     });
     builder.addCase(guestLogin.rejected, (state) => {
       state.loginRequestPending = false;
