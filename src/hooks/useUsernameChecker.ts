@@ -12,7 +12,8 @@ const useUsernameChecker = (
 ) => {
   const [username, setUsername] = useState<string>('');
   const [checkIsPending, setCheckIsPending] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>(emptyStateMessage);
+  const [message, setMessage] = useState<string>(emptyStateMessage);
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const [checkUsername, { data, loading }] = useLazyQuery(
     CHECK_USERNAME,
@@ -44,18 +45,24 @@ const useUsernameChecker = (
   };
 
   useEffect(() => {
-    if (loading === false) setCheckIsPending(false);
-  }, [loading]);
+    if (loading === false) {
+      setCheckIsPending(false);
+      setIsValid(
+        !data?.checkUsername.taken
+        && !data?.checkUsername.validationError,
+      );
+    }
+  }, [loading, data]);
 
   useEffect(() => {
     if (username.length === 0) {
-      setErrorMessage(emptyStateMessage);
+      setMessage(emptyStateMessage);
     } else if (data?.checkUsername?.taken) {
-      setErrorMessage(usernameTakenMessage);
+      setMessage(usernameTakenMessage);
     } else if (data?.checkUsername.validationError) {
-      setErrorMessage(data.checkUsername.validationError);
+      setMessage(data.checkUsername.validationError);
     } else if (!loading) {
-      setErrorMessage(usernameValidMessage);
+      setMessage(usernameValidMessage);
     }
   }, [data, loading, username, emptyStateMessage, usernameTakenMessage, usernameValidMessage]);
 
@@ -63,7 +70,8 @@ const useUsernameChecker = (
     username,
     setUsername: setUsernameExternal,
     checkIsPending,
-    errorMessage,
+    message,
+    isValid,
   };
 };
 
