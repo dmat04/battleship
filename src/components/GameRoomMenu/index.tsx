@@ -18,18 +18,15 @@ const MenuContainer = styled.div<{ theme: Theme }>`
 
 const GameRoomMenu = () => {
   const dispatch = useAppDispatch();
-  const fetchingRoom = useAppSelector((state) => state.gameRoom.fetchingRoom);
-  const fetchinSettings = useAppSelector((state) => state.gameRoom.fetchingSettings);
-  const [requestType, setRequestType] = useState<'join' | 'new' | null>(null);
+  const loadingNewRoom = useAppSelector((state) => state.gameRoom.loadingNewRoom);
 
   const collapsible = useRef<CollapsibleAPI>(null);
   const [collapsibleOpen, setCollapsibleOpen] = useState<boolean>(false);
 
   const startNewGame = () => {
-    if (fetchingRoom || fetchinSettings) return;
+    if (loadingNewRoom) return;
 
     collapsible.current?.setCollapsed(true);
-    setRequestType('new');
     dispatch(createGameRoom());
   };
 
@@ -37,7 +34,7 @@ const GameRoomMenu = () => {
     <MenuContainer>
       <Button $variant="primary" onClick={startNewGame}>
         {
-          (requestType === 'new' && (fetchingRoom || fetchinSettings))
+          loadingNewRoom
             ? <Spinner $visible />
             : <MenuItemLabel>Start a new game</MenuItemLabel>
         }

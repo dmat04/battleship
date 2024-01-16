@@ -3,28 +3,26 @@ import { useState } from 'react';
 import TextInput from '../TextInput';
 import { Theme } from '../assets/themes/themeDefault';
 import FormButton from '../FormButton';
-import { useAppDispatch } from '../../store/store';
-import { guestLogin } from '../../store/authSlice';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import Spinner from '../Spinner';
+import { joinGameRoom } from '../../store/gameRoomSlice';
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;
   grid-template-rows: 0.75fr 0.75fr 1fr;
   grid-template-areas: 
     "code"
-    "status"
+    "label"
     "button";
   grid-row-gap: ${(props) => props.theme.paddingMin};
   grid-column-gap: ${(props) => props.theme.paddingMin};
   padding: ${(props) => props.theme.paddingMin} 0 0 0;
 `;
 
-const Status = styled.div`
-  grid-area: status;
-  font-size: smaller;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+const Label = styled.p`
+  grid-area: label;
+  width: 100%;
+  text-align: center;
 `;
 
 interface Props {
@@ -33,13 +31,16 @@ interface Props {
 
 const JoinGameForm = ({ disabled }: Props) => {
   const dispatch = useAppDispatch();
+  const loadingJoinRoom = useAppSelector((state) => state.gameRoom.loadingJoinRoom);
+
   const [code, setCode] = useState<string>('');
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (ev) => {
     ev.preventDefault();
+    if (loadingJoinRoom) return;
 
     if (code.length > 0) {
-      dispatch(guestLogin(null));
+      dispatch(joinGameRoom(code));
     }
   };
 
@@ -53,19 +54,19 @@ const JoinGameForm = ({ disabled }: Props) => {
         onChange={(ev) => setCode(ev.target.value)}
         disabled={disabled}
       />
-      <Status>
-        <p>Join using a code</p>
-      </Status>
+      <Label>
+        Join using an invite code.
+      </Label>
       <FormButton
         type="submit"
         $variant="submit"
         style={{ gridArea: 'button' }}
-        disabled={disabled}
+        disabled={disabled || code.length === 0}
       >
         {
-          (true)
+          loadingJoinRoom
             ? <Spinner $visible />
-            : <div>Continue</div>
+            : <div>Join</div>
         }
       </FormButton>
     </Container>
