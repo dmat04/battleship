@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useRef, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
 import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
@@ -18,6 +19,8 @@ const MenuContainer = styled.div<{ theme: Theme }>`
 
 const GameRoomMenu = () => {
   const dispatch = useAppDispatch();
+  const roomID = useAppSelector((state) => state.gameRoom.roomID);
+  const auth = useAppSelector((state) => state.auth.loginResult);
   const loadingNewRoom = useAppSelector((state) => state.gameRoom.loadingNewRoom);
 
   const collapsible = useRef<CollapsibleAPI>(null);
@@ -29,6 +32,14 @@ const GameRoomMenu = () => {
     collapsible.current?.setCollapsed(true);
     dispatch(createGameRoom());
   };
+
+  if (!auth?.accessToken) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (roomID) {
+    return <Navigate to="/getReady" replace />;
+  }
 
   return (
     <MenuContainer>

@@ -1,11 +1,12 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter, Navigate, Route, Routes,
+} from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import themeDefault from './components/assets/themes/themeDefault';
 import Navbar from './components/Navbar';
 import PlacementGrid from './components/PlacementGrid';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
-import { useAppSelector } from './store/store';
 
 const ScreenContainer = styled.div`
   height: 100vh;
@@ -30,16 +31,8 @@ const TempFooter = styled.footer`
   grid-area: footer;
 `;
 
+// eslint-disable-next-line arrow-body-style
 const App = () => {
-  const auth = useAppSelector((state) => state.auth.loginResult);
-
-  let menuComponent;
-  if (!auth?.accessToken) {
-    menuComponent = <UserMenu />;
-  } else {
-    menuComponent = <GameRoomMenu />;
-  }
-
   return (
     <ThemeProvider theme={themeDefault}>
       <div className="App">
@@ -48,8 +41,10 @@ const App = () => {
             <Navbar />
             <MainContentContainer>
               <Routes>
-                <Route path="/" element={menuComponent} />
-                <Route path="/startGame" element={<PlacementGrid />} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<UserMenu />} />
+                <Route path="/start" element={<GameRoomMenu />} />
+                <Route path="/getReady" element={<PlacementGrid />} />
               </Routes>
             </MainContentContainer>
             <TempFooter />

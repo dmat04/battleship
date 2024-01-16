@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import { useCallback, useRef, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { Theme } from '../assets/themes/themeDefault';
 import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
 import GuestForm from './GuestForm';
+import { useAppSelector } from '../../store/store';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -19,6 +21,7 @@ interface CollapsibleHandles {
 const UserMenu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
   const [opened, setOpened] = useState<string | null>(null);
+  const auth = useAppSelector((state) => state.auth.loginResult);
 
   const addCollapsibleRef = useCallback((key: string, handle: CollapsibleAPI | null) => {
     if (!handle) return;
@@ -34,6 +37,10 @@ const UserMenu = () => {
 
     setOpened(key);
   }, []);
+
+  if (auth?.accessToken) {
+    return <Navigate to="/start" replace />;
+  }
 
   return (
     <MenuContainer>
