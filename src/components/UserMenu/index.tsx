@@ -40,7 +40,9 @@ const UserMenu = () => {
       <CollapsibleContainer
         label="Continue as guest"
         ref={(api) => addCollapsibleRef('guest', api)}
-        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('guest'))}
+        onCollapsedStateChange={
+          (collapsed) => (collapsed ? setOpened(null) : closeOthers('guest'))
+        }
       >
         <GuestForm disabled={opened !== 'guest'} />
       </CollapsibleContainer>
@@ -48,7 +50,9 @@ const UserMenu = () => {
       <CollapsibleContainer
         label="Login"
         ref={(api) => addCollapsibleRef('login', api)}
-        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('login'))}
+        onCollapsedStateChange={
+          (collapsed) => (collapsed ? setOpened(null) : closeOthers('login'))
+        }
       >
         <form>
           <input type="text" placeholder="Username" />
@@ -60,7 +64,9 @@ const UserMenu = () => {
       <CollapsibleContainer
         label="Register"
         ref={(api) => addCollapsibleRef('register', api)}
-        onClick={(collapsed) => (collapsed ? setOpened(null) : closeOthers('register'))}
+        onCollapsedStateChange={
+          (collapsed) => (collapsed ? setOpened(null) : closeOthers('register'))
+        }
       >
         <form>
           <input type="text" placeholder="Username" />

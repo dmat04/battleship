@@ -19,7 +19,7 @@ const Container = styled(animated.div) <{ theme: Theme }>`
 interface Props {
   label: string;
   // eslint-disable-next-line react/require-default-props
-  onClick?: (collapsed: boolean) => void;
+  onCollapsedStateChange?: (collapsed: boolean) => void;
 }
 
 export interface CollapsibleAPI {
@@ -27,7 +27,7 @@ export interface CollapsibleAPI {
 }
 
 const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
-  ({ label, onClick, children }: React.PropsWithChildren<Props>, ref) => {
+  ({ label, onCollapsedStateChange, children }: React.PropsWithChildren<Props>, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const labelRef = useRef<HTMLParagraphElement>(null);
     const childrenContainerRef = useRef<HTMLDivElement>(null);
@@ -76,7 +76,9 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
         });
         backgroundColor.start(theme.colorSecondary);
       }
-    }, [backgroundColor, springAPI, theme.colorBg, theme.colorSecondary]);
+
+      if (onCollapsedStateChange) onCollapsedStateChange(isCollapsed.current);
+    }, [backgroundColor, onCollapsedStateChange, springAPI, theme.colorBg, theme.colorSecondary]);
 
     useImperativeHandle(ref, () => ({
       setCollapsed,
@@ -87,7 +89,6 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
         && ev.target !== labelRef.current) return;
 
       setCollapsed(!isCollapsed.current);
-      if (onClick) onClick(isCollapsed.current);
     };
 
     return (
