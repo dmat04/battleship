@@ -10,8 +10,9 @@ export type GameRoomSliceState = {
   inviteCode?: string;
   wsAuthCode?: string;
   gameSettings?: GameSettings;
-  fetchingRoom: boolean;
-  fetchingSettings: boolean;
+  loadingNewRoom: boolean;
+  loadingJoinRoom: boolean;
+  loadingSettings: boolean;
 };
 
 const initialState: GameRoomSliceState = {
@@ -19,8 +20,9 @@ const initialState: GameRoomSliceState = {
   inviteCode: undefined,
   wsAuthCode: undefined,
   gameSettings: undefined,
-  fetchingRoom: false,
-  fetchingSettings: false,
+  loadingNewRoom: false,
+  loadingJoinRoom: false,
+  loadingSettings: false,
 };
 
 export const fetchGameSettings = createAsyncThunk(
@@ -89,21 +91,11 @@ export const joinGameRoom = createAsyncThunk(
   },
 );
 
-const isRoomPendingAction = (action: UnknownAction) => (
-  action.type === createGameRoom.pending.type
-  || action.type === joinGameRoom.pending.type
-);
-
 const isRoomFullfilledAction = (
   action: UnknownAction,
 ): action is ReturnType<typeof createGameRoom['fulfilled']> => (
   action.type === createGameRoom.fulfilled.type
   || action.type === joinGameRoom.fulfilled.type
-);
-
-const isRoomRejectedAction = (action: UnknownAction) => (
-  action.type === createGameRoom.rejected.type
-  || action.type === joinGameRoom.rejected.type
 );
 
 const gameRoomSlice = createSlice({
@@ -112,31 +104,35 @@ const gameRoomSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchGameSettings.pending, (state) => {
-      state.fetchingSettings = true;
+      state.loadingSettings = true;
     });
     builder.addCase(fetchGameSettings.fulfilled, (state, action) => {
-      state.fetchingSettings = false;
+      state.loadingSettings = false;
       state.gameSettings = action.payload;
     });
     builder.addCase(fetchGameSettings.rejected, (state) => {
-      state.fetchingSettings = false;
+      state.loadingSettings = false;
       state.gameSettings = undefined;
     });
-    builder.addMatcher(isRoomPendingAction, (state) => {
-      state.fetchingRoom = true;
+    builder.addCase(createGameRoom.pending, (state) => {
+      state.loadingNewRoom = true;
+    });
+    builder.addCase(joinGameRoom.pending, (state) => {
+      state.loadingJoinRoom = true;
+    });
+    builder.addCase(createGameRoom.rejected, (state) => {
+      state.loadingNewRoom = false;
+    });
+    builder.addCase(joinGameRoom.rejected, (state) => {
+      state.loadingJoinRoom = false;
     });
     builder.addMatcher(isRoomFullfilledAction, (state, action) => {
       const { roomID, inviteCode, wsAuthCode } = action.payload;
-      state.fetchingRoom = false;
+      state.loadingNewRoom = false;
+      state.loadingJoinRoom = false;
       state.roomID = roomID;
       state.inviteCode = inviteCode;
       state.wsAuthCode = wsAuthCode;
-    });
-    builder.addMatcher(isRoomRejectedAction, (state) => {
-      state.fetchingRoom = false;
-      state.roomID = undefined;
-      state.inviteCode = undefined;
-      state.wsAuthCode = undefined;
     });
   },
 });
