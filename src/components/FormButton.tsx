@@ -7,7 +7,7 @@ export type FormButtonVariant = 'submit' | 'cancel' | 'skip';
 const FormButton = styled.button<{ $variant: FormButtonVariant, theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
-      case 'submit': return props.theme.colorPrimary;
+      case 'submit': return props.theme.colorBg;
       case 'cancel': return props.theme.colorSecondary;
       case 'skip': return props.theme.colorBg;
       default: return assertNever(props.$variant);
@@ -15,7 +15,7 @@ const FormButton = styled.button<{ $variant: FormButtonVariant, theme: Theme }>`
   }};
   --colorBgHover: ${(props) => {
     switch (props.$variant) {
-      case 'submit': return props.theme.colorBg;
+      case 'submit': return props.theme.colorPrimary;
       case 'cancel': return props.theme.colorPrimary;
       case 'skip': return props.theme.colorPrimary;
       default: return assertNever(props.$variant);
