@@ -38,20 +38,3 @@ export const JOIN_ROOM = gql(`
     }
   }
 `);
-
-export const GET_GAME_SETTINGS = gql(`
-  query GameSettings($gameId: ID!) {
-    gameSettings(gameId: $gameId) {
-      boardHeight
-      boardWidth
-      shipClasses {
-        size
-        type
-      }
-      shipCounts {
-        class
-        count
-      }
-    }
-}
-`);
