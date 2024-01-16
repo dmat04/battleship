@@ -15,8 +15,10 @@ const createApolloClient = () => {
     }
 
     return {
-      ...headers,
-      authorization: `Bearer ${token}`,
+      headers: {
+        ...headers,
+        authorization: `Bearer ${token}`,
+      },
     };
   });
 
