@@ -5,7 +5,7 @@ import FormButton from '../FormButton';
 import useUsernameChecker from '../../hooks/useUsernameChecker';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { guestLogin } from '../../store/authSlice';
-import SpinnerAnim from '../assets/icons/180-ring.svg';
+import Spinner from '../Spinner';
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;
@@ -26,15 +26,6 @@ const Status = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`;
-
-const Spinner = styled.div<{ $visible: boolean }>`
-  opacity: ${(props) => (props.$visible ? 1 : 0)};
-  background: url(${SpinnerAnim});
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 2rem;
-  aspect-ratio: 1;
 `;
 
 interface Props {
