@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { SliceState } from './types';
 import {
   initializeState,
@@ -6,8 +6,44 @@ import {
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
-import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
+import {
+  GameRoomStatus, ShipClassName, ShipOrientation, ShipPlacement,
+} from '../../__generated__/graphql';
 import { fetchGameSettings } from '../gameRoomSlice';
+import type { AppDispatch, RootState } from '../store';
+import Dependencies from '../../utils/Dependencies';
+import { PLACE_SHIPS } from '../../graphql/mutations';
+
+export const submitPlacement = createAsyncThunk<
+// eslint-disable-next-line @typescript-eslint/indent
+  GameRoomStatus | undefined, string, { dispatch: AppDispatch, state: RootState }
+>(
+  'shipPlacement/submit',
+  async (roomId: string, thunkAPI) => {
+    const { shipStates } = thunkAPI.getState().shipPlacement;
+
+    if (shipStates.some(({ position }) => position === null)) {
+      thunkAPI.rejectWithValue({ error: 'Cannot submit ship placement - not all ships placed' });
+    }
+
+    const shipPlacements: ShipPlacement[] = shipStates.map((ship) => ({
+      shipClass: ship.shipClass.type,
+      orientation: ship.orientation,
+      x: ship.position?.x ?? 0,
+      y: ship.position?.y ?? 0,
+    }));
+
+    const roomState = await Dependencies.getApolloClient()?.mutate({
+      mutation: PLACE_SHIPS,
+      variables: {
+        roomId,
+        shipPlacements,
+      },
+    });
+
+    return roomState?.data?.placeShips;
+  },
+);
 
 const stateStub: SliceState = {
   placedIDs: [],
