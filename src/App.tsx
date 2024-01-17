@@ -2,7 +2,7 @@ import {
   BrowserRouter, Navigate, Route, Routes,
 } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import themeDefault from './components/assets/themes/themeDefault';
+import themeDefault, { Theme } from './components/assets/themes/themeDefault';
 import Navbar from './components/Navbar';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
@@ -18,12 +18,17 @@ const ScreenContainer = styled.div`
     "footer";
 `;
 
-const MainContentContainer = styled.div`
+const MainContentContainer = styled.div<{ theme: Theme }>`
   grid-area: content;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  padding: ${(props) => props.theme.paddingSm} 0;
+
+  @media (max-width: 35em) {
+    padding: ${(props) => props.theme.paddingMin} 0;
+  }
 `;
 
 const TempFooter = styled.footer`

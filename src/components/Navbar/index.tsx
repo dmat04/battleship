@@ -23,6 +23,10 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   background-size: 2.5vh 2.5vh;
   background-position: center center;
   border: var(--border-size) solid var(--border-color);
+
+  @media (max-width: 35em) {
+    padding: var(--gap-smaller);
+  }
 `;
 
 const NavList = styled.ul<{ theme: Theme, $navOpen: boolean }>`
@@ -64,6 +68,11 @@ const NavLogo = styled.div`
   color: white;
   border-radius: 10px;
   background-color: #4e2e82;
+
+  @media (max-width: 35em) {
+    font-size: large;
+    padding: var(--gap-smaller);
+  }
 `;
 
 const MobileToggle = styled.button<{ theme: Theme, $navOpen: boolean }>`

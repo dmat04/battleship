@@ -4,11 +4,11 @@ import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
 import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
-import Button from '../Button';
 import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
 import { createGameRoom } from '../../store/gameRoomSlice';
 import Spinner from '../Spinner';
+import { MenuItemButton } from '../Button';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -43,13 +43,13 @@ const GameRoomMenu = () => {
 
   return (
     <MenuContainer>
-      <Button $variant="primary" onClick={startNewGame}>
+      <MenuItemButton $variant="primary" onClick={startNewGame}>
         {
           loadingNewRoom
             ? <Spinner $visible />
             : <MenuItemLabel>Start a new game</MenuItemLabel>
         }
-      </Button>
+      </MenuItemButton>
 
       <CollapsibleContainer
         ref={collapsible}

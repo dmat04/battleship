@@ -4,7 +4,7 @@ import { assertNever } from '../utils/typeUtils';
 
 export type ButtonVariant = 'primary' | 'warning' | 'danger';
 
-const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
+export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
       case 'primary': return props.theme.colorBg;
@@ -30,12 +30,12 @@ const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
 
   padding: ${(props) => props.theme.paddingMin};
-  width: 20rem;
-
 
   &:hover {
     background-color: var(--colorBgHover);
   }
 `;
 
-export default Button;
+export const MenuItemButton = styled(Button)`
+  width: 20rem;
+`;
