@@ -1,12 +1,12 @@
 import { MoveResult } from '../game/Board';
 import { GameRoomStatus } from '../models/GameRoom';
 
-export enum IncomingMessageCode {
+export enum ClientMessageCode {
   Shoot = 'Shoot',
   RoomStatusRequest = 'RoomStatusRequest',
 }
 
-export enum OutgoingMessageCode {
+export enum ServerMessageCode {
   Error = 'Error',
   OpponentMoveResult = 'OpponentMoveResult',
   OwnMoveResult = 'OwnMoveResult',
@@ -26,45 +26,45 @@ interface MoveResultMessage extends CoordinateMessage {
 }
 
 export interface ShootMessage extends CoordinateMessage {
-  code: IncomingMessageCode.Shoot;
+  code: ClientMessageCode.Shoot;
 }
 
 export interface RoomStatusRequestMessage {
-  code: IncomingMessageCode.RoomStatusRequest;
+  code: ClientMessageCode.RoomStatusRequest;
 }
 
 export interface ErrorMessage {
-  code: OutgoingMessageCode.Error;
+  code: ServerMessageCode.Error;
   message: string;
 }
 
 export interface OpponentMoveResultMessage extends MoveResultMessage {
-  code: OutgoingMessageCode.OpponentMoveResult;
+  code: ServerMessageCode.OpponentMoveResult;
 }
 
 export interface OwnMoveResultMessage extends MoveResultMessage {
-  code: OutgoingMessageCode.OwnMoveResult;
+  code: ServerMessageCode.OwnMoveResult;
 }
 
 export interface RoomStatusResponseMessage {
-  code: OutgoingMessageCode.RoomStatusResponse;
+  code: ServerMessageCode.RoomStatusResponse;
   roomStatus: GameRoomStatus;
 }
 
 export interface AuthenticatedResponseMessage {
-  code: OutgoingMessageCode.AuthenticatedResponse;
+  code: ServerMessageCode.AuthenticatedResponse;
 }
 
 export interface GameStartedMessage {
-  code: OutgoingMessageCode.GameStarted;
+  code: ServerMessageCode.GameStarted;
   playsFirst: string;
 }
 
-export type IncommingMessage =
+export type ClientMessage =
   | ShootMessage
   | RoomStatusRequestMessage;
 
-export type OutgoingMessage =
+export type ServerMessage =
  | ErrorMessage
  | OpponentMoveResultMessage
  | OwnMoveResultMessage

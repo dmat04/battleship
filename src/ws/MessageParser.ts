@@ -1,6 +1,6 @@
 import { isInteger } from 'lodash';
 import { assertNever } from '../utils/typeUtils';
-import { CoordinateMessage, IncomingMessageCode, IncommingMessage } from './MessageTypes';
+import { CoordinateMessage, ClientMessageCode, ClientMessage } from './MessageTypes';
 
 const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => {
   if ('x' in message
@@ -16,7 +16,7 @@ const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => 
   return undefined;
 };
 
-const ParseMessage = (jsonMessage: string): IncommingMessage | undefined => {
+const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
   let message = null;
 
   try {
@@ -33,14 +33,14 @@ const ParseMessage = (jsonMessage: string): IncommingMessage | undefined => {
     return undefined;
   }
 
-  if (!Object.values(IncomingMessageCode).includes(message.code)) {
+  if (!Object.values(ClientMessageCode).includes(message.code)) {
     return undefined;
   }
 
-  const code: IncomingMessageCode = message.code as IncomingMessageCode;
+  const code: ClientMessageCode = message.code as ClientMessageCode;
 
   switch (code) {
-    case IncomingMessageCode.Shoot: {
+    case ClientMessageCode.Shoot: {
       const coordinates = parseCoordinateMessage(message);
       if (coordinates) {
         return {
@@ -50,7 +50,7 @@ const ParseMessage = (jsonMessage: string): IncommingMessage | undefined => {
       }
       return undefined;
     }
-    case IncomingMessageCode.RoomStatusRequest: return { code };
+    case ClientMessageCode.RoomStatusRequest: return { code };
     default: return assertNever(code);
   }
 };

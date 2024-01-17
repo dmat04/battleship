@@ -6,9 +6,9 @@ import MessageParser from './MessageParser';
 import {
   AuthenticatedResponseMessage,
   ErrorMessage,
-  IncomingMessageCode,
+  ClientMessageCode,
   OpponentMoveResultMessage,
-  OutgoingMessageCode,
+  ServerMessageCode,
   OwnMoveResultMessage,
   RoomStatusResponseMessage,
   ShootMessage,
@@ -29,7 +29,7 @@ const handleErrorState = (ws: WebSocket<WSData>): void => {
   }
 
   const response: ErrorMessage = {
-    code: OutgoingMessageCode.Error,
+    code: ServerMessageCode.Error,
     message: errorMessage,
   };
 
@@ -75,7 +75,7 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
 
     // send a confirmation message
     const responseMessage: AuthenticatedResponseMessage = {
-      code: OutgoingMessageCode.AuthenticatedResponse,
+      code: ServerMessageCode.AuthenticatedResponse,
     };
 
     ws.send(JSON.stringify(responseMessage));
@@ -95,7 +95,7 @@ const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void 
 
   if (!roomIsActive) {
     const response: ErrorMessage = {
-      code: OutgoingMessageCode.Error,
+      code: ServerMessageCode.Error,
       message: 'Can\'t make move, game is not active.',
     };
 
@@ -112,7 +112,7 @@ const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void 
     } = ActiveGameService.makeMove(roomID, username, x, y);
 
     const ownResponse: OwnMoveResultMessage = {
-      code: OutgoingMessageCode.OwnMoveResult,
+      code: ServerMessageCode.OwnMoveResult,
       x,
       y,
       result,
@@ -120,7 +120,7 @@ const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void 
     };
 
     const opponentResponse: OpponentMoveResultMessage = {
-      code: OutgoingMessageCode.OpponentMoveResult,
+      code: ServerMessageCode.OpponentMoveResult,
       x,
       y,
       result,
@@ -132,7 +132,7 @@ const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void 
   } catch (error) {
     if (error instanceof GameplayError) {
       const response: ErrorMessage = {
-        code: OutgoingMessageCode.Error,
+        code: ServerMessageCode.Error,
         message: error.message,
       };
 
@@ -166,7 +166,7 @@ const handleRoomStatusRequestMessage = (ws: WebSocket<WSData>) => {
 
   if (roomStatus) {
     const response: RoomStatusResponseMessage = {
-      code: OutgoingMessageCode.RoomStatusResponse,
+      code: ServerMessageCode.RoomStatusResponse,
       roomStatus,
     };
 
@@ -184,7 +184,7 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
 
   if (!parsedMessage) {
     const response: ErrorMessage = {
-      code: OutgoingMessageCode.Error,
+      code: ServerMessageCode.Error,
       message: 'Couldn\'t parse incoming message',
     };
     ws.send(JSON.stringify(response));
@@ -193,8 +193,8 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
 
   const { code } = parsedMessage;
   switch (code) {
-    case IncomingMessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
-    case IncomingMessageCode.RoomStatusRequest: handleRoomStatusRequestMessage(ws); break;
+    case ClientMessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
+    case ClientMessageCode.RoomStatusRequest: handleRoomStatusRequestMessage(ws); break;
     default: assertNever(code);
   }
 };
