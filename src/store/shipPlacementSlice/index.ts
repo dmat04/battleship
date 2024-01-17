@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SliceState } from './types';
 import {
+  initializeState,
   processPlaceShipAction,
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
 import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
+import { fetchGameSettings } from '../gameRoomSlice';
 
 const stateStub: SliceState = {
   placedIDs: [],
@@ -58,11 +60,17 @@ const initialState: SliceState = {
 
 const shipPlacementSlice = createSlice({
   name: 'shipPlacement',
-  initialState: stateStub,
+  initialState,
   reducers: {
     placeShip: processPlaceShipAction,
     resetShip: processResetShipAction,
     rotateShip: processRotateShipAction,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(
+      fetchGameSettings.fulfilled,
+      (state, action) => initializeState(action.payload),
+    );
   },
 });
 

@@ -8,7 +8,7 @@ import {
   ShipID,
   Coordinates,
 } from './types';
-import { ShipOrientation } from '../../__generated__/graphql';
+import { GameSettings, ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
 
 const minmax = (min: number, value: number, max: number): number =>
@@ -220,4 +220,48 @@ export const processRotateShipAction = (
 
   // eslint-disable-next-line no-param-reassign
   state.shipStates[shipIndex] = newState;
+};
+
+export const initializeState = (gameSettings: GameSettings): SliceState => {
+  const nonPlacedIDs: string[] = [];
+  const shipStates: ShipState[] = [];
+
+  gameSettings.shipCounts.forEach((shipCount) => {
+    for (let c = 1; c <= shipCount.count; c += 1) {
+      const shipID = `${shipCount.class}-${c}`;
+      const shipClass = gameSettings.shipClasses.find(
+        (ship) => ship.type === shipCount.class
+      );
+
+      if (!shipClass) throw Error('GameSettings seem to be malformed!');
+
+      nonPlacedIDs.push(shipID);
+      shipStates.push({
+        shipID,
+        shipClass,
+        orientation: ShipOrientation.Horizontal,
+        position: null,
+      });
+    }
+  });
+
+  const cellStates: null[][] = new Array(gameSettings.boardHeight);
+  for (let i = 0; i < gameSettings.boardHeight; i += 1) {
+    cellStates[i] = (new Array(gameSettings.boardWidth).fill(null));
+  }
+
+  const grid: GridState = {
+    columns: gameSettings.boardWidth,
+    rows: gameSettings.boardHeight,
+    cellStates,
+  };
+
+  const state: SliceState = {
+    placedIDs: [],
+    nonPlacedIDs,
+    shipStates,
+    grid,
+  };
+
+  return state;
 };
