@@ -223,19 +223,17 @@ export const processRotateShipAction = (
 };
 
 export const initializeState = (gameSettings: GameSettings): SliceState => {
-  const nonPlacedIDs: string[] = [];
   const shipStates: ShipState[] = [];
 
   gameSettings.shipCounts.forEach((shipCount) => {
     for (let c = 1; c <= shipCount.count; c += 1) {
       const shipID = `${shipCount.class}-${c}`;
       const shipClass = gameSettings.shipClasses.find(
-        (ship) => ship.type === shipCount.class
+        (ship) => ship.type === shipCount.class,
       );
 
       if (!shipClass) throw Error('GameSettings seem to be malformed!');
 
-      nonPlacedIDs.push(shipID);
       shipStates.push({
         shipID,
         shipClass,
@@ -244,6 +242,9 @@ export const initializeState = (gameSettings: GameSettings): SliceState => {
       });
     }
   });
+
+  shipStates.sort((a, b) => b.shipClass.size - a.shipClass.size);
+  const nonPlacedIDs = shipStates.map((state) => state.shipID);
 
   const cellStates: null[][] = new Array(gameSettings.boardHeight);
   for (let i = 0; i < gameSettings.boardHeight; i += 1) {
