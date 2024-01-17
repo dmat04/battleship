@@ -6,7 +6,7 @@ import { useSpring } from '@react-spring/web';
 import type { RootState } from '../../store/store';
 import { Coordinates } from '../../store/shipPlacementSlice/types';
 import useBoundingRects from '../useBoundingRects';
-import PlacementGridContext from '../../components/PlacementGrid/PlacementGridContext';
+import PlacementGridContext from '../../components/PlacementScreen/PlacementGrid/PlacementGridContext';
 import { canPlaceShip } from '../../store/shipPlacementSlice/utils';
 import { placeShip, resetShip, rotateShip } from '../../store/shipPlacementSlice';
 import { calculateGridPosition, calculateTranslation, isWithinGrid } from './utils';
