@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import GameGrid from '../GameGrid';
 import DraggableShip from './DraggableShip';
 import PlacementGridContext, { IPlacementGridContext } from './PlacementGridContext';
-import type { RootState } from '../../store/store';
+import { RootState } from '../../../store/store';
+import GameGrid from '../../GameGrid';
 
 const Container = styled.div`
   width: 35vh;
