@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
 import PlacementScreen from './components/PlacementScreen';
+import GameScreen from './components/GameScreen';
 
 const ScreenContainer = styled.div`
   height: 100vh;
@@ -50,6 +51,7 @@ const App = () => {
                 <Route path="/login" element={<UserMenu />} />
                 <Route path="/start" element={<GameRoomMenu />} />
                 <Route path="/getReady" element={<PlacementScreen />} />
+                <Route path="/game" element={<GameScreen />} />
               </Routes>
             </MainContentContainer>
             <TempFooter />
