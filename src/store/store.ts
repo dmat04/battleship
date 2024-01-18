@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authReducer from './authSlice';
 import shipPlacementReducer from './shipPlacementSlice';
 import gameRoomReducer from './gameRoomSlice';
+import activeGameReducer from './activeGameSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     shipPlacement: shipPlacementReducer,
     gameRoom: gameRoomReducer,
+    activeGame: activeGameReducer,
   },
 });
 
