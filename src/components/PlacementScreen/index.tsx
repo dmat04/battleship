@@ -29,11 +29,20 @@ const Info = styled.p`
 
 const PlacementScreen = () => {
   const dispatch = useAppDispatch();
+  const username = useAppSelector((state) => state.auth.loginResult?.username);
   const roomID = useAppSelector((state) => state.gameRoom.roomID);
+  const gameRoomStatus = useAppSelector((state) => state.activeGame.gameRoomStatus);
   const shipPlacementState = useAppSelector((state) => state.shipPlacement);
   const nonPlacedCount = useAppSelector((state) => state.shipPlacement.nonPlacedIDs.length);
 
   if (!roomID) return <Navigate to="/start" replace />;
+
+  if (
+    (username === gameRoomStatus.player1 && gameRoomStatus.p1ShipsPlaced)
+    || (username === gameRoomStatus.player2 && gameRoomStatus.p2ShipsPlaced)
+  ) {
+    return <Navigate to="/game" replace />;
+  }
 
   if (shipPlacementState.shipStates.length === 0) return null;
 
