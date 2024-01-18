@@ -13,6 +13,8 @@ import { fetchGameSettings } from '../gameRoomSlice';
 import type { AppDispatch, RootState } from '../store';
 import Dependencies from '../../utils/Dependencies';
 import { PLACE_SHIPS } from '../../graphql/mutations';
+import { initGame } from '../activeGameSlice';
+import { GameInitArgs } from '../activeGameSlice/utils';
 
 export const submitPlacement = createAsyncThunk<
 // eslint-disable-next-line @typescript-eslint/indent
@@ -33,7 +35,7 @@ export const submitPlacement = createAsyncThunk<
       y: ship.position?.y ?? 0,
     }));
 
-    const roomState = await Dependencies.getApolloClient()?.mutate({
+    const result = await Dependencies.getApolloClient()?.mutate({
       mutation: PLACE_SHIPS,
       variables: {
         roomId,
@@ -41,7 +43,20 @@ export const submitPlacement = createAsyncThunk<
       },
     });
 
-    return roomState?.data?.placeShips;
+    const gameRoomStatus = result?.data?.placeShips;
+    const { gameSettings } = thunkAPI.getState().gameRoom;
+
+    if (gameRoomStatus && gameSettings) {
+      const gameInitArgs: GameInitArgs = {
+        gameRoomStatus,
+        gameSettings,
+        playerShips: shipPlacements,
+      };
+
+      thunkAPI.dispatch(initGame(gameInitArgs));
+    }
+
+    return result?.data?.placeShips;
   },
 );
 
@@ -57,13 +72,27 @@ const stateStub: SliceState = {
     'SUBMARINE-2',
   ],
   shipStates: [
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 5, type: ShipClassName.Carrier }, position: null, shipID: 'CARRIER-1' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 4, type: ShipClassName.Battleship }, position: null, shipID: 'BATTLESHIP-1' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 3, type: ShipClassName.Cruiser }, position: null, shipID: 'CRUISER-1' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-1' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-2' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-1' },
-    { orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-2' },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 5, type: ShipClassName.Carrier }, position: null, shipID: 'CARRIER-1',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 4, type: ShipClassName.Battleship }, position: null, shipID: 'BATTLESHIP-1',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 3, type: ShipClassName.Cruiser }, position: null, shipID: 'CRUISER-1',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-1',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-2',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-1',
+    },
+    {
+      orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-2',
+    },
   ],
   grid: {
     columns: 10,
