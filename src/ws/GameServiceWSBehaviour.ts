@@ -4,7 +4,6 @@ import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
 import MessageParser from './MessageParser';
 import {
-  AuthenticatedResponseMessage,
   ErrorMessage,
   ClientMessageCode,
   OpponentMoveResultMessage,
@@ -68,17 +67,22 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
 
   // if the ticket is valid, and its data corresponds to the websocket
   if (ticket && errorMessage === null) {
-    // let the GameService know that the socket is authenticated
-    GameRoomService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
-    // set the socket state
-    wsData.state = WSState.Open;
+    try {
+      // let the GameService know that the socket is authenticated
+      GameRoomService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
 
-    // send a confirmation message
-    const responseMessage: AuthenticatedResponseMessage = {
-      code: ServerMessageCode.AuthenticatedResponse,
-    };
+      // set the socket state
+      wsData.state = WSState.Open;
 
-    ws.send(JSON.stringify(responseMessage));
+      const responseMessage = {
+        code: ServerMessageCode.AuthenticatedResponse,
+      };
+
+      // send a confirmation message
+      ws.send(JSON.stringify(responseMessage));
+    } catch (error) {
+      errorMessage = (error as Error).message ?? 'Couldn\'t authenticate sokcet connection';
+    }
   }
 
   // if any kind of error was encountered
@@ -208,7 +212,8 @@ const WsHandler: WebSocketBehavior<WSData> = {
     // pattern '/game/:gameId/:username', so the two parameters are read from
     // the request
     const gameID = req.getParameter(0);
-    const username = req.getParameter(1);
+    const encodedUsername = req.getParameter(1);
+    const username = decodeURIComponent(encodedUsername);
 
     // do some checks before upgrading the request to websockets
     let errorMessage: string | null = null;
@@ -260,6 +265,15 @@ const WsHandler: WebSocketBehavior<WSData> = {
     // error message and close the connection)
     if (ws.getUserData().state === WSState.Error) {
       handleErrorState(ws);
+    }
+  },
+
+  close: (ws) => {
+    const data = ws.getUserData();
+    if (data.roomIsActive) {
+      // TODO: handle in active game service
+    } else {
+      GameRoomService.playerSocketClosed(data.roomID, data.username);
     }
   },
 
