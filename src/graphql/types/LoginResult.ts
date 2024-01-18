@@ -1,14 +1,14 @@
 export interface LoginResult {
   username: string,
   accessToken: string,
-  expiresAt: string
+  expiresAt: number
 }
 
 export const typeDefs = `#graphql
   type LoginResult {
     username: String!
     accessToken: String!
-    expiresAt: String!
+    expiresAt: Int!
   }
 `;
 

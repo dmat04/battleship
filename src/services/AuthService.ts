@@ -232,7 +232,7 @@ const createGuestUserAndToken = async (username?: string): Promise<LoginResult> 
   return {
     username: guestUser.username,
     accessToken: token.token,
-    expiresAt: token.expiresAt.getTime().toString(),
+    expiresAt: token.expiresAt.getTime(),
   };
 };
 
@@ -315,7 +315,7 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
   return {
     username: user.username,
     accessToken: token.token,
-    expiresAt: token.expiresAt.getTime().toString(),
+    expiresAt: token.expiresAt.getTime(),
   };
 };
 
@@ -349,7 +349,7 @@ const registerUser = async (username: string, password: string): Promise<LoginRe
     return {
       username: user.username,
       accessToken: token.token,
-      expiresAt: token.expiresAt.getTime().toString(),
+      expiresAt: token.expiresAt.getTime(),
     };
   } catch (error) {
     if (error instanceof MongooseError.ValidationError) {
