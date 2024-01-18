@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
-import createSocket from './wsBehaviour';
-import { useAppDispatch } from '../../store/store';
+import { Navigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import OpponentGrid from './OpponentGrid';
 import Scoreboard from './Scoreboard';
 import PlayerGrid from './PlayerGrid';
+import useGameSocket from '../../hooks/useGameSocket';
 
 const Container = styled.div`
   display: grid;
@@ -19,8 +19,18 @@ const Container = styled.div`
 
 const GameScreen = () => {
   const dispatch = useAppDispatch();
+  const username = useAppSelector((state) => state.auth.loginResult?.username);
+  const { roomID, wsAuthCode } = useAppSelector((state) => state.gameRoom);
+  const gameRoomStatus = useAppSelector((state) => state.activeGame.gameRoomStatus);
+  const socket = useGameSocket(username, roomID, wsAuthCode, dispatch);
 
-  const socket = useMemo(() => createSocket('wss://example.com', 'authCode', dispatch), [dispatch]);
+  if (
+    (username === gameRoomStatus.player1 && !gameRoomStatus.p1ShipsPlaced)
+    || (username === gameRoomStatus.player2 && !gameRoomStatus.p2ShipsPlaced)
+    || (username !== gameRoomStatus.player1 && username !== gameRoomStatus.player2)
+  ) {
+    return <Navigate to="/getReady" replace />;
+  }
 
   return (
     <Container>
