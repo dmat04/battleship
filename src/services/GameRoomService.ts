@@ -364,6 +364,31 @@ const playerSocketAuthenticated = (
   throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
 };
 
+/**
+ * Call when an opened and authenticated socket has been closed.
+ * This method will mark the players socket as undefined for the given room.
+ * Throws an Error if a game with the specified ID isn't found, or the given
+ * username isn't part of the specified game room.
+ *
+ * @param roomID Id of the room for in which a players socket was closed
+ * @param username Username of the payer whoose socket was closed
+ */
+const playerSocketClosed = (roomID: string, username: string): void => {
+  const room = getRoom(roomID);
+
+  if (username === room.userP1.username) {
+    room.p1socket = undefined;
+    return;
+  }
+
+  if (username === room.userP2?.username) {
+    room.p2socket = undefined;
+    return;
+  }
+
+  throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
+};
+
 export default {
   createNewRoom,
   joinWithInviteCode,
@@ -373,4 +398,5 @@ export default {
   placeShips,
   playerSocketRequested,
   playerSocketAuthenticated,
+  playerSocketClosed,
 };
