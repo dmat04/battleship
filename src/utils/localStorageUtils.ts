@@ -1,5 +1,5 @@
 import { LoginResult } from '../__generated__/graphql';
-import { isString } from './typeUtils';
+import { isInteger, isString } from './typeUtils';
 
 const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
 
@@ -27,9 +27,16 @@ const getAccessToken = (): LoginResult | null => {
 
   if ('username' in parsed && isString(parsed.username)
     && 'accessToken' in parsed && isString(parsed.accessToken)
-    && 'expiresAt' in parsed && isString(parsed.accessToken)
+    && 'expiresAt' in parsed && isInteger(parsed.expiresAt)
   ) {
-    return parsed;
+    const expiresAt = Number.parseInt(parsed.expiresAt, 10);
+    const now = Date.now();
+    const left = expiresAt - now;
+
+    // only return the token if it's alive for atleast an hour
+    if (left >= 3_600_000) {
+      return parsed;
+    }
   }
 
   localStorage.removeItem(KEY_AUTH_TOKEN);
