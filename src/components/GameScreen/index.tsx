@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../store/store';
 import OpponentGrid from './OpponentGrid';
 import Scoreboard from './Scoreboard';
 import PlayerGrid from './PlayerGrid';
-import useGameSocket from '../../hooks/useGameSocket';
 
 const Container = styled.div`
   display: grid;
@@ -20,9 +19,7 @@ const Container = styled.div`
 const GameScreen = () => {
   const dispatch = useAppDispatch();
   const username = useAppSelector((state) => state.auth.loginResult?.username);
-  const { roomID, wsAuthCode } = useAppSelector((state) => state.gameRoom);
   const gameRoomStatus = useAppSelector((state) => state.activeGame.gameRoomStatus);
-  const socket = useGameSocket(username, roomID, wsAuthCode, dispatch);
 
   if (
     (username === gameRoomStatus.player1 && !gameRoomStatus.p1ShipsPlaced)
