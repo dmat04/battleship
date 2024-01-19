@@ -4,6 +4,7 @@ import authReducer from './authSlice';
 import shipPlacementReducer from './shipPlacementSlice';
 import gameRoomReducer from './gameRoomSlice';
 import activeGameReducer from './activeGameSlice';
+import wsMiddleware from './wsMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     gameRoom: gameRoomReducer,
     activeGame: activeGameReducer,
   },
+  middleware: (getDefaultMiddleware) => (getDefaultMiddleware().concat(wsMiddleware)),
 });
 
 export type Store = typeof store;
