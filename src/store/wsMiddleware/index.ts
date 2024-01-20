@@ -1,6 +1,6 @@
 import { Action, Middleware } from '@reduxjs/toolkit';
-import type { AppDispatch } from './store';
-import { initGame } from './activeGameSlice';
+import type { AppDispatch } from '../store';
+import { initGame, messageReceived } from '../activeGameSlice';
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => (event: Event) => {
   console.log('socket opened', event);
@@ -8,8 +8,11 @@ const onOpenBuilder = (authCode: string, socket: WebSocket) => (event: Event) =>
 };
 
 const onMessageBuilder = (dispatch: AppDispatch) => (event: MessageEvent) => {
-  console.log('message received', event.data);
-  // dispatch('some/thing');
+  const message = JSON.parse(event.data);
+  // TODO: check if code is AuthenticatedResponse and skip dispatch if so
+  // TODO: create a messageParser
+
+  dispatch(messageReceived(message));
 };
 
 const onError = (event: Event) => {
@@ -48,15 +51,15 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
       const username = state.auth.loginResult?.username;
       const { roomID, wsAuthCode } = state.gameRoom;
 
-      if (!username || !roomID || !wsAuthCode) {
-        // TODO: dispatch an error
-        return next(action);
+      if (username && roomID && wsAuthCode) {
+        const uriEncodedUsername = encodeURIComponent(username);
+        const url = `ws://localhost:5000/game/${roomID}/${uriEncodedUsername}`;
+        socket = createSocket(url, wsAuthCode, dispatch);
+      } else {
+        // TODO: dispatch an error action
       }
 
-      const uriEncodedUsername = encodeURIComponent(username);
-      const url = `ws://localhost:5000/game/${roomID}/${uriEncodedUsername}`;
-      socket = createSocket(url, wsAuthCode, dispatch);
-      return null;
+      return next(action);
     }
 
     return next(action);
