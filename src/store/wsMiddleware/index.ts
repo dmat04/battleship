@@ -1,8 +1,8 @@
-import { Action, Middleware } from '@reduxjs/toolkit';
+import { Middleware } from '@reduxjs/toolkit';
 import type { AppDispatch } from '../store';
-import { initGame, messageReceived } from '../activeGameSlice';
+import { hitOpponentCell, initGame, messageReceived } from '../activeGameSlice';
 import MessageParser from './MessageParser';
-import { ServerMessageCode } from '../activeGameSlice/messageTypes';
+import { ClientMessageCode, ServerMessageCode, ShootMessage } from '../activeGameSlice/messageTypes';
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
@@ -43,10 +43,7 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
   let socket: WebSocket | null = null;
 
   return (next) => (action) => {
-    const { type } = action as Action;
-    if (!type) return next(action);
-
-    if (type === initGame.type) {
+    if (initGame.match(action)) {
       if (socket !== null) {
         // TODO: dispatch an error
         return next(action);
@@ -63,8 +60,16 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
       } else {
         // TODO: dispatch an error action
       }
+    } else if (hitOpponentCell.match(action)) {
+      const { payload } = action;
 
-      return next(action);
+      const message: ShootMessage = {
+        code: ClientMessageCode.Shoot,
+        x: payload.x,
+        y: payload.y,
+      };
+
+      socket?.send(JSON.stringify(message));
     }
 
     return next(action);
