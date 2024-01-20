@@ -1,6 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { SliceState } from './stateTypes';
-import { processGameInitAction, processMessageReceived } from './utils';
+import {
+  processGameInitAction,
+  processMessageReceived,
+  processAcknowledgePendingMessage,
+} from './utils';
+import { Coordinates } from '../shipPlacementSlice/types';
 
 const initialState: SliceState = {
   gameRoomStatus: {
@@ -27,12 +32,16 @@ const activeGameSlice = createSlice({
   reducers: {
     initGame: processGameInitAction,
     messageReceived: processMessageReceived,
+    acknowledgePendingMessage: processAcknowledgePendingMessage,
   },
 });
 
 export const {
   initGame,
   messageReceived,
+  acknowledgePendingMessage,
 } = activeGameSlice.actions;
+
+export const hitOpponentCell = createAction<Coordinates>('sendMessage/hitOpponentCell');
 
 export default activeGameSlice.reducer;
