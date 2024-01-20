@@ -2,6 +2,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ShipPlacement, GameSettings, GameRoomStatus } from '../../__generated__/graphql';
 import { CellState, SliceState } from './stateTypes';
+import { ServerMessage } from './messageTypes';
 
 export interface GameInitArgs {
   playerShips: ShipPlacement[];
@@ -27,4 +28,17 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
   state.opponentGrid = opponentGrid;
   state.sunkenPayerShips = [];
   state.sunkenOpponentShips = [];
+  state.messageQueue = [];
+  state.pendingMessage = null;
+};
+
+export const processMessageReceived = (
+  state: SliceState,
+  { payload }: PayloadAction<ServerMessage>,
+) => {
+  if (state.pendingMessage === null) {
+    state.pendingMessage = payload;
+  } else {
+    state.messageQueue.push(payload);
+  }
 };

@@ -25,7 +25,7 @@ export interface CoordinateMessage {
   y: number;
 }
 
-interface MoveResultMessage extends CoordinateMessage {
+export interface MoveResultMessage extends CoordinateMessage {
   result: MoveResult;
   currentPlayer: string;
 }

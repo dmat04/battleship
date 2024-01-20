@@ -1,4 +1,5 @@
 import { GameRoomStatus, ShipPlacement } from '../../__generated__/graphql';
+import { ServerMessage } from './messageTypes';
 
 export interface SliceState {
   gameRoomStatus: GameRoomStatus;
@@ -7,6 +8,8 @@ export interface SliceState {
   opponentGrid: CellState[][];
   sunkenPayerShips: ShipPlacement[];
   sunkenOpponentShips: ShipPlacement[];
+  messageQueue: ServerMessage[];
+  pendingMessage: ServerMessage | null;
 }
 
 export enum CellState {

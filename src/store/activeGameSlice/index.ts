@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SliceState } from './stateTypes';
-import { processGameInitAction } from './utils';
+import { processGameInitAction, processMessageReceived } from './utils';
 
 const initialState: SliceState = {
   gameRoomStatus: {
@@ -17,6 +17,8 @@ const initialState: SliceState = {
   opponentGrid: [],
   sunkenPayerShips: [],
   sunkenOpponentShips: [],
+  messageQueue: [],
+  pendingMessage: null,
 };
 
 const activeGameSlice = createSlice({
@@ -24,11 +26,13 @@ const activeGameSlice = createSlice({
   initialState,
   reducers: {
     initGame: processGameInitAction,
+    messageReceived: processMessageReceived,
   },
 });
 
 export const {
   initGame,
+  messageReceived,
 } = activeGameSlice.actions;
 
 export default activeGameSlice.reducer;
