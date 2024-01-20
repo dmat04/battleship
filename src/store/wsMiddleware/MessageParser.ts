@@ -130,7 +130,7 @@ const isGameStartedMessage = (message: object): message is GameStartedMessage =>
   );
 };
 
-const ParseMessage = (jsonMessage: string): ServerMessage | undefined => {
+const parseMessage = (jsonMessage: string): ServerMessage | undefined => {
   let message = null;
 
   try {
@@ -171,5 +171,5 @@ const ParseMessage = (jsonMessage: string): ServerMessage | undefined => {
 };
 
 export default {
-  ParseMessage,
+  parseMessage,
 };
