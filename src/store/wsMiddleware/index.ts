@@ -1,18 +1,23 @@
 import { Action, Middleware } from '@reduxjs/toolkit';
 import type { AppDispatch } from '../store';
 import { initGame, messageReceived } from '../activeGameSlice';
+import MessageParser from './MessageParser';
+import { ServerMessageCode } from '../activeGameSlice/messageTypes';
 
-const onOpenBuilder = (authCode: string, socket: WebSocket) => (event: Event) => {
-  console.log('socket opened', event);
+const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
 };
 
 const onMessageBuilder = (dispatch: AppDispatch) => (event: MessageEvent) => {
-  const message = JSON.parse(event.data);
-  // TODO: check if code is AuthenticatedResponse and skip dispatch if so
-  // TODO: create a messageParser
+  const message = MessageParser.parseMessage(event.data);
 
-  dispatch(messageReceived(message));
+  if (message) {
+    if (message.code === ServerMessageCode.AuthenticatedResponse) return;
+
+    dispatch(messageReceived(message));
+  } else {
+    // TODO: dispatch an error
+  }
 };
 
 const onError = (event: Event) => {
