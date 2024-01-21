@@ -45,9 +45,11 @@ export const submitPlacement = createAsyncThunk<
 
     const gameRoomStatus = result?.data?.placeShips;
     const { gameSettings } = thunkAPI.getState().gameRoom;
+    const playerName = thunkAPI.getState().auth.loginResult?.username;
 
-    if (gameRoomStatus && gameSettings) {
+    if (gameRoomStatus && gameSettings && playerName) {
       const gameInitArgs: GameInitArgs = {
+        playerName,
         gameRoomStatus,
         gameSettings,
         playerShips: shipPlacements,
