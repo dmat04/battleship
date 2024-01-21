@@ -1,5 +1,5 @@
 import { ShipPlacement } from '../../__generated__/graphql';
-import { ServerMessage } from './messageTypes';
+import { OpponentMoveResultMessage, OwnMoveResultMessage } from './messageTypes';
 
 export interface SliceState {
   gameState: GameState;
@@ -10,8 +10,8 @@ export interface SliceState {
   opponentGrid: CellState[][];
   sunkenPayerShips: ShipPlacement[];
   sunkenOpponentShips: ShipPlacement[];
-  messageQueue: ServerMessage[];
-  pendingMessage: ServerMessage | null;
+  moveResultQueue: (OpponentMoveResultMessage | OwnMoveResultMessage)[];
+  pendingMoveResult: OpponentMoveResultMessage | OwnMoveResultMessage | null;
 }
 
 export enum CellState {

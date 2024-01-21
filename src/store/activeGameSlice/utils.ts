@@ -2,7 +2,14 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { ShipPlacement, GameSettings, GameRoomStatus } from '../../__generated__/graphql';
 import { CellState, GameState, SliceState } from './stateTypes';
-import { ServerMessage, ServerMessageCode } from './messageTypes';
+import {
+  GameStartedMessage,
+  OpponentMoveResultMessage,
+  OwnMoveResultMessage,
+  RoomStatusResponseMessage,
+  ServerMessage,
+  ServerMessageCode,
+} from './messageTypes';
 import { assertNever } from '../../utils/typeUtils';
 
 export interface GameInitArgs {
@@ -40,6 +47,75 @@ const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus)
   return GameState.WaitingForOpponentToGetReady;
 };
 
+const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
+  const {
+    result,
+    currentPlayer,
+    x,
+    y,
+  } = message;
+  const { hit, shipSunk } = result;
+
+  state.currentPlayer = currentPlayer;
+  state.opponentGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
+
+  if (shipSunk) {
+    state.sunkenOpponentShips.push(shipSunk);
+  }
+};
+
+const applyOpponentMoveResultMessage = (
+  state: SliceState,
+  message: OpponentMoveResultMessage,
+) => {
+  const {
+    result,
+    currentPlayer,
+    x,
+    y,
+  } = message;
+  const { hit, shipSunk } = result;
+
+  state.currentPlayer = currentPlayer;
+  state.playerGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
+
+  if (shipSunk) {
+    state.sunkenPayerShips.push(shipSunk);
+  }
+};
+
+const moveResultMessageReceived = (
+  state: SliceState,
+  message: OpponentMoveResultMessage | OwnMoveResultMessage,
+) => {
+  if (state.pendingMoveResult === null) {
+    state.pendingMoveResult = message;
+  } else {
+    state.moveResultQueue.push(message);
+  }
+};
+
+const processRoomStatusResponseMessage = (
+  state: SliceState,
+  message: RoomStatusResponseMessage,
+) => {
+  const newState = getInitialGameState(state.username, message.roomStatus);
+  const { gameState } = state;
+
+  if (
+    gameState === GameState.PlayerNotReady
+    || gameState === GameState.WaitingForOpponentToConnect
+    || gameState === GameState.WaitingForOpponentToGetReady
+  ) {
+    state.gameState = newState;
+  }
+};
+
+const processGameStartedMessage = (state: SliceState, message: GameStartedMessage) => {
+  state.gameState = GameState.InProgress;
+  state.currentPlayer = message.playsFirst;
+};
+
 export const processGameInitAction = (state: SliceState, action: PayloadAction<GameInitArgs>) => {
   const {
     playerName,
@@ -66,8 +142,8 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     opponentGrid,
     sunkenPayerShips: [],
     sunkenOpponentShips: [],
-    messageQueue: [],
-    pendingMessage: null,
+    moveResultQueue: [],
+    pendingMoveResult: null,
   };
 
   return newState;
@@ -77,105 +153,43 @@ export const processMessageReceived = (
   state: SliceState,
   { payload }: PayloadAction<ServerMessage>,
 ) => {
-  if (state.pendingMessage === null) {
-    state.pendingMessage = payload;
-  } else {
-    state.messageQueue.push(payload);
-  }
-};
+  const { code } = payload;
 
-const discardPendingMessage = (state: SliceState) => {
-  const nextPending = state.messageQueue.shift();
-
-  state.pendingMessage = nextPending ?? null;
-};
-
-const processOpponentMoveResultMessage = (state: SliceState) => {
-  const message = state.pendingMessage;
-  if (!message || message.code !== ServerMessageCode.OpponentMoveResult) return;
-
-  const {
-    result,
-    currentPlayer,
-    x,
-    y,
-  } = message;
-  const { hit, shipSunk } = result;
-
-  state.currentPlayer = currentPlayer;
-  state.playerGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
-
-  if (shipSunk) {
-    state.sunkenPayerShips.push(shipSunk);
-  }
-};
-
-const processOwnMoveResultMessage = (state: SliceState) => {
-  const message = state.pendingMessage;
-  if (!message || message.code !== ServerMessageCode.OwnMoveResult) return;
-
-  const {
-    result,
-    currentPlayer,
-    x,
-    y,
-  } = message;
-  const { hit, shipSunk } = result;
-
-  state.currentPlayer = currentPlayer;
-  state.opponentGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
-
-  if (shipSunk) {
-    state.sunkenOpponentShips.push(shipSunk);
-  }
-};
-
-const processRoomStatusResponseMessage = (state: SliceState) => {
-  const message = state.pendingMessage;
-  if (!message || message.code !== ServerMessageCode.RoomStatusResponse) return;
-
-  const newState = getInitialGameState(state.username, message.roomStatus);
-  const { gameState } = state;
-
-  if (
-    gameState === GameState.PlayerNotReady
-    || gameState === GameState.WaitingForOpponentToConnect
-    || gameState === GameState.WaitingForOpponentToGetReady
-  ) {
-    state.gameState = newState;
-  }
-};
-
-const processGameStartedMessage = (state: SliceState) => {
-  const message = state.pendingMessage;
-  if (!message || message.code !== ServerMessageCode.GameStarted) return;
-
-  state.gameState = GameState.InProgress;
-};
-
-export const processAcknowledgePendingMessage = (state: SliceState) => {
-  if (state.pendingMessage === null) return;
-
-  const { code } = state.pendingMessage;
   switch (code) {
     case ServerMessageCode.AuthenticatedResponse:
       break;
     case ServerMessageCode.RoomStatusResponse:
-      processRoomStatusResponseMessage(state);
+      processRoomStatusResponseMessage(state, payload);
       break;
     case ServerMessageCode.Error:
       break;
     case ServerMessageCode.GameStarted:
-      processGameStartedMessage(state);
+      processGameStartedMessage(state, payload);
       break;
     case ServerMessageCode.OpponentMoveResult:
-      processOpponentMoveResultMessage(state);
+      moveResultMessageReceived(state, payload);
       break;
     case ServerMessageCode.OwnMoveResult:
-      processOwnMoveResultMessage(state);
+      moveResultMessageReceived(state, payload);
+      break;
+    default: assertNever(code);
+  }
+};
+
+export const processAcknowledgeMoveResult = (state: SliceState) => {
+  if (state.pendingMoveResult === null) return;
+
+  const { code } = state.pendingMoveResult;
+  switch (code) {
+    case ServerMessageCode.OpponentMoveResult:
+      applyOpponentMoveResultMessage(state, state.pendingMoveResult);
+      break;
+    case ServerMessageCode.OwnMoveResult:
+      applyOwnMoveResultMessage(state, state.pendingMoveResult);
       break;
     default: assertNever(code);
   }
 
-  discardPendingMessage(state);
+  const nextMoveResult = state.moveResultQueue.shift();
+  state.pendingMoveResult = nextMoveResult ?? null;
 };

@@ -3,7 +3,7 @@ import { GameState, SliceState } from './stateTypes';
 import {
   processGameInitAction,
   processMessageReceived,
-  processAcknowledgePendingMessage,
+  processAcknowledgeMoveResult,
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
 
@@ -16,8 +16,8 @@ const initialState: SliceState = {
   opponentGrid: [],
   sunkenPayerShips: [],
   sunkenOpponentShips: [],
-  messageQueue: [],
-  pendingMessage: null,
+  moveResultQueue: [],
+  pendingMoveResult: null,
 };
 
 const activeGameSlice = createSlice({
@@ -26,16 +26,18 @@ const activeGameSlice = createSlice({
   reducers: {
     initGame: processGameInitAction,
     messageReceived: processMessageReceived,
-    acknowledgePendingMessage: processAcknowledgePendingMessage,
+    acknowledgeMoveResult: processAcknowledgeMoveResult,
   },
 });
 
 export const {
   initGame,
   messageReceived,
-  acknowledgePendingMessage,
+  acknowledgeMoveResult,
 } = activeGameSlice.actions;
 
 export const hitOpponentCell = createAction<Coordinates>('sendMessage/hitOpponentCell');
+
+export const requestRoomStatus = createAction('sendMessage/requestRoomStatus');
 
 export default activeGameSlice.reducer;
