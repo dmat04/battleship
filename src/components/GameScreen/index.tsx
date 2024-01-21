@@ -9,10 +9,9 @@ import Scoreboard from './Scoreboard';
 const Container = styled.div`
   display: grid;
   grid-template-areas: 
-    "opponent"
-    "score"
-    "player";
-  grid-template-rows: 4fr 1fr 4fr;
+    "score score"
+    "player opponent";
+  grid-template-rows: 1.5fr 5fr;
   width: 90vw;
   height: 100%;
 `;
@@ -20,7 +19,7 @@ const Container = styled.div`
 const GameScreen = () => {
   const dispatch = useAppDispatch();
   const gameState = useAppSelector((state) => state.activeGame.gameState);
-  const pendingMessage = useAppSelector((state) => state.activeGame.pendingMessage);
+  const pendingMessage = useAppSelector((state) => state.activeGame.pendingMoveResult);
 
   if (gameState === GameState.PlayerNotReady) {
     return <Navigate to="/getReady" replace />;
