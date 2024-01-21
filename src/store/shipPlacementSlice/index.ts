@@ -6,9 +6,7 @@ import {
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
-import {
-  GameRoomStatus, ShipClassName, ShipOrientation, ShipPlacement,
-} from '../../__generated__/graphql';
+import { GameRoomStatus, ShipPlacement } from '../../__generated__/graphql';
 import { fetchGameSettings } from '../gameRoomSlice';
 import type { AppDispatch, RootState } from '../store';
 import Dependencies from '../../utils/Dependencies';
@@ -61,58 +59,6 @@ export const submitPlacement = createAsyncThunk<
     return result?.data?.placeShips;
   },
 );
-
-const stateStub: SliceState = {
-  placedIDs: [],
-  nonPlacedIDs: [
-    'CARRIER-1',
-    'BATTLESHIP-1',
-    'CRUISER-1',
-    'DESTROYER-1',
-    'DESTROYER-2',
-    'SUBMARINE-1',
-    'SUBMARINE-2',
-  ],
-  shipStates: [
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 5, type: ShipClassName.Carrier }, position: null, shipID: 'CARRIER-1',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 4, type: ShipClassName.Battleship }, position: null, shipID: 'BATTLESHIP-1',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 3, type: ShipClassName.Cruiser }, position: null, shipID: 'CRUISER-1',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-1',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 2, type: ShipClassName.Destroyer }, position: null, shipID: 'DESTROYER-2',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-1',
-    },
-    {
-      orientation: ShipOrientation.Horizontal, shipClass: { size: 1, type: ShipClassName.Submarine }, position: null, shipID: 'SUBMARINE-2',
-    },
-  ],
-  grid: {
-    columns: 10,
-    rows: 10,
-    cellStates: [
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null, null, null],
-    ],
-  },
-};
 
 const initialState: SliceState = {
   placedIDs: [],
