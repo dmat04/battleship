@@ -1,8 +1,17 @@
 import { Middleware } from '@reduxjs/toolkit';
 import type { AppDispatch } from '../store';
-import { hitOpponentCell, initGame, messageReceived } from '../activeGameSlice';
+import {
+  hitOpponentCell,
+  initGame,
+  messageReceived,
+  requestRoomStatus,
+} from '../activeGameSlice';
 import MessageParser from './MessageParser';
-import { ClientMessageCode, ServerMessageCode, ShootMessage } from '../activeGameSlice/messageTypes';
+import {
+  ClientMessageCode,
+  RoomStatusRequestMessage,
+  ShootMessage,
+} from '../activeGameSlice/messageTypes';
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
@@ -12,8 +21,6 @@ const onMessageBuilder = (dispatch: AppDispatch) => (event: MessageEvent) => {
   const message = MessageParser.parseMessage(event.data);
 
   if (message) {
-    if (message.code === ServerMessageCode.AuthenticatedResponse) return;
-
     dispatch(messageReceived(message));
   } else {
     // TODO: dispatch an error
@@ -67,6 +74,12 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
         code: ClientMessageCode.Shoot,
         x: payload.x,
         y: payload.y,
+      };
+
+      socket?.send(JSON.stringify(message));
+    } else if (requestRoomStatus.match(action)) {
+      const message: RoomStatusRequestMessage = {
+        code: ClientMessageCode.RoomStatusRequest,
       };
 
       socket?.send(JSON.stringify(message));
