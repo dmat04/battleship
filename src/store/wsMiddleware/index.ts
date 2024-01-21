@@ -15,6 +15,12 @@ import {
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
+
+  const message: RoomStatusRequestMessage = {
+    code: ClientMessageCode.RoomStatusRequest,
+  };
+
+  socket?.send(JSON.stringify(message));
 };
 
 const onMessageBuilder = (dispatch: AppDispatch) => (event: MessageEvent) => {
