@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
+import { GameState } from '../../store/activeGameSlice/stateTypes';
 import OpponentGrid from './OpponentGrid';
-import Scoreboard from './Scoreboard';
 import PlayerGrid from './PlayerGrid';
+import Scoreboard from './Scoreboard';
 
 const Container = styled.div`
   display: grid;
@@ -18,14 +19,10 @@ const Container = styled.div`
 
 const GameScreen = () => {
   const dispatch = useAppDispatch();
-  const username = useAppSelector((state) => state.auth.loginResult?.username);
-  const gameRoomStatus = useAppSelector((state) => state.activeGame.gameRoomStatus);
+  const gameState = useAppSelector((state) => state.activeGame.gameState);
+  const pendingMessage = useAppSelector((state) => state.activeGame.pendingMessage);
 
-  if (
-    (username === gameRoomStatus.player1 && !gameRoomStatus.p1ShipsPlaced)
-    || (username === gameRoomStatus.player2 && !gameRoomStatus.p2ShipsPlaced)
-    || (username !== gameRoomStatus.player1 && username !== gameRoomStatus.player2)
-  ) {
+  if (gameState === GameState.PlayerNotReady) {
     return <Navigate to="/getReady" replace />;
   }
 
