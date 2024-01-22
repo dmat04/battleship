@@ -1,6 +1,5 @@
 import {
   GameSettings,
-  ShipClass,
   ShipClassName,
   ShipPlacement,
 } from '../../__generated__/graphql';
@@ -11,7 +10,7 @@ export interface SliceState {
   gameState: GameState;
   username: string,
   gameSettings: GameSettings | null,
-  shipClasses: Map<ShipClassName, ShipClass>,
+  shipSizes: { [key in ShipClassName]: number },
   currentPlayer: string | null;
   playerShips: ShipPlacement[];
   playerGridState: GridState;

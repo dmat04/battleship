@@ -6,13 +6,18 @@ import {
   processAcknowledgeMoveResult,
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
-import { ShipClass, ShipClassName } from '../../__generated__/graphql';
 
 const initialState: SliceState = {
   gameState: GameState.PlayerNotReady,
   username: '',
   gameSettings: null,
-  shipClasses: new Map<ShipClassName, ShipClass>(),
+  shipSizes: {
+    BATTLESHIP: 0,
+    CARRIER: 0,
+    CRUISER: 0,
+    DESTROYER: 0,
+    SUBMARINE: 0,
+  },
   currentPlayer: null,
   playerShips: [],
   playerGridState: {

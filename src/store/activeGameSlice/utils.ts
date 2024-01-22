@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   ShipPlacement,
   GameSettings,
@@ -83,7 +83,7 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
   state.currentPlayer = currentPlayer;
   if (shipSunk) {
     state.opponentGridState.sunkenShips.push(shipSunk);
-    const shipSize = state.shipClasses.get(shipSunk.shipClass)?.size ?? 1;
+    const shipSize = state.shipSizes[shipSunk.shipClass];
 
     state.opponentGridState.hitCells = state
       .opponentGridState
@@ -113,7 +113,7 @@ const applyOpponentMoveResultMessage = (
   state.currentPlayer = currentPlayer;
   if (shipSunk) {
     state.playerGridState.sunkenShips.push(shipSunk);
-    const shipSize = state.shipClasses.get(shipSunk.shipClass)?.size ?? 1;
+    const shipSize = state.shipSizes[shipSunk.shipClass];
 
     state.playerGridState.hitCells = state
       .playerGridState
@@ -168,14 +168,23 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     gameRoomStatus,
   } = action.payload;
 
-  const shipClasses = new Map<ShipClassName, ShipClass>();
-  gameSettings.shipClasses.forEach((shipClass) => shipClasses.set(shipClass.type, shipClass));
+  const shipSizes: SliceState['shipSizes'] = {
+    BATTLESHIP: 0,
+    CARRIER: 0,
+    CRUISER: 0,
+    DESTROYER: 0,
+    SUBMARINE: 0,
+  };
+
+  gameSettings.shipClasses.forEach((shipClass) => {
+    shipSizes[shipClass.type] = shipClass.size;
+  });
 
   const newState: SliceState = {
     gameState: getInitialGameState(playerName, gameRoomStatus),
     username: playerName,
     gameSettings: { ...gameSettings },
-    shipClasses,
+    shipSizes,
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
     playerShips: [...playerShips],
     playerGridState: {
