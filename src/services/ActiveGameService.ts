@@ -1,5 +1,5 @@
 import { WebSocket } from 'uWebSockets.js';
-import Game from '../game/Game';
+import Game, { GameState } from '../game/Game';
 import {
   GameRoom,
   ActiveGameRoom,
@@ -9,6 +9,7 @@ import {
 import EntityNotFoundError from './errors/EntityNotFoundError';
 import { WSData } from '../models/WSData';
 import { MoveResult } from '../game/Board';
+import { GameStartedMessage, ServerMessageCode } from '../ws/MessageTypes';
 
 /**
  * Registry of active game instances, indexed by game Id's
@@ -57,7 +58,6 @@ const addGameRoom = (room: GameRoom): GameRoomStatus => {
 
   const gameInstance = new Game(room.userP1.username, room.userP2.username, room.gameSettings);
   gameInstance.initialize(room.p1Placements, room.p2Placements);
-  gameInstance.start();
 
   const activeRoom: ActiveGameRoom = { ...room, gameInstance };
 
@@ -68,6 +68,22 @@ const addGameRoom = (room: GameRoom): GameRoomStatus => {
 
   activeRooms.set(activeRoom.id, activeRoom);
   return getRoomStatus(room.id);
+};
+
+const startGame = (roomID: string) => {
+  const { gameInstance, p1socket, p2socket } = getRoom(roomID);
+  if (gameInstance.getGameState() !== GameState.Initialized) return;
+
+  gameInstance.start();
+
+  const startGameMessage: GameStartedMessage = {
+    code: ServerMessageCode.GameStarted,
+    playsFirst: gameInstance.getCurrentPlayer(),
+  };
+
+  const serialized = JSON.stringify(startGameMessage);
+  p1socket.send(serialized);
+  p2socket.send(serialized);
 };
 
 const makeMove = (
@@ -90,6 +106,7 @@ const makeMove = (
 
 export default {
   addGameRoom,
+  startGame,
   getRoomStatus,
   makeMove,
 };
