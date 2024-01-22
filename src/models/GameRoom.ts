@@ -54,3 +54,12 @@ export const gameRoomIsActive = (room: GameRoom): room is ActiveGameRoom => (
   && room.p1socket !== undefined
   && room.p2socket !== undefined
 );
+
+export const gameStatusIsActive = (roomStatus: GameRoomStatus): boolean => (
+  roomStatus.player2 !== undefined
+  && roomStatus.currentPlayer !== undefined
+  && roomStatus.p1ShipsPlaced
+  && roomStatus.p1WSOpen
+  && roomStatus.p2ShipsPlaced
+  && roomStatus.p2WSOpen
+);
