@@ -70,20 +70,25 @@ const addGameRoom = (room: GameRoom): GameRoomStatus => {
   return getRoomStatus(room.id);
 };
 
-const startGame = (roomID: string) => {
-  const { gameInstance, p1socket, p2socket } = getRoom(roomID);
-  if (gameInstance.getGameState() !== GameState.Initialized) return;
+const startGame = (roomID: string): boolean => {
+  try {
+    const { gameInstance, p1socket, p2socket } = getRoom(roomID);
+    if (gameInstance.getGameState() !== GameState.Initialized) return false;
 
-  gameInstance.start();
+    gameInstance.start();
 
-  const startGameMessage: GameStartedMessage = {
-    code: ServerMessageCode.GameStarted,
-    playsFirst: gameInstance.getCurrentPlayer(),
-  };
+    const startGameMessage: GameStartedMessage = {
+      code: ServerMessageCode.GameStarted,
+      playsFirst: gameInstance.getCurrentPlayer(),
+    };
 
-  const serialized = JSON.stringify(startGameMessage);
-  p1socket.send(serialized);
-  p2socket.send(serialized);
+    const serialized = JSON.stringify(startGameMessage);
+    p1socket.send(serialized);
+    p2socket.send(serialized);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 const makeMove = (
