@@ -6,16 +6,25 @@ import {
   processAcknowledgeMoveResult,
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
+import { ShipClass, ShipClassName } from '../../__generated__/graphql';
 
 const initialState: SliceState = {
   gameState: GameState.PlayerNotReady,
   username: '',
+  gameSettings: null,
+  shipClasses: new Map<ShipClassName, ShipClass>(),
   currentPlayer: null,
   playerShips: [],
-  playerGrid: [],
-  opponentGrid: [],
-  sunkenPayerShips: [],
-  sunkenOpponentShips: [],
+  playerGridState: {
+    hitCells: [],
+    missedCells: [],
+    sunkenShips: [],
+  },
+  opponentGridState: {
+    hitCells: [],
+    missedCells: [],
+    sunkenShips: [],
+  },
   moveResultQueue: [],
   pendingMoveResult: null,
 };

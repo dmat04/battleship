@@ -1,7 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
-import { ShipPlacement, GameSettings, GameRoomStatus } from '../../__generated__/graphql';
-import { CellState, GameState, SliceState } from './stateTypes';
+import {
+  ShipPlacement,
+  GameSettings,
+  GameRoomStatus,
+  ShipClassName,
+  ShipClass,
+  ShipOrientation,
+} from '../../__generated__/graphql';
+import { GameState, SliceState } from './stateTypes';
+import { Coordinates } from '../shipPlacementSlice/types';
 import {
   GameStartedMessage,
   OpponentMoveResultMessage,
@@ -47,6 +55,22 @@ const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus)
   return GameState.WaitingForOpponentToGetReady;
 };
 
+const isWithinShip = (
+  { x, y }: Coordinates,
+  shipX: number,
+  shipY: number,
+  shipOrientation: ShipOrientation,
+  shipSize: number,
+): boolean => {
+  switch (shipOrientation) {
+    case ShipOrientation.Horizontal:
+      return x >= shipX && x < shipX + shipSize && y === shipY;
+    case ShipOrientation.Vertical:
+      return y >= shipY && y < shipY + shipSize && x === shipX;
+    default: return assertNever(shipOrientation);
+  }
+};
+
 const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
   const {
     result,
@@ -57,10 +81,20 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
   const { hit, shipSunk } = result;
 
   state.currentPlayer = currentPlayer;
-  state.opponentGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
-
   if (shipSunk) {
-    state.sunkenOpponentShips.push(shipSunk);
+    state.opponentGridState.sunkenShips.push(shipSunk);
+    const shipSize = state.shipClasses.get(shipSunk.shipClass)?.size ?? 1;
+
+    state.opponentGridState.hitCells = state
+      .opponentGridState
+      .hitCells
+      .filter(
+        (coord) => !isWithinShip(coord, shipSunk.x, shipSunk.y, shipSunk.orientation, shipSize),
+      );
+  } else if (hit) {
+    state.opponentGridState.hitCells.push({ x, y });
+  } else {
+    state.opponentGridState.missedCells.push({ x, y });
   }
 };
 
@@ -77,10 +111,20 @@ const applyOpponentMoveResultMessage = (
   const { hit, shipSunk } = result;
 
   state.currentPlayer = currentPlayer;
-  state.playerGrid[y][x] = hit ? CellState.Hit : CellState.Miss;
-
   if (shipSunk) {
-    state.sunkenPayerShips.push(shipSunk);
+    state.playerGridState.sunkenShips.push(shipSunk);
+    const shipSize = state.shipClasses.get(shipSunk.shipClass)?.size ?? 1;
+
+    state.playerGridState.hitCells = state
+      .playerGridState
+      .hitCells
+      .filter(
+        (coord) => !isWithinShip(coord, shipSunk.x, shipSunk.y, shipSunk.orientation, shipSize),
+      );
+  } else if (hit) {
+    state.playerGridState.hitCells.push({ x, y });
+  } else {
+    state.playerGridState.missedCells.push({ x, y });
   }
 };
 
@@ -124,24 +168,26 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     gameRoomStatus,
   } = action.payload;
 
-  const playerGrid = [];
-  const opponentGrid = [];
-
-  const { boardHeight, boardWidth } = gameSettings;
-  for (let row = 0; row < boardHeight; row += 1) {
-    playerGrid.push((new Array(boardWidth)).fill(CellState.Empty));
-    opponentGrid.push((new Array(boardWidth)).fill(CellState.Empty));
-  }
+  const shipClasses = new Map<ShipClassName, ShipClass>();
+  gameSettings.shipClasses.forEach((shipClass) => shipClasses.set(shipClass.type, shipClass));
 
   const newState: SliceState = {
     gameState: getInitialGameState(playerName, gameRoomStatus),
     username: playerName,
+    gameSettings: { ...gameSettings },
+    shipClasses,
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
     playerShips: [...playerShips],
-    playerGrid,
-    opponentGrid,
-    sunkenPayerShips: [],
-    sunkenOpponentShips: [],
+    playerGridState: {
+      hitCells: [],
+      missedCells: [],
+      sunkenShips: [],
+    },
+    opponentGridState: {
+      hitCells: [],
+      missedCells: [],
+      sunkenShips: [],
+    },
     moveResultQueue: [],
     pendingMoveResult: null,
   };
