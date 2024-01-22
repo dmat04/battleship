@@ -277,7 +277,9 @@ const placeShips = (
   }
 
   if (gameRoomIsActive(room)) {
-    return transferRoomToActiveGames(roomID);
+    const roomStatus = transferRoomToActiveGames(roomID);
+    ActiveGameService.startGame(roomID);
+    return roomStatus;
   }
 
   return getRoomStatus(roomID);
@@ -327,12 +329,13 @@ const playerSocketRequested = (username: string, gameID: string): void => {
  * @param roomID Id of the GameRoom for which a connection has been authenticated.
  * @param username Username of the User making the authentication.
  * @param socket Reference to the opened and authenticated websocket connection.
+ * @returns Returns the current status of the GameRoom
  */
 const playerSocketAuthenticated = (
   roomID: string,
   username: string,
   socket: WebSocket<WSData>,
-): void => {
+): GameRoomStatus => {
   const room = getRoom(roomID);
 
   if (username === room.userP1.username) {
@@ -342,10 +345,10 @@ const playerSocketAuthenticated = (
 
     room.p1socket = socket;
     if (gameRoomIsActive(room)) {
-      transferRoomToActiveGames(roomID);
+      return transferRoomToActiveGames(roomID);
     }
 
-    return;
+    return getRoomStatus(roomID);
   }
 
   if (username === room.userP2?.username) {
@@ -355,10 +358,10 @@ const playerSocketAuthenticated = (
 
     room.p2socket = socket;
     if (gameRoomIsActive(room)) {
-      transferRoomToActiveGames(roomID);
+      return transferRoomToActiveGames(roomID);
     }
 
-    return;
+    return getRoomStatus(roomID);
   }
 
   throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);

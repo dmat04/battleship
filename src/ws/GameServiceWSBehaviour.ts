@@ -80,6 +80,8 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
 
       // send a confirmation message
       ws.send(JSON.stringify(responseMessage));
+
+      ActiveGameService.startGame(ticket.roomID);
     } catch (error) {
       errorMessage = (error as Error).message ?? 'Couldn\'t authenticate sokcet connection';
     }
