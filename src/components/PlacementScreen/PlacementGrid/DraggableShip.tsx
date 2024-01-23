@@ -18,9 +18,9 @@ const generateStyle = (row: number, col: number, size: number, vertical: boolean
   borderStyle: 'solid',
   borderWidth: '3px',
   borderColor: 'transparent',
-  gridRowStart: row >= 0 ? `${row + 1}` : 'initial',
+  gridRowStart: row >= 0 ? `${row + 1}` : 'auto',
   gridRowEnd: vertical ? `span ${size}` : 'span 1',
-  gridColumnStart: col >= 0 ? `${col + 1}` : 'initial',
+  gridColumnStart: col >= 0 ? `${col + 1}` : 'auto',
   gridColumnEnd: vertical ? 'span 1' : `span ${size}`,
 });
 
