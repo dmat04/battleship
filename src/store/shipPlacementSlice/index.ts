@@ -6,13 +6,13 @@ import {
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
-import { GameRoomStatus, ShipPlacement } from '../../__generated__/graphql';
+import { GameRoomStatus, InputShipPlacement } from '../../__generated__/graphql';
 import { fetchGameSettings } from '../gameRoomSlice';
 import type { AppDispatch, RootState } from '../store';
 import Dependencies from '../../utils/Dependencies';
 import { PLACE_SHIPS } from '../../graphql/mutations';
 import { initGame } from '../activeGameSlice';
-import { GameInitArgs } from '../activeGameSlice/utils';
+import { GameInitArgs } from '../activeGameSlice/stateTypes';
 
 export const submitPlacement = createAsyncThunk<
 // eslint-disable-next-line @typescript-eslint/indent
@@ -26,7 +26,7 @@ export const submitPlacement = createAsyncThunk<
       thunkAPI.rejectWithValue({ error: 'Cannot submit ship placement - not all ships placed' });
     }
 
-    const shipPlacements: ShipPlacement[] = shipStates.map((ship) => ({
+    const shipPlacements: InputShipPlacement[] = shipStates.map((ship) => ({
       shipClass: ship.shipClass.type,
       orientation: ship.orientation,
       x: ship.position?.x ?? 0,
@@ -50,7 +50,7 @@ export const submitPlacement = createAsyncThunk<
         playerName,
         gameRoomStatus,
         gameSettings,
-        playerShips: shipPlacements,
+        playerShips: shipStates,
       };
 
       thunkAPI.dispatch(initGame(gameInitArgs));
