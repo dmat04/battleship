@@ -12,7 +12,7 @@ const Container = styled.div`
     "score score"
     "player opponent";
   grid-template-rows: 1.5fr 5fr;
-  width: 90vw;
+  width: 60vw;
   height: 100%;
 `;
 

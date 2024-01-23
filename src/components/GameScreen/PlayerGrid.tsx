@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import GameGrid from '../GameGrid';
 import { Theme } from '../assets/themes/themeDefault';
-import { hitOpponentCell } from '../../store/activeGameSlice';
-import { Coordinates } from '../../store/shipPlacementSlice/types';
+import { acknowledgeMoveResult } from '../../store/activeGameSlice';
+import { ShipOrientation } from '../../__generated__/graphql';
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: player;
@@ -12,45 +12,88 @@ const Container = styled.div<{ theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};
 `;
 
-const CellContainer = styled.div<{ $col: number, $row: number }>`
+const HitCell = styled.div<{ $col: number, $row: number }>`
   grid-column: ${(props) => props.$col + 1} / span 1;
   grid-row: ${(props) => props.$row + 1} / span 1;
+  background-color: red;
 `;
 
-const GridCell = (position: Coordinates) => {
-  const dispatch = useAppDispatch();
+const MissedCell = styled.div<{ $col: number, $row: number }>`
+  grid-column: ${(props) => props.$col + 1} / span 1;
+  grid-row: ${(props) => props.$row + 1} / span 1;
+  background-color: deepskyblue;
+`;
 
-  const { x, y } = position;
-
-  return (
-    <CellContainer
-      $col={x}
-      $row={y}
-      onClick={() => dispatch(hitOpponentCell(position))}
-    />
-  );
-};
+const ShipContainer = styled.div<{
+  $col: number,
+  $row: number,
+  $size: number,
+  $orientation: ShipOrientation
+}>`
+  grid-row-start: ${(props) => props.$row + 1};
+  grid-row-end: span ${(props) => (props.$orientation === ShipOrientation.Vertical
+    ? props.$size
+    : 1
+  )};
+  grid-column-start: ${(props) => props.$col + 1};
+  grid-column-end: span ${(props) => (props.$orientation === ShipOrientation.Horizontal
+    ? props.$size
+    : 1
+  )};
+  background-color: slategrey;
+`;
 
 const PlayerGrid = () => {
-  const settings = useAppSelector((state) => state.gameRoom.gameSettings);
-  const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
+  const {
+    gameSettings,
+    playerGridState,
+    playerShips,
+    pendingMoveResult,
+  } = useAppSelector((state) => state.activeGame);
+  const dispatch = useAppDispatch();
 
-  const coordinates = useMemo(() => {
-    const arr: Coordinates[] = Array(boardHeight * boardWidth);
-    for (let row = 0; row < boardHeight; row += 1) {
-      for (let col = 0; col < boardWidth; col += 1) {
-        arr[(row * boardWidth) + col] = { x: col, y: row };
-      }
+  useEffect(() => {
+    if (pendingMoveResult !== null) {
+      dispatch(acknowledgeMoveResult());
     }
+  }, [pendingMoveResult, dispatch]);
 
-    return arr;
-  }, [boardWidth, boardHeight]);
+  const { boardWidth, boardHeight } = gameSettings ?? { boardWidth: 10, boardHeight: 10 };
 
   return (
     <Container>
-      <GameGrid $rows={settings?.boardHeight ?? 10} $cols={settings?.boardWidth ?? 10}>
+      <GameGrid
+        $rows={boardHeight}
+        $cols={boardWidth}
+      >
         {
-          coordinates.map(({ x, y }) => <GridCell x={x} y={y} key={`PlayerCell-${x}-${y}`} />)
+          playerShips.map((ship) => (
+            <ShipContainer
+              key={`PlayerShip-${ship.x}-${ship.y}`}
+              $col={ship.x}
+              $row={ship.y}
+              $orientation={ship.orientation}
+              $size={ship.shipClass.size}
+            />
+          ))
+        }
+        {
+          playerGridState.hitCells.map(({ x, y }) => (
+            <HitCell
+              key={`PlayerHitCell-${x}-${y}`}
+              $col={x}
+              $row={y}
+            />
+          ))
+        }
+        {
+          playerGridState.missedCells.map(({ x, y }) => (
+            <MissedCell
+              key={`PlayerMissedCell-${x}-${y}`}
+              $col={x}
+              $row={y}
+            />
+          ))
         }
       </GameGrid>
     </Container>
