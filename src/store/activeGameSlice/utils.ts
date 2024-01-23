@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
-import { GameSettings, GameRoomStatus, ShipOrientation } from '../../__generated__/graphql';
-import { GameState, SliceState } from './stateTypes';
+import { GameRoomStatus, ShipOrientation } from '../../__generated__/graphql';
+import { GameInitArgs, GameState, SliceState } from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
   ShipPlacement,
@@ -13,13 +13,6 @@ import {
   ServerMessageCode,
 } from './messageTypes';
 import { assertNever } from '../../utils/typeUtils';
-
-export interface GameInitArgs {
-  playerName: string;
-  playerShips: ShipPlacement[];
-  gameSettings: GameSettings;
-  gameRoomStatus: GameRoomStatus;
-}
 
 const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus): GameState => {
   const [playerWsOpen, opponentWsOpen] = playerName === gameRoomStatus.player1
@@ -153,12 +146,19 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     gameRoomStatus,
   } = action.payload;
 
+  const playerShipsMapped: ShipPlacement[] = playerShips.map((ship) => ({
+    orientation: ship.orientation,
+    shipClass: ship.shipClass,
+    x: ship.position?.x ?? 0,
+    y: ship.position?.y ?? 0,
+  }));
+
   const newState: SliceState = {
     gameState: getInitialGameState(playerName, gameRoomStatus),
     username: playerName,
     gameSettings: { ...gameSettings },
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
-    playerShips: [...playerShips],
+    playerShips: playerShipsMapped,
     playerGridState: {
       hitCells: [],
       missedCells: [],

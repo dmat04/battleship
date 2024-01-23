@@ -1,5 +1,5 @@
-import { GameSettings } from '../../__generated__/graphql';
-import { Coordinates } from '../shipPlacementSlice/types';
+import { GameRoomStatus, GameSettings } from '../../__generated__/graphql';
+import { Coordinates, ShipState } from '../shipPlacementSlice/types';
 import { OpponentMoveResultMessage, OwnMoveResultMessage, ShipPlacement } from './messageTypes';
 
 export interface SliceState {
@@ -28,4 +28,11 @@ export enum GameState {
   InProgress = 'InProgress',
   Finished = 'Finished',
   OpponentDisconnected = 'OpponentDisconnected',
+}
+
+export interface GameInitArgs {
+  playerName: string;
+  playerShips: ShipState[];
+  gameSettings: GameSettings;
+  gameRoomStatus: GameRoomStatus;
 }
