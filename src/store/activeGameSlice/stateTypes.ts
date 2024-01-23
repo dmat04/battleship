@@ -1,16 +1,11 @@
-import {
-  GameSettings,
-  ShipClassName,
-  ShipPlacement,
-} from '../../__generated__/graphql';
+import { GameSettings } from '../../__generated__/graphql';
 import { Coordinates } from '../shipPlacementSlice/types';
-import { OpponentMoveResultMessage, OwnMoveResultMessage } from './messageTypes';
+import { OpponentMoveResultMessage, OwnMoveResultMessage, ShipPlacement } from './messageTypes';
 
 export interface SliceState {
   gameState: GameState;
   username: string,
   gameSettings: GameSettings | null,
-  shipSizes: { [key in ShipClassName]: number },
   currentPlayer: string | null;
   playerShips: ShipPlacement[];
   playerGridState: GridState;

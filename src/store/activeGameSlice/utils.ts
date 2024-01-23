@@ -1,16 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { PayloadAction, Slice } from '@reduxjs/toolkit';
-import {
-  ShipPlacement,
-  GameSettings,
-  GameRoomStatus,
-  ShipClassName,
-  ShipClass,
-  ShipOrientation,
-} from '../../__generated__/graphql';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { GameSettings, GameRoomStatus, ShipOrientation } from '../../__generated__/graphql';
 import { GameState, SliceState } from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
+  ShipPlacement,
   GameStartedMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
@@ -57,17 +51,14 @@ const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus)
 
 const isWithinShip = (
   { x, y }: Coordinates,
-  shipX: number,
-  shipY: number,
-  shipOrientation: ShipOrientation,
-  shipSize: number,
+  ship: ShipPlacement,
 ): boolean => {
-  switch (shipOrientation) {
+  switch (ship.orientation) {
     case ShipOrientation.Horizontal:
-      return x >= shipX && x < shipX + shipSize && y === shipY;
+      return x >= ship.x && x < ship.x + ship.shipClass.size && y === ship.y;
     case ShipOrientation.Vertical:
-      return y >= shipY && y < shipY + shipSize && x === shipX;
-    default: return assertNever(shipOrientation);
+      return y >= ship.y && y < ship.y + ship.shipClass.size && x === ship.x;
+    default: return assertNever(ship.orientation);
   }
 };
 
@@ -83,14 +74,11 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
   state.currentPlayer = currentPlayer;
   if (shipSunk) {
     state.opponentGridState.sunkenShips.push(shipSunk);
-    const shipSize = state.shipSizes[shipSunk.shipClass];
 
     state.opponentGridState.hitCells = state
       .opponentGridState
       .hitCells
-      .filter(
-        (coord) => !isWithinShip(coord, shipSunk.x, shipSunk.y, shipSunk.orientation, shipSize),
-      );
+      .filter((coord) => !isWithinShip(coord, shipSunk));
   } else if (hit) {
     state.opponentGridState.hitCells.push({ x, y });
   } else {
@@ -113,14 +101,11 @@ const applyOpponentMoveResultMessage = (
   state.currentPlayer = currentPlayer;
   if (shipSunk) {
     state.playerGridState.sunkenShips.push(shipSunk);
-    const shipSize = state.shipSizes[shipSunk.shipClass];
 
     state.playerGridState.hitCells = state
       .playerGridState
       .hitCells
-      .filter(
-        (coord) => !isWithinShip(coord, shipSunk.x, shipSunk.y, shipSunk.orientation, shipSize),
-      );
+      .filter((coord) => !isWithinShip(coord, shipSunk));
   } else if (hit) {
     state.playerGridState.hitCells.push({ x, y });
   } else {
@@ -168,23 +153,10 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     gameRoomStatus,
   } = action.payload;
 
-  const shipSizes: SliceState['shipSizes'] = {
-    BATTLESHIP: 0,
-    CARRIER: 0,
-    CRUISER: 0,
-    DESTROYER: 0,
-    SUBMARINE: 0,
-  };
-
-  gameSettings.shipClasses.forEach((shipClass) => {
-    shipSizes[shipClass.type] = shipClass.size;
-  });
-
   const newState: SliceState = {
     gameState: getInitialGameState(playerName, gameRoomStatus),
     username: playerName,
     gameSettings: { ...gameSettings },
-    shipSizes,
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
     playerShips: [...playerShips],
     playerGridState: {

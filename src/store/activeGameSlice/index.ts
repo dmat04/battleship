@@ -11,13 +11,6 @@ const initialState: SliceState = {
   gameState: GameState.PlayerNotReady,
   username: '',
   gameSettings: null,
-  shipSizes: {
-    BATTLESHIP: 0,
-    CARRIER: 0,
-    CRUISER: 0,
-    DESTROYER: 0,
-    SUBMARINE: 0,
-  },
   currentPlayer: null,
   playerShips: [],
   playerGridState: {
