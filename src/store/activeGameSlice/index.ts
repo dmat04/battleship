@@ -1,11 +1,31 @@
-import { createAction, createSlice } from '@reduxjs/toolkit';
+import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { GameState, SliceState } from './stateTypes';
 import {
   processGameInitAction,
   processMessageReceived,
   processAcknowledgeMoveResult,
+  canHitOpponentCell,
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
+import stateStub from './stateStub';
+import type { AppDispatch, RootState } from '../store';
+
+export const hitOpponentCell = createAction<Coordinates>('sendMessage/hitOpponentCell');
+
+export const requestRoomStatus = createAction('sendMessage/requestRoomStatus');
+
+export const opponentCellClicked = createAsyncThunk<
+// eslint-disable-next-line @typescript-eslint/indent
+  void, Coordinates, { dispatch: AppDispatch, state: RootState }
+>(
+  'activeGame/opponentCellClicked',
+  async (cell: Coordinates, thunkAPI) => {
+    const gameState = thunkAPI.getState().activeGame;
+    if (canHitOpponentCell(gameState, cell)) {
+      thunkAPI.dispatch(hitOpponentCell(cell));
+    }
+  },
+);
 
 const initialState: SliceState = {
   gameState: GameState.PlayerNotReady,
@@ -42,9 +62,5 @@ export const {
   messageReceived,
   acknowledgeMoveResult,
 } = activeGameSlice.actions;
-
-export const hitOpponentCell = createAction<Coordinates>('sendMessage/hitOpponentCell');
-
-export const requestRoomStatus = createAction('sendMessage/requestRoomStatus');
 
 export default activeGameSlice.reducer;

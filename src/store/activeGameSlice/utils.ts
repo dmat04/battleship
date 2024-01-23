@@ -220,3 +220,25 @@ export const processAcknowledgeMoveResult = (state: SliceState) => {
   const nextMoveResult = state.moveResultQueue.shift();
   state.pendingMoveResult = nextMoveResult ?? null;
 };
+
+export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
+  if (state.gameState !== GameState.InProgress) return false;
+
+  if (state.currentPlayer !== state.username) return false;
+
+  const { opponentGridState } = state;
+
+  if (opponentGridState.hitCells.some(
+    (c) => c.x === cell.x && c.y === cell.y,
+  )) return false;
+
+  if (opponentGridState.missedCells.some(
+    (c) => c.x === cell.x && c.y === cell.y,
+  )) return false;
+
+  if (opponentGridState.sunkenShips.some(
+    (ship) => isWithinShip(cell, ship),
+  )) return false;
+
+  return true;
+};
