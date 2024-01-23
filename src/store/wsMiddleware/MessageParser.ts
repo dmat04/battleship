@@ -11,12 +11,13 @@ import {
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
+  ShipPlacement,
 } from '../activeGameSlice/messageTypes';
 import {
   GameRoomStatus,
+  ShipClass,
   ShipClassName,
   ShipOrientation,
-  ShipPlacement,
 } from '../../__generated__/graphql';
 
 const isErrorMessage = (message: object): message is ErrorMessage => {
@@ -27,6 +28,20 @@ const isErrorMessage = (message: object): message is ErrorMessage => {
   );
 };
 
+const isShipClass = (obj: Object): obj is ShipClass => {
+  const typed = obj as ShipClass;
+
+  if (!Object.values(ShipClassName).includes(typed.type)) {
+    return false;
+  }
+
+  if (!isInteger(typed.size)) {
+    return false;
+  }
+
+  return true;
+};
+
 const isShipPlacement = (obj: object): obj is ShipPlacement => {
   const typed = obj as ShipPlacement;
 
@@ -34,7 +49,7 @@ const isShipPlacement = (obj: object): obj is ShipPlacement => {
     return false;
   }
 
-  if (!Object.values(ShipClassName).includes(typed.shipClass)) {
+  if (!isShipClass(typed.shipClass)) {
     return false;
   }
 
