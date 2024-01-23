@@ -40,7 +40,7 @@ export const JOIN_ROOM = gql(`
 `);
 
 export const PLACE_SHIPS = gql(`
-  mutation placeShips($roomId: ID!, $shipPlacements: [ShipPlacement!]!) {
+  mutation placeShips($roomId: ID!, $shipPlacements: [InputShipPlacement!]!) {
     placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {
       currentPlayer
       p1ShipsPlaced
