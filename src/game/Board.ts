@@ -118,7 +118,7 @@ class Board {
     // so in each case the ships size needs to be taken into account when checking
     // bounds.
     switch (orientation) {
-      case ShipOrientation.Vertical:
+      case ShipOrientation.VERTICAL:
         // For vertically oriented ships, make sure x is within bounds...
         if (x < 0 || x >= settings.boardWidth) return false;
         // ... and the topmost part (y) is >0 and the bottom-most part (y+shipSize)
@@ -126,7 +126,7 @@ class Board {
         // greater than board height).
         if (y < 0 || y + shipClass.size > settings.boardHeight) return false;
         return true;
-      case ShipOrientation.Horizontal:
+      case ShipOrientation.HORIZONTAL:
         // Analogous to the case for vartical orientation, same checks but
         // the directions are switched
         if (x < 0 || x + shipClass.size > settings.boardWidth) return false;
@@ -171,11 +171,11 @@ class Board {
     // Calculate the bounds within which no other ship
     // should be placed
     const xStart = Math.max(0, x - 1);
-    const xEnd = orientation === ShipOrientation.Horizontal
+    const xEnd = orientation === ShipOrientation.HORIZONTAL
       ? Math.min(boardWidth - 1, x + shipClass.size)
       : Math.min(boardWidth - 1, x + 1);
     const yStart = Math.max(0, y - 1);
-    const yEnd = orientation === ShipOrientation.Vertical
+    const yEnd = orientation === ShipOrientation.VERTICAL
       ? Math.min(boardHeight - 1, y + shipClass.size)
       : Math.min(boardHeight - 1, y + 1);
 
@@ -289,9 +289,9 @@ class Board {
 
     // Call the appropriate method for each orientaion
     switch (orientation) {
-      case ShipOrientation.Vertical:
+      case ShipOrientation.VERTICAL:
         return Board.placeShipVertical(playerBoard, ship, settings);
-      case ShipOrientation.Horizontal:
+      case ShipOrientation.HORIZONTAL:
         return Board.placeShipHorizontal(playerBoard, ship, settings);
       default:
         return assertNever(orientation);
@@ -467,7 +467,7 @@ class Board {
         x, y, orientation, shipClass,
       } = ship.ship;
 
-      if (orientation === ShipOrientation.Horizontal) {
+      if (orientation === ShipOrientation.HORIZONTAL) {
         return row === y && col >= x && col < x + shipClass.size;
       }
       return col === x && row >= y && row < y + shipClass.size;

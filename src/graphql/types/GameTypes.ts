@@ -25,7 +25,7 @@ export const typeDefs = `#graphql
     count: Int!
   }
 
-  input ShipPlacement {
+  input InputShipPlacement {
     shipClass: ShipClassName!
     orientation: ShipOrientation!
     x: Int!
@@ -82,15 +82,15 @@ export const resolvers = {
     },
   },
   ShipClassName: {
-    SUBMARINE: ShipClassName[ShipClassName.Submarine],
-    DESTROYER: ShipClassName[ShipClassName.Destroyer],
-    CRUISER: ShipClassName[ShipClassName.Cruiser],
-    BATTLESHIP: ShipClassName[ShipClassName.Battleship],
-    CARRIER: ShipClassName[ShipClassName.AircraftCarrier],
+    SUBMARINE: ShipClassName[ShipClassName.SUBMARINE],
+    DESTROYER: ShipClassName[ShipClassName.DESTROYER],
+    CRUISER: ShipClassName[ShipClassName.CRUISER],
+    BATTLESHIP: ShipClassName[ShipClassName.BATTLESHIP],
+    CARRIER: ShipClassName[ShipClassName.CARRIER],
   },
   ShipOrientation: {
-    VERTICAL: ShipOrientation[ShipOrientation.Vertical],
-    HORIZONTAL: ShipOrientation[ShipOrientation.Horizontal],
+    VERTICAL: ShipOrientation[ShipOrientation.VERTICAL],
+    HORIZONTAL: ShipOrientation[ShipOrientation.HORIZONTAL],
   },
 };
 

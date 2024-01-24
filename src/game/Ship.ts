@@ -4,16 +4,16 @@ import { assertNever } from '../utils/typeUtils';
 export const MAX_SIZE = 5;
 
 export enum ShipClassName {
-  Submarine = 'Submarine',
-  Destroyer = 'Destroyer',
-  Cruiser = 'Cruiser',
-  Battleship = 'Battleship',
-  AircraftCarrier = 'AircraftCarrier',
+  SUBMARINE = 'SUBMARINE',
+  DESTROYER = 'DESTROYER',
+  CRUISER = 'CRUISER',
+  BATTLESHIP = 'BATTLESHIP',
+  CARRIER = 'CARRIER',
 }
 
 export enum ShipOrientation {
-  Vertical = 'Vertical',
-  Horizontal = 'Horizontal',
+  VERTICAL = 'VERTICAL',
+  HORIZONTAL = 'HORIZONTAL',
 }
 
 export interface ShipPlacement {
@@ -73,15 +73,15 @@ class ShipClass {
    */
   public static Get = (type: ShipClassName): ShipClass => {
     switch (type) {
-      case ShipClassName.Submarine:
+      case ShipClassName.SUBMARINE:
         return this.Submarine();
-      case ShipClassName.Destroyer:
+      case ShipClassName.DESTROYER:
         return this.Destroyer();
-      case ShipClassName.Cruiser:
+      case ShipClassName.CRUISER:
         return this.Cruiser();
-      case ShipClassName.Battleship:
+      case ShipClassName.BATTLESHIP:
         return this.Battleship();
-      case ShipClassName.AircraftCarrier:
+      case ShipClassName.CARRIER:
         return this.AircraftCarrier();
       default:
         return assertNever(type);
@@ -96,7 +96,7 @@ class ShipClass {
    */
   public static Submarine = (): ShipClass => {
     if (!this.submarineInstance) {
-      this.submarineInstance = new ShipClass(ShipClassName.Submarine, 1);
+      this.submarineInstance = new ShipClass(ShipClassName.SUBMARINE, 1);
     }
 
     return this.submarineInstance;
@@ -110,7 +110,7 @@ class ShipClass {
   */
   public static Destroyer = (): ShipClass => {
     if (!this.destroyerInstance) {
-      this.destroyerInstance = new ShipClass(ShipClassName.Destroyer, 2);
+      this.destroyerInstance = new ShipClass(ShipClassName.DESTROYER, 2);
     }
 
     return this.destroyerInstance;
@@ -124,7 +124,7 @@ class ShipClass {
   */
   public static Cruiser = (): ShipClass => {
     if (!this.cruiserInstance) {
-      this.cruiserInstance = new ShipClass(ShipClassName.Cruiser, 3);
+      this.cruiserInstance = new ShipClass(ShipClassName.CRUISER, 3);
     }
 
     return this.cruiserInstance;
@@ -138,7 +138,7 @@ class ShipClass {
   */
   public static Battleship = (): ShipClass => {
     if (!this.battleshipInstance) {
-      this.battleshipInstance = new ShipClass(ShipClassName.Battleship, 4);
+      this.battleshipInstance = new ShipClass(ShipClassName.BATTLESHIP, 4);
     }
 
     return this.battleshipInstance;
@@ -152,7 +152,7 @@ class ShipClass {
   */
   public static AircraftCarrier = (): ShipClass => {
     if (!this.aircraftCarrierInstance) {
-      this.aircraftCarrierInstance = new ShipClass(ShipClassName.AircraftCarrier, 5);
+      this.aircraftCarrierInstance = new ShipClass(ShipClassName.CARRIER, 5);
     }
 
     return this.aircraftCarrierInstance;

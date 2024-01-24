@@ -15,7 +15,7 @@ interface MutationParams {
 
 export const typeDefs = `#graphql
   extend type Mutation {
-    placeShips(roomID: ID!, shipPlacements: [ShipPlacement!]!): GameRoomStatus!
+    placeShips(roomID: ID!, shipPlacements: [InputShipPlacement!]!): GameRoomStatus!
   }
 `;
 

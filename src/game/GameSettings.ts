@@ -40,10 +40,10 @@ export const DefaultSettings: GameSetting = new GameSetting(
   10,
   10,
   new Map<ShipClassName, number>([
-    [ShipClassName.Submarine, 2],
-    [ShipClassName.Destroyer, 2],
-    [ShipClassName.Cruiser, 1],
-    [ShipClassName.Battleship, 1],
-    [ShipClassName.AircraftCarrier, 1],
+    [ShipClassName.SUBMARINE, 2],
+    [ShipClassName.DESTROYER, 2],
+    [ShipClassName.CRUISER, 1],
+    [ShipClassName.BATTLESHIP, 1],
+    [ShipClassName.CARRIER, 1],
   ]),
 );
