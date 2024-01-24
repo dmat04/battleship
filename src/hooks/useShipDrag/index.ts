@@ -88,6 +88,11 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       gridPosition,
     } = calculateGridPosition(gridState, shipRect, gridRect, dx, dy);
 
+    if (ev.type === 'pointercancel') {
+      gridPosition.x = -1;
+      gridPosition.y = -1;
+    }
+
     const isPlaced = shipState.position !== null;
     const isOutsideGrid = !isWithinGrid(gridPosition, gridState);
     const canBePlaced = canPlaceShip(gridState, shipState, gridPosition);
@@ -149,6 +154,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         y: dy,
         scale: 1.2,
         borderColor,
+        zIndex: 50,
       },
     });
   }, [containerRect, gridRect, gridState, shipRect, shipState, springAPI]);
