@@ -13,6 +13,7 @@ const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }
 `;
 
 const generateStyle = (row: number, col: number, size: number, vertical: boolean) => ({
+  touchAction: 'none',
   backgroundColor: 'lightslategray',
   display: 'flex',
   borderStyle: 'solid',
