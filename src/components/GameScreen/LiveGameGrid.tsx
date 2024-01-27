@@ -1,0 +1,159 @@
+import styled from 'styled-components';
+import { animated, useTransition } from '@react-spring/web';
+import { useCallback, useRef } from 'react';
+import GameGrid from '../GameGrid';
+import { Theme } from '../assets/themes/themeDefault';
+import { ShipOrientation } from '../../__generated__/graphql';
+import { Coordinates } from '../../store/shipPlacementSlice/types';
+import { ShipPlacement } from '../../store/activeGameSlice/messageTypes';
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { assertNever } from '../../utils/typeUtils';
+import { calculateGridPosition } from './utils';
+import { opponentCellClicked } from '../../store/activeGameSlice';
+
+const Container = styled.div<{ $owner: Props['owner'], theme: Theme }>`
+  grid-area: ${(props) => props.$owner};
+  padding: ${(props) => props.theme.paddingMin};
+`;
+
+const Cell = styled(animated.div) <{ $col: number, $row: number }>`
+  grid-column: ${(props) => props.$col + 1} / span 1;
+  grid-row: ${(props) => props.$row + 1} / span 1;
+`;
+
+const ShipContainer = styled(animated.div) <{
+  $col: number,
+  $row: number,
+  $size: number,
+  $orientation: ShipOrientation
+}>`
+  grid-row-start: ${(props) => props.$row + 1};
+  grid-row-end: span ${(props) => (props.$orientation === ShipOrientation.Vertical
+    ? props.$size
+    : 1
+  )};
+  grid-column-start: ${(props) => props.$col + 1};
+  grid-column-end: span ${(props) => (props.$orientation === ShipOrientation.Horizontal
+    ? props.$size
+    : 1
+  )};
+  background-color: slategrey;
+`;
+
+interface Props {
+  owner: 'player' | 'opponent';
+}
+
+const LiveGameGrid = ({ owner }: Props) => {
+  const settings = useAppSelector((state) => state.activeGame.gameSettings);
+  const gridState = useAppSelector((state) => {
+    switch (owner) {
+      case 'player': return state.activeGame.playerGridState;
+      case 'opponent': return state.activeGame.opponentGridState;
+      default: return assertNever(owner);
+    }
+  });
+
+  const dispatch = useAppDispatch();
+
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  const gridClickHandler: React.MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
+    if (owner === 'player') return;
+
+    const coords = calculateGridPosition(ev, gridRef.current, settings);
+    if (coords) dispatch(opponentCellClicked(coords));
+  }, [dispatch, settings, owner]);
+
+  const hitTransition = useTransition<Coordinates, any>(gridState.hitCells, {
+    keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
+    from: { opacity: 1, scale: 0.66, background: '#ffffff' },
+    enter: [
+      { opacity: 1, scale: 1.33, background: '#ffd600' },
+      { opacity: 0.9, scale: 1, background: '#ff6d00' },
+    ],
+  });
+
+  const missTransition = useTransition<Coordinates, any>(gridState.missedCells, {
+    keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
+    from: { opacity: 1, scale: 0.66, background: '#ffffff' },
+    enter: [
+      { opacity: 1, scale: 1.33, background: '#29b6f6' },
+      { opacity: 0.9, scale: 1, background: '#01579b' },
+    ],
+    leave: { opacity: 0 },
+  });
+
+  const [shipNeighbourhod, shipNeighbourhoodApi] = useTransition<Coordinates, any>(
+    gridState.sunkenShipSurroundings,
+    () => ({
+      keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
+      from: { opacity: 0, background: '#ffffff' },
+      enter: { opacity: 0.9, background: '#01579b' },
+    }),
+  );
+
+  const sinkTransition = useTransition<ShipPlacement, any>(gridState.sunkenShips, {
+    keys: (ship: ShipPlacement) => `${owner}-ship-${ship.x}-${ship.y}`,
+    from: { opacity: 1, scale: 1, background: '#ffffff' },
+    enter: [
+      { opacity: 1, scale: 1.1, background: '#ffd600' },
+      { opacity: 0.9, scale: 1, background: '#a62d24' },
+    ],
+    onRest: () => { shipNeighbourhoodApi.start(); },
+  });
+
+  const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
+
+  return (
+    <Container $owner={owner}>
+      <GameGrid
+        ref={gridRef}
+        onClick={gridClickHandler}
+        $rows={boardHeight}
+        $cols={boardWidth}
+      >
+        {
+          sinkTransition((style, item) => (
+            <ShipContainer
+              style={style}
+              $col={item.x}
+              $row={item.y}
+              $orientation={item.orientation}
+              $size={item.shipClass.size}
+            />
+          ))
+        }
+        {
+          hitTransition((style, item) => (
+            <Cell
+              style={style}
+              $col={item.x}
+              $row={item.y}
+            />
+          ))
+        }
+        {
+          missTransition((style, item) => (
+            <Cell
+              style={style}
+              $col={item.x}
+              $row={item.y}
+            />
+          ))
+        }
+        {
+          shipNeighbourhod((style, item) => (
+            <Cell
+              style={style}
+              $col={item.x}
+              $row={item.y}
+            />
+          ))
+        }
+      </GameGrid>
+    </Container>
+  );
+};
+
+export default LiveGameGrid;

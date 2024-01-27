@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import { Navigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/store';
+import { useAppSelector } from '../../store/store';
 import { GameState } from '../../store/activeGameSlice/stateTypes';
-import OpponentGrid from './OpponentGrid';
-import PlayerGrid from './PlayerGrid';
 import Scoreboard from './Scoreboard';
+import LiveGameGrid from './LiveGameGrid';
 
 const Container = styled.div`
   display: grid;
@@ -14,12 +13,21 @@ const Container = styled.div`
   grid-template-rows: 1.5fr 5fr;
   width: 60vw;
   height: 100%;
+
+  @media (max-width: 60em) {
+    grid-template-areas: 
+      "player"
+      "score"
+      "opponent";
+    grid-template-rows: 5fr 1fr 5fr;
+    align-items: center;
+    width: 80vw;
+    height: 100%;
+  }
 `;
 
 const GameScreen = () => {
-  const dispatch = useAppDispatch();
   const gameState = useAppSelector((state) => state.activeGame.gameState);
-  const pendingMessage = useAppSelector((state) => state.activeGame.pendingMoveResult);
 
   if (gameState === GameState.PlayerNotReady) {
     return <Navigate to="/getReady" replace />;
@@ -27,9 +35,9 @@ const GameScreen = () => {
 
   return (
     <Container>
-      <OpponentGrid />
+      <LiveGameGrid owner="player" />
       <Scoreboard />
-      <PlayerGrid />
+      <LiveGameGrid owner="opponent" />
     </Container>
   );
 };
