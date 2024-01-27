@@ -11,13 +11,13 @@ export interface SliceState {
   playerGridState: GridState;
   opponentGridState: GridState;
   moveResultQueue: (OpponentMoveResultMessage | OwnMoveResultMessage)[];
-  pendingMoveResult: OpponentMoveResultMessage | OwnMoveResultMessage | null;
 }
 
 export interface GridState {
   missedCells: Coordinates[];
   hitCells: Coordinates[];
   sunkenShips: ShipPlacement[];
+  sunkenShipSurroundings: Coordinates[];
 }
 
 export enum GameState {

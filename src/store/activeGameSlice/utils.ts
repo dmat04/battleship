@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
-import { GameRoomStatus, ShipOrientation } from '../../__generated__/graphql';
+import { GameRoomStatus, GameSettings, ShipOrientation } from '../../__generated__/graphql';
 import { GameInitArgs, GameState, SliceState } from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
@@ -55,6 +55,60 @@ const isWithinShip = (
   }
 };
 
+const isWithinShipSurroundings = (
+  { x, y }: Coordinates,
+  ship: ShipPlacement,
+  settings: GameSettings | null,
+): boolean => {
+  if (!settings) return false;
+
+  const xStart = Math.max(0, ship.x - 1);
+  const yStart = Math.max(0, ship.y - 1);
+
+  const xEnd = ship.orientation === ShipOrientation.Horizontal
+    ? Math.min(ship.x + ship.shipClass.size, settings.boardWidth - 1)
+    : Math.min(ship.x + 1, settings.boardWidth - 1);
+
+  const yEnd = ship.orientation === ShipOrientation.Vertical
+    ? Math.min(ship.y + ship.shipClass.size, settings.boardHeight - 1)
+    : Math.min(ship.y + 1, settings.boardHeight - 1);
+
+  return (
+    x >= xStart
+    && x <= xEnd
+    && y >= yStart
+    && y <= yEnd
+  );
+};
+
+const getShipSurroundingCells = (
+  ship: ShipPlacement,
+  settings: GameSettings | null,
+): Coordinates[] => {
+  if (!settings) return [];
+
+  const xStart = Math.max(0, ship.x - 1);
+  const yStart = Math.max(0, ship.y - 1);
+
+  const xEnd = ship.orientation === ShipOrientation.Horizontal
+    ? Math.min(ship.x + ship.shipClass.size, settings.boardWidth - 1)
+    : Math.min(ship.x + 1, settings.boardWidth - 1);
+
+  const yEnd = ship.orientation === ShipOrientation.Vertical
+    ? Math.min(ship.y + ship.shipClass.size, settings.boardHeight - 1)
+    : Math.min(ship.y + 1, settings.boardHeight - 1);
+
+  const cells = [];
+  for (let x = xStart; x <= xEnd; x += 1) {
+    for (let y = yStart; y <= yEnd; y += 1) {
+      const coord = { x, y };
+      if (!isWithinShip(coord, ship)) cells.push(coord);
+    }
+  }
+
+  return cells;
+};
+
 const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
   const {
     result,
@@ -72,6 +126,23 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
       .opponentGridState
       .hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
+
+    state.opponentGridState.missedCells = state
+      .opponentGridState
+      .missedCells
+      .filter((coord) => !isWithinShipSurroundings(coord, shipSunk, state.gameSettings));
+
+    let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
+    shipSurroundingCells = shipSurroundingCells
+      .filter((coord) => !state
+        .opponentGridState
+        .sunkenShipSurroundings
+        .some((existing) => existing.x === coord.x && existing.y === coord.y));
+
+    state.opponentGridState.sunkenShipSurroundings = state
+      .opponentGridState
+      .sunkenShipSurroundings
+      .concat(shipSurroundingCells);
   } else if (hit) {
     state.opponentGridState.hitCells.push({ x, y });
   } else {
@@ -99,6 +170,23 @@ const applyOpponentMoveResultMessage = (
       .playerGridState
       .hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
+
+    state.playerGridState.missedCells = state
+      .playerGridState
+      .missedCells
+      .filter((coord) => !isWithinShipSurroundings(coord, shipSunk, state.gameSettings));
+
+    let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
+    shipSurroundingCells = shipSurroundingCells
+      .filter((coord) => !state
+        .playerGridState
+        .sunkenShipSurroundings
+        .some((existing) => existing.x === coord.x && existing.y === coord.y));
+
+    state.playerGridState.sunkenShipSurroundings = state
+      .playerGridState
+      .sunkenShipSurroundings
+      .concat(shipSurroundingCells);
   } else if (hit) {
     state.playerGridState.hitCells.push({ x, y });
   } else {
@@ -110,10 +198,15 @@ const moveResultMessageReceived = (
   state: SliceState,
   message: OpponentMoveResultMessage | OwnMoveResultMessage,
 ) => {
-  if (state.pendingMoveResult === null) {
-    state.pendingMoveResult = message;
-  } else {
-    state.moveResultQueue.push(message);
+  const { code } = message;
+  switch (code) {
+    case ServerMessageCode.OpponentMoveResult:
+      applyOpponentMoveResultMessage(state, message);
+      break;
+    case ServerMessageCode.OwnMoveResult:
+      applyOwnMoveResultMessage(state, message);
+      break;
+    default: assertNever(code);
   }
 };
 
@@ -163,14 +256,15 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
       hitCells: [],
       missedCells: [],
       sunkenShips: [],
+      sunkenShipSurroundings: [],
     },
     opponentGridState: {
       hitCells: [],
       missedCells: [],
       sunkenShips: [],
+      sunkenShipSurroundings: [],
     },
     moveResultQueue: [],
-    pendingMoveResult: null,
   };
 
   return newState;
@@ -203,24 +297,6 @@ export const processMessageReceived = (
   }
 };
 
-export const processAcknowledgeMoveResult = (state: SliceState) => {
-  if (state.pendingMoveResult === null) return;
-
-  const { code } = state.pendingMoveResult;
-  switch (code) {
-    case ServerMessageCode.OpponentMoveResult:
-      applyOpponentMoveResultMessage(state, state.pendingMoveResult);
-      break;
-    case ServerMessageCode.OwnMoveResult:
-      applyOwnMoveResultMessage(state, state.pendingMoveResult);
-      break;
-    default: assertNever(code);
-  }
-
-  const nextMoveResult = state.moveResultQueue.shift();
-  state.pendingMoveResult = nextMoveResult ?? null;
-};
-
 export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
   if (state.gameState !== GameState.InProgress) return false;
 
@@ -238,6 +314,10 @@ export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolea
 
   if (opponentGridState.sunkenShips.some(
     (ship) => isWithinShip(cell, ship),
+  )) return false;
+
+  if (opponentGridState.sunkenShipSurroundings.some(
+    (c) => c.x === cell.x && c.y === cell.y,
   )) return false;
 
   return true;
