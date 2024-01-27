@@ -12,8 +12,16 @@ import { calculateGridPosition } from './utils';
 import { opponentCellClicked } from '../../store/activeGameSlice';
 
 const Container = styled.div<{ $owner: Props['owner'], theme: Theme }>`
+  --padding-x: ${(props) => props.theme.paddingMin};
+  --padding-y: ${(props) => props.theme.paddingMin};
+  --padding-x-lg: ${(props) => props.theme.paddingLg};
+  
   grid-area: ${(props) => props.$owner};
-  padding: ${(props) => props.theme.paddingMin};
+  padding: var(--padding-y) var(--padding-x);
+
+  @media (max-width: 60em) {
+    padding: var(--padding-y) ${(props) => (props.$owner === 'player' ? 'var(--padding-x-lg)' : 'var(--padding-x)')};
+  }
 `;
 
 const Cell = styled(animated.div) <{ $col: number, $row: number }>`

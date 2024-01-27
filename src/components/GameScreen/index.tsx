@@ -19,9 +19,9 @@ const Container = styled.div`
       "player"
       "score"
       "opponent";
-    grid-template-rows: 5fr 1fr 5fr;
-    align-items: center;
-    width: 80vw;
+    grid-template-rows: 5fr 1fr 10fr;
+    align-items: start;
+    width: 100vw;
     height: 100%;
   }
 `;
