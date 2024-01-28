@@ -15,6 +15,7 @@ import ActiveGameService from './ActiveGameService';
 import Board from '../game/Board';
 import { ShipPlacement } from '../game/Ship';
 import { GameRoomStatus, gameRoomIsActive } from '../models/GameRoom';
+import { RoomStatusResponseMessage, ServerMessageCode } from '../ws/MessageTypes';
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -348,7 +349,18 @@ const playerSocketAuthenticated = (
       return transferRoomToActiveGames(roomID);
     }
 
-    return getRoomStatus(roomID);
+    const roomStatus = getRoomStatus(roomID);
+
+    if (room.p2socket) {
+      const statusMesssage: RoomStatusResponseMessage = {
+        code: ServerMessageCode.RoomStatusResponse,
+        roomStatus,
+      };
+
+      room.p2socket.send(JSON.stringify(statusMesssage));
+    }
+
+    return roomStatus;
   }
 
   if (username === room.userP2?.username) {
@@ -361,7 +373,18 @@ const playerSocketAuthenticated = (
       return transferRoomToActiveGames(roomID);
     }
 
-    return getRoomStatus(roomID);
+    const roomStatus = getRoomStatus(roomID);
+
+    if (room.p1socket) {
+      const statusMesssage: RoomStatusResponseMessage = {
+        code: ServerMessageCode.RoomStatusResponse,
+        roomStatus,
+      };
+
+      room.p1socket.send(JSON.stringify(statusMesssage));
+    }
+
+    return roomStatus;
   }
 
   throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
