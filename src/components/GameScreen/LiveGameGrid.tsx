@@ -1,5 +1,5 @@
 /* eslint-disable object-curly-newline */
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
 import { useCallback, useRef } from 'react';
 import GameGrid from '../GameGrid';
@@ -56,6 +56,7 @@ interface Props {
 }
 
 const LiveGameGrid = ({ owner }: Props) => {
+  const { gameScreenTheme: theme } = useTheme() as Theme;
   const settings = useAppSelector((state) => state.activeGame.gameSettings);
   const gridState = useAppSelector((state) => {
     switch (owner) {
@@ -66,7 +67,6 @@ const LiveGameGrid = ({ owner }: Props) => {
   });
 
   const dispatch = useAppDispatch();
-
   const gridRef = useRef<HTMLDivElement>(null);
 
   const gridClickHandler: React.MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
@@ -76,40 +76,37 @@ const LiveGameGrid = ({ owner }: Props) => {
     if (coords) dispatch(opponentCellClicked(coords));
   }, [dispatch, settings, owner]);
 
-  const hitTransition = useTransition<Coordinates, any>(gridState.hitCells, {
-    keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-    from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
-    enter: [
-      { opacity: 1, scale: 1.33, background: '#ffd600', zIndex: 10 },
-      { opacity: 0.9, scale: 1, background: '#ff6d00', zIndex: 1 },
-    ],
-  });
+  const hitTransition = useTransition<Coordinates, any>(
+    gridState.hitCells,
+    {
+      keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
+      from: theme.hitCellAnimStart,
+      enter: theme.hitCellAnimSteps,
+    },
+  );
 
   const missTransition = useTransition<Coordinates, any>(
     gridState.missedCells,
     {
-      keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-      from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
-      enter: { opacity: 0.9, scale: 1, background: '#01579b', zIndex: 1 },
+      keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
+      from: theme.missedCellAnimStart,
+      enter: theme.missedCellAnimSteps,
     },
   );
 
   const [inaccessibleTransition, inaccessibleTransitionApi] = useTransition<Coordinates, any>(
     gridState.inaccessibleCells,
     () => ({
-      keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-      from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
-      enter: { opacity: 0.9, scale: 1, background: '#01579b', zIndex: 1 },
+      keys: (coord: Coordinates) => `${owner}-empty-${coord.x}-${coord.y}`,
+      from: theme.missedCellAnimStart,
+      enter: theme.missedCellAnimSteps,
     }),
   );
 
   const sinkTransition = useTransition<ShipPlacement, any>(gridState.sunkenShips, {
     keys: (ship: ShipPlacement) => `${owner}-ship-${ship.x}-${ship.y}`,
-    from: { opacity: 1, scale: 1, background: '#ffffff', zIndex: 10 },
-    enter: [
-      { opacity: 1, scale: 1.1, background: '#ffd600', zIndex: 10 },
-      { opacity: 0.9, scale: 1, background: '#a62d24', zIndex: 1 },
-    ],
+    from: theme.sunkShipAnimStart,
+    enter: theme.sunkShipAnimSteps,
     onRest: () => { inaccessibleTransitionApi.start(); },
   });
 
