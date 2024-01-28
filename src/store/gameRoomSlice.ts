@@ -4,6 +4,7 @@ import { GameSettings } from '../__generated__/graphql';
 import { CREATE_ROOM, JOIN_ROOM } from '../graphql/mutations';
 import Dependencies from '../utils/Dependencies';
 import { GET_GAME_SETTINGS } from '../graphql/queries';
+import { openWSConnection } from './wsMiddleware';
 
 export type GameRoomSliceState = {
   roomID?: string;
@@ -57,6 +58,7 @@ export const createGameRoom = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: 'Error creating game room' });
     }
 
+    thunkAPI.dispatch(openWSConnection({ roomID, wsAuthCode }));
     thunkAPI.dispatch(fetchGameSettings(roomID));
 
     return {
@@ -81,6 +83,7 @@ export const joinGameRoom = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: 'Error joining game room' });
     }
 
+    thunkAPI.dispatch(openWSConnection({ roomID, wsAuthCode }));
     thunkAPI.dispatch(fetchGameSettings(roomID));
 
     return {
