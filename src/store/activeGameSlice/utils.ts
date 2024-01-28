@@ -1,7 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
 import { GameRoomStatus, GameSettings, ShipOrientation } from '../../__generated__/graphql';
-import { GameInitArgs, GameState, SliceState } from './stateTypes';
+import {
+  GameInitArgs,
+  GameState,
+  GridState,
+  SliceState,
+} from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
   ShipPlacement,
@@ -11,6 +16,7 @@ import {
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
+  MoveResultMessage,
 } from './messageTypes';
 import { assertNever } from '../../utils/typeUtils';
 
@@ -83,7 +89,7 @@ const getShipSurroundingCells = (
   return cells;
 };
 
-const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
+const applyMoveResult = (message: MoveResultMessage, state: SliceState, grid: GridState) => {
   const {
     result,
     currentPlayer,
@@ -94,68 +100,34 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
 
   state.currentPlayer = currentPlayer;
   if (shipSunk) {
-    state.opponentGridState.sunkenShips.push(shipSunk);
+    grid.sunkenShips.push(shipSunk);
 
-    state.opponentGridState.hitCells = state
-      .opponentGridState
-      .hitCells
+    grid.hitCells = grid.hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
 
     let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
     shipSurroundingCells = shipSurroundingCells
-      .filter((coord) => !state
-        .opponentGridState
-        .missedCells
+      .filter((coord) => !grid.missedCells
         .some((existing) => existing.x === coord.x && existing.y === coord.y));
 
-    state.opponentGridState.inaccessibleCells = state
-      .opponentGridState
-      .inaccessibleCells
+    grid.inaccessibleCells = grid.inaccessibleCells
       .concat(shipSurroundingCells);
   } else if (hit) {
-    state.opponentGridState.hitCells.push({ x, y });
+    grid.hitCells.push({ x, y });
   } else {
-    state.opponentGridState.missedCells.push({ x, y });
+    grid.missedCells.push({ x, y });
   }
+};
+
+const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
+  applyMoveResult(message, state, state.opponentGridState);
 };
 
 const applyOpponentMoveResultMessage = (
   state: SliceState,
   message: OpponentMoveResultMessage,
 ) => {
-  const {
-    result,
-    currentPlayer,
-    x,
-    y,
-  } = message;
-  const { hit, shipSunk } = result;
-
-  state.currentPlayer = currentPlayer;
-  if (shipSunk) {
-    state.playerGridState.sunkenShips.push(shipSunk);
-
-    state.playerGridState.hitCells = state
-      .playerGridState
-      .hitCells
-      .filter((coord) => !isWithinShip(coord, shipSunk));
-
-    let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
-    shipSurroundingCells = shipSurroundingCells
-      .filter((coord) => !state
-        .playerGridState
-        .missedCells
-        .some((existing) => existing.x === coord.x && existing.y === coord.y));
-
-    state.playerGridState.inaccessibleCells = state
-      .playerGridState
-      .inaccessibleCells
-      .concat(shipSurroundingCells);
-  } else if (hit) {
-    state.playerGridState.hitCells.push({ x, y });
-  } else {
-    state.playerGridState.missedCells.push({ x, y });
-  }
+  applyMoveResult(message, state, state.playerGridState);
 };
 
 const moveResultMessageReceived = (
