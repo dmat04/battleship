@@ -147,13 +147,13 @@ const stateStub = {
       // { x: 0, y: 9 },
     ],
     sunkenShips: [],
-    sunkenShipSurroundings: [],
+    inaccessibleCells: [],
   },
   opponentGridState: {
     hitCells: [],
     missedCells: [],
     sunkenShips: [],
-    sunkenShipSurroundings: [],
+    inaccessibleCells: [],
   },
   moveResultQueue: [],
 };

@@ -55,32 +55,6 @@ const isWithinShip = (
   }
 };
 
-const isWithinShipSurroundings = (
-  { x, y }: Coordinates,
-  ship: ShipPlacement,
-  settings: GameSettings | null,
-): boolean => {
-  if (!settings) return false;
-
-  const xStart = Math.max(0, ship.x - 1);
-  const yStart = Math.max(0, ship.y - 1);
-
-  const xEnd = ship.orientation === ShipOrientation.Horizontal
-    ? Math.min(ship.x + ship.shipClass.size, settings.boardWidth - 1)
-    : Math.min(ship.x + 1, settings.boardWidth - 1);
-
-  const yEnd = ship.orientation === ShipOrientation.Vertical
-    ? Math.min(ship.y + ship.shipClass.size, settings.boardHeight - 1)
-    : Math.min(ship.y + 1, settings.boardHeight - 1);
-
-  return (
-    x >= xStart
-    && x <= xEnd
-    && y >= yStart
-    && y <= yEnd
-  );
-};
-
 const getShipSurroundingCells = (
   ship: ShipPlacement,
   settings: GameSettings | null,
@@ -127,21 +101,16 @@ const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMess
       .hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
 
-    state.opponentGridState.missedCells = state
-      .opponentGridState
-      .missedCells
-      .filter((coord) => !isWithinShipSurroundings(coord, shipSunk, state.gameSettings));
-
     let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
     shipSurroundingCells = shipSurroundingCells
       .filter((coord) => !state
         .opponentGridState
-        .sunkenShipSurroundings
+        .missedCells
         .some((existing) => existing.x === coord.x && existing.y === coord.y));
 
-    state.opponentGridState.sunkenShipSurroundings = state
+    state.opponentGridState.inaccessibleCells = state
       .opponentGridState
-      .sunkenShipSurroundings
+      .inaccessibleCells
       .concat(shipSurroundingCells);
   } else if (hit) {
     state.opponentGridState.hitCells.push({ x, y });
@@ -171,21 +140,16 @@ const applyOpponentMoveResultMessage = (
       .hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
 
-    state.playerGridState.missedCells = state
-      .playerGridState
-      .missedCells
-      .filter((coord) => !isWithinShipSurroundings(coord, shipSunk, state.gameSettings));
-
     let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
     shipSurroundingCells = shipSurroundingCells
       .filter((coord) => !state
         .playerGridState
-        .sunkenShipSurroundings
+        .missedCells
         .some((existing) => existing.x === coord.x && existing.y === coord.y));
 
-    state.playerGridState.sunkenShipSurroundings = state
+    state.playerGridState.inaccessibleCells = state
       .playerGridState
-      .sunkenShipSurroundings
+      .inaccessibleCells
       .concat(shipSurroundingCells);
   } else if (hit) {
     state.playerGridState.hitCells.push({ x, y });
@@ -256,13 +220,13 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
       hitCells: [],
       missedCells: [],
       sunkenShips: [],
-      sunkenShipSurroundings: [],
+      inaccessibleCells: [],
     },
     opponentGridState: {
       hitCells: [],
       missedCells: [],
       sunkenShips: [],
-      sunkenShipSurroundings: [],
+      inaccessibleCells: [],
     },
     moveResultQueue: [],
   };
@@ -316,7 +280,7 @@ export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolea
     (ship) => isWithinShip(cell, ship),
   )) return false;
 
-  if (opponentGridState.sunkenShipSurroundings.some(
+  if (opponentGridState.inaccessibleCells.some(
     (c) => c.x === cell.x && c.y === cell.y,
   )) return false;
 

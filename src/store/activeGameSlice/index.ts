@@ -35,13 +35,13 @@ const initialState: SliceState = {
     hitCells: [],
     missedCells: [],
     sunkenShips: [],
-    sunkenShipSurroundings: [],
+    inaccessibleCells: [],
   },
   opponentGridState: {
     hitCells: [],
     missedCells: [],
     sunkenShips: [],
-    sunkenShipSurroundings: [],
+    inaccessibleCells: [],
   },
   moveResultQueue: [],
 };

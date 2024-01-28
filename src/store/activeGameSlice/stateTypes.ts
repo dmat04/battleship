@@ -16,8 +16,8 @@ export interface SliceState {
 export interface GridState {
   missedCells: Coordinates[];
   hitCells: Coordinates[];
+  inaccessibleCells: Coordinates[];
   sunkenShips: ShipPlacement[];
-  sunkenShipSurroundings: Coordinates[];
 }
 
 export enum GameState {
