@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import styled from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
 import { useCallback, useRef } from 'react';
@@ -27,6 +28,7 @@ const Container = styled.div<{ $owner: Props['owner'], theme: Theme }>`
 const Cell = styled(animated.div) <{ $col: number, $row: number }>`
   grid-column: ${(props) => props.$col + 1} / span 1;
   grid-row: ${(props) => props.$row + 1} / span 1;
+  z-index: 2;
 `;
 
 const ShipContainer = styled(animated.div) <{
@@ -46,6 +48,7 @@ const ShipContainer = styled(animated.div) <{
     : 1
   )};
   background-color: slategrey;
+  z-index: 1;
 `;
 
 interface Props {
@@ -75,40 +78,39 @@ const LiveGameGrid = ({ owner }: Props) => {
 
   const hitTransition = useTransition<Coordinates, any>(gridState.hitCells, {
     keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-    from: { opacity: 1, scale: 0.66, background: '#ffffff' },
+    from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
     enter: [
-      { opacity: 1, scale: 1.33, background: '#ffd600' },
-      { opacity: 0.9, scale: 1, background: '#ff6d00' },
+      { opacity: 1, scale: 1.33, background: '#ffd600', zIndex: 10 },
+      { opacity: 0.9, scale: 1, background: '#ff6d00', zIndex: 1 },
     ],
   });
 
-  const missTransition = useTransition<Coordinates, any>(gridState.missedCells, {
-    keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-    from: { opacity: 1, scale: 0.66, background: '#ffffff' },
-    enter: [
-      { opacity: 1, scale: 1.33, background: '#29b6f6' },
-      { opacity: 0.9, scale: 1, background: '#01579b' },
-    ],
-    leave: { opacity: 0 },
-  });
+  const missTransition = useTransition<Coordinates, any>(
+    gridState.missedCells,
+    {
+      keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
+      from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
+      enter: { opacity: 0.9, scale: 1, background: '#01579b', zIndex: 1 },
+    },
+  );
 
-  const [shipNeighbourhod, shipNeighbourhoodApi] = useTransition<Coordinates, any>(
-    gridState.sunkenShipSurroundings,
+  const [inaccessibleTransition, inaccessibleTransitionApi] = useTransition<Coordinates, any>(
+    gridState.inaccessibleCells,
     () => ({
       keys: (coord: Coordinates) => `${owner}-${coord.x}-${coord.y}`,
-      from: { opacity: 0, background: '#ffffff' },
-      enter: { opacity: 0.9, background: '#01579b' },
+      from: { opacity: 1, scale: 0.66, background: '#ffffff', zIndex: 10 },
+      enter: { opacity: 0.9, scale: 1, background: '#01579b', zIndex: 1 },
     }),
   );
 
   const sinkTransition = useTransition<ShipPlacement, any>(gridState.sunkenShips, {
     keys: (ship: ShipPlacement) => `${owner}-ship-${ship.x}-${ship.y}`,
-    from: { opacity: 1, scale: 1, background: '#ffffff' },
+    from: { opacity: 1, scale: 1, background: '#ffffff', zIndex: 10 },
     enter: [
-      { opacity: 1, scale: 1.1, background: '#ffd600' },
-      { opacity: 0.9, scale: 1, background: '#a62d24' },
+      { opacity: 1, scale: 1.1, background: '#ffd600', zIndex: 10 },
+      { opacity: 0.9, scale: 1, background: '#a62d24', zIndex: 1 },
     ],
-    onRest: () => { shipNeighbourhoodApi.start(); },
+    onRest: () => { inaccessibleTransitionApi.start(); },
   });
 
   const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
@@ -151,7 +153,7 @@ const LiveGameGrid = ({ owner }: Props) => {
           ))
         }
         {
-          shipNeighbourhod((style, item) => (
+          inaccessibleTransition((style, item) => (
             <Cell
               style={style}
               $col={item.x}
