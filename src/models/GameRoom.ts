@@ -1,42 +1,73 @@
 import { WebSocket } from 'uWebSockets.js';
-import { GameSetting } from '../game/GameSettings';
 import type { User } from './User';
 import type { WSData } from './WSData';
-import { ShipPlacement } from '../game/Ship';
 import Game from '../game/Game';
+import { GameSettings, ShipPlacement } from '../graphql/types.generated';
 
-export interface GameRoomStatus {
-  player1: string;
-  player2?: string;
-  p1WSOpen: boolean;
-  p2WSOpen: boolean;
-  p1ShipsPlaced: boolean;
-  p2ShipsPlaced: boolean;
-  currentPlayer?: string;
+export interface PlayerData {
+  readonly user: User;
+  shipPlacements?: ShipPlacement[];
+  socket?: WebSocket<WSData>;
+}
+
+export interface ActivePlayerData extends PlayerData {
+  shipPlacements: ShipPlacement[];
+  socket: WebSocket<WSData>;
 }
 
 export interface GameRoom {
   readonly id: string;
-  readonly gameSettings: GameSetting;
-  readonly userP1: User;
-  userP2?: User;
-  p1Placements?: ShipPlacement[];
-  p2Placements?: ShipPlacement[];
-  p1socket?: WebSocket<WSData>;
-  p2socket?: WebSocket<WSData>;
+  readonly gameSettings: GameSettings;
+  readonly player1: PlayerData;
+  player2?: PlayerData;
+  gameInstance?: Game;
 }
 
-export interface ActiveGameRoom {
-  readonly id: string;
-  readonly gameSettings: GameSetting;
-  readonly userP1: User;
-  readonly userP2: User;
-  readonly p1Placements: ShipPlacement[];
-  readonly p2Placements: ShipPlacement[];
-  readonly p1socket: WebSocket<WSData>;
-  readonly p2socket: WebSocket<WSData>;
+export interface ActiveGameRoom extends GameRoom {
+  player1: ActivePlayerData;
+  player2: ActivePlayerData;
   gameInstance: Game;
 }
+
+export const getPlayerData = (room: GameRoom, player: string): {
+  playerData: PlayerData | undefined,
+  opponentData?: PlayerData | undefined,
+} => {
+  let playerData: PlayerData | undefined;
+  let opponentData: PlayerData | undefined;
+
+  if (player === room.player1.user.username) {
+    playerData = room.player1;
+    opponentData = room.player2;
+  }
+
+  if (player === room.player2?.user.username) {
+    playerData = room.player2;
+    opponentData = room.player2;
+  }
+
+  return {
+    playerData,
+    opponentData,
+  };
+};
+
+export const getActivePlayerData = (room: ActiveGameRoom, player: string): {
+  playerData: ActivePlayerData,
+  opponentData: ActivePlayerData,
+} => {
+  if (player === room.player1.user.username) {
+    return {
+      playerData: room.player1,
+      opponentData: room.player2,
+    };
+  }
+
+  return {
+    playerData: room.player2,
+    opponentData: room.player1,
+  };
+};
 
 /**
  * Checks whether a game room has all of its missing components
@@ -48,18 +79,9 @@ export interface ActiveGameRoom {
  *          be cast to an ActiveGameRoom object.
  */
 export const gameRoomIsActive = (room: GameRoom): room is ActiveGameRoom => (
-  room.userP2 !== undefined
-  && room.p1Placements !== undefined
-  && room.p2Placements !== undefined
-  && room.p1socket !== undefined
-  && room.p2socket !== undefined
-);
-
-export const gameStatusIsActive = (roomStatus: GameRoomStatus): boolean => (
-  roomStatus.player2 !== undefined
-  && roomStatus.currentPlayer !== undefined
-  && roomStatus.p1ShipsPlaced
-  && roomStatus.p1WSOpen
-  && roomStatus.p2ShipsPlaced
-  && roomStatus.p2WSOpen
+  room.gameInstance !== undefined
+  && room.player1.shipPlacements !== undefined
+  && room.player1.socket !== undefined
+  && room.player2?.shipPlacements !== undefined
+  && room.player2?.socket !== undefined
 );
