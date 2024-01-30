@@ -3,18 +3,9 @@ import AuthService, { WSAuthTicket } from '../services/AuthService';
 import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
 import MessageParser from './MessageParser';
-import {
-  ErrorMessage,
-  ClientMessageCode,
-  OpponentMoveResultMessage,
-  ServerMessageCode,
-  OwnMoveResultMessage,
-  RoomStatusResponseMessage,
-  ShootMessage,
-} from './MessageTypes';
+import { ErrorMessage, ServerMessageCode } from './MessageTypes';
 import GameRoomService from '../services/GameRoomService';
-import ActiveGameService from '../services/ActiveGameService';
-import GameplayError from '../game/GameplayError';
+import GameService from '../services/GameService';
 
 const messageDecoder = new TextDecoder();
 
@@ -73,17 +64,8 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
 
       // set the socket state
       wsData.state = WSState.Open;
-
-      const responseMessage = {
-        code: ServerMessageCode.AuthenticatedResponse,
-      };
-
-      // send a confirmation message
-      ws.send(JSON.stringify(responseMessage));
-
-      ActiveGameService.startGame(ticket.roomID);
     } catch (error) {
-      errorMessage = (error as Error).message ?? 'Couldn\'t authenticate sokcet connection';
+      errorMessage = (error as Error).message ?? 'Couldn\'t authenticate socket connection';
     }
   }
 
@@ -96,95 +78,8 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   }
 };
 
-const handleShootMessage = (ws: WebSocket<WSData>, message: ShootMessage): void => {
-  const { roomIsActive, roomID, username } = ws.getUserData();
-
-  if (!roomIsActive) {
-    const response: ErrorMessage = {
-      code: ServerMessageCode.Error,
-      message: 'Can\'t make move, game is not active.',
-    };
-
-    ws.send(JSON.stringify(response));
-    return;
-  }
-
-  try {
-    const { x, y } = message;
-    const {
-      result,
-      currentPlayer,
-      opponentWS,
-    } = ActiveGameService.makeMove(roomID, username, x, y);
-
-    const ownResponse: OwnMoveResultMessage = {
-      code: ServerMessageCode.OwnMoveResult,
-      x,
-      y,
-      result,
-      currentPlayer,
-    };
-
-    const opponentResponse: OpponentMoveResultMessage = {
-      code: ServerMessageCode.OpponentMoveResult,
-      x,
-      y,
-      result,
-      currentPlayer,
-    };
-
-    ws.send(JSON.stringify(ownResponse));
-    opponentWS.send(JSON.stringify(opponentResponse));
-  } catch (error) {
-    if (error instanceof GameplayError) {
-      const response: ErrorMessage = {
-        code: ServerMessageCode.Error,
-        message: error.message,
-      };
-
-      ws.send(JSON.stringify(response));
-    } else {
-      let errorMessage = 'An unknown error has occured';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      const wsData = ws.getUserData();
-      wsData.errorMessage = errorMessage;
-      wsData.state = WSState.Error;
-      handleErrorState(ws);
-    }
-  }
-};
-
-const handleRoomStatusRequestMessage = (ws: WebSocket<WSData>) => {
-  const wsData = ws.getUserData();
-
-  let roomStatus = null;
-
-  try {
-    if (wsData.roomIsActive) {
-      roomStatus = ActiveGameService.getRoomStatus(wsData.roomID);
-    } else {
-      roomStatus = GameRoomService.getRoomStatus(wsData.roomID);
-    }
-  } catch { /* empty */ }
-
-  if (roomStatus) {
-    const response: RoomStatusResponseMessage = {
-      code: ServerMessageCode.RoomStatusResponse,
-      roomStatus,
-    };
-
-    ws.send(JSON.stringify(response));
-  } else {
-    wsData.state = WSState.Error;
-    wsData.errorMessage = `GameRoom service error: room ${wsData.roomID} not found.`;
-    handleErrorState(ws);
-  }
-};
-
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
+  const { roomID, username } = ws.getUserData();
   const decoded = messageDecoder.decode(message);
   const parsedMessage = MessageParser.ParseMessage(decoded);
 
@@ -197,12 +92,7 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
     return;
   }
 
-  const { code } = parsedMessage;
-  switch (code) {
-    case ClientMessageCode.Shoot: handleShootMessage(ws, parsedMessage); break;
-    case ClientMessageCode.RoomStatusRequest: handleRoomStatusRequestMessage(ws); break;
-    default: assertNever(code);
-  }
+  GameService.handleClientMessage(roomID, username, parsedMessage);
 };
 
 /**
@@ -236,7 +126,6 @@ const WsHandler: WebSocketBehavior<WSData> = {
     const socketData: WSData = {
       state: WSState.Error,
       roomID: gameID,
-      roomIsActive: false,
       username,
     };
 
@@ -272,11 +161,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
 
   close: (ws) => {
     const data = ws.getUserData();
-    if (data.roomIsActive) {
-      // TODO: handle in active game service
-    } else {
-      GameRoomService.playerSocketClosed(data.roomID, data.username);
-    }
+    GameRoomService.playerSocketClosed(data.roomID, data.username);
   },
 
   message: (ws, message) => {
