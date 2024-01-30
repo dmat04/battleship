@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run build && NODE_ENV=production node build/index.js",
     "start:dev": "NODE_ENV=development ts-node-dev ./src/index.ts",
+    "genGQLTypes": "graphql-codegen",
     "build": "rimraf ./build && tsc",
     "test": "jest ./test",
     "test:debug": "jest --runInBand ./test",
