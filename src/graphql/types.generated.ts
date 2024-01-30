@@ -19,12 +19,12 @@ export type Scalars = {
 export type GameRoomStatus = {
   __typename?: 'GameRoomStatus';
   currentPlayer?: Maybe<Scalars['String']['output']>;
-  p1ShipsPlaced: Scalars['Boolean']['output'];
-  p1WSOpen: Scalars['Boolean']['output'];
-  p2ShipsPlaced: Scalars['Boolean']['output'];
-  p2WSOpen: Scalars['Boolean']['output'];
-  player1: Scalars['String']['output'];
-  player2?: Maybe<Scalars['String']['output']>;
+  opponent?: Maybe<Scalars['String']['output']>;
+  opponentShipsPlaced: Scalars['Boolean']['output'];
+  opponentSocketConnected: Scalars['Boolean']['output'];
+  player: Scalars['String']['output'];
+  playerShipsPlaced: Scalars['Boolean']['output'];
+  playerSocketConnected: Scalars['Boolean']['output'];
 };
 
 export type GameSettings = {
@@ -32,6 +32,7 @@ export type GameSettings = {
   availableShips: Array<Ship>;
   boardHeight: Scalars['Int']['output'];
   boardWidth: Scalars['Int']['output'];
+  turnDuration: Scalars['Int']['output'];
 };
 
 export type LoginResult = {
@@ -250,12 +251,12 @@ export type ResolversParentTypes = {
 
 export type GameRoomStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['GameRoomStatus'] = ResolversParentTypes['GameRoomStatus']> = {
   currentPlayer?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  p1ShipsPlaced?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  p1WSOpen?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  p2ShipsPlaced?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  p2WSOpen?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  player1?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  player2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  opponent?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  opponentShipsPlaced?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  opponentSocketConnected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  player?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  playerShipsPlaced?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  playerSocketConnected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -263,6 +264,7 @@ export type GameSettingsResolvers<ContextType = any, ParentType extends Resolver
   availableShips?: Resolver<Array<ResolversTypes['Ship']>, ParentType, ContextType>;
   boardHeight?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   boardWidth?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  turnDuration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

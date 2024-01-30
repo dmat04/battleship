@@ -52,14 +52,15 @@ type GameSettings {
   boardWidth: Int!
   boardHeight: Int!
   availableShips: [Ship!]!
+  turnDuration: Int!
 }
 
 type GameRoomStatus {
-  player1: String!
-  player2: String
-  p1WSOpen: Boolean!
-  p2WSOpen: Boolean!
-  p1ShipsPlaced: Boolean!
-  p2ShipsPlaced: Boolean!
+  player: String!
+  playerShipsPlaced: Boolean!
+  playerSocketConnected: Boolean!
+  opponent: String
+  opponentShipsPlaced: Boolean!
+  opponentSocketConnected: Boolean!
   currentPlayer: String
 }

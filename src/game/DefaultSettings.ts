@@ -12,6 +12,7 @@ const DefaultSettings: GameSettings = {
     { shipID: 'Submarine-0', size: 1, type: 'SUBMARINE' },
     { shipID: 'Submarine-1', size: 1, type: 'SUBMARINE' },
   ],
+  turnDuration: 20,
 };
 
 export default DefaultSettings;
