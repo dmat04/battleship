@@ -11,8 +11,7 @@ import UserDbModel from './dbModels/UserDbModel';
 import GuestUserDbModel from './dbModels/GuestUserDbModel';
 import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
 import type { User } from '../models/User';
-import type { LoginResult } from '../graphql/types/LoginResult';
-import { UsernameQueryResult } from '../graphql/types/UsernameQueryResult';
+import { LoginResult, UsernameQueryResult } from '../graphql/types.generated';
 
 interface AccessToken {
   token: string;
