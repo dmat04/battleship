@@ -1,5 +1,5 @@
 import { MoveResult } from '../game/Board';
-import { GameRoomStatus } from '../models/GameRoom';
+import { GameRoomStatus } from '../graphql/types.generated';
 
 export enum ClientMessageCode {
   Shoot = 'Shoot',
