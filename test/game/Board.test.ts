@@ -1,12 +1,12 @@
 import Board, { CellState } from '../../src/game/Board';
-import { ShipPlacement } from '../../src/game/Ship';
-import { DefaultSettings, GameSetting } from '../../src/game/GameSettings';
-import { validPlacements, invalidPlacements } from './shipPlacementData.json';
+import DefaultSettings from '../../src/game/DefaultSettings';
+import { GameSettings } from '../../src/graphql/types.generated';
+import { validPlacements, invalidPlacements } from './shipPlacementData';
 
-const gameSettings = [
+const gameSettings: GameSettings[] = [
   DefaultSettings,
-  new GameSetting(8, 16, DefaultSettings.shipCounts),
-  new GameSetting(16, 8, DefaultSettings.shipCounts),
+  { ...DefaultSettings, boardHeight: 8, boardWidth: 16 },
+  { ...DefaultSettings, boardHeight: 16, boardWidth: 8 },
 ];
 
 describe('Board', () => {
@@ -29,8 +29,8 @@ describe('Board', () => {
     ({ populatedCells, placements }) => {
       const gameBoard = new Board(DefaultSettings);
 
-      gameBoard.placePlayer1Ships(placements as ShipPlacement[]);
-      gameBoard.placePlayer2Ships(placements as ShipPlacement[]);
+      gameBoard.placePlayer1Ships(placements);
+      gameBoard.placePlayer2Ships(placements);
 
       const playerCells = gameBoard.getPlayerBoardCopies();
 
@@ -53,9 +53,9 @@ describe('Board', () => {
     ({ placements }) => {
       const gameBoard = new Board(DefaultSettings);
 
-      expect(() => gameBoard.placePlayer1Ships(placements as ShipPlacement[]))
+      expect(() => gameBoard.placePlayer1Ships(placements))
         .toThrow();
-      expect(() => gameBoard.placePlayer2Ships(placements as ShipPlacement[]))
+      expect(() => gameBoard.placePlayer2Ships(placements))
         .toThrow();
     },
   );

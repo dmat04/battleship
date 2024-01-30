@@ -1,10 +1,10 @@
 import { MoveResult } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
-import { ShipPlacement } from '../../src/game/Ship';
-import { DefaultSettings } from '../../src/game/GameSettings';
+
+import DefaultSettings from '../../src/game/DefaultSettings';
 import {
   p1Placements, p2Placements, firstPlayer, secondPlayer, moves,
-} from './gameTestData.json';
+} from './gameTestData';
 
 let gameSubject: Game;
 
@@ -30,13 +30,13 @@ describe('Game', () => {
 describe('An initialized game', () => {
   beforeEach(() => {
     gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
-    gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
+    gameSubject.initialize(p1Placements, p2Placements);
   });
 
   test('throws an error when attempting to initialize again', () => {
     expect(() => gameSubject.initialize(
-      p1Placements as ShipPlacement[],
-      p2Placements as ShipPlacement[],
+      p1Placements,
+      p2Placements,
     )).toThrow();
   });
 
@@ -55,7 +55,7 @@ describe('An initialized game', () => {
 describe('A game in progress', () => {
   beforeEach(() => {
     gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
-    gameSubject.initialize(p1Placements as ShipPlacement[], p2Placements as ShipPlacement[]);
+    gameSubject.initialize(p1Placements, p2Placements);
     gameSubject.start();
   });
 
