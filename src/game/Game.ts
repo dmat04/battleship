@@ -1,9 +1,7 @@
 import Board, { MoveResult, Player } from './Board';
 import GameplayError from './GameplayError';
-import { ShipPlacement } from './Ship';
-import {
-  GameSetting, DefaultSettings,
-} from './GameSettings';
+import { GameSettings, ShipPlacement } from '../graphql/types.generated';
+import DefaultSettings from './DefaultSettings';
 
 export enum GameState {
   Created = 'Created',
@@ -53,7 +51,7 @@ class Game {
    * @param settings The GameSettings which will dictate the Board dimension and
    *                 the numbers of available ships
    */
-  constructor(player1: string, player2: string, settings: GameSetting = DefaultSettings) {
+  constructor(player1: string, player2: string, settings: GameSettings = DefaultSettings) {
     // set the initial state to Created
     this.state = GameState.Created;
     // create a Board instance with the provided GameSettings
@@ -181,7 +179,7 @@ class Game {
    *
    * @returns The GameSettings
    */
-  getGameSettings = (): GameSetting => this.board.getSettings();
+  getGameSettings = (): GameSettings => this.board.getSettings();
 }
 
 export default Game;

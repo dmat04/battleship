@@ -1,7 +1,7 @@
-import { ShipOrientation, ShipPlacement, ShipClassName } from './Ship';
-import { GameSetting, DefaultSettings } from './GameSettings';
 import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
+import { GameSettings, ShipClassName, ShipPlacement } from '../graphql/types.generated';
+import DefaultSettings from './DefaultSettings';
 
 export enum CellState {
   Empty = 1,
@@ -40,7 +40,7 @@ type PlayerBoard = BoardRowType[];
 class Board {
   // GameSettings provided by constructor - used to set the grid sizes,
   // and validate the number of ships placed by each player
-  private readonly settings: GameSetting;
+  private readonly settings: GameSettings;
 
   // Player 1's cell grid
   private player1Board: PlayerBoard;
@@ -60,7 +60,7 @@ class Board {
    * @param {GameSetting} [settings=DefaultSettings]
    * @memberof Board
    */
-  constructor(settings: GameSetting = DefaultSettings) {
+  constructor(settings: GameSettings = DefaultSettings) {
     // save the settings
     this.settings = settings;
 
@@ -75,7 +75,7 @@ class Board {
    * @param settings The game settings to be used.
    * @returns An initailized player board.
    */
-  private static initPlayerBoard = (settings: GameSetting): PlayerBoard => {
+  private static initPlayerBoard = (settings: GameSettings): PlayerBoard => {
     // initialize the grids as 2D arrays, the 'outer' array will
     // hold instances of Uint8Arrays, each of which represents a row of cells
     const board = new Array(settings.boardHeight);
@@ -90,7 +90,7 @@ class Board {
 
   private static initShipStates = (ships: ShipPlacement[]): ShipState[] => ships.map((ship) => ({
     ship,
-    aliveCells: ship.shipClass.size,
+    aliveCells: ship.ship.size,
   }));
 
   /**
@@ -106,10 +106,10 @@ class Board {
    * @memberof Board
    * @static
    */
-  private static checkPosition = (placement: ShipPlacement, settings: GameSetting): boolean => {
+  private static checkPosition = (placement: ShipPlacement, settings: GameSettings): boolean => {
     // Destructure the member properties
     const {
-      shipClass, orientation, x, y,
+      ship, orientation, x, y,
     } = placement;
 
     // Check that the whole ship is within bounds according to its orientation.
@@ -118,18 +118,18 @@ class Board {
     // so in each case the ships size needs to be taken into account when checking
     // bounds.
     switch (orientation) {
-      case ShipOrientation.VERTICAL:
+      case 'VERTICAL':
         // For vertically oriented ships, make sure x is within bounds...
         if (x < 0 || x >= settings.boardWidth) return false;
         // ... and the topmost part (y) is >0 and the bottom-most part (y+shipSize)
         // is not greater than the board height (also means y by itself cannot be
         // greater than board height).
-        if (y < 0 || y + shipClass.size > settings.boardHeight) return false;
+        if (y < 0 || y + ship.size > settings.boardHeight) return false;
         return true;
-      case ShipOrientation.HORIZONTAL:
+      case 'HORIZONTAL':
         // Analogous to the case for vartical orientation, same checks but
         // the directions are switched
-        if (x < 0 || x + shipClass.size > settings.boardWidth) return false;
+        if (x < 0 || x + ship.size > settings.boardWidth) return false;
         if (y < 0 || y >= settings.boardHeight) return false;
         return true;
       default:
@@ -153,30 +153,30 @@ class Board {
    * or within one cell distance of another placed ship.
    *
    * @param playerBoard The players board onto which a ship is being placed
-   * @param ship The ship being placed
+   * @param shipPlacement The ship being placed
    * @param settings The GameSettings to be used
    * @returns true if there is no overlap, false is overlap is detected
    */
   private static checkOverlap = (
     playerBoard: PlayerBoard,
-    ship: ShipPlacement,
-    settings: GameSetting,
+    shipPlacement: ShipPlacement,
+    settings: GameSettings,
   ): boolean => {
     // Destructure the placement values
     const {
-      shipClass, x, y, orientation,
-    } = ship;
+      ship, x, y, orientation,
+    } = shipPlacement;
     const { boardWidth, boardHeight } = settings;
 
     // Calculate the bounds within which no other ship
     // should be placed
     const xStart = Math.max(0, x - 1);
-    const xEnd = orientation === ShipOrientation.HORIZONTAL
-      ? Math.min(boardWidth - 1, x + shipClass.size)
+    const xEnd = orientation === 'HORIZONTAL'
+      ? Math.min(boardWidth - 1, x + ship.size)
       : Math.min(boardWidth - 1, x + 1);
     const yStart = Math.max(0, y - 1);
-    const yEnd = orientation === ShipOrientation.VERTICAL
-      ? Math.min(boardHeight - 1, y + shipClass.size)
+    const yEnd = orientation === 'VERTICAL'
+      ? Math.min(boardHeight - 1, y + ship.size)
       : Math.min(boardHeight - 1, y + 1);
 
     // Check that no other ship is placed within the calculated bounds
@@ -202,29 +202,29 @@ class Board {
    *
    * @private
    * @param {PlayerBoard} playerBoard The grid onto which the ship should be placed
-   * @param {ShipPlacement} ship The ship to be placed
+   * @param {ShipPlacement} shipPlacement The ship to be placed
    * @param {GameSetting} settings The GameSettings to be used
    * @memberof Board
    */
   private static placeShipVertical = (
     playerBoard: PlayerBoard,
-    ship: ShipPlacement,
-    settings: GameSetting,
+    shipPlacement: ShipPlacement,
+    settings: GameSettings,
   ): void => {
     // Destructure the placement values
     const {
-      shipClass, x, y,
-    } = ship;
+      ship, x, y,
+    } = shipPlacement;
 
     // Check for ship overlap before placing the ship
-    if (!Board.checkOverlap(playerBoard, ship, settings)) {
+    if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
       throw new Error('Ship placement error - ship crossover');
     }
 
     // After the overlap check is completed, place the ship.
     // When placing a ship vertically, in each of the rows within the
     // range [y, y+shipSize> the cell at position x needs to be marked Populated
-    for (let row = y; row - y < shipClass.size; row += 1) {
+    for (let row = y; row - y < ship.size; row += 1) {
       const rowArray = playerBoard[row];
 
       // Mark the appropriate cell Populated
@@ -241,22 +241,22 @@ class Board {
    *
    * @private
    * @param {PlayerBoard} playerBoard The grid onto which the ship should be placed
-   * @param {ShipPlacement} ship The ship to be placed
+   * @param {ShipPlacement} shipPlacement The ship to be placed
    * @param {GameSetting} settings The GameSettings to be used
    * @memberof Board
    */
   private static placeShipHorizontal = (
     playerBoard: PlayerBoard,
-    ship: ShipPlacement,
-    settings: GameSetting,
+    shipPlacement: ShipPlacement,
+    settings: GameSettings,
   ): void => {
     // Destructure the placement values
     const {
-      shipClass, x, y,
-    } = ship;
+      ship, x, y,
+    } = shipPlacement;
 
     // Check for ship overlap before placing the ship
-    if (!Board.checkOverlap(playerBoard, ship, settings)) {
+    if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
       throw new Error('Ship placement error - ship crossover');
     }
 
@@ -266,7 +266,7 @@ class Board {
 
     // ... and within the row, the cells within the range [x, x+shipSIze> need
     // to be marked Populated
-    for (let pos = x; pos - x < shipClass.size; pos += 1) {
+    for (let pos = x; pos - x < ship.size; pos += 1) {
       // Mark the cell Populated
       row[pos] = CellState.Populated;
     }
@@ -282,16 +282,16 @@ class Board {
   private static placeShip = (
     playerBoard: PlayerBoard,
     ship: ShipPlacement,
-    settings: GameSetting,
+    settings: GameSettings,
   ): void => {
     // Get the orientation for the placement
     const { orientation } = ship;
 
     // Call the appropriate method for each orientaion
     switch (orientation) {
-      case ShipOrientation.VERTICAL:
+      case 'VERTICAL':
         return Board.placeShipVertical(playerBoard, ship, settings);
-      case ShipOrientation.HORIZONTAL:
+      case 'HORIZONTAL':
         return Board.placeShipHorizontal(playerBoard, ship, settings);
       default:
         return assertNever(orientation);
@@ -310,7 +310,7 @@ class Board {
   private static placeShips = (
     playerBoard: PlayerBoard,
     ships: ShipPlacement[],
-    settings: GameSetting,
+    settings: GameSettings,
   ): void => {
     const errors = Board.verifyShipPlacements(ships, settings);
 
@@ -337,10 +337,17 @@ class Board {
    */
   public static verifyShipPlacements = (
     ships: ShipPlacement[],
-    settings: GameSetting,
+    settings: GameSettings,
   ): string[] => {
-    // Create a copy of the specified ship counts provided by the GameSettings
-    const shipCounts = new Map<ShipClassName, number>(settings.shipCounts);
+    const shipCounts = new Map<ShipClassName, number>();
+
+    settings.availableShips.forEach((ship) => {
+      shipCounts.set(
+        ship.type,
+        (shipCounts.get(ship.type) ?? 0) + 1,
+      );
+    });
+
     // Counter for number of ships placed
     let placed = 0;
 
@@ -353,16 +360,16 @@ class Board {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
-          `${placement.shipClass.type} at (${placement.x}, ${placement.y}) `
+          `${placement.ship.type} at (${placement.x}, ${placement.y}) `
           + `${placement.orientation.charAt(0)} - out of bounds`,
         );
       }
 
       // Check to make sure that no extra instances of the current ship type
       // are attempted to be placed
-      const remaining = shipCounts.get(placement.shipClass.type) ?? 0;
+      const remaining = shipCounts.get(placement.ship.type) ?? 0;
       if (!remaining) {
-        errors.push(`Too many ${placement.shipClass.type}s given`);
+        errors.push(`Too many ${placement.ship.type}s given`);
       }
 
       // Attempt to place the ship onto a test board
@@ -371,7 +378,7 @@ class Board {
       } catch {
         // If ship placement failed, ship overlap has been detected.
         errors.push(
-          `${placement.shipClass.type} at (${placement.x}, ${placement.y}) `
+          `${placement.ship.type} at (${placement.x}, ${placement.y}) `
           + `${placement.orientation.charAt(0)} - ship overlap`,
         );
       }
@@ -379,11 +386,11 @@ class Board {
       // Increase the total counter...
       placed += 1;
       // ... and decrease the remaining ships of the placed type
-      shipCounts.set(placement.shipClass.type, remaining - 1);
+      shipCounts.set(placement.ship.type, remaining - 1);
     });
 
     // Check that all of the expected ships have been placed
-    if (placed !== settings.totalShips) {
+    if (placed !== settings.availableShips.length) {
       errors.push('Not all ships placed');
     }
 
@@ -462,15 +469,16 @@ class Board {
       ? this.p1Ships
       : this.p2Ships;
 
-    const found = ships.find(((ship) => {
+    const found = ships.find(((shipState) => {
       const {
-        x, y, orientation, shipClass,
-      } = ship.ship;
+        x, y, orientation, ship,
+      } = shipState.ship;
 
-      if (orientation === ShipOrientation.HORIZONTAL) {
-        return row === y && col >= x && col < x + shipClass.size;
+      switch (orientation) {
+        case 'HORIZONTAL': return row === y && col >= x && col < x + ship.size;
+        case 'VERTICAL': return col === x && row >= y && row < y + ship.size;
+        default: return assertNever(orientation);
       }
-      return col === x && row >= y && row < y + shipClass.size;
     }));
 
     if (!found) throw new Error(`No ship at coordinates (${col}, ${row})`);
@@ -563,7 +571,7 @@ class Board {
    *
    * @returns The GameSettings
    */
-  getSettings = (): GameSetting => this.settings;
+  getSettings = (): GameSettings => this.settings;
 }
 
 export default Board;
