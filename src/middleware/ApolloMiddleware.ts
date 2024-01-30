@@ -2,7 +2,8 @@ import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
 
-import { typeDefs, resolvers } from '../graphql/schema';
+import { typeDefs } from '../graphql/typeDefs.generated';
+import { resolvers } from '../graphql/resolvers.generated';
 import ApolloErrorFormatter from './ApolloErrorFormatter';
 import { ApolloContext } from './ApolloContext';
 
