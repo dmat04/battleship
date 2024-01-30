@@ -1,0 +1,65 @@
+extend type Query {
+  gameSettings(gameId: ID!): GameSettings!
+}
+
+extend type Mutation {
+  createRoom: RoomCreatedResult!
+  joinRoom(inviteCode: String!): RoomJoinedResult!
+  placeShips(
+    roomID: ID!
+    shipPlacements: [ShipPlacement!]!
+  ): GameRoomStatus!
+}
+
+type RoomCreatedResult {
+  roomID: ID!
+  inviteCode: String!
+  wsAuthCode: String!
+}
+
+type RoomJoinedResult {
+  roomID: ID!
+  wsAuthCode: String!
+}
+
+enum ShipClassName {
+  SUBMARINE
+  DESTROYER
+  CRUISER
+  BATTLESHIP
+  CARRIER
+}
+
+type Ship {
+  shipID: ID!
+  type: ShipClassName!
+  size: Int!
+}
+
+enum ShipOrientation {
+  VERTICAL
+  HORIZONTAL
+}
+
+input ShipPlacement {
+  ship: Ship!
+  orientation: ShipOrientation!
+  x: Int!
+  y: Int!
+}
+
+type GameSettings {
+  boardWidth: Int!
+  boardHeight: Int!
+  availableShips: [Ship!]!
+}
+
+type GameRoomStatus {
+  player1: String!
+  player2: String
+  p1WSOpen: Boolean!
+  p2WSOpen: Boolean!
+  p1ShipsPlaced: Boolean!
+  p2ShipsPlaced: Boolean!
+  currentPlayer: String
+}

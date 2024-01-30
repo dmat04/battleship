@@ -1,0 +1,2 @@
+import type   { MutationResolvers } from './../../../types.generated';
+        export const joinRoom: NonNullable<MutationResolvers['joinRoom']> = async (_parent, _arg, _ctx) => { /* Implement Mutation.joinRoom resolver logic here */ };
