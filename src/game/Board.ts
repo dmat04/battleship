@@ -1,6 +1,11 @@
 import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
-import { GameSettings, ShipClassName, ShipPlacement } from '../graphql/types.generated';
+import {
+  GameSettings,
+  Ship,
+  ShipOrientation,
+  ShipPlacement,
+} from '../graphql/types.generated';
 import DefaultSettings from './DefaultSettings';
 
 export enum CellState {
@@ -18,11 +23,18 @@ export enum Player {
 export interface MoveResult {
   hit: boolean,
   gameWon: boolean,
-  shipSunk?: ShipPlacement,
+  shipSunk?: Ship['shipID'],
+}
+
+interface ShipPlacementInternal {
+  readonly ship: Ship;
+  readonly x: number;
+  readonly y: number;
+  readonly orientation: ShipOrientation;
 }
 
 interface ShipState {
-  ship: ShipPlacement;
+  shipPlacement: ShipPlacementInternal;
   aliveCells: number;
 }
 
@@ -88,10 +100,34 @@ class Board {
     return board;
   };
 
-  private static initShipStates = (ships: ShipPlacement[]): ShipState[] => ships.map((ship) => ({
-    ship,
-    aliveCells: ship.ship.size,
-  }));
+  private static mapShipPlacmentsToInternal = (
+    shipPlacements: ShipPlacement[],
+    settings: GameSettings,
+  ): ShipPlacementInternal[] => shipPlacements.map((shipPlacement) => {
+    const ship = settings.availableShips
+      .find((availableShip) => availableShip.shipID === shipPlacement.shipID);
+
+    if (!ship) throw new Error('Couldn\'t find ship in GameSettings');
+
+    return {
+      ship,
+      x: shipPlacement.x,
+      y: shipPlacement.y,
+      orientation: shipPlacement.orientation,
+    };
+  });
+
+  private static initShipStates = (
+    ships: ShipPlacement[],
+    settings: GameSettings,
+  ): ShipState[] => {
+    const shipsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
+
+    return shipsInternal.map((shipPlacement) => ({
+      shipPlacement,
+      aliveCells: shipPlacement.ship.size,
+    }));
+  };
 
   /**
    * Check if a ShipPlacement has coordinates within the grid.
@@ -106,7 +142,10 @@ class Board {
    * @memberof Board
    * @static
    */
-  private static checkPosition = (placement: ShipPlacement, settings: GameSettings): boolean => {
+  private static checkPosition = (
+    placement: ShipPlacementInternal,
+    settings: GameSettings,
+  ): boolean => {
     // Destructure the member properties
     const {
       ship, orientation, x, y,
@@ -159,7 +198,7 @@ class Board {
    */
   private static checkOverlap = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacement,
+    shipPlacement: ShipPlacementInternal,
     settings: GameSettings,
   ): boolean => {
     // Destructure the placement values
@@ -208,7 +247,7 @@ class Board {
    */
   private static placeShipVertical = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacement,
+    shipPlacement: ShipPlacementInternal,
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
@@ -247,7 +286,7 @@ class Board {
    */
   private static placeShipHorizontal = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacement,
+    shipPlacement: ShipPlacementInternal,
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
@@ -281,7 +320,7 @@ class Board {
    */
   private static placeShip = (
     playerBoard: PlayerBoard,
-    ship: ShipPlacement,
+    ship: ShipPlacementInternal,
     settings: GameSettings,
   ): void => {
     // Get the orientation for the placement
@@ -318,7 +357,9 @@ class Board {
       throw new Error('Cannot place ships - ship placements are invalid');
     }
 
-    ships.forEach((placement) => {
+    const shipPlacementsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
+
+    shipPlacementsInternal.forEach((placement) => {
       // Place the ship
       Board.placeShip(playerBoard, placement, settings);
     });
@@ -339,37 +380,35 @@ class Board {
     ships: ShipPlacement[],
     settings: GameSettings,
   ): string[] => {
-    const shipCounts = new Map<ShipClassName, number>();
-
-    settings.availableShips.forEach((ship) => {
-      shipCounts.set(
-        ship.type,
-        (shipCounts.get(ship.type) ?? 0) + 1,
-      );
-    });
-
-    // Counter for number of ships placed
-    let placed = 0;
-
     const testBoard = this.initPlayerBoard(settings);
 
     // Found errors
     const errors = [];
 
-    ships.forEach((placement) => {
+    // Check that all of the available ships (as defined in the given
+    // game settings) are present in the given ship placements.
+    settings.availableShips.forEach((availableShip) => {
+      const found = ships.find((placed) => placed.shipID === availableShip.shipID);
+      if (!found) {
+        errors.push(`Missing ship ${availableShip.shipID}`);
+      }
+    });
+
+    // Check that no extra ships are present in the given
+    // ship placements
+    if (ships.length > settings.availableShips.length) {
+      errors.push('Too many shipPlacements given');
+    }
+
+    const placementsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
+
+    placementsInternal.forEach((placement) => {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
           `${placement.ship.type} at (${placement.x}, ${placement.y}) `
           + `${placement.orientation.charAt(0)} - out of bounds`,
         );
-      }
-
-      // Check to make sure that no extra instances of the current ship type
-      // are attempted to be placed
-      const remaining = shipCounts.get(placement.ship.type) ?? 0;
-      if (!remaining) {
-        errors.push(`Too many ${placement.ship.type}s given`);
       }
 
       // Attempt to place the ship onto a test board
@@ -382,17 +421,7 @@ class Board {
           + `${placement.orientation.charAt(0)} - ship overlap`,
         );
       }
-
-      // Increase the total counter...
-      placed += 1;
-      // ... and decrease the remaining ships of the placed type
-      shipCounts.set(placement.ship.type, remaining - 1);
     });
-
-    // Check that all of the expected ships have been placed
-    if (placed !== settings.availableShips.length) {
-      errors.push('Not all ships placed');
-    }
 
     return errors;
   };
@@ -410,7 +439,7 @@ class Board {
   placePlayer1Ships = (ships: ShipPlacement[]): void => {
     try {
       Board.placeShips(this.player1Board, ships, this.settings);
-      this.p1Ships = Board.initShipStates(ships);
+      this.p1Ships = Board.initShipStates(ships, this.settings);
     } catch (error) {
       // If an error has occured during ship placement, reset the
       // player board before passing on the error
@@ -433,7 +462,7 @@ class Board {
   placePlayer2Ships = (ships: ShipPlacement[]): void => {
     try {
       Board.placeShips(this.player2Board, ships, this.settings);
-      this.p2Ships = Board.initShipStates(ships);
+      this.p2Ships = Board.initShipStates(ships, this.settings);
     } catch (error) {
       // If an error has occured during ship placement, reset the
       // player board before passing on the error
@@ -472,7 +501,7 @@ class Board {
     const found = ships.find(((shipState) => {
       const {
         x, y, orientation, ship,
-      } = shipState.ship;
+      } = shipState.shipPlacement;
 
       switch (orientation) {
         case 'HORIZONTAL': return row === y && col >= x && col < x + ship.size;
@@ -552,7 +581,7 @@ class Board {
       const shipState = this.getShip(opponent, x, y);
       shipState.aliveCells -= 1;
       if (shipState.aliveCells === 0) {
-        result.shipSunk = shipState.ship;
+        result.shipSunk = shipState.shipPlacement.ship.shipID;
       }
 
       // Check if all of the ships are sunk
