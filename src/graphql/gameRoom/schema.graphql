@@ -30,19 +30,13 @@ enum ShipClassName {
   CARRIER
 }
 
-input ShipInput {
-  shipID: ID!
-  type: ShipClassName!
-  size: Int!
-}
-
 enum ShipOrientation {
   VERTICAL
   HORIZONTAL
 }
 
 input ShipPlacement {
-  ship: ShipInput!
+  shipID: ID!
   orientation: ShipOrientation!
   x: Int!
   y: Int!
