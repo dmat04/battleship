@@ -4,7 +4,6 @@ import { WSState, type WSData } from '../models/WSData';
 import { assertNever } from '../utils/typeUtils';
 import MessageParser from './MessageParser';
 import { ErrorMessage, ServerMessageCode } from './MessageTypes';
-import GameRoomService from '../services/GameRoomService';
 import GameService from '../services/GameService';
 
 const messageDecoder = new TextDecoder();
@@ -60,7 +59,7 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   if (ticket && errorMessage === null) {
     try {
       // let the GameService know that the socket is authenticated
-      GameRoomService.playerSocketAuthenticated(ticket.roomID, ticket.username, ws);
+      GameService.clientSocketAuthenticated(ticket.roomID, ticket.username, ws);
 
       // set the socket state
       wsData.state = WSState.Open;
@@ -110,7 +109,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
     // do some checks before upgrading the request to websockets
     let errorMessage: string | null = null;
     try {
-      GameRoomService.playerSocketRequested(username, gameID);
+      GameService.clientSocketRequested(username, gameID);
     } catch (error) {
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -161,7 +160,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
 
   close: (ws) => {
     const data = ws.getUserData();
-    GameRoomService.playerSocketClosed(data.roomID, data.username);
+    GameService.clientSocketClosed(data.roomID, data.username);
   },
 
   message: (ws, message) => {
