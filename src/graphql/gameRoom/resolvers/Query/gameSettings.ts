@@ -1,9 +1,9 @@
 import { assertAuthorized } from '../../../../middleware/ApolloContext';
 import type { QueryResolvers } from '../../../types.generated';
-import GameService from '../../../../services/GameRoomService';
+import GameService from '../../../../services/GameService';
 
 export const gameSettings: NonNullable<QueryResolvers['gameSettings']> = async (
-  _parent,
+  _,
   _arg,
   _ctx,
 ) => {
@@ -11,4 +11,4 @@ export const gameSettings: NonNullable<QueryResolvers['gameSettings']> = async (
   return GameService.getGameSettings(_arg.gameId);
 };
 
-export default gameSettings;
+export default {};

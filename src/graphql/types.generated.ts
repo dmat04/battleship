@@ -124,13 +124,19 @@ export type ShipClassName =
   | 'DESTROYER'
   | 'SUBMARINE';
 
+export type ShipInput = {
+  shipID: Scalars['ID']['input'];
+  size: Scalars['Int']['input'];
+  type: ShipClassName;
+};
+
 export type ShipOrientation =
   | 'HORIZONTAL'
   | 'VERTICAL';
 
 export type ShipPlacement = {
   orientation: ShipOrientation;
-  ship: Ship;
+  ship: ShipInput;
   x: Scalars['Int']['input'];
   y: Scalars['Int']['input'];
 };
@@ -226,6 +232,7 @@ export type ResolversTypes = {
   RoomJoinedResult: ResolverTypeWrapper<RoomJoinedResult>;
   Ship: ResolverTypeWrapper<Ship>;
   ShipClassName: ShipClassName;
+  ShipInput: ShipInput;
   ShipOrientation: ShipOrientation;
   ShipPlacement: ShipPlacement;
   UsernameQueryResult: ResolverTypeWrapper<UsernameQueryResult>;
@@ -245,6 +252,7 @@ export type ResolversParentTypes = {
   RoomCreatedResult: RoomCreatedResult;
   RoomJoinedResult: RoomJoinedResult;
   Ship: Ship;
+  ShipInput: ShipInput;
   ShipPlacement: ShipPlacement;
   UsernameQueryResult: UsernameQueryResult;
 };
