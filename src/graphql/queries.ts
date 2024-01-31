@@ -15,13 +15,11 @@ export const GET_GAME_SETTINGS = gql(`
     gameSettings(gameId: $gameId) {
       boardHeight
       boardWidth
-      shipClasses {
+      turnDuration
+      availableShips {
+        shipID
         size
         type
-      }
-      shipCounts {
-        class
-        count
       }
     }
 }

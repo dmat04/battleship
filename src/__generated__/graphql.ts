@@ -19,27 +19,20 @@ export type Scalars = {
 export type GameRoomStatus = {
   __typename?: 'GameRoomStatus';
   currentPlayer?: Maybe<Scalars['String']['output']>;
-  p1ShipsPlaced: Scalars['Boolean']['output'];
-  p1WSOpen: Scalars['Boolean']['output'];
-  p2ShipsPlaced: Scalars['Boolean']['output'];
-  p2WSOpen: Scalars['Boolean']['output'];
-  player1: Scalars['String']['output'];
-  player2?: Maybe<Scalars['String']['output']>;
+  opponent?: Maybe<Scalars['String']['output']>;
+  opponentShipsPlaced: Scalars['Boolean']['output'];
+  opponentSocketConnected: Scalars['Boolean']['output'];
+  player: Scalars['String']['output'];
+  playerShipsPlaced: Scalars['Boolean']['output'];
+  playerSocketConnected: Scalars['Boolean']['output'];
 };
 
 export type GameSettings = {
   __typename?: 'GameSettings';
+  availableShips: Array<Ship>;
   boardHeight: Scalars['Int']['output'];
   boardWidth: Scalars['Int']['output'];
-  shipClasses: Array<ShipClass>;
-  shipCounts: Array<ShipCount>;
-};
-
-export type InputShipPlacement = {
-  orientation: ShipOrientation;
-  shipClass: ShipClassName;
-  x: Scalars['Int']['input'];
-  y: Scalars['Int']['input'];
+  turnDuration: Scalars['Int']['output'];
 };
 
 export type LoginResult = {
@@ -51,7 +44,6 @@ export type LoginResult = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['String']['output']>;
   createRoom: RoomCreatedResult;
   guestLogin?: Maybe<LoginResult>;
   joinRoom: RoomJoinedResult;
@@ -73,7 +65,7 @@ export type MutationJoinRoomArgs = {
 
 export type MutationPlaceShipsArgs = {
   roomID: Scalars['ID']['input'];
-  shipPlacements: Array<InputShipPlacement>;
+  shipPlacements: Array<ShipPlacement>;
 };
 
 
@@ -90,10 +82,9 @@ export type MutationRegisteredLoginArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  _empty?: Maybe<Scalars['String']['output']>;
   checkUsername: UsernameQueryResult;
   gameSettings: GameSettings;
-  ping?: Maybe<Scalars['String']['output']>;
+  ping: Scalars['String']['output'];
 };
 
 
@@ -119,8 +110,9 @@ export type RoomJoinedResult = {
   wsAuthCode: Scalars['String']['output'];
 };
 
-export type ShipClass = {
-  __typename?: 'ShipClass';
+export type Ship = {
+  __typename?: 'Ship';
+  shipID: Scalars['ID']['output'];
   size: Scalars['Int']['output'];
   type: ShipClassName;
 };
@@ -133,16 +125,23 @@ export enum ShipClassName {
   Submarine = 'SUBMARINE'
 }
 
-export type ShipCount = {
-  __typename?: 'ShipCount';
-  class: ShipClassName;
-  count: Scalars['Int']['output'];
+export type ShipInput = {
+  shipID: Scalars['ID']['input'];
+  size: Scalars['Int']['input'];
+  type: ShipClassName;
 };
 
 export enum ShipOrientation {
   Horizontal = 'HORIZONTAL',
   Vertical = 'VERTICAL'
 }
+
+export type ShipPlacement = {
+  orientation: ShipOrientation;
+  ship: ShipInput;
+  x: Scalars['Int']['input'];
+  y: Scalars['Int']['input'];
+};
 
 export type UsernameQueryResult = {
   __typename?: 'UsernameQueryResult';
@@ -180,11 +179,11 @@ export type JoinRoomMutation = { __typename?: 'Mutation', joinRoom: { __typename
 
 export type PlaceShipsMutationVariables = Exact<{
   roomId: Scalars['ID']['input'];
-  shipPlacements: Array<InputShipPlacement> | InputShipPlacement;
+  shipPlacements: Array<ShipPlacement> | ShipPlacement;
 }>;
 
 
-export type PlaceShipsMutation = { __typename?: 'Mutation', placeShips: { __typename?: 'GameRoomStatus', currentPlayer?: string | null, p1ShipsPlaced: boolean, p1WSOpen: boolean, p2ShipsPlaced: boolean, p2WSOpen: boolean, player1: string, player2?: string | null } };
+export type PlaceShipsMutation = { __typename?: 'Mutation', placeShips: { __typename?: 'GameRoomStatus', player: string, playerShipsPlaced: boolean, playerSocketConnected: boolean, opponent?: string | null, opponentShipsPlaced: boolean, opponentSocketConnected: boolean, currentPlayer?: string | null } };
 
 export type CheckUsernameQueryVariables = Exact<{
   username: Scalars['String']['input'];
@@ -198,13 +197,13 @@ export type GameSettingsQueryVariables = Exact<{
 }>;
 
 
-export type GameSettingsQuery = { __typename?: 'Query', gameSettings: { __typename?: 'GameSettings', boardHeight: number, boardWidth: number, shipClasses: Array<{ __typename?: 'ShipClass', size: number, type: ShipClassName }>, shipCounts: Array<{ __typename?: 'ShipCount', class: ShipClassName, count: number }> } };
+export type GameSettingsQuery = { __typename?: 'Query', gameSettings: { __typename?: 'GameSettings', boardHeight: number, boardWidth: number, turnDuration: number, availableShips: Array<{ __typename?: 'Ship', shipID: string, size: number, type: ShipClassName }> } };
 
 
 export const GuestLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"guestLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"guestLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]} as unknown as DocumentNode<GuestLoginMutation, GuestLoginMutationVariables>;
 export const RegisteredLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"registeredLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"registeredLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]} as unknown as DocumentNode<RegisteredLoginMutation, RegisteredLoginMutationVariables>;
 export const CreateRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRoom"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomID"}},{"kind":"Field","name":{"kind":"Name","value":"inviteCode"}},{"kind":"Field","name":{"kind":"Name","value":"wsAuthCode"}}]}}]}}]} as unknown as DocumentNode<CreateRoomMutation, CreateRoomMutationVariables>;
 export const JoinRoomDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"joinRoom"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inviteCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"joinRoom"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inviteCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inviteCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomID"}},{"kind":"Field","name":{"kind":"Name","value":"wsAuthCode"}}]}}]}}]} as unknown as DocumentNode<JoinRoomMutation, JoinRoomMutationVariables>;
-export const PlaceShipsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"placeShips"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipPlacements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputShipPlacement"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"placeShips"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}},{"kind":"Argument","name":{"kind":"Name","value":"shipPlacements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipPlacements"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentPlayer"}},{"kind":"Field","name":{"kind":"Name","value":"p1ShipsPlaced"}},{"kind":"Field","name":{"kind":"Name","value":"p1WSOpen"}},{"kind":"Field","name":{"kind":"Name","value":"p2ShipsPlaced"}},{"kind":"Field","name":{"kind":"Name","value":"p2WSOpen"}},{"kind":"Field","name":{"kind":"Name","value":"player1"}},{"kind":"Field","name":{"kind":"Name","value":"player2"}}]}}]}}]} as unknown as DocumentNode<PlaceShipsMutation, PlaceShipsMutationVariables>;
+export const PlaceShipsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"placeShips"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipPlacements"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ShipPlacement"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"placeShips"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roomID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roomId"}}},{"kind":"Argument","name":{"kind":"Name","value":"shipPlacements"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipPlacements"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"}},{"kind":"Field","name":{"kind":"Name","value":"playerShipsPlaced"}},{"kind":"Field","name":{"kind":"Name","value":"playerSocketConnected"}},{"kind":"Field","name":{"kind":"Name","value":"opponent"}},{"kind":"Field","name":{"kind":"Name","value":"opponentShipsPlaced"}},{"kind":"Field","name":{"kind":"Name","value":"opponentSocketConnected"}},{"kind":"Field","name":{"kind":"Name","value":"currentPlayer"}}]}}]}}]} as unknown as DocumentNode<PlaceShipsMutation, PlaceShipsMutationVariables>;
 export const CheckUsernameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"checkUsername"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"username"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkUsername"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"username"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"taken"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"validationError"}}]}}]}}]} as unknown as DocumentNode<CheckUsernameQuery, CheckUsernameQueryVariables>;
-export const GameSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GameSettings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameSettings"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"boardHeight"}},{"kind":"Field","name":{"kind":"Name","value":"boardWidth"}},{"kind":"Field","name":{"kind":"Name","value":"shipClasses"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shipCounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"class"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GameSettingsQuery, GameSettingsQueryVariables>;
+export const GameSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GameSettings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameSettings"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"boardHeight"}},{"kind":"Field","name":{"kind":"Name","value":"boardWidth"}},{"kind":"Field","name":{"kind":"Name","value":"turnDuration"}},{"kind":"Field","name":{"kind":"Name","value":"availableShips"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipID"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}}]} as unknown as DocumentNode<GameSettingsQuery, GameSettingsQueryVariables>;

@@ -17,9 +17,9 @@ const documents = {
     "\n  mutation registeredLogin($username: String!, $password: String!) {\n    registeredLogin(username: $username, password: $password) {\n      accessToken\n      expiresAt\n      username\n    }\n  }\n": types.RegisteredLoginDocument,
     "\n  mutation createRoom {\n    createRoom {\n      roomID\n      inviteCode\n      wsAuthCode\n    }\n  }\n": types.CreateRoomDocument,
     "\n  mutation joinRoom($inviteCode: String!) {\n    joinRoom(inviteCode: $inviteCode) {\n      roomID\n      wsAuthCode\n    }\n  }\n": types.JoinRoomDocument,
-    "\n  mutation placeShips($roomId: ID!, $shipPlacements: [InputShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      currentPlayer\n      p1ShipsPlaced\n      p1WSOpen\n      p2ShipsPlaced\n      p2WSOpen\n      player1\n      player2\n    }\n  }\n": types.PlaceShipsDocument,
+    "\n  mutation placeShips($roomId: ID!, $shipPlacements: [ShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      player\n      playerShipsPlaced\n      playerSocketConnected\n      opponent\n      opponentShipsPlaced\n      opponentSocketConnected\n      currentPlayer\n    }\n  }\n": types.PlaceShipsDocument,
     "\n  query checkUsername($username: String!) {\n    checkUsername(username: $username) {\n      taken\n      username\n      validationError\n    }\n  }\n": types.CheckUsernameDocument,
-    "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n": types.GameSettingsDocument,
+    "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      turnDuration\n      availableShips {\n        shipID\n        size\n        type\n      }\n    }\n}\n": types.GameSettingsDocument,
 };
 
 /**
@@ -55,7 +55,7 @@ export function gql(source: "\n  mutation joinRoom($inviteCode: String!) {\n    
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation placeShips($roomId: ID!, $shipPlacements: [InputShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      currentPlayer\n      p1ShipsPlaced\n      p1WSOpen\n      p2ShipsPlaced\n      p2WSOpen\n      player1\n      player2\n    }\n  }\n"): (typeof documents)["\n  mutation placeShips($roomId: ID!, $shipPlacements: [InputShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      currentPlayer\n      p1ShipsPlaced\n      p1WSOpen\n      p2ShipsPlaced\n      p2WSOpen\n      player1\n      player2\n    }\n  }\n"];
+export function gql(source: "\n  mutation placeShips($roomId: ID!, $shipPlacements: [ShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      player\n      playerShipsPlaced\n      playerSocketConnected\n      opponent\n      opponentShipsPlaced\n      opponentSocketConnected\n      currentPlayer\n    }\n  }\n"): (typeof documents)["\n  mutation placeShips($roomId: ID!, $shipPlacements: [ShipPlacement!]!) {\n    placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {\n      player\n      playerShipsPlaced\n      playerSocketConnected\n      opponent\n      opponentShipsPlaced\n      opponentSocketConnected\n      currentPlayer\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -63,7 +63,7 @@ export function gql(source: "\n  query checkUsername($username: String!) {\n    
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n"): (typeof documents)["\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      shipClasses {\n        size\n        type\n      }\n      shipCounts {\n        class\n        count\n      }\n    }\n}\n"];
+export function gql(source: "\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      turnDuration\n      availableShips {\n        shipID\n        size\n        type\n      }\n    }\n}\n"): (typeof documents)["\n  query GameSettings($gameId: ID!) {\n    gameSettings(gameId: $gameId) {\n      boardHeight\n      boardWidth\n      turnDuration\n      availableShips {\n        shipID\n        size\n        type\n      }\n    }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
