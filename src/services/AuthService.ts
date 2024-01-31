@@ -179,7 +179,7 @@ const checkUsername = async (username: string): Promise<UsernameQueryResult> => 
  *                 is thrown.
  * @returns The user data, including: username, expiration timestamp and access token.
  */
-const createGuestUserAndToken = async (username?: string): Promise<LoginResult> => {
+const createGuestUserAndToken = async (username: string | null): Promise<LoginResult> => {
   let name;
 
   if (username) {
