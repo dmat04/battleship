@@ -10,71 +10,43 @@ export const validPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 0,
         y: 9,
@@ -85,71 +57,43 @@ export const validPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 8,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 0,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 0,
         y: 6,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 0,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'HORIZONTAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'HORIZONTAL',
         x: 9,
         y: 9,
@@ -163,71 +107,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 8,
         y: 8,
@@ -238,71 +154,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 5,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 0,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 0,
         y: 6,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 0,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'VERTICAL',
         x: 0,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 4,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 0,
         y: 2,
@@ -313,71 +201,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 6,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 9,
         y: 0,
@@ -388,71 +248,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 5,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 5,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 5,
@@ -463,71 +295,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 6,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 8,
         y: 8,
@@ -538,71 +342,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 6,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 0,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 0,
         y: 6,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 0,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'VERTICAL',
         x: 0,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 4,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 0,
         y: 2,
@@ -613,71 +389,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 7,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 0,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 9,
         y: 0,
@@ -688,71 +436,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 5,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 6,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 5,
@@ -763,61 +483,37 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 5,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 5,
@@ -828,81 +524,49 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 5,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 5,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 8,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'HORIZONTAL',
         x: 4,
         y: 3,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'HORIZONTAL',
         x: 2,
         y: 5,
@@ -913,71 +577,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 10,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 8,
         y: 8,
@@ -988,71 +624,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: -1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 1,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 8,
         y: 8,
@@ -1063,71 +671,43 @@ export const invalidPlacements: PlacementTestData[] = [
     populatedCells: 18,
     placements: [
       {
-        ship: {
-          shipID: '',
-          type: 'CARRIER',
-          size: 5,
-        },
+        shipID: 'CARRIER-0',
         orientation: 'VERTICAL',
         x: 9,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'BATTLESHIP',
-          size: 4,
-        },
+        shipID: 'BATTLESHIP-0',
         orientation: 'VERTICAL',
         x: 7,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'CRUISER',
-          size: 3,
-        },
+        shipID: 'CRUISER-0',
         orientation: 'HORIZONTAL',
         x: 7,
         y: 9,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 1,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'DESTROYER',
-          size: 2,
-        },
+        shipID: 'DESTROYER-1',
         orientation: 'HORIZONTAL',
         x: 3,
         y: 4,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-0',
         orientation: 'VERTICAL',
         x: 3,
         y: 2,
       },
       {
-        ship: {
-          shipID: '',
-          type: 'SUBMARINE',
-          size: 1,
-        },
+        shipID: 'SUBMARINE-1',
         orientation: 'VERTICAL',
         x: 8,
         y: 8,
