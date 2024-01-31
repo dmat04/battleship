@@ -23,10 +23,10 @@ export enum Player {
 export interface MoveResult {
   hit: boolean,
   gameWon: boolean,
-  shipSunk?: Ship['shipID'],
+  shipSunk?: PlacedShip,
 }
 
-interface ShipPlacementInternal {
+interface PlacedShip {
   readonly ship: Ship;
   readonly x: number;
   readonly y: number;
@@ -34,7 +34,7 @@ interface ShipPlacementInternal {
 }
 
 interface ShipState {
-  shipPlacement: ShipPlacementInternal;
+  shipPlacement: PlacedShip;
   aliveCells: number;
 }
 
@@ -103,7 +103,7 @@ class Board {
   private static mapShipPlacmentsToInternal = (
     shipPlacements: ShipPlacement[],
     settings: GameSettings,
-  ): ShipPlacementInternal[] => shipPlacements.map((shipPlacement) => {
+  ): PlacedShip[] => shipPlacements.map((shipPlacement) => {
     const ship = settings.availableShips
       .find((availableShip) => availableShip.shipID === shipPlacement.shipID);
 
@@ -143,7 +143,7 @@ class Board {
    * @static
    */
   private static checkPosition = (
-    placement: ShipPlacementInternal,
+    placement: PlacedShip,
     settings: GameSettings,
   ): boolean => {
     // Destructure the member properties
@@ -198,7 +198,7 @@ class Board {
    */
   private static checkOverlap = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacementInternal,
+    shipPlacement: PlacedShip,
     settings: GameSettings,
   ): boolean => {
     // Destructure the placement values
@@ -247,7 +247,7 @@ class Board {
    */
   private static placeShipVertical = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacementInternal,
+    shipPlacement: PlacedShip,
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
@@ -286,7 +286,7 @@ class Board {
    */
   private static placeShipHorizontal = (
     playerBoard: PlayerBoard,
-    shipPlacement: ShipPlacementInternal,
+    shipPlacement: PlacedShip,
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
@@ -320,7 +320,7 @@ class Board {
    */
   private static placeShip = (
     playerBoard: PlayerBoard,
-    ship: ShipPlacementInternal,
+    ship: PlacedShip,
     settings: GameSettings,
   ): void => {
     // Get the orientation for the placement
@@ -581,7 +581,7 @@ class Board {
       const shipState = this.getShip(opponent, x, y);
       shipState.aliveCells -= 1;
       if (shipState.aliveCells === 0) {
-        result.shipSunk = shipState.shipPlacement.ship.shipID;
+        result.shipSunk = shipState.shipPlacement;
       }
 
       // Check if all of the ships are sunk

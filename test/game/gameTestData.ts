@@ -164,7 +164,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'DESTROYER-0',
+      shipSunk: {
+        ship: {
+          shipID: 'DESTROYER-0',
+          type: 'DESTROYER',
+          size: 2,
+        },
+        orientation: 'VERTICAL',
+        x: 1,
+        y: 1,
+      },
     },
   },
   {
@@ -174,7 +183,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'SUBMARINE-0',
+      shipSunk: {
+        ship: {
+          shipID: 'SUBMARINE-0',
+          type: 'SUBMARINE',
+          size: 1,
+        },
+        orientation: 'VERTICAL',
+        x: 3,
+        y: 2,
+      },
     },
   },
   {
@@ -229,7 +247,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'CRUISER-0',
+      shipSunk: {
+        ship: {
+          shipID: 'CRUISER-0',
+          type: 'CRUISER',
+          size: 3,
+        },
+        orientation: 'HORIZONTAL',
+        x: 0,
+        y: 0,
+      },
     },
   },
   {
@@ -239,7 +266,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'SUBMARINE-0',
+      shipSunk: {
+        ship: {
+          shipID: 'SUBMARINE-0',
+          type: 'SUBMARINE',
+          size: 1,
+        },
+        orientation: 'HORIZONTAL',
+        x: 8,
+        y: 1,
+      },
     },
   },
   {
@@ -276,7 +312,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'BATTLESHIP-0',
+      shipSunk: {
+        ship: {
+          shipID: 'BATTLESHIP-0',
+          type: 'BATTLESHIP',
+          size: 4,
+        },
+        orientation: 'VERTICAL',
+        x: 8,
+        y: 3,
+      },
     },
   },
   {
@@ -295,7 +340,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'DESTROYER-0',
+      shipSunk: {
+        ship: {
+          shipID: 'DESTROYER-0',
+          type: 'DESTROYER',
+          size: 2,
+        },
+        orientation: 'VERTICAL',
+        x: 0,
+        y: 6,
+      },
     },
   },
   {
@@ -305,7 +359,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'DESTROYER-1',
+      shipSunk: {
+        ship: {
+          shipID: 'DESTROYER-1',
+          type: 'DESTROYER',
+          size: 2,
+        },
+        orientation: 'HORIZONTAL',
+        x: 0,
+        y: 9,
+      },
     },
   },
   {
@@ -351,7 +414,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: false,
-      shipSunk: 'SUBMARINE-1',
+      shipSunk: {
+        ship: {
+          shipID: 'SUBMARINE-1',
+          type: 'SUBMARINE',
+          size: 1,
+        },
+        orientation: 'HORIZONTAL',
+        x: 9,
+        y: 9,
+      },
     },
   },
   {
@@ -361,7 +433,16 @@ export const moves = [
     result: {
       hit: true,
       gameWon: true,
-      shipSunk: 'CARRIER-0',
+      shipSunk: {
+        ship: {
+          shipID: 'CARRIER-0',
+          type: 'CARRIER',
+          size: 5,
+        },
+        orientation: 'HORIZONTAL',
+        x: 3,
+        y: 9,
+      },
     },
   },
 ];
