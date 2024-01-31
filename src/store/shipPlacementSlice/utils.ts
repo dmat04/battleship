@@ -5,10 +5,9 @@ import {
   GridState,
   ShipState,
   SliceState,
-  ShipID,
   Coordinates,
 } from './types';
-import { GameSettings, ShipOrientation } from '../../__generated__/graphql';
+import { GameSettings, Ship, ShipOrientation } from '../../__generated__/graphql';
 import { assertNever } from '../../utils/typeUtils';
 
 const minmax = (min: number, value: number, max: number): number =>
@@ -17,13 +16,12 @@ const minmax = (min: number, value: number, max: number): number =>
 
 export const canPlaceShip = (
   grid: GridState,
-  ship: ShipState,
+  shipState: ShipState,
   { x, y }: Coordinates,
-  orientation: ShipOrientation = ship.orientation,
+  orientation: ShipOrientation = shipState.orientation,
 ): boolean => {
   const { columns, rows, cellStates } = grid;
-  const { shipID, shipClass } = ship;
-  const { size } = shipClass;
+  const { shipID, size } = shipState.ship;
 
   let vSize = 0;
   let hSize = 0;
@@ -62,7 +60,7 @@ const fillGrid = (
   { x, y }: Coordinates,
   orientation: ShipOrientation,
   size: number,
-  value: ShipID | null,
+  value: Ship['shipID'] | null,
 ) => {
   switch (orientation) {
     case ShipOrientation.Horizontal: {
@@ -83,16 +81,22 @@ const fillGrid = (
   }
 };
 
-const clearShipFromGrid = (grid: GridState, ship: ShipState): void => {
-  if (!ship.position) return;
+const clearShipFromGrid = (grid: GridState, shipState: ShipState): void => {
+  if (!shipState.position) return;
 
-  fillGrid(grid, ship.position, ship.orientation, ship.shipClass.size, null);
+  fillGrid(grid, shipState.position, shipState.orientation, shipState.ship.size, null);
 };
 
-const populateGridWithShip = (grid: GridState, ship: ShipState): void => {
-  if (!ship.position) return;
+const populateGridWithShip = (grid: GridState, shipState: ShipState): void => {
+  if (!shipState.position) return;
 
-  fillGrid(grid, ship.position, ship.orientation, ship.shipClass.size, ship.shipID);
+  fillGrid(
+    grid,
+    shipState.position,
+    shipState.orientation,
+    shipState.ship.size,
+    shipState.ship.shipID,
+  );
 };
 
 const placeShip = (
@@ -112,9 +116,9 @@ const placeShip = (
     orientation: orientation ?? oldState.orientation,
   };
 
-  state.nonPlacedIDs = state.nonPlacedIDs.filter((id) => id !== newState.shipID);
-  if (state.placedIDs.findIndex((val) => val === newState.shipID) < 0) {
-    state.placedIDs.push(newState.shipID);
+  state.nonPlacedIDs = state.nonPlacedIDs.filter((id) => id !== newState.ship.shipID);
+  if (state.placedIDs.findIndex((val) => val === newState.ship.shipID) < 0) {
+    state.placedIDs.push(newState.ship.shipID);
   }
 
   // eslint-disable-next-line no-param-reassign
@@ -130,9 +134,9 @@ const displaceShip = (state: SliceState, shipIndex: number) => {
     position: null,
   };
 
-  state.placedIDs = state.placedIDs.filter((id) => id !== newState.shipID);
-  if (state.nonPlacedIDs.findIndex((val) => val === newState.shipID) < 0) {
-    state.nonPlacedIDs.push(newState.shipID);
+  state.placedIDs = state.placedIDs.filter((id) => id !== newState.ship.shipID);
+  if (state.nonPlacedIDs.findIndex((val) => val === newState.ship.shipID) < 0) {
+    state.nonPlacedIDs.push(newState.ship.shipID);
   }
 
   // eslint-disable-next-line no-param-reassign
@@ -144,7 +148,7 @@ export const processPlaceShipAction = (
   state: SliceState,
   { payload }: PayloadAction<PlaceShipArgs>,
 ) => {
-  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload.shipID);
+  const shipIndex = state.shipStates.findIndex(({ ship }) => ship.shipID === payload.shipID);
   if (shipIndex < 0) return;
 
   const shipState = state.shipStates[shipIndex];
@@ -155,9 +159,9 @@ export const processPlaceShipAction = (
 
 export const processResetShipAction = (
   state: SliceState,
-  { payload }: PayloadAction<ShipID>,
+  { payload }: PayloadAction<Ship['shipID']>,
 ) => {
-  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload);
+  const shipIndex = state.shipStates.findIndex(({ ship }) => ship.shipID === payload);
   if (shipIndex < 0) return;
 
   displaceShip(state, shipIndex);
@@ -165,14 +169,14 @@ export const processResetShipAction = (
 
 export const processRotateShipAction = (
   state: SliceState,
-  { payload }: PayloadAction<ShipID>,
+  { payload }: PayloadAction<Ship['shipID']>,
 ) => {
-  const shipIndex = state.shipStates.findIndex(({ shipID }) => shipID === payload);
+  const shipIndex = state.shipStates.findIndex(({ ship }) => ship.shipID === payload);
   if (shipIndex < 0) return;
 
   const oldState = state.shipStates[shipIndex];
   const {
-    shipClass,
+    ship,
     orientation,
     position,
   } = oldState;
@@ -185,25 +189,24 @@ export const processRotateShipAction = (
   }
 
   const newState: ShipState = {
-    shipID: payload,
-    shipClass,
+    ship,
     orientation: newOrientation,
     position: null,
   };
 
   if (position) {
     const { rows, columns } = state.grid;
-    const halfSize = Math.floor(shipClass.size / 2);
+    const halfSize = Math.floor(ship.size / 2);
     const rotatedPosition = { ...position };
 
     switch (orientation) {
       case ShipOrientation.Horizontal: {
         rotatedPosition.x = minmax(0, rotatedPosition.x + halfSize, columns - 1);
-        rotatedPosition.y = minmax(0, rotatedPosition.y - halfSize, rows - shipClass.size);
+        rotatedPosition.y = minmax(0, rotatedPosition.y - halfSize, rows - ship.size);
         break;
       }
       case ShipOrientation.Vertical: {
-        rotatedPosition.x = minmax(0, rotatedPosition.x - halfSize, columns - shipClass.size);
+        rotatedPosition.x = minmax(0, rotatedPosition.x - halfSize, columns - ship.size);
         rotatedPosition.y = minmax(0, rotatedPosition.y + halfSize, rows - 1);
         break;
       }
@@ -223,28 +226,14 @@ export const processRotateShipAction = (
 };
 
 export const initializeState = (gameSettings: GameSettings): SliceState => {
-  const shipStates: ShipState[] = [];
+  const shipStates: ShipState[] = gameSettings.availableShips.map((availableShip) => ({
+    ship: availableShip,
+    position: null,
+    orientation: ShipOrientation.Horizontal,
+  }));
 
-  gameSettings.shipCounts.forEach((shipCount) => {
-    for (let c = 1; c <= shipCount.count; c += 1) {
-      const shipID = `${shipCount.class}-${c}`;
-      const shipClass = gameSettings.shipClasses.find(
-        (ship) => ship.type === shipCount.class,
-      );
-
-      if (!shipClass) throw Error('GameSettings seem to be malformed!');
-
-      shipStates.push({
-        shipID,
-        shipClass,
-        orientation: ShipOrientation.Horizontal,
-        position: null,
-      });
-    }
-  });
-
-  shipStates.sort((a, b) => b.shipClass.size - a.shipClass.size);
-  const nonPlacedIDs = shipStates.map((state) => state.shipID);
+  shipStates.sort((a, b) => b.ship.size - a.ship.size);
+  const nonPlacedIDs = shipStates.map((state) => state.ship.shipID);
 
   const cellStates: null[][] = new Array(gameSettings.boardHeight);
   for (let i = 0; i < gameSettings.boardHeight; i += 1) {

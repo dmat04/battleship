@@ -6,7 +6,7 @@ import {
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
-import { GameRoomStatus, InputShipPlacement } from '../../__generated__/graphql';
+import { GameRoomStatus, ShipPlacement } from '../../__generated__/graphql';
 import { fetchGameSettings } from '../gameRoomSlice';
 import type { AppDispatch, RootState } from '../store';
 import Dependencies from '../../utils/Dependencies';
@@ -26,11 +26,11 @@ export const submitPlacement = createAsyncThunk<
       thunkAPI.rejectWithValue({ error: 'Cannot submit ship placement - not all ships placed' });
     }
 
-    const shipPlacements: InputShipPlacement[] = shipStates.map((ship) => ({
-      shipClass: ship.shipClass.type,
-      orientation: ship.orientation,
-      x: ship.position?.x ?? 0,
-      y: ship.position?.y ?? 0,
+    const shipPlacements: ShipPlacement[] = shipStates.map((shipState) => ({
+      shipID: shipState.ship.shipID,
+      orientation: shipState.orientation,
+      x: shipState.position?.x ?? 0,
+      y: shipState.position?.y ?? 0,
     }));
 
     const result = await Dependencies.getApolloClient()?.mutate({

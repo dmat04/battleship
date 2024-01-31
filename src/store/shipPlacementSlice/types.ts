@@ -1,6 +1,4 @@
-import { ShipClass, ShipOrientation } from '../../__generated__/graphql';
-
-export type ShipID = string;
+import { Ship, ShipOrientation } from '../../__generated__/graphql';
 
 export interface Coordinates {
   x: number;
@@ -8,13 +6,12 @@ export interface Coordinates {
 }
 
 export interface PlaceShipArgs {
-  shipID: ShipID;
+  shipID: Ship['shipID'];
   position: Coordinates;
 }
 
 export interface ShipState {
-  shipID: ShipID;
-  shipClass: ShipClass;
+  ship: Ship;
   orientation: ShipOrientation;
   position: Coordinates | null;
 }
@@ -22,7 +19,7 @@ export interface ShipState {
 export interface GridState {
   columns: number;
   rows: number;
-  cellStates: (ShipID | null)[][];
+  cellStates: (Ship['shipID'] | null)[][];
 }
 
 export interface SliceState {
