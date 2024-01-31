@@ -125,12 +125,6 @@ export enum ShipClassName {
   Submarine = 'SUBMARINE'
 }
 
-export type ShipInput = {
-  shipID: Scalars['ID']['input'];
-  size: Scalars['Int']['input'];
-  type: ShipClassName;
-};
-
 export enum ShipOrientation {
   Horizontal = 'HORIZONTAL',
   Vertical = 'VERTICAL'
@@ -138,7 +132,7 @@ export enum ShipOrientation {
 
 export type ShipPlacement = {
   orientation: ShipOrientation;
-  ship: ShipInput;
+  shipID: Scalars['ID']['input'];
   x: Scalars['Int']['input'];
   y: Scalars['Int']['input'];
 };
