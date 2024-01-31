@@ -1,16 +1,9 @@
-import { GameRoomStatus, ShipClass, ShipOrientation } from '../../__generated__/graphql';
-
-export interface ShipPlacement {
-  readonly shipClass: ShipClass;
-  readonly orientation: ShipOrientation;
-  readonly x: number;
-  readonly y: number;
-}
+import { GameRoomStatus, Ship } from '../../__generated__/graphql';
 
 export interface MoveResult {
   hit: boolean,
   gameWon: boolean,
-  shipSunk?: ShipPlacement,
+  shipSunk?: Ship['shipID'],
 }
 
 export enum ClientMessageCode {

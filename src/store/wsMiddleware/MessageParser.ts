@@ -11,14 +11,8 @@ import {
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
-  ShipPlacement,
 } from '../activeGameSlice/messageTypes';
-import {
-  GameRoomStatus,
-  ShipClass,
-  ShipClassName,
-  ShipOrientation,
-} from '../../__generated__/graphql';
+import { GameRoomStatus } from '../../__generated__/graphql';
 
 const isErrorMessage = (message: object): message is ErrorMessage => {
   const typed = message as ErrorMessage;
@@ -28,43 +22,11 @@ const isErrorMessage = (message: object): message is ErrorMessage => {
   );
 };
 
-const isShipClass = (obj: Object): obj is ShipClass => {
-  const typed = obj as ShipClass;
-
-  if (!Object.values(ShipClassName).includes(typed.type)) {
-    return false;
-  }
-
-  if (!isInteger(typed.size)) {
-    return false;
-  }
-
-  return true;
-};
-
-const isShipPlacement = (obj: object): obj is ShipPlacement => {
-  const typed = obj as ShipPlacement;
-
-  if (!Object.values(ShipOrientation).includes(typed.orientation)) {
-    return false;
-  }
-
-  if (!isShipClass(typed.shipClass)) {
-    return false;
-  }
-
-  if (!isInteger(typed.x) || !isInteger(typed.y)) {
-    return false;
-  }
-
-  return true;
-};
-
 const isMoveResult = (obj: object): obj is MoveResult => {
   const typed = obj as MoveResult;
 
   const { shipSunk } = typed;
-  if (shipSunk !== undefined && !isShipPlacement(shipSunk)) {
+  if (shipSunk !== undefined && !isString(shipSunk)) {
     return false;
   }
 
@@ -78,23 +40,23 @@ const isMoveResult = (obj: object): obj is MoveResult => {
 const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
   const {
     currentPlayer,
-    p1ShipsPlaced,
-    p1WSOpen,
-    p2ShipsPlaced,
-    p2WSOpen,
-    player1,
-    player2,
+    opponent,
+    opponentShipsPlaced,
+    opponentSocketConnected,
+    player,
+    playerShipsPlaced,
+    playerSocketConnected,
   } = obj as GameRoomStatus;
 
   if (currentPlayer && !isString(currentPlayer)) return false;
-  if (player2 && !isString(player2)) return false;
+  if (opponent && !isString(opponent)) return false;
 
   if (
-    !isString(player1)
-    || !isBoolean(p1ShipsPlaced)
-    || !isBoolean(p2ShipsPlaced)
-    || !isBoolean(p1WSOpen)
-    || !isBoolean(p2WSOpen)
+    !isString(player)
+    || !isBoolean(playerShipsPlaced)
+    || !isBoolean(playerSocketConnected)
+    || !isBoolean(opponentShipsPlaced)
+    || !isBoolean(opponentSocketConnected)
   ) return false;
 
   return true;
