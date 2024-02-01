@@ -7,8 +7,8 @@ extend type Mutation {
   joinRoom(inviteCode: String!): RoomJoinedResult!
   placeShips(
     roomID: ID!
-    shipPlacements: [ShipPlacement!]!
-  ): GameRoomStatus!
+    shipPlacements: [ShipPlacementInput!]!
+  ): ShipsPlacedResult
 }
 
 type RoomCreatedResult {
@@ -20,6 +20,11 @@ type RoomCreatedResult {
 type RoomJoinedResult {
   roomID: ID!
   wsAuthCode: String!
+}
+
+type ShipsPlacedResult {
+  placedShips: [PlacedShip!]!
+  gameRoomStatus: GameRoomStatus!
 }
 
 enum ShipClassName {
@@ -35,17 +40,24 @@ enum ShipOrientation {
   HORIZONTAL
 }
 
-input ShipPlacement {
+type Ship {
+  shipID: ID!
+  type: ShipClassName!
+  size: Int!
+}
+
+input ShipPlacementInput {
   shipID: ID!
   orientation: ShipOrientation!
   x: Int!
   y: Int!
 }
 
-type Ship {
-  shipID: ID!
-  type: ShipClassName!
-  size: Int!
+type PlacedShip {
+  ship: Ship!
+  orientation: ShipOrientation!
+  x: Int!
+  y: Int!
 }
 
 type GameSettings {

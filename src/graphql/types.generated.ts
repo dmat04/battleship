@@ -47,7 +47,7 @@ export type Mutation = {
   createRoom: RoomCreatedResult;
   guestLogin?: Maybe<LoginResult>;
   joinRoom: RoomJoinedResult;
-  placeShips: GameRoomStatus;
+  placeShips?: Maybe<ShipsPlacedResult>;
   registerUser?: Maybe<LoginResult>;
   registeredLogin?: Maybe<LoginResult>;
 };
@@ -65,7 +65,7 @@ export type MutationjoinRoomArgs = {
 
 export type MutationplaceShipsArgs = {
   roomID: Scalars['ID']['input'];
-  shipPlacements: Array<ShipPlacement>;
+  shipPlacements: Array<ShipPlacementInput>;
 };
 
 
@@ -78,6 +78,14 @@ export type MutationregisterUserArgs = {
 export type MutationregisteredLoginArgs = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+export type PlacedShip = {
+  __typename?: 'PlacedShip';
+  orientation: ShipOrientation;
+  ship: Ship;
+  x: Scalars['Int']['output'];
+  y: Scalars['Int']['output'];
 };
 
 export type Query = {
@@ -128,11 +136,17 @@ export type ShipOrientation =
   | 'HORIZONTAL'
   | 'VERTICAL';
 
-export type ShipPlacement = {
+export type ShipPlacementInput = {
   orientation: ShipOrientation;
   shipID: Scalars['ID']['input'];
   x: Scalars['Int']['input'];
   y: Scalars['Int']['input'];
+};
+
+export type ShipsPlacedResult = {
+  __typename?: 'ShipsPlacedResult';
+  gameRoomStatus: GameRoomStatus;
+  placedShips: Array<PlacedShip>;
 };
 
 export type UsernameQueryResult = {
@@ -221,13 +235,15 @@ export type ResolversTypes = {
   LoginResult: ResolverTypeWrapper<LoginResult>;
   Mutation: ResolverTypeWrapper<{}>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  PlacedShip: ResolverTypeWrapper<PlacedShip>;
   Query: ResolverTypeWrapper<{}>;
   RoomCreatedResult: ResolverTypeWrapper<RoomCreatedResult>;
   RoomJoinedResult: ResolverTypeWrapper<RoomJoinedResult>;
   Ship: ResolverTypeWrapper<Ship>;
   ShipClassName: ShipClassName;
   ShipOrientation: ShipOrientation;
-  ShipPlacement: ShipPlacement;
+  ShipPlacementInput: ShipPlacementInput;
+  ShipsPlacedResult: ResolverTypeWrapper<ShipsPlacedResult>;
   UsernameQueryResult: ResolverTypeWrapper<UsernameQueryResult>;
 };
 
@@ -241,11 +257,13 @@ export type ResolversParentTypes = {
   LoginResult: LoginResult;
   Mutation: {};
   ID: Scalars['ID']['output'];
+  PlacedShip: PlacedShip;
   Query: {};
   RoomCreatedResult: RoomCreatedResult;
   RoomJoinedResult: RoomJoinedResult;
   Ship: Ship;
-  ShipPlacement: ShipPlacement;
+  ShipPlacementInput: ShipPlacementInput;
+  ShipsPlacedResult: ShipsPlacedResult;
   UsernameQueryResult: UsernameQueryResult;
 };
 
@@ -279,9 +297,17 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createRoom?: Resolver<ResolversTypes['RoomCreatedResult'], ParentType, ContextType>;
   guestLogin?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, Partial<MutationguestLoginArgs>>;
   joinRoom?: Resolver<ResolversTypes['RoomJoinedResult'], ParentType, ContextType, RequireFields<MutationjoinRoomArgs, 'inviteCode'>>;
-  placeShips?: Resolver<ResolversTypes['GameRoomStatus'], ParentType, ContextType, RequireFields<MutationplaceShipsArgs, 'roomID' | 'shipPlacements'>>;
+  placeShips?: Resolver<Maybe<ResolversTypes['ShipsPlacedResult']>, ParentType, ContextType, RequireFields<MutationplaceShipsArgs, 'roomID' | 'shipPlacements'>>;
   registerUser?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationregisterUserArgs, 'password' | 'username'>>;
   registeredLogin?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationregisteredLoginArgs, 'password' | 'username'>>;
+};
+
+export type PlacedShipResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlacedShip'] = ResolversParentTypes['PlacedShip']> = {
+  orientation?: Resolver<ResolversTypes['ShipOrientation'], ParentType, ContextType>;
+  ship?: Resolver<ResolversTypes['Ship'], ParentType, ContextType>;
+  x?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  y?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -310,6 +336,12 @@ export type ShipResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ShipsPlacedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ShipsPlacedResult'] = ResolversParentTypes['ShipsPlacedResult']> = {
+  gameRoomStatus?: Resolver<ResolversTypes['GameRoomStatus'], ParentType, ContextType>;
+  placedShips?: Resolver<Array<ResolversTypes['PlacedShip']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UsernameQueryResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['UsernameQueryResult'] = ResolversParentTypes['UsernameQueryResult']> = {
   taken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -322,10 +354,12 @@ export type Resolvers<ContextType = any> = {
   GameSettings?: GameSettingsResolvers<ContextType>;
   LoginResult?: LoginResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PlacedShip?: PlacedShipResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RoomCreatedResult?: RoomCreatedResultResolvers<ContextType>;
   RoomJoinedResult?: RoomJoinedResultResolvers<ContextType>;
   Ship?: ShipResolvers<ContextType>;
+  ShipsPlacedResult?: ShipsPlacedResultResolvers<ContextType>;
   UsernameQueryResult?: UsernameQueryResultResolvers<ContextType>;
 };
 
