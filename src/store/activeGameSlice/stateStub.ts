@@ -1,136 +1,122 @@
-const stateStub = {
-  gameState: 'InProgress',
+import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
+import { GameState, SliceState } from './stateTypes';
+
+const stateStub: SliceState = {
+  gameState: GameState.InProgress,
   username: 'Guest#17315',
   gameSettings: {
-    __typename: 'GameSettings',
     boardHeight: 10,
     boardWidth: 10,
-    shipClasses: [
+    turnDuration: 20,
+    availableShips: [
       {
-        __typename: 'ShipClass',
-        size: 1,
-        type: 'SUBMARINE',
-      },
-      {
-        __typename: 'ShipClass',
-        size: 2,
-        type: 'DESTROYER',
-      },
-      {
-        __typename: 'ShipClass',
-        size: 3,
-        type: 'CRUISER',
-      },
-      {
-        __typename: 'ShipClass',
-        size: 4,
-        type: 'BATTLESHIP',
-      },
-      {
-        __typename: 'ShipClass',
+        shipID: 'CARRIER-0',
         size: 5,
-        type: 'CARRIER',
-      },
-    ],
-    shipCounts: [
-      {
-        __typename: 'ShipCount',
-        class: 'SUBMARINE',
-        count: 2,
+        type: ShipClassName.Carrier,
       },
       {
-        __typename: 'ShipCount',
-        class: 'DESTROYER',
-        count: 2,
+        shipID: 'BATTLESHIP-0',
+        size: 4,
+        type: ShipClassName.Battleship,
       },
       {
-        __typename: 'ShipCount',
-        class: 'CRUISER',
-        count: 1,
+        shipID: 'CRUISER-0',
+        size: 3,
+        type: ShipClassName.Cruiser,
       },
       {
-        __typename: 'ShipCount',
-        class: 'BATTLESHIP',
-        count: 1,
+        shipID: 'DESTROYER-0',
+        size: 2,
+        type: ShipClassName.Destroyer,
       },
       {
-        __typename: 'ShipCount',
-        class: 'CARRIER',
-        count: 1,
+        shipID: 'DESTROYER-0',
+        size: 2,
+        type: ShipClassName.Destroyer,
+      },
+      {
+        shipID: 'SUBMARINE-0',
+        size: 1,
+        type: ShipClassName.Submarine,
+      },
+      {
+        shipID: 'SUBMARINE-0',
+        size: 1,
+        type: ShipClassName.Submarine,
       },
     ],
   },
   currentPlayer: 'Guest#17315',
   playerShips: [
     {
-      orientation: 'VERTICAL',
-      shipClass: {
-        __typename: 'ShipClass',
+      ship: {
+        shipID: 'CARRIER-0',
         size: 5,
-        type: 'CARRIER',
+        type: ShipClassName.Carrier,
       },
+      orientation: ShipOrientation.Horizontal,
       x: 0,
-      y: 0,
-    },
-    {
-      orientation: 'VERTICAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 4,
-        type: 'BATTLESHIP',
-      },
-      x: 9,
-      y: 3,
-    },
-    {
-      orientation: 'HORIZONTAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 3,
-        type: 'CRUISER',
-      },
-      x: 4,
       y: 1,
     },
     {
-      orientation: 'HORIZONTAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 2,
-        type: 'DESTROYER',
+      ship: {
+        shipID: 'BATTLESHIP-0',
+        size: 4,
+        type: ShipClassName.Battleship,
       },
-      x: 0,
-      y: 7,
-    },
-    {
-      orientation: 'HORIZONTAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 2,
-        type: 'DESTROYER',
-      },
-      x: 5,
-      y: 5,
-    },
-    {
-      orientation: 'HORIZONTAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 1,
-        type: 'SUBMARINE',
-      },
-      x: 9,
+      orientation: ShipOrientation.Horizontal,
+      x: 6,
       y: 0,
     },
     {
-      orientation: 'HORIZONTAL',
-      shipClass: {
-        __typename: 'ShipClass',
-        size: 1,
-        type: 'SUBMARINE',
+      ship: {
+        shipID: 'CRUISER-0',
+        size: 3,
+        type: ShipClassName.Cruiser,
       },
-      x: 6,
-      y: 9,
+      orientation: ShipOrientation.Horizontal,
+      x: 0,
+      y: 3,
+    },
+    {
+      ship: {
+        shipID: 'DESTROYER-0',
+        size: 2,
+        type: ShipClassName.Destroyer,
+      },
+      orientation: ShipOrientation.Horizontal,
+      x: 7,
+      y: 2,
+    },
+    {
+      ship: {
+        shipID: 'DESTROYER-1',
+        size: 2,
+        type: ShipClassName.Destroyer,
+      },
+      orientation: ShipOrientation.Horizontal,
+      x: 4,
+      y: 5,
+    },
+    {
+      ship: {
+        shipID: 'SUBMARINE-0',
+        size: 1,
+        type: ShipClassName.Submarine,
+      },
+      orientation: ShipOrientation.Horizontal,
+      x: 1,
+      y: 7,
+    },
+    {
+      ship: {
+        shipID: 'SUBMARINE-1',
+        size: 1,
+        type: ShipClassName.Submarine,
+      },
+      orientation: ShipOrientation.Horizontal,
+      x: 8,
+      y: 7,
     },
   ],
   playerGridState: {
@@ -148,34 +134,44 @@ const stateStub = {
     ],
     sunkenShips: [
       {
-        orientation: 'VERTICAL',
-        shipClass: {
-          __typename: 'ShipClass',
-          size: 4,
-          type: 'BATTLESHIP',
+        ship: {
+          shipID: 'CARRIER-0',
+          size: 5,
+          type: ShipClassName.Carrier,
         },
-        x: 9,
+        orientation: ShipOrientation.Horizontal,
+        x: 0,
+        y: 1,
+      },
+      {
+        ship: {
+          shipID: 'CRUISER-0',
+          size: 3,
+          type: ShipClassName.Cruiser,
+        },
+        orientation: ShipOrientation.Horizontal,
+        x: 0,
         y: 3,
       },
       {
-        orientation: 'HORIZONTAL',
-        shipClass: {
-          __typename: 'ShipClass',
+        ship: {
+          shipID: 'DESTROYER-0',
           size: 2,
-          type: 'DESTROYER',
+          type: ShipClassName.Destroyer,
         },
-        x: 0,
-        y: 7,
+        orientation: ShipOrientation.Horizontal,
+        x: 7,
+        y: 2,
       },
       {
-        orientation: 'HORIZONTAL',
-        shipClass: {
-          __typename: 'ShipClass',
+        ship: {
+          shipID: 'SUBMARINE-0',
           size: 1,
-          type: 'SUBMARINE',
+          type: ShipClassName.Submarine,
         },
-        x: 6,
-        y: 9,
+        orientation: ShipOrientation.Horizontal,
+        x: 1,
+        y: 7,
       },
     ],
     inaccessibleCells: [],
@@ -186,7 +182,6 @@ const stateStub = {
     sunkenShips: [],
     inaccessibleCells: [],
   },
-  moveResultQueue: [],
 };
 
 export default stateStub;
