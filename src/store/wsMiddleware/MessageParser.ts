@@ -8,13 +8,13 @@ import {
   MoveResultMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
-  PlacedShip,
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
 } from './messageTypes';
 import {
   GameRoomStatus,
+  PlacedShip,
   Ship,
   ShipClassName,
   ShipOrientation,
