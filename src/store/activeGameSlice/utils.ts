@@ -1,6 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
-import { GameRoomStatus, GameSettings, ShipOrientation } from '../../__generated__/graphql';
+import {
+  GameRoomStatus,
+  GameSettings,
+  ShipOrientation,
+  PlacedShip,
+} from '../../__generated__/graphql';
 import {
   GameInitArgs,
   GameState,
@@ -9,7 +14,6 @@ import {
 } from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
-  ShipPlacement,
   GameStartedMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
@@ -17,31 +21,27 @@ import {
   ServerMessage,
   ServerMessageCode,
   MoveResultMessage,
-} from './messageTypes';
+} from '../wsMiddleware/messageTypes';
 import { assertNever } from '../../utils/typeUtils';
 
-const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus): GameState => {
-  const [playerWsOpen, opponentWsOpen] = playerName === gameRoomStatus.player1
-    ? [gameRoomStatus.p1WSOpen, gameRoomStatus.p2WSOpen]
-    : [gameRoomStatus.p2WSOpen, gameRoomStatus.p2WSOpen];
+const getInitialGameState = (gameRoomStatus: GameRoomStatus): GameState => {
+  const {
+    playerSocketConnected,
+    playerShipsPlaced,
+    opponent,
+    opponentSocketConnected,
+    opponentShipsPlaced,
+  } = gameRoomStatus;
 
-  const [playerPlaced, opponentPlaced] = playerName === gameRoomStatus.player1
-    ? [gameRoomStatus.p1ShipsPlaced, gameRoomStatus.p2ShipsPlaced]
-    : [gameRoomStatus.p2ShipsPlaced, gameRoomStatus.p1ShipsPlaced];
-
-  const opponentName = playerName === gameRoomStatus.player1
-    ? gameRoomStatus.player2
-    : gameRoomStatus.player1;
-
-  if (!playerWsOpen || !playerPlaced) {
+  if (!playerSocketConnected || !playerShipsPlaced) {
     return GameState.PlayerNotReady;
   }
 
-  if (opponentPlaced && opponentWsOpen) {
+  if (opponentShipsPlaced && opponentSocketConnected) {
     return GameState.OpponentReady;
   }
 
-  if (!opponentPlaced && !opponentWsOpen && !opponentName) {
+  if (!opponentShipsPlaced && !opponentSocketConnected && !opponent) {
     return GameState.WaitingForOpponentToConnect;
   }
 
@@ -50,39 +50,44 @@ const getInitialGameState = (playerName: string, gameRoomStatus: GameRoomStatus)
 
 const isWithinShip = (
   { x, y }: Coordinates,
-  ship: ShipPlacement,
+  {
+    ship, x: shipX, y: shipY, orientation,
+  }: PlacedShip,
 ): boolean => {
-  switch (ship.orientation) {
+  switch (orientation) {
     case ShipOrientation.Horizontal:
-      return x >= ship.x && x < ship.x + ship.shipClass.size && y === ship.y;
+      return x >= shipX && x < shipX + ship.size && y === shipY;
     case ShipOrientation.Vertical:
-      return y >= ship.y && y < ship.y + ship.shipClass.size && x === ship.x;
-    default: return assertNever(ship.orientation);
+      return y >= shipY && y < shipY + ship.size && x === shipX;
+    default: return assertNever(orientation);
   }
 };
 
 const getShipSurroundingCells = (
-  ship: ShipPlacement,
+  placedShip: PlacedShip,
   settings: GameSettings | null,
 ): Coordinates[] => {
   if (!settings) return [];
 
-  const xStart = Math.max(0, ship.x - 1);
-  const yStart = Math.max(0, ship.y - 1);
+  const {
+    ship, orientation, x, y,
+  } = placedShip;
+  const xStart = Math.max(0, x - 1);
+  const yStart = Math.max(0, y - 1);
 
-  const xEnd = ship.orientation === ShipOrientation.Horizontal
-    ? Math.min(ship.x + ship.shipClass.size, settings.boardWidth - 1)
-    : Math.min(ship.x + 1, settings.boardWidth - 1);
+  const xEnd = orientation === ShipOrientation.Horizontal
+    ? Math.min(x + ship.size, settings.boardWidth - 1)
+    : Math.min(x + 1, settings.boardWidth - 1);
 
-  const yEnd = ship.orientation === ShipOrientation.Vertical
-    ? Math.min(ship.y + ship.shipClass.size, settings.boardHeight - 1)
-    : Math.min(ship.y + 1, settings.boardHeight - 1);
+  const yEnd = orientation === ShipOrientation.Vertical
+    ? Math.min(y + ship.size, settings.boardHeight - 1)
+    : Math.min(y + 1, settings.boardHeight - 1);
 
   const cells = [];
-  for (let x = xStart; x <= xEnd; x += 1) {
-    for (let y = yStart; y <= yEnd; y += 1) {
-      const coord = { x, y };
-      if (!isWithinShip(coord, ship)) cells.push(coord);
+  for (let col = xStart; col <= xEnd; col += 1) {
+    for (let row = yStart; row <= yEnd; row += 1) {
+      const coord: Coordinates = { x: col, y: row };
+      if (!isWithinShip(coord, placedShip)) cells.push(coord);
     }
   }
 
@@ -99,6 +104,7 @@ const applyMoveResult = (message: MoveResultMessage, state: SliceState, grid: Gr
   const { hit, shipSunk } = result;
 
   state.currentPlayer = currentPlayer;
+
   if (shipSunk) {
     grid.sunkenShips.push(shipSunk);
 
@@ -150,7 +156,7 @@ const processRoomStatusResponseMessage = (
   state: SliceState,
   message: RoomStatusResponseMessage,
 ) => {
-  const newState = getInitialGameState(state.username, message.roomStatus);
+  const newState = getInitialGameState(message.roomStatus);
   const { gameState } = state;
 
   if (
@@ -175,19 +181,12 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
     gameRoomStatus,
   } = action.payload;
 
-  const playerShipsMapped: ShipPlacement[] = playerShips.map((ship) => ({
-    orientation: ship.orientation,
-    shipClass: ship.shipClass,
-    x: ship.position?.x ?? 0,
-    y: ship.position?.y ?? 0,
-  }));
-
   const newState: SliceState = {
-    gameState: getInitialGameState(playerName, gameRoomStatus),
+    gameState: getInitialGameState(gameRoomStatus),
     username: playerName,
     gameSettings: { ...gameSettings },
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
-    playerShips: playerShipsMapped,
+    playerShips: [...playerShips],
     playerGridState: {
       hitCells: [],
       missedCells: [],

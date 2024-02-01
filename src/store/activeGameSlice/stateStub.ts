@@ -1,5 +1,5 @@
 const stateStub = {
-  gameState: 'WaitingForOpponentToConnect',
+  gameState: 'InProgress',
   username: 'Guest#17315',
   gameSettings: {
     __typename: 'GameSettings',
@@ -135,18 +135,49 @@ const stateStub = {
   ],
   playerGridState: {
     hitCells: [
-      // { x: 0, y: 1 },
-      // { x: 1, y: 7 },
-      // { x: 9, y: 6 },
-      // { x: 5, y: 1 },
+      { x: 0, y: 1 },
+      { x: 1, y: 7 },
+      { x: 9, y: 6 },
+      { x: 5, y: 1 },
     ],
     missedCells: [
-      // { x: 2, y: 0 },
-      // { x: 9, y: 2 },
-      // { x: 5, y: 7 },
-      // { x: 0, y: 9 },
+      { x: 2, y: 0 },
+      { x: 9, y: 2 },
+      { x: 5, y: 7 },
+      { x: 0, y: 9 },
     ],
-    sunkenShips: [],
+    sunkenShips: [
+      {
+        orientation: 'VERTICAL',
+        shipClass: {
+          __typename: 'ShipClass',
+          size: 4,
+          type: 'BATTLESHIP',
+        },
+        x: 9,
+        y: 3,
+      },
+      {
+        orientation: 'HORIZONTAL',
+        shipClass: {
+          __typename: 'ShipClass',
+          size: 2,
+          type: 'DESTROYER',
+        },
+        x: 0,
+        y: 7,
+      },
+      {
+        orientation: 'HORIZONTAL',
+        shipClass: {
+          __typename: 'ShipClass',
+          size: 1,
+          type: 'SUBMARINE',
+        },
+        x: 6,
+        y: 9,
+      },
+    ],
     inaccessibleCells: [],
   },
   opponentGridState: {
