@@ -4,9 +4,8 @@ import { animated, useTransition } from '@react-spring/web';
 import { useCallback, useRef } from 'react';
 import GameGrid from '../GameGrid';
 import { Theme } from '../assets/themes/themeDefault';
-import { ShipOrientation } from '../../__generated__/graphql';
+import { PlacedShip, ShipOrientation } from '../../__generated__/graphql';
 import { Coordinates } from '../../store/shipPlacementSlice/types';
-import { ShipPlacement } from '../../store/activeGameSlice/messageTypes';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { assertNever } from '../../utils/typeUtils';
 import { calculateGridPosition } from './utils';
@@ -94,8 +93,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     }),
   );
 
-  const sinkTransition = useTransition<ShipPlacement, any>(gridState.sunkenShips, {
-    keys: (ship: ShipPlacement) => `${owner}-ship-${ship.x}-${ship.y}`,
+  const sinkTransition = useTransition<PlacedShip, any>(gridState.sunkenShips, {
+    keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
     from: theme.sunkShipAnimStart,
     enter: theme.sunkShipAnimSteps,
     onRest: () => { inaccessibleTransitionApi.start(); },
@@ -118,7 +117,7 @@ const LiveGameGrid = ({ owner }: Props) => {
               $col={item.x}
               $row={item.y}
               $orientation={item.orientation}
-              $size={item.shipClass.size}
+              $size={item.ship.size}
             />
           ))
         }
