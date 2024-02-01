@@ -25,7 +25,8 @@ import {
   GameSettings,
   RoomCreatedResult,
   RoomJoinedResult,
-  ShipPlacement,
+  ShipPlacementInput,
+  ShipsPlacedResult,
 } from '../graphql/types.generated';
 import { assertNever } from '../utils/typeUtils';
 import Game, { GameState } from '../game/Game';
@@ -281,8 +282,8 @@ const getRoomStatus = (roomID: string, player: string): GameRoomStatus => {
 const placeShips = (
   user: User,
   roomID: string,
-  shipPlacements: ShipPlacement[],
-): GameRoomStatus => {
+  shipPlacements: ShipPlacementInput[],
+): ShipsPlacedResult => {
   // get the game instance
   const room = getRoom(roomID);
 
@@ -292,13 +293,13 @@ const placeShips = (
 
   // validate the ship placements and throw an error if
   // any placement is invalid
-  const placementErrors = Board.verifyShipPlacements(shipPlacements, room.gameSettings);
-  if (placementErrors.length !== 0) {
+  const { errors, placedShips } = Board.verifyShipPlacements(shipPlacements, room.gameSettings);
+  if (errors || !placedShips) {
     throw new ValidationError({
       property: 'shipPlacements',
       errorKind: 'gameInput',
       value: JSON.stringify(shipPlacements),
-      message: `Invalid ship placements: ${placementErrors.join('; ')}`,
+      message: `Invalid ship placements: ${errors?.join('; ')}`,
     });
   }
 
@@ -319,7 +320,10 @@ const placeShips = (
   playerData.shipPlacements = [...shipPlacements];
   roomStatusUpdated(room);
 
-  return getRoomStatusInternal(room, user.username);
+  return {
+    placedShips,
+    gameRoomStatus: getRoomStatusInternal(room, user.username),
+  };
 };
 
 /**

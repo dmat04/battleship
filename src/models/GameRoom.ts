@@ -2,16 +2,16 @@ import { WebSocket } from 'uWebSockets.js';
 import type { User } from './User';
 import type { WSData } from './WSData';
 import Game from '../game/Game';
-import { GameSettings, ShipPlacement } from '../graphql/types.generated';
+import { GameSettings, ShipPlacementInput } from '../graphql/types.generated';
 
 export interface PlayerData {
   readonly user: User;
-  shipPlacements?: ShipPlacement[];
+  shipPlacements?: ShipPlacementInput[];
   socket?: WebSocket<WSData>;
 }
 
 export interface ActivePlayerData extends PlayerData {
-  shipPlacements: ShipPlacement[];
+  shipPlacements: ShipPlacementInput[];
   socket: WebSocket<WSData>;
 }
 

@@ -2,9 +2,8 @@ import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
 import {
   GameSettings,
-  Ship,
-  ShipOrientation,
-  ShipPlacement,
+  PlacedShip,
+  ShipPlacementInput,
 } from '../graphql/types.generated';
 import DefaultSettings from './DefaultSettings';
 
@@ -24,13 +23,6 @@ export interface MoveResult {
   hit: boolean,
   gameWon: boolean,
   shipSunk?: PlacedShip,
-}
-
-interface PlacedShip {
-  readonly ship: Ship;
-  readonly x: number;
-  readonly y: number;
-  readonly orientation: ShipOrientation;
 }
 
 interface ShipState {
@@ -100,8 +92,8 @@ class Board {
     return board;
   };
 
-  private static mapShipPlacmentsToInternal = (
-    shipPlacements: ShipPlacement[],
+  private static mapShipIDsToShips = (
+    shipPlacements: ShipPlacementInput[],
     settings: GameSettings,
   ): PlacedShip[] => shipPlacements.map((shipPlacement) => {
     const ship = settings.availableShips
@@ -118,10 +110,10 @@ class Board {
   });
 
   private static initShipStates = (
-    ships: ShipPlacement[],
+    ships: ShipPlacementInput[],
     settings: GameSettings,
   ): ShipState[] => {
-    const shipsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
+    const shipsInternal = Board.mapShipIDsToShips(ships, settings);
 
     return shipsInternal.map((shipPlacement) => ({
       shipPlacement,
@@ -348,18 +340,16 @@ class Board {
    */
   private static placeShips = (
     playerBoard: PlayerBoard,
-    ships: ShipPlacement[],
+    ships: ShipPlacementInput[],
     settings: GameSettings,
   ): void => {
-    const errors = Board.verifyShipPlacements(ships, settings);
+    const { errors, placedShips } = Board.verifyShipPlacements(ships, settings);
 
-    if (errors.length !== 0) {
+    if (errors || !placedShips) {
       throw new Error('Cannot place ships - ship placements are invalid');
     }
 
-    const shipPlacementsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
-
-    shipPlacementsInternal.forEach((placement) => {
+    placedShips.forEach((placement) => {
       // Place the ship
       Board.placeShip(playerBoard, placement, settings);
     });
@@ -377,9 +367,12 @@ class Board {
    * @static
    */
   public static verifyShipPlacements = (
-    ships: ShipPlacement[],
+    ships: ShipPlacementInput[],
     settings: GameSettings,
-  ): string[] => {
+  ): {
+    errors: string[] | null,
+    placedShips: PlacedShip[] | null,
+  } => {
     const testBoard = this.initPlayerBoard(settings);
 
     // Found errors
@@ -400,9 +393,9 @@ class Board {
       errors.push('Too many shipPlacements given');
     }
 
-    const placementsInternal = Board.mapShipPlacmentsToInternal(ships, settings);
+    const placedShips = Board.mapShipIDsToShips(ships, settings);
 
-    placementsInternal.forEach((placement) => {
+    placedShips.forEach((placement) => {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
@@ -423,7 +416,10 @@ class Board {
       }
     });
 
-    return errors;
+    return {
+      errors: errors.length > 0 ? errors : null,
+      placedShips: errors.length > 0 ? null : placedShips,
+    };
   };
 
   /**
@@ -436,7 +432,7 @@ class Board {
    *
    * @param ships The ships to be placed
    */
-  placePlayer1Ships = (ships: ShipPlacement[]): void => {
+  placePlayer1Ships = (ships: ShipPlacementInput[]): void => {
     try {
       Board.placeShips(this.player1Board, ships, this.settings);
       this.p1Ships = Board.initShipStates(ships, this.settings);
@@ -459,7 +455,7 @@ class Board {
    *
    * @param ships The ships to be placed
    */
-  placePlayer2Ships = (ships: ShipPlacement[]): void => {
+  placePlayer2Ships = (ships: ShipPlacementInput[]): void => {
     try {
       Board.placeShips(this.player2Board, ships, this.settings);
       this.p2Ships = Board.initShipStates(ships, this.settings);

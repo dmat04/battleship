@@ -1,6 +1,6 @@
 import Board, { MoveResult, Player } from './Board';
 import GameplayError from './GameplayError';
-import { GameSettings, ShipPlacement } from '../graphql/types.generated';
+import { GameSettings, ShipPlacementInput } from '../graphql/types.generated';
 import DefaultSettings from './DefaultSettings';
 
 export enum GameState {
@@ -81,7 +81,7 @@ class Game {
    * @param p1Placement Ship placements for Player 1
    * @param p2Placement Ship placements for Player 2
    */
-  initialize = (p1Placement: ShipPlacement[], p2Placement: ShipPlacement[]): void => {
+  initialize = (p1Placement: ShipPlacementInput[], p2Placement: ShipPlacementInput[]): void => {
     // Check that the current state is 'Created'
     if (this.state !== GameState.Created) {
       throw new Error('Game initialization error - game is already initialized');
