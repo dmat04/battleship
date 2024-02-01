@@ -199,7 +199,6 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
       sunkenShips: [],
       inaccessibleCells: [],
     },
-    moveResultQueue: [],
   };
 
   return newState;

@@ -43,7 +43,6 @@ const initialState: SliceState = {
     sunkenShips: [],
     inaccessibleCells: [],
   },
-  moveResultQueue: [],
 };
 
 const activeGameSlice = createSlice({

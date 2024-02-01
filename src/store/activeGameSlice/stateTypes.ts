@@ -1,6 +1,5 @@
 import { GameRoomStatus, GameSettings, PlacedShip } from '../../__generated__/graphql';
 import { Coordinates } from '../shipPlacementSlice/types';
-import { OpponentMoveResultMessage, OwnMoveResultMessage } from '../wsMiddleware/messageTypes';
 
 export enum GameState {
   PlayerNotReady = 'PlayerNotReady',
@@ -27,7 +26,6 @@ export interface SliceState {
   playerShips: PlacedShip[];
   playerGridState: GridState;
   opponentGridState: GridState;
-  moveResultQueue: (OpponentMoveResultMessage | OwnMoveResultMessage)[];
 }
 
 export interface GameInitArgs {
