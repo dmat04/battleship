@@ -10,7 +10,7 @@ import {
   ClientMessageCode,
   RoomStatusRequestMessage,
   ShootMessage,
-} from '../activeGameSlice/messageTypes';
+} from './messageTypes';
 
 interface WSConnectionArgs {
   roomID: string,

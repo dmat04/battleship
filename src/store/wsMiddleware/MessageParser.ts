@@ -12,7 +12,7 @@ import {
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
-} from '../activeGameSlice/messageTypes';
+} from './messageTypes';
 import {
   GameRoomStatus,
   Ship,
