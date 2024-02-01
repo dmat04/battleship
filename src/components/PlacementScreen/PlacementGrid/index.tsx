@@ -44,10 +44,10 @@ const PlacementGrid = () => {
           {
             ships
               .filter(({ position }) => position !== null)
-              .map(({ shipID, orientation, position }) => (
+              .map(({ ship, orientation, position }) => (
                 <DraggableShip
-                  key={`${shipID}-${position?.x}-${position?.y}-${orientation}`}
-                  id={shipID}
+                  key={`${ship.shipID}-${position?.x}-${position?.y}-${orientation}`}
+                  id={ship.shipID}
                 />
               ))
           }
@@ -56,10 +56,10 @@ const PlacementGrid = () => {
           {
             ships
               .filter(({ position }) => position === null)
-              .map(({ shipID, orientation }) => (
+              .map(({ ship, orientation }) => (
                 <DraggableShip
-                  key={`${shipID}-${orientation}`}
-                  id={shipID}
+                  key={`${ship.shipID}-${orientation}`}
+                  id={ship.shipID}
                 />
               ))
           }

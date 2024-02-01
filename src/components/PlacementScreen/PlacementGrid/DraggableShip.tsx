@@ -38,12 +38,12 @@ const DraggableShip = ({ id }: PropTypes) => {
   const initialStyle = generateStyle(
     dragProps.gridPosition?.y ?? -1,
     dragProps.gridPosition?.x ?? -1,
-    dragProps.shipClass.size,
+    dragProps.ship.size,
     dragProps.orientation === ShipOrientation.Vertical,
   );
 
   const {
-    shipClass,
+    ship,
     orientation,
     gridPosition,
     listeners,
@@ -62,7 +62,7 @@ const DraggableShip = ({ id }: PropTypes) => {
 
   return (
     <NavyHolderContainer
-      $shipSize={shipClass.size}
+      $shipSize={ship.size}
       $vertical={orientation === ShipOrientation.Vertical}
     >
       <div style={{ gridArea: '1 / 1 / 1 / -1' }} />

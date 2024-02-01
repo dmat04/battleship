@@ -23,7 +23,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   const gridState = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid);
   const shipState = useSelector(
     ({ shipPlacement }: RootState) => shipPlacement.shipStates.find(
-      ({ shipID }) => shipID === id,
+      ({ ship }) => ship.shipID === id,
     ),
   );
 
@@ -174,7 +174,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   if (shipState === undefined) return null;
 
   return {
-    shipClass: shipState.shipClass,
+    ship: shipState.ship,
     orientation: shipState.orientation,
     gridPosition: shipState.position,
     listeners,
