@@ -1,8 +1,8 @@
-import { ShipPlacement } from '../../src/graphql/types.generated';
+import { ShipPlacementInput } from '../../src/graphql/types.generated';
 
 interface PlacementTestData {
   populatedCells: number,
-  placements: ShipPlacement[],
+  placements: ShipPlacementInput[],
 }
 
 export const validPlacements: PlacementTestData[] = [

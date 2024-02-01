@@ -1,6 +1,6 @@
-import { ShipPlacement } from '../../src/graphql/types.generated';
+import { ShipPlacementInput } from '../../src/graphql/types.generated';
 
-export const p1Placements: ShipPlacement[] = [
+export const p1Placements: ShipPlacementInput[] = [
   {
     shipID: 'CARRIER-0',
     orientation: 'VERTICAL',
@@ -45,7 +45,7 @@ export const p1Placements: ShipPlacement[] = [
   },
 ];
 
-export const p2Placements: ShipPlacement[] = [
+export const p2Placements: ShipPlacementInput[] = [
   {
     shipID: 'CARRIER-0',
     orientation: 'HORIZONTAL',
