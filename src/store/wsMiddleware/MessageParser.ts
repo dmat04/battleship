@@ -8,11 +8,17 @@ import {
   MoveResultMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
+  PlacedShip,
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
 } from '../activeGameSlice/messageTypes';
-import { GameRoomStatus } from '../../__generated__/graphql';
+import {
+  GameRoomStatus,
+  Ship,
+  ShipClassName,
+  ShipOrientation,
+} from '../../__generated__/graphql';
 
 const isErrorMessage = (message: object): message is ErrorMessage => {
   const typed = message as ErrorMessage;
@@ -22,11 +28,47 @@ const isErrorMessage = (message: object): message is ErrorMessage => {
   );
 };
 
+const isShip = (obj: Object): obj is Ship => {
+  const typed = obj as Ship;
+
+  if (!isString(typed.shipID)) {
+    return false;
+  }
+
+  if (!isInteger(typed.size)) {
+    return false;
+  }
+
+  if (!Object.values(ShipClassName).includes(typed.type)) {
+    return false;
+  }
+
+  return true;
+};
+
+const isPlacedShip = (obj: object): obj is PlacedShip => {
+  const typed = obj as PlacedShip;
+
+  if (!isInteger(typed.x) || !isInteger(typed.y)) {
+    return false;
+  }
+
+  if (!Object.values(ShipOrientation).includes(typed.orientation)) {
+    return false;
+  }
+
+  if (!isShip(typed.ship)) {
+    return false;
+  }
+
+  return true;
+};
+
 const isMoveResult = (obj: object): obj is MoveResult => {
   const typed = obj as MoveResult;
 
   const { shipSunk } = typed;
-  if (shipSunk !== undefined && !isString(shipSunk)) {
+  if (shipSunk !== undefined && !isPlacedShip(shipSunk)) {
     return false;
   }
 
