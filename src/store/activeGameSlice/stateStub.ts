@@ -30,7 +30,7 @@ const stateStub: SliceState = {
         type: ShipClassName.Destroyer,
       },
       {
-        shipID: 'DESTROYER-0',
+        shipID: 'DESTROYER-1',
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -40,7 +40,7 @@ const stateStub: SliceState = {
         type: ShipClassName.Submarine,
       },
       {
-        shipID: 'SUBMARINE-0',
+        shipID: 'SUBMARINE-1',
         size: 1,
         type: ShipClassName.Submarine,
       },

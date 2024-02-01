@@ -7,6 +7,7 @@ import {
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
 import type { AppDispatch, RootState } from '../store';
+import stateStub from './stateStub';
 
 export const hitOpponentCell = createAction<Coordinates>('sendMessage/hitOpponentCell');
 
@@ -47,7 +48,7 @@ const initialState: SliceState = {
 
 const activeGameSlice = createSlice({
   name: 'activeGame',
-  initialState,
+  initialState: stateStub,
   reducers: {
     initGame: processGameInitAction,
     messageReceived: processMessageReceived,
