@@ -1,4 +1,4 @@
-import Board, { MoveResult, Player } from './Board';
+import Board, { CellHitResult, Player } from './Board';
 import GameplayError from './GameplayError';
 import { GameSettings, ShipPlacementInput } from '../graphql/types.generated';
 import DefaultSettings from './DefaultSettings';
@@ -64,12 +64,39 @@ class Game {
   }
 
   /**
-   * Changes the currentPlayer property to the next player based on the current value.
+   * Check that the given player username may perform a move.
+   * Throws if the game state is not 'InProgress' or it isn't
+   * the specified players turn.
    */
-  private nextPlayer = (): void => {
-    this.currentPlayer = this.currentPlayer === this.player1
-      ? this.player2
-      : this.player1;
+  private assertCanMakeMove = (player: string): void => {
+    // Check that the Game is in the appropriate state
+    if (this.state !== GameState.InProgress) {
+      throw new Error('Game error - game is not in progress');
+    }
+
+    // Check that it is the specified players move
+    if (player !== this.currentPlayer) {
+      throw new GameplayError('Game error - not the players turn');
+    }
+  };
+
+  /**
+   * Advance the round counter and change the current player after a move is made.
+   * If the move was a hit, the current player is not changed, the current player
+   * gets another move.
+   *
+   * @param moveResult The MoveResult resulting from the made move.
+   */
+  private advanceRound = (moveResult: CellHitResult): void => {
+    // Advance the round number
+    this.round += 1;
+    // If a hit is made, the current player gets another round, ...
+    if (!moveResult.hit) {
+      // .. otherwise move on to the next player
+      this.currentPlayer = this.currentPlayer === this.player1
+        ? this.player2
+        : this.player1;
+    }
   };
 
   /**
@@ -123,16 +150,8 @@ class Game {
    * @param y The y coordinate of the opposing players grid to hit
    * @returns A MoveResult indicating the result of the move.
    */
-  makeMove = (player: string, x: number, y: number): MoveResult => {
-    // Check that the Game is in the appropriate state
-    if (this.state !== GameState.InProgress) {
-      throw new Error('Game error - game is not in progress');
-    }
-
-    // Check that it is the specified players move
-    if (player !== this.currentPlayer) {
-      throw new GameplayError('Game error - not the players turn');
-    }
+  makeMove = (player: string, x: number, y: number): CellHitResult => {
+    this.assertCanMakeMove(player);
 
     // Perform the cell hit - this will throw if coords are out of
     // bounds, or cell has already been hit
@@ -142,13 +161,20 @@ class Game {
       y,
     );
 
-    // Advance the round number
-    this.round += 1;
-    // If a hit is made, the current player gets another round, ...
-    if (!result.hit) {
-      // .. otherwise move on to the next player
-      this.nextPlayer();
-    }
+    this.advanceRound(result);
+
+    return result;
+  };
+
+  makeRandomMove = (player: string): CellHitResult => {
+    this.assertCanMakeMove(player);
+
+    // Perform the cell hit
+    const result = this.board.hitRandomCell(
+      player === this.player1 ? Player.Player1 : Player.Player2,
+    );
+
+    this.advanceRound(result);
 
     return result;
   };
