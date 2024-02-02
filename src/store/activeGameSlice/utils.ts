@@ -15,12 +15,12 @@ import {
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
   GameStartedMessage,
+  MoveResultMessageBase,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
-  MoveResultMessage,
 } from '../wsMiddleware/messageTypes';
 import { assertNever } from '../../utils/typeUtils';
 
@@ -94,14 +94,14 @@ const getShipSurroundingCells = (
   return cells;
 };
 
-const applyMoveResult = (message: MoveResultMessage, state: SliceState, grid: GridState) => {
+const applyMoveResult = (message: MoveResultMessageBase, state: SliceState, grid: GridState) => {
   const {
-    result,
-    currentPlayer,
     x,
     y,
+    hit,
+    shipSunk,
+    currentPlayer,
   } = message;
-  const { hit, shipSunk } = result;
 
   state.currentPlayer = currentPlayer;
 
