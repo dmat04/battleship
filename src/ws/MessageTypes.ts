@@ -1,4 +1,4 @@
-import { MoveResult } from '../game/Board';
+import { CellHitResult } from '../game/Board';
 import { GameRoomStatus } from '../graphql/types.generated';
 
 export enum ClientMessageCode {
@@ -15,18 +15,10 @@ export enum ServerMessageCode {
   GameStarted = 'GameStarted',
 }
 
-export interface CoordinateMessage {
+export interface ShootMessage {
+  code: ClientMessageCode.Shoot;
   x: number;
   y: number;
-}
-
-interface MoveResultMessage extends CoordinateMessage {
-  result: MoveResult;
-  currentPlayer: string;
-}
-
-export interface ShootMessage extends CoordinateMessage {
-  code: ClientMessageCode.Shoot;
 }
 
 export interface RoomStatusRequestMessage {
@@ -38,11 +30,15 @@ export interface ErrorMessage {
   message: string;
 }
 
-export interface OpponentMoveResultMessage extends MoveResultMessage {
+interface MoveResultMessageBase extends CellHitResult {
+  currentPlayer: string;
+}
+
+export interface OpponentMoveResultMessage extends MoveResultMessageBase {
   code: ServerMessageCode.OpponentMoveResult;
 }
 
-export interface OwnMoveResultMessage extends MoveResultMessage {
+export interface OwnMoveResultMessage extends MoveResultMessageBase {
   code: ServerMessageCode.OwnMoveResult;
 }
 

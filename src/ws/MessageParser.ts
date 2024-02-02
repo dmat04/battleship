@@ -1,19 +1,19 @@
 import { isInteger } from 'lodash';
 import { assertNever } from '../utils/typeUtils';
-import { CoordinateMessage, ClientMessageCode, ClientMessage } from './MessageTypes';
+import { ClientMessageCode, ClientMessage, ShootMessage } from './MessageTypes';
 
-const parseCoordinateMessage = (message: any): CoordinateMessage | undefined => {
-  if ('x' in message
-    && isInteger(message.x)
-    && 'y' in message
-    && isInteger(message.y)) {
-    return {
-      x: message.x,
-      y: message.y,
-    };
+const isShootMessage = (message: object): message is ShootMessage => {
+  const typed = message as ShootMessage;
+
+  if (!isInteger(typed.x) || !isInteger(typed.y)) {
+    return false;
   }
 
-  return undefined;
+  if (!typed.code || typed.code !== ClientMessageCode.Shoot) {
+    return false;
+  }
+
+  return true;
 };
 
 const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
@@ -40,16 +40,7 @@ const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
   const code: ClientMessageCode = message.code as ClientMessageCode;
 
   switch (code) {
-    case ClientMessageCode.Shoot: {
-      const coordinates = parseCoordinateMessage(message);
-      if (coordinates) {
-        return {
-          ...coordinates,
-          code,
-        };
-      }
-      return undefined;
-    }
+    case ClientMessageCode.Shoot: return isShootMessage(message) ? message : undefined;
     case ClientMessageCode.RoomStatusRequest: return { code };
     default: return assertNever(code);
   }
