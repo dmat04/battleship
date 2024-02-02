@@ -1,3 +1,4 @@
+import { shuffle } from 'lodash';
 import { assertNever } from '../utils/typeUtils';
 import GameplayError from './GameplayError';
 import {
@@ -19,7 +20,9 @@ export enum Player {
   Player2 = 2,
 }
 
-export interface MoveResult {
+export interface CellHitResult {
+  x: number,
+  y: number,
   hit: boolean,
   gameWon: boolean,
   shipSunk?: PlacedShip,
@@ -523,7 +526,7 @@ class Board {
    *          MoveResult.Hit if a populated cell is struck, or
    *          MoveResult.GameWon if the last remaining populated cell is struck.
    */
-  hitCell = (player: Player, x: number, y: number): MoveResult => {
+  hitCell = (player: Player, x: number, y: number): CellHitResult => {
     // Check if hit is within bounds
     if (!this.checkCellBounds(x, y)) {
       throw new GameplayError('Hit coordinates out of bounds');
@@ -562,10 +565,12 @@ class Board {
     targetBoard[y][x] = newState;
 
     // Construct a default return value
-    const result: MoveResult = {
+    const result: CellHitResult = {
       hit: false,
       gameWon: false,
       shipSunk: undefined,
+      x,
+      y,
     };
 
     // If a ship has been hit...
@@ -589,6 +594,58 @@ class Board {
     }
 
     return result;
+  };
+
+  /**
+   * Hit a random opponent cell. Will hit a pseudo-random cell which has
+   * not been hit before. Throws a GamePlayError if no hittable cells are
+   * found on the opponend board.
+   *
+   * @param player The player making the random hit.
+   * @returns A MoveResult containing the result of the random hit.
+   */
+  hitRandomCell = (player: Player): CellHitResult => {
+    // Select the opponent board
+    const targetBoard = player === Player.Player1
+      ? this.player2Board
+      : this.player1Board;
+
+    // Filter out all row indices which contain at least one
+    // 'hittable' cell (meaning its eaither 'empty' or 'populated', as
+    // opposed to 'hit' or 'miss')
+    const hittableRows: number[] = [];
+    targetBoard.forEach((row, idx) => {
+      if (row.some((cell) => cell === CellState.Empty || cell === CellState.Populated)) {
+        hittableRows.push(idx);
+      }
+    });
+
+    if (hittableRows.length === 0) {
+      throw new GameplayError('Making a random hit - no more cells left to hit');
+    }
+
+    // Select a random row
+    const rowIndex = shuffle(hittableRows)[0];
+    const row = targetBoard[rowIndex];
+
+    // Within the selected row,
+    // filter out all column indices which are 'hittable'
+    const hittableColumns: number[] = [];
+    row.forEach((cell, idx) => {
+      if (cell === CellState.Empty || cell === CellState.Populated) {
+        hittableColumns.push(idx);
+      }
+    });
+
+    if (hittableColumns.length === 0) {
+      throw new GameplayError('Making a random hit - no more cells left to hit');
+    }
+
+    // Select a random column
+    const columnIndex = shuffle(hittableColumns)[0];
+
+    // Perform the hit on the selected row and column
+    return this.hitCell(player, columnIndex, rowIndex);
   };
 
   /**
