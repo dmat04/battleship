@@ -4,10 +4,15 @@ import AuthService from './AuthService';
 import DefaultSettings from '../game/DefaultSettings';
 import ValidationError from './errors/ValidationError';
 import EntityNotFoundError from './errors/EntityNotFoundError';
-import type { GameRoom, PlayerData } from '../models/GameRoom';
+import type {
+  ActiveGameRoom,
+  ActivePlayerData,
+  GameRoom,
+  PlayerData,
+} from '../models/GameRoom';
 import type { User } from '../models/User';
 import { WSData } from '../models/WSData';
-import Board from '../game/Board';
+import Board, { CellHitResult } from '../game/Board';
 import { getPlayerData, gameRoomIsActive, getActivePlayerData } from '../models/GameRoom';
 import {
   ClientMessage,
@@ -30,6 +35,7 @@ import {
 } from '../graphql/types.generated';
 import { assertNever } from '../utils/typeUtils';
 import Game, { GameState } from '../game/Game';
+import GameplayError from '../game/GameplayError';
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -143,6 +149,50 @@ const createNewRoom = (user: User): RoomCreatedResult => {
   };
 };
 
+const sendMoveResultResponse = (
+  currentPlayer: string,
+  moveResult: CellHitResult,
+  player: ActivePlayerData,
+  opponent: ActivePlayerData,
+) => {
+  const ownResponse: OwnMoveResultMessage = {
+    ...moveResult,
+    code: ServerMessageCode.OwnMoveResult,
+    currentPlayer,
+  };
+
+  const opponentResponse: OpponentMoveResultMessage = {
+    ...moveResult,
+    code: ServerMessageCode.OpponentMoveResult,
+    currentPlayer,
+  };
+
+  player.socket.send(JSON.stringify(ownResponse));
+  opponent.socket.send(JSON.stringify(opponentResponse));
+};
+
+const turnTimeExpired = (room: ActiveGameRoom) => {
+  const {
+    turnTimer,
+    gameInstance,
+  } = room;
+
+  let currentPlayer = gameInstance.getCurrentPlayer();
+  const { playerData, opponentData } = getActivePlayerData(room, currentPlayer);
+
+  try {
+    const moveResult = gameInstance.makeRandomMove(currentPlayer);
+    currentPlayer = gameInstance.getCurrentPlayer();
+
+    sendMoveResultResponse(currentPlayer, moveResult, playerData, opponentData);
+    turnTimer.refresh();
+  } catch (error) {
+    if (error instanceof GameplayError) {
+      // TODO: handle case when random move couldn't be made
+    }
+  }
+};
+
 const roomStatusUpdated = (room: GameRoom) => {
   if (!gameRoomIsActive(room)) return;
 
@@ -165,6 +215,12 @@ const roomStatusUpdated = (room: GameRoom) => {
   const encoded = JSON.stringify(message);
   room.player1.socket.send(encoded);
   room.player2.socket.send(encoded);
+
+  // eslint-disable-next-line no-param-reassign
+  room.turnTimer = setTimeout(
+    () => turnTimeExpired(room),
+    room.gameSettings.turnDuration * 1000,
+  );
 };
 
 /**
@@ -448,24 +504,14 @@ const handleShootMessage = (room: GameRoom, player: string, message: ShootMessag
     const result = room.gameInstance.makeMove(playerData.user.username, x, y);
     const currentPlayer = room.gameInstance.getCurrentPlayer();
 
-    const ownResponse: OwnMoveResultMessage = {
-      code: ServerMessageCode.OwnMoveResult,
-      x,
-      y,
-      result,
+    sendMoveResultResponse(
       currentPlayer,
-    };
-
-    const opponentResponse: OpponentMoveResultMessage = {
-      code: ServerMessageCode.OpponentMoveResult,
-      x,
-      y,
       result,
-      currentPlayer,
-    };
+      playerData,
+      opponentData,
+    );
 
-    playerData.socket.send(JSON.stringify(ownResponse));
-    opponentData.socket.send(JSON.stringify(opponentResponse));
+    room.turnTimer.refresh();
   } catch (error) {
     let errorMessage = 'An unknown error has occured';
 
