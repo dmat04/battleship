@@ -21,12 +21,14 @@ export interface GameRoom {
   readonly player1: PlayerData;
   player2?: PlayerData;
   gameInstance?: Game;
+  turnTimer?: NodeJS.Timeout;
 }
 
 export interface ActiveGameRoom extends GameRoom {
   player1: ActivePlayerData;
   player2: ActivePlayerData;
   gameInstance: Game;
+  turnTimer: NodeJS.Timeout;
 }
 
 export const getPlayerData = (room: GameRoom, player: string): {
