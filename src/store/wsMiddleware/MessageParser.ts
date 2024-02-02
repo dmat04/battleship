@@ -4,8 +4,7 @@ import {
   AuthenticatedResponseMessage,
   ErrorMessage,
   GameStartedMessage,
-  MoveResult,
-  MoveResultMessage,
+  MoveResultMessageBase,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
   RoomStatusResponseMessage,
@@ -64,21 +63,6 @@ const isPlacedShip = (obj: object): obj is PlacedShip => {
   return true;
 };
 
-const isMoveResult = (obj: object): obj is MoveResult => {
-  const typed = obj as MoveResult;
-
-  const { shipSunk } = typed;
-  if (shipSunk !== undefined && !isPlacedShip(shipSunk)) {
-    return false;
-  }
-
-  if (!isBoolean(typed.gameWon) || !isBoolean(typed.hit)) {
-    return false;
-  }
-
-  return true;
-};
-
 const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
   const {
     currentPlayer,
@@ -104,15 +88,17 @@ const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
   return true;
 };
 
-const isMoveResultMessage = (message: object): message is MoveResultMessage => {
-  const typed = message as MoveResultMessage;
+const isMoveResultMessage = (message: object): message is MoveResultMessageBase => {
+  const typed = message as MoveResultMessageBase;
 
-  return (
-    isInteger(typed.x)
-    && isInteger(typed.y)
-    && isString(typed.currentPlayer)
-    && isMoveResult(typed.result)
-  );
+  if (!isInteger(typed.x) || !isInteger(typed.y)) return false;
+  if (!isBoolean(typed.hit) || !isBoolean(typed.gameWon)) return false;
+  if (!isString(typed.currentPlayer)) return false;
+
+  const { shipSunk } = typed;
+  if (shipSunk !== undefined && !isPlacedShip(shipSunk)) return false;
+
+  return true;
 };
 
 const isOpponentMoveResultMessage = (message: object): message is OpponentMoveResultMessage => 'code' in message

@@ -1,6 +1,8 @@
-import { GameRoomStatus, PlacedShip } from '../../__generated__/graphql';
+import { PlacedShip, GameRoomStatus } from '../../__generated__/graphql';
 
-export interface MoveResult {
+export interface CellHitResult {
+  x: number,
+  y: number,
   hit: boolean,
   gameWon: boolean,
   shipSunk?: PlacedShip,
@@ -20,18 +22,10 @@ export enum ServerMessageCode {
   GameStarted = 'GameStarted',
 }
 
-export interface CoordinateMessage {
+export interface ShootMessage {
+  code: ClientMessageCode.Shoot;
   x: number;
   y: number;
-}
-
-export interface MoveResultMessage extends CoordinateMessage {
-  result: MoveResult;
-  currentPlayer: string;
-}
-
-export interface ShootMessage extends CoordinateMessage {
-  code: ClientMessageCode.Shoot;
 }
 
 export interface RoomStatusRequestMessage {
@@ -43,11 +37,15 @@ export interface ErrorMessage {
   message: string;
 }
 
-export interface OpponentMoveResultMessage extends MoveResultMessage {
+export interface MoveResultMessageBase extends CellHitResult {
+  currentPlayer: string;
+}
+
+export interface OpponentMoveResultMessage extends MoveResultMessageBase {
   code: ServerMessageCode.OpponentMoveResult;
 }
 
-export interface OwnMoveResultMessage extends MoveResultMessage {
+export interface OwnMoveResultMessage extends MoveResultMessageBase {
   code: ServerMessageCode.OwnMoveResult;
 }
 
