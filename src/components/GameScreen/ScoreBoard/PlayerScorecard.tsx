@@ -1,33 +1,76 @@
 import styled from 'styled-components';
 import { useMemo } from 'react';
-import { animated, useTransition } from '@react-spring/web';
+import { animated, useSpring, useTransition } from '@react-spring/web';
 import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 import { type Ship, PlacedShip } from '../../../__generated__/graphql';
+import type { Owner } from '.';
 
-const PlayerScoreContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+const Container = styled.div<{ $owner: Owner }>`
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    "timer"
+    "name"
+    "score";
   gap: 1em;
+  grid-template-rows: 0.5rem 0.5fr 1fr;
+  justify-items: ${(props) => (props.$owner === 'player' ? 'end' : 'start')};
+
+  @media (max-width: 60em) {
+    gap: 0.5em;
+  }
+`;
+
+const TurnTimer = styled(animated.div) <{ $owner: Owner }>`
+  position: relative;
+  grid-area: timer;
+  height: 100%;
+  width: 100%;
+  background-color: red;
+`;
+
+const PlayerName = styled.p<{ $owner: Owner }>`
+  grid-area: name;
+  font-size: x-large;
+  word-wrap: break-word;
+  word-break: break-all;
+  text-overflow: ellipsis;
+
+  @media (max-width: 60em) {
+    font-size: medium;
+  }
+`;
+
+const PlayerScoreContainer = styled.div<{ $owner: Owner }>`
+  grid-area: score;
+  display: flex;
+  flex-direction: ${(props) => (props.$owner === 'player' ? 'row' : 'row-reverse')};
+  gap: 0.33em;
+
+  @media (max-width: 60em) {
+    gap: 0.2em;
+  }
 `;
 
 const ShipIndicator = styled(animated.div) <{ $ship: ShipScoreItem, theme: Theme }>`
   width: 1em;
   height: ${(props) => `${props.$ship.size}em`};
+
+  @media (max-width: 60em) {
+    width: 0.5em;
+    height: ${(props) => `${props.$ship.size / 2}em`};
+  }
 `;
 
 const mapScoreItems = (
   availableShips: Ship[],
   sunkenShips: PlacedShip[],
-  owner: Props['owner'],
+  owner: Owner,
 ) => {
   const score: ShipScoreItem[] = availableShips
     .map((ship) => ({ ...ship, sunken: false }))
-    .sort((a, b) => {
-      let res = a.size - b.size;
-      if (owner !== 'player') res = -res;
-      return res;
-    });
+    .sort((a, b) => a.size - b.size);
 
   sunkenShips.forEach((sunken) => {
     const idx = score.findIndex((item) => item.shipID === sunken.ship.shipID);
@@ -42,13 +85,14 @@ const mapScoreItems = (
 export type ShipScoreItem = Ship & { sunken: boolean };
 
 export interface Props {
-  owner: 'player' | 'opponent';
+  owner: Owner;
+  username: string;
 }
 
-const PlayerScorecard = ({ owner }: Props) => {
+const PlayerScorecard = ({ owner, username }: Props) => {
   const activeGame = useAppSelector((state) => state.activeGame);
 
-  const { gameSettings } = activeGame;
+  const { gameSettings, currentPlayer } = activeGame;
   const gridState = owner === 'player'
     ? activeGame.playerGridState
     : activeGame.opponentGridState;
@@ -70,16 +114,31 @@ const PlayerScorecard = ({ owner }: Props) => {
     },
   );
 
+  const timerSpring = useSpring({
+    from: { width: '100%' },
+    to: { width: '0%' },
+    config: {
+      duration: (gameSettings?.turnDuration ?? 0) * 1000,
+    },
+  });
+
   if (!gameSettings) return null;
 
   return (
-    <PlayerScoreContainer>
+    <Container $owner={owner}>
       {
-        animatedScoreItems(
-          (style, item) => <ShipIndicator style={style} $ship={item} />,
-        )
+        currentPlayer !== username
+        && <TurnTimer $owner={owner} style={timerSpring} />
       }
-    </PlayerScoreContainer>
+      <PlayerName $owner={owner}>{username}</PlayerName>
+      <PlayerScoreContainer $owner={owner}>
+        {
+          animatedScoreItems(
+            (style, item) => <ShipIndicator style={style} $ship={item} />,
+          )
+        }
+      </PlayerScoreContainer>
+    </Container>
   );
 };
 

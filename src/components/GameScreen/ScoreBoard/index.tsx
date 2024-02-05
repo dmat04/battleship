@@ -3,20 +3,26 @@ import { useAppSelector } from '../../../store/store';
 import { GameState } from '../../../store/activeGameSlice/stateTypes';
 import StatusMessage from './StatusMessage';
 import PlayerScorecard from './PlayerScorecard';
+import { Theme } from '../../assets/themes/themeDefault';
 
-const Container = styled.div`
+const Container = styled.div<{ theme: Theme }>`
   grid-area: score;
-  display: flex;
-  gap: 1em;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-column-gap: ${(props) => props.theme.paddingSm};
 `;
 
-const Scoreboard = () => {
-  const { gameState, gameSettings } = useAppSelector((state) => state.activeGame);
+export type Owner = 'player' | 'opponent';
 
-  if (!gameSettings) return null;
+const Scoreboard = () => {
+  const {
+    gameState,
+    gameSettings,
+    playerName,
+    opponentName,
+  } = useAppSelector((state) => state.activeGame);
+
+  if (!gameSettings || !opponentName) return null;
 
   if (gameState !== GameState.InProgress) {
     return (
@@ -28,8 +34,8 @@ const Scoreboard = () => {
 
   return (
     <Container>
-      <PlayerScorecard owner="player" />
-      <PlayerScorecard owner="opponent" />
+      <PlayerScorecard owner="player" username={playerName} />
+      <PlayerScorecard owner="opponent" username="opponent" />
     </Container>
   );
 };
