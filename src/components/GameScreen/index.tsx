@@ -11,7 +11,7 @@ const Container = styled.div<{ theme: Theme }>`
   grid-template-areas: 
     "score score"
     "player opponent";
-  grid-template-rows: 1.5fr 5fr;
+  grid-template-rows: 1fr 5fr;
   grid-row-gap: ${(props) => props.theme.paddingSm};
   grid-column-gap: ${(props) => props.theme.paddingSm};
   width: 60vw;
@@ -21,8 +21,8 @@ const Container = styled.div<{ theme: Theme }>`
       ". player ."
       "score score score"
       "opponent opponent opponent";
-    grid-template-rows: 3fr 8vh 5fr;
-    grid-template-columns: 1fr 5fr 1fr;
+    grid-template-rows: none;
+    grid-template-columns: 1fr 4fr 1fr;
     grid-row-gap: ${(props) => props.theme.paddingMin};
     align-items: center;
     width: 95vw;
