@@ -154,9 +154,9 @@ const moveResultMessageReceived = (
 
 const processRoomStatusResponseMessage = (
   state: SliceState,
-  message: RoomStatusResponseMessage,
+  { roomStatus }: RoomStatusResponseMessage,
 ) => {
-  const newState = getInitialGameState(message.roomStatus);
+  const newState = getInitialGameState(roomStatus);
   const { gameState } = state;
 
   if (
@@ -165,6 +165,10 @@ const processRoomStatusResponseMessage = (
     || gameState === GameState.WaitingForOpponentToGetReady
   ) {
     state.gameState = newState;
+  }
+
+  if (roomStatus.opponent) {
+    state.opponentName = roomStatus.opponent;
   }
 };
 
@@ -176,6 +180,7 @@ const processGameStartedMessage = (state: SliceState, message: GameStartedMessag
 export const processGameInitAction = (state: SliceState, action: PayloadAction<GameInitArgs>) => {
   const {
     playerName,
+    opponentName,
     playerShips,
     gameSettings,
     gameRoomStatus,
@@ -183,7 +188,8 @@ export const processGameInitAction = (state: SliceState, action: PayloadAction<G
 
   const newState: SliceState = {
     gameState: getInitialGameState(gameRoomStatus),
-    username: playerName,
+    playerName,
+    opponentName,
     gameSettings: { ...gameSettings },
     currentPlayer: gameRoomStatus.currentPlayer ?? null,
     playerShips: [...playerShips],
@@ -234,7 +240,7 @@ export const processMessageReceived = (
 export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
   if (state.gameState !== GameState.InProgress) return false;
 
-  if (state.currentPlayer !== state.username) return false;
+  if (state.currentPlayer !== state.playerName) return false;
 
   const { opponentGridState } = state;
 

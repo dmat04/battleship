@@ -20,8 +20,9 @@ export interface GridState {
 
 export interface SliceState {
   gameState: GameState;
-  username: string,
   gameSettings: GameSettings | null,
+  playerName: string,
+  opponentName: string | null,
   currentPlayer: string | null;
   playerShips: PlacedShip[];
   playerGridState: GridState;
@@ -30,6 +31,7 @@ export interface SliceState {
 
 export interface GameInitArgs {
   playerName: string;
+  opponentName: string | null;
   playerShips: PlacedShip[];
   gameSettings: GameSettings;
   gameRoomStatus: GameRoomStatus;

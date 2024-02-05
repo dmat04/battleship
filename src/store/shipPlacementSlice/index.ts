@@ -53,6 +53,7 @@ export const submitPlacement = createAsyncThunk<
     if (shipPlacementResult) {
       const gameInitArgs: GameInitArgs = {
         playerName,
+        opponentName: shipPlacementResult.gameRoomStatus.opponent ?? null,
         gameSettings,
         gameRoomStatus: shipPlacementResult.gameRoomStatus,
         playerShips: shipPlacementResult.placedShips,

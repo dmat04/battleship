@@ -3,7 +3,8 @@ import { GameState, SliceState } from './stateTypes';
 
 const stateStub: SliceState = {
   gameState: GameState.InProgress,
-  username: 'Guest#17315',
+  playerName: 'Guest#17315',
+  opponentName: 'OpponentName',
   gameSettings: {
     boardHeight: 10,
     boardWidth: 10,

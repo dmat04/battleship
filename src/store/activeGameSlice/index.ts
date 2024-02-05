@@ -28,8 +28,9 @@ export const opponentCellClicked = createAsyncThunk<
 
 const initialState: SliceState = {
   gameState: GameState.PlayerNotReady,
-  username: '',
   gameSettings: null,
+  playerName: '',
+  opponentName: '',
   currentPlayer: null,
   playerShips: [],
   playerGridState: {
