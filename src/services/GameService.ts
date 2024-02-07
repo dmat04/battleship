@@ -149,6 +149,20 @@ const createNewRoom = (user: User): RoomCreatedResult => {
   };
 };
 
+const getRoomStatusInternal = (room: GameRoom, player: string): GameRoomStatus => {
+  const { playerData, opponentData } = getPlayerData(room, player);
+
+  return {
+    player: playerData?.user.username ?? '',
+    playerShipsPlaced: playerData?.shipPlacements !== undefined,
+    playerSocketConnected: playerData?.socket !== undefined,
+    opponent: opponentData?.user.username,
+    opponentShipsPlaced: opponentData?.shipPlacements !== undefined,
+    opponentSocketConnected: opponentData?.socket !== undefined,
+    currentPlayer: room.gameInstance?.getCurrentPlayer(),
+  };
+};
+
 const sendMoveResultResponse = (
   currentPlayer: string,
   moveResult: CellHitResult,
@@ -193,7 +207,7 @@ const turnTimeExpired = (room: ActiveGameRoom) => {
   }
 };
 
-const roomStatusUpdated = (room: GameRoom) => {
+const attemptToStartGame = (room: GameRoom) => {
   if (!gameRoomIsActive(room)) return;
 
   const { gameInstance } = room;
@@ -221,6 +235,28 @@ const roomStatusUpdated = (room: GameRoom) => {
     () => turnTimeExpired(room),
     room.gameSettings.turnDuration * 1000,
   );
+};
+
+const roomStatusUpdated = (room: GameRoom) => {
+  if (room.player1.socket) {
+    const message: RoomStatusResponseMessage = {
+      code: ServerMessageCode.RoomStatusResponse,
+      roomStatus: getRoomStatusInternal(room, room.player1.user.username),
+    };
+
+    room.player1.socket.send(JSON.stringify(message));
+  }
+
+  if (room?.player2 && room.player2.socket) {
+    const message: RoomStatusResponseMessage = {
+      code: ServerMessageCode.RoomStatusResponse,
+      roomStatus: getRoomStatusInternal(room, room.player2.user.username),
+    };
+
+    room.player2.socket.send(JSON.stringify(message));
+  }
+
+  attemptToStartGame(room);
 };
 
 /**
@@ -272,6 +308,8 @@ const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult =>
 
   const wsAuthCode = AuthService.encodeWSToken({ username: user.username, roomID: gameRoom.id });
 
+  roomStatusUpdated(gameRoom);
+
   return {
     roomID: gameRoom.id,
     wsAuthCode,
@@ -292,20 +330,6 @@ const getGameSettings = (roomID: string): GameSettings => {
   }
 
   return room.gameSettings;
-};
-
-const getRoomStatusInternal = (room: GameRoom, player: string): GameRoomStatus => {
-  const { playerData, opponentData } = getPlayerData(room, player);
-
-  return {
-    player: playerData?.user.username ?? '',
-    playerShipsPlaced: playerData?.shipPlacements !== undefined,
-    playerSocketConnected: playerData?.socket !== undefined,
-    opponent: opponentData?.user.username,
-    opponentShipsPlaced: opponentData?.shipPlacements !== undefined,
-    opponentSocketConnected: opponentData?.socket !== undefined,
-    currentPlayer: room.gameInstance?.getCurrentPlayer(),
-  };
 };
 
 /**
