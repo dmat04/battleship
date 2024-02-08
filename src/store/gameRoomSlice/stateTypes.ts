@@ -25,6 +25,7 @@ export interface SliceStateInactive {
   playerShips?: PlacedShip[];
   inviteCode: string | undefined;
   gameStarted: boolean;
+  round: number;
   playerScore: ScoreState;
   opponentScore: ScoreState;
   requestStatus: {

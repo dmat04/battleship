@@ -14,6 +14,7 @@ const stateStub: SliceStateActive = {
   playerStatus: PlayerStatus.Connected,
   opponentStatus: PlayerStatus.Disconnected,
   gameStarted: true,
+  round: 10,
   gameSettings: {
     boardHeight: 10,
     boardWidth: 10,

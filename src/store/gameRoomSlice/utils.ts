@@ -126,6 +126,8 @@ const moveResultMessageReceived = (
 ) => {
   if (!GameRoomIsReady(state)) return;
 
+  state.round += 1;
+
   const { code } = message;
   switch (code) {
     case ServerMessageCode.OpponentMoveResult:

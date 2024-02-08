@@ -50,6 +50,7 @@ const initialState: SliceStateInactive = {
   playerShips: undefined,
   inviteCode: undefined,
   gameStarted: false,
+  round: 0,
   playerScore: {
     hitCells: [],
     missedCells: [],
