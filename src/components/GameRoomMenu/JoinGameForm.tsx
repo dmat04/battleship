@@ -5,7 +5,7 @@ import { Theme } from '../assets/themes/themeDefault';
 import FormButton from '../FormButton';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import Spinner from '../Spinner';
-import { joinGameRoom } from '../../store/gameRoomSlice';
+import { joinGameRoom } from '../../store/gameRoomSlice/thunks';
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;
@@ -31,7 +31,7 @@ interface Props {
 
 const JoinGameForm = ({ disabled }: Props) => {
   const dispatch = useAppDispatch();
-  const loadingJoinRoom = useAppSelector((state) => state.gameRoom.loadingJoinRoom);
+  const loadingJoinRoom = useAppSelector((state) => state.gameRoom.requestStatus.loadingJoinRoom);
 
   const [code, setCode] = useState<string>('');
 

@@ -6,7 +6,7 @@ import { Theme } from '../assets/themes/themeDefault';
 import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
 import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
-import { createGameRoom } from '../../store/gameRoomSlice';
+import { createGameRoom } from '../../store/gameRoomSlice/thunks';
 import Spinner from '../Spinner';
 import { MenuItemButton } from '../Button';
 
@@ -21,7 +21,7 @@ const GameRoomMenu = () => {
   const dispatch = useAppDispatch();
   const roomID = useAppSelector((state) => state.gameRoom.roomID);
   const auth = useAppSelector((state) => state.auth.loginResult);
-  const loadingNewRoom = useAppSelector((state) => state.gameRoom.loadingNewRoom);
+  const loadingNewRoom = useAppSelector((state) => state.gameRoom.requestStatus.loadingNewRoom);
 
   const collapsible = useRef<CollapsibleAPI>(null);
   const [collapsibleOpen, setCollapsibleOpen] = useState<boolean>(false);

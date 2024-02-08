@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import { GameState } from '../../../store/activeGameSlice/stateTypes';
+import { GameStateValues } from '../../../store/gameRoomSlice/stateTypes';
 import { assertNever } from '../../../utils/typeUtils';
 import { Theme } from '../../assets/themes/themeDefault';
 import Spinner from '../../Spinner';
 
 const Container = styled.div<{ theme: Theme }>`
+  grid-area: 1 / 1 / span 1 / span 2;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -23,7 +24,7 @@ const Label = styled.p<{ theme: Theme }>`
 `;
 
 interface Props {
-  gameState: GameState;
+  gameState: GameStateValues;
 }
 
 const StatusMessage = ({ gameState }: Props) => {
@@ -31,23 +32,23 @@ const StatusMessage = ({ gameState }: Props) => {
   let showSpinner = false;
 
   switch (gameState) {
-    case GameState.PlayerNotReady:
-    case GameState.InProgress:
-    case GameState.Finished:
+    case GameStateValues.PlayerNotReady:
+    case GameStateValues.InProgress:
+    case GameStateValues.Finished:
       message = '';
       break;
-    case GameState.WaitingForOpponentToConnect:
+    case GameStateValues.WaitingForOpponentToConnect:
       message = 'Waiting for an opponent to connect';
       showSpinner = true;
       break;
-    case GameState.WaitingForOpponentToGetReady:
+    case GameStateValues.WaitingForOpponentToGetReady:
       message = 'Opponent connected, waiting for opponent to get ready';
       showSpinner = true;
       break;
-    case GameState.OpponentReady:
+    case GameStateValues.OpponentReady:
       message = 'Opponent ready, game starting...';
       break;
-    case GameState.OpponentDisconnected:
+    case GameStateValues.OpponentDisconnected:
       message = 'Opponent disconnected...';
       break;
     default: assertNever(gameState);

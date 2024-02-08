@@ -9,10 +9,13 @@ import { Coordinates } from '../../store/shipPlacementSlice/types';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { assertNever } from '../../utils/typeUtils';
 import { calculateGridPosition } from './utils';
-import { opponentCellClicked } from '../../store/activeGameSlice';
+import { opponentCellClicked } from '../../store/gameRoomSlice';
+import { GameStateValues } from '../../store/gameRoomSlice/stateTypes';
 
-const Container = styled.div<{ $owner: Props['owner'] }>`
+const Container = styled.div<{ $owner: Props['owner'], $active: boolean }>`
   grid-area: ${(props) => props.$owner};
+  opacity: ${(props) => (props.$active ? 1 : 0.5)};
+  transition: opacity 0.5s;
 `;
 
 const Cell = styled(animated.div) <{ $col: number, $row: number }>`
@@ -47,11 +50,23 @@ interface Props {
 
 const LiveGameGrid = ({ owner }: Props) => {
   const { gameScreenTheme: theme } = useTheme() as Theme;
-  const settings = useAppSelector((state) => state.activeGame.gameSettings);
-  const gridState = useAppSelector((state) => {
+
+  const currentPlayer = useAppSelector((state) => state.gameRoom.currentPlayer);
+  const ownerName = useAppSelector((state) => {
     switch (owner) {
-      case 'player': return state.activeGame.playerGridState;
-      case 'opponent': return state.activeGame.opponentGridState;
+      case 'player': return state.gameRoom.playerName;
+      case 'opponent': return state.gameRoom.opponentName;
+      default: return assertNever(owner);
+    }
+  });
+
+  const settings = useAppSelector((state) => state.gameRoom.gameSettings);
+  const gridState = useAppSelector((state) => {
+    if (state.gameRoom.gameState !== GameStateValues.InProgress) return null;
+
+    switch (owner) {
+      case 'player': return state.gameRoom.playerScore;
+      case 'opponent': return state.gameRoom.opponentScore;
       default: return assertNever(owner);
     }
   });
@@ -67,7 +82,7 @@ const LiveGameGrid = ({ owner }: Props) => {
   }, [dispatch, settings, owner]);
 
   const hitTransition = useTransition<Coordinates, any>(
-    gridState.hitCells,
+    gridState?.hitCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
       from: theme.hitCellAnimStart,
@@ -76,7 +91,7 @@ const LiveGameGrid = ({ owner }: Props) => {
   );
 
   const missTransition = useTransition<Coordinates, any>(
-    gridState.missedCells,
+    gridState?.missedCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
       from: theme.missedCellAnimStart,
@@ -85,7 +100,7 @@ const LiveGameGrid = ({ owner }: Props) => {
   );
 
   const [inaccessibleTransition, inaccessibleTransitionApi] = useTransition<Coordinates, any>(
-    gridState.inaccessibleCells,
+    gridState?.inaccessibleCells ?? [],
     () => ({
       keys: (coord: Coordinates) => `${owner}-empty-${coord.x}-${coord.y}`,
       from: theme.missedCellAnimStart,
@@ -93,17 +108,20 @@ const LiveGameGrid = ({ owner }: Props) => {
     }),
   );
 
-  const sinkTransition = useTransition<PlacedShip, any>(gridState.sunkenShips, {
-    keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
-    from: theme.sunkShipAnimStart,
-    enter: theme.sunkShipAnimSteps,
-    onRest: () => { inaccessibleTransitionApi.start(); },
-  });
+  const sinkTransition = useTransition<PlacedShip, any>(
+    gridState?.sunkenShips ?? [],
+    {
+      keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
+      from: theme.sunkShipAnimStart,
+      enter: theme.sunkShipAnimSteps,
+      onRest: () => { inaccessibleTransitionApi.start(); },
+    },
+  );
 
   const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
 
   return (
-    <Container $owner={owner}>
+    <Container $owner={owner} $active={currentPlayer !== ownerName}>
       <GameGrid
         ref={gridRef}
         onClick={gridClickHandler}

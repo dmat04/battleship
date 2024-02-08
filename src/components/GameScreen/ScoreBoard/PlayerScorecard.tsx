@@ -5,6 +5,7 @@ import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 import { type Ship, PlacedShip } from '../../../__generated__/graphql';
 import type { Owner } from '.';
+import { GameStateValues, ScoreState } from '../../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ $owner: Owner }>`
   position: relative;
@@ -27,7 +28,7 @@ const TurnTimer = styled(animated.div) <{ $owner: Owner }>`
   grid-area: timer;
   height: 100%;
   width: 100%;
-  background-color: red;
+  background-color: ${(props) => (props.$owner === 'player' ? 'green' : 'red')};
 `;
 
 const PlayerName = styled.p<{ $owner: Owner }>`
@@ -66,7 +67,6 @@ const ShipIndicator = styled(animated.div) <{ $ship: ShipScoreItem, theme: Theme
 const mapScoreItems = (
   availableShips: Ship[],
   sunkenShips: PlacedShip[],
-  owner: Owner,
 ) => {
   const score: ShipScoreItem[] = availableShips
     .map((ship) => ({ ...ship, sunken: false }))
@@ -90,20 +90,33 @@ export interface Props {
 }
 
 const PlayerScorecard = ({ owner, username }: Props) => {
-  const activeGame = useAppSelector((state) => state.activeGame);
+  const gameRoom = useAppSelector((state) => state.gameRoom);
 
-  const { gameSettings, currentPlayer } = activeGame;
-  const gridState = owner === 'player'
-    ? activeGame.playerGridState
-    : activeGame.opponentGridState;
+  let score: ScoreState = {
+    hitCells: [],
+    missedCells: [],
+    inaccessibleCells: [],
+    sunkenShips: [],
+  };
+
+  if (gameRoom.gameState === GameStateValues.InProgress) {
+    score = owner === 'player'
+      ? gameRoom.playerScore
+      : gameRoom.opponentScore;
+  }
+
+  const { gameSettings, currentPlayer } = gameRoom;
+  const ownerName = owner === 'player'
+    ? gameRoom.playerName
+    : gameRoom.opponentName;
 
   const scoreItems: ShipScoreItem[] = useMemo(() => {
     if (gameSettings?.availableShips) {
-      return mapScoreItems(gameSettings.availableShips, gridState.sunkenShips, owner);
+      return mapScoreItems(gameSettings.availableShips, score.sunkenShips);
     }
 
     return [];
-  }, [gameSettings?.availableShips, gridState.sunkenShips, owner]);
+  }, [gameSettings?.availableShips, score.sunkenShips]);
 
   const animatedScoreItems = useTransition<ShipScoreItem, any>(
     scoreItems,
@@ -124,13 +137,19 @@ const PlayerScorecard = ({ owner, username }: Props) => {
 
   if (!gameSettings) return null;
 
+  const active = currentPlayer === ownerName;
+
   return (
     <Container $owner={owner}>
       {
-        currentPlayer !== username
+        active
         && <TurnTimer $owner={owner} style={timerSpring} />
       }
-      <PlayerName $owner={owner}>{username}</PlayerName>
+
+      <PlayerName $owner={owner}>
+        {username}
+      </PlayerName>
+
       <PlayerScoreContainer $owner={owner}>
         {
           animatedScoreItems(

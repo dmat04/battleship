@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useAppSelector } from '../../../store/store';
-import { GameState } from '../../../store/activeGameSlice/stateTypes';
+import { GameStateValues } from '../../../store/gameRoomSlice/stateTypes';
 import StatusMessage from './StatusMessage';
 import PlayerScorecard from './PlayerScorecard';
 import { Theme } from '../../assets/themes/themeDefault';
@@ -20,11 +20,9 @@ const Scoreboard = () => {
     gameSettings,
     playerName,
     opponentName,
-  } = useAppSelector((state) => state.activeGame);
+  } = useAppSelector((state) => state.gameRoom);
 
-  if (!gameSettings || !opponentName) return null;
-
-  if (gameState !== GameState.InProgress) {
+  if (gameState !== GameStateValues.InProgress || !gameSettings || !opponentName) {
     return (
       <Container>
         <StatusMessage gameState={gameState} />
@@ -35,7 +33,7 @@ const Scoreboard = () => {
   return (
     <Container>
       <PlayerScorecard owner="player" username={playerName} />
-      <PlayerScorecard owner="opponent" username="opponent" />
+      <PlayerScorecard owner="opponent" username={opponentName} />
     </Container>
   );
 };

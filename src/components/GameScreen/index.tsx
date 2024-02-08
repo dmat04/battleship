@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Navigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/store';
-import { GameState } from '../../store/activeGameSlice/stateTypes';
+import { GameStateValues } from '../../store/gameRoomSlice/stateTypes';
 import Scoreboard from './ScoreBoard';
 import LiveGameGrid from './LiveGameGrid';
 import { Theme } from '../assets/themes/themeDefault';
@@ -30,11 +30,11 @@ const Container = styled.div<{ theme: Theme }>`
 `;
 
 const GameScreen = () => {
-  const gameState = useAppSelector((state) => state.activeGame.gameState);
+  const gameState = useAppSelector((state) => state.gameRoom.gameState);
 
-  // if (gameState === GameState.PlayerNotReady) {
-  //   return <Navigate to="/getReady" replace />;
-  // }
+  if (gameState === GameStateValues.PlayerNotReady) {
+    return <Navigate to="/getReady" replace />;
+  }
 
   return (
     <Container>

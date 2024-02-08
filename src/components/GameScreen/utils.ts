@@ -4,7 +4,7 @@ import { Coordinates } from '../../store/shipPlacementSlice/types';
 export const calculateGridPosition = (
   ev: React.MouseEvent<HTMLDivElement, MouseEvent>,
   gridElement: HTMLDivElement | null,
-  settings: GameSettings | null,
+  settings: GameSettings | null | undefined,
 ): Coordinates | undefined => {
   if (!gridElement || !settings) return undefined;
 
