@@ -45,7 +45,7 @@ export const getPlayerData = (room: GameRoom, player: string): {
 
   if (player === room.player2?.user.username) {
     playerData = room.player2;
-    opponentData = room.player2;
+    opponentData = room.player1;
   }
 
   return {
