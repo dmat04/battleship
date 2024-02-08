@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import { useMemo } from 'react';
-import { animated, useSpring, useTransition } from '@react-spring/web';
+import { animated, useTransition } from '@react-spring/web';
 import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 import { type Ship, PlacedShip } from '../../../__generated__/graphql';
 import type { Owner } from '.';
 import { GameRoomIsReady, ScoreState } from '../../../store/gameRoomSlice/stateTypes';
+import TurnTimer from './TurnTimer';
 
 const Container = styled.div<{ $owner: Owner }>`
   position: relative;
@@ -21,14 +22,6 @@ const Container = styled.div<{ $owner: Owner }>`
   @media (max-width: 60em) {
     gap: 0.5em;
   }
-`;
-
-const TurnTimer = styled(animated.div) <{ $owner: Owner }>`
-  position: relative;
-  grid-area: timer;
-  height: 100%;
-  width: 100%;
-  background-color: ${(props) => (props.$owner === 'player' ? 'green' : 'red')};
 `;
 
 const PlayerName = styled.p<{ $owner: Owner }>`
@@ -127,14 +120,6 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     },
   );
 
-  const timerSpring = useSpring({
-    from: { width: '100%' },
-    to: { width: '0%' },
-    config: {
-      duration: (gameSettings?.turnDuration ?? 0) * 1000,
-    },
-  });
-
   if (!gameSettings) return null;
 
   const active = currentPlayer === ownerName;
@@ -142,8 +127,7 @@ const PlayerScorecard = ({ owner, username }: Props) => {
   return (
     <Container $owner={owner}>
       {
-        active
-        && <TurnTimer $owner={owner} style={timerSpring} />
+        active && <TurnTimer owner={owner} />
       }
 
       <PlayerName $owner={owner}>
