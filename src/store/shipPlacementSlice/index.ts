@@ -6,7 +6,7 @@ import {
   processResetShipAction,
   processRotateShipAction,
 } from './utils';
-import { fetchGameSettings } from '../gameRoomSlice';
+import { fetchGameSettings } from '../gameRoomSlice/thunks';
 
 const initialState: SliceState = {
   placedIDs: [],
