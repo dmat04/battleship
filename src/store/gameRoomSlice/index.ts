@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { UnknownAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { GameStateValues, SliceState } from './stateTypes';
+import { GameStateValues, SliceState, SliceStateInactive } from './stateTypes';
 import {
   processMessageReceived,
   canHitOpponentCell,
@@ -39,7 +39,7 @@ export const opponentCellClicked = createAsyncThunk<
   },
 );
 
-const initialState: SliceState = {
+const initialState: SliceStateInactive = {
   gameState: GameStateValues.PlayerNotReady,
   roomID: undefined,
   inviteCode: undefined,
@@ -55,9 +55,9 @@ const initialState: SliceState = {
   },
 };
 
-const activeGameSlice = createSlice({
+const gameRoomSlice = createSlice({
   name: 'activeGame',
-  initialState,
+  initialState: initialState as SliceState,
   reducers: { },
   extraReducers: (builder) => {
     builder.addCase(messageReceived, (state, action) => {
@@ -102,4 +102,4 @@ const activeGameSlice = createSlice({
   },
 });
 
-export default activeGameSlice.reducer;
+export default gameRoomSlice.reducer;
