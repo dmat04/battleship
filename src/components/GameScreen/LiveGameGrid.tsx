@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../store/store';
 import { assertNever } from '../../utils/typeUtils';
 import { calculateGridPosition } from './utils';
 import { opponentCellClicked } from '../../store/gameRoomSlice';
-import { GameStateValues } from '../../store/gameRoomSlice/stateTypes';
+import { GameRoomIsReady } from '../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ $owner: Props['owner'], $active: boolean }>`
   grid-area: ${(props) => props.$owner};
@@ -49,9 +49,11 @@ interface Props {
 }
 
 const LiveGameGrid = ({ owner }: Props) => {
+  const dispatch = useAppDispatch();
+  const gridRef = useRef<HTMLDivElement>(null);
   const { gameScreenTheme: theme } = useTheme() as Theme;
 
-  const currentPlayer = useAppSelector((state) => state.gameRoom.currentPlayer);
+  const { gameStarted, currentPlayer } = useAppSelector((state) => state.gameRoom);
   const ownerName = useAppSelector((state) => {
     switch (owner) {
       case 'player': return state.gameRoom.playerName;
@@ -62,7 +64,7 @@ const LiveGameGrid = ({ owner }: Props) => {
 
   const settings = useAppSelector((state) => state.gameRoom.gameSettings);
   const gridState = useAppSelector((state) => {
-    if (state.gameRoom.gameState !== GameStateValues.InProgress) return null;
+    if (!GameRoomIsReady(state.gameRoom)) return null;
 
     switch (owner) {
       case 'player': return state.gameRoom.playerScore;
@@ -70,9 +72,6 @@ const LiveGameGrid = ({ owner }: Props) => {
       default: return assertNever(owner);
     }
   });
-
-  const dispatch = useAppDispatch();
-  const gridRef = useRef<HTMLDivElement>(null);
 
   const gridClickHandler: React.MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
     if (owner === 'player') return;
@@ -120,8 +119,10 @@ const LiveGameGrid = ({ owner }: Props) => {
 
   const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
 
+  const active = gameStarted && currentPlayer !== ownerName;
+
   return (
-    <Container $owner={owner} $active={currentPlayer !== ownerName}>
+    <Container $owner={owner} $active={active}>
       <GameGrid
         ref={gridRef}
         onClick={gridClickHandler}

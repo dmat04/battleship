@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { GameStateValues } from '../../../store/gameRoomSlice/stateTypes';
 import { assertNever } from '../../../utils/typeUtils';
 import { Theme } from '../../assets/themes/themeDefault';
 import Spinner from '../../Spinner';
+import { useAppSelector } from '../../../store/store';
+import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: 1 / 1 / span 1 / span 2;
@@ -23,35 +24,22 @@ const Label = styled.p<{ theme: Theme }>`
   }
 `;
 
-interface Props {
-  gameState: GameStateValues;
-}
+const StatusMessage = () => {
+  const { opponentStatus } = useAppSelector((state) => state.gameRoom);
 
-const StatusMessage = ({ gameState }: Props) => {
   let message = '';
-  let showSpinner = false;
 
-  switch (gameState) {
-    case GameStateValues.PlayerNotReady:
-    case GameStateValues.InProgress:
-    case GameStateValues.Finished:
-      message = '';
-      break;
-    case GameStateValues.WaitingForOpponentToConnect:
+  switch (opponentStatus) {
+    case PlayerStatus.Disconnected:
       message = 'Waiting for an opponent to connect';
-      showSpinner = true;
       break;
-    case GameStateValues.WaitingForOpponentToGetReady:
+    case PlayerStatus.Connected:
       message = 'Opponent connected, waiting for opponent to get ready';
-      showSpinner = true;
       break;
-    case GameStateValues.OpponentReady:
+    case PlayerStatus.Ready:
       message = 'Opponent ready, game starting...';
       break;
-    case GameStateValues.OpponentDisconnected:
-      message = 'Opponent disconnected...';
-      break;
-    default: assertNever(gameState);
+    default: assertNever(opponentStatus);
   }
 
   return (
@@ -59,7 +47,7 @@ const StatusMessage = ({ gameState }: Props) => {
       <Label>
         {message}
       </Label>
-      <Spinner $visible={showSpinner} />
+      <Spinner $visible />
     </Container>
   );
 };

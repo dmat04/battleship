@@ -5,7 +5,7 @@ import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 import { type Ship, PlacedShip } from '../../../__generated__/graphql';
 import type { Owner } from '.';
-import { GameStateValues, ScoreState } from '../../../store/gameRoomSlice/stateTypes';
+import { GameRoomIsReady, ScoreState } from '../../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ $owner: Owner }>`
   position: relative;
@@ -99,7 +99,7 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     sunkenShips: [],
   };
 
-  if (gameRoom.gameState === GameStateValues.InProgress) {
+  if (GameRoomIsReady(gameRoom)) {
     score = owner === 'player'
       ? gameRoom.playerScore
       : gameRoom.opponentScore;

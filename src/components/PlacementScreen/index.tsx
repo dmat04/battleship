@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../store/store';
 import PlacementGrid from './PlacementGrid';
 import { Button } from '../Button';
 import { Theme } from '../assets/themes/themeDefault';
-import { GameStateValues } from '../../store/gameRoomSlice/stateTypes';
 import { submitPlacement } from '../../store/shipPlacementSlice/thunks';
 
 const Container = styled.div<{ theme: Theme }>`
@@ -30,14 +29,13 @@ const Info = styled.p`
 
 const PlacementScreen = () => {
   const dispatch = useAppDispatch();
-  const roomID = useAppSelector((state) => state.gameRoom.roomID);
-  const gameState = useAppSelector((state) => state.gameRoom.gameState);
+  const { roomID, playerShips } = useAppSelector((state) => state.gameRoom);
   const shipPlacementState = useAppSelector((state) => state.shipPlacement);
   const nonPlacedCount = useAppSelector((state) => state.shipPlacement.nonPlacedIDs.length);
 
   if (!roomID) return <Navigate to="/start" replace />;
 
-  if (gameState !== GameStateValues.PlayerNotReady) {
+  if (playerShips) {
     return <Navigate to="/game" replace />;
   }
 
