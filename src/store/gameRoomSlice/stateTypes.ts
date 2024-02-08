@@ -1,25 +1,6 @@
 import { GameSettings, PlacedShip } from '../../__generated__/graphql';
 import { Coordinates } from '../shipPlacementSlice/types';
 
-export enum GameStateValues {
-  PlayerNotReady = 'PlayerNotReady',
-  WaitingForOpponentToConnect = 'WaitingForOpponentToConnect',
-  WaitingForOpponentToGetReady = 'WaitingForOpponentToGetReady',
-  OpponentReady = 'OpponentReady',
-  InProgress = 'InProgress',
-  Finished = 'Finished',
-  OpponentDisconnected = 'OpponentDisconnected',
-}
-
-export type GameState =
-  GameStateValues.PlayerNotReady |
-  GameStateValues.WaitingForOpponentToConnect |
-  GameStateValues.WaitingForOpponentToGetReady |
-  GameStateValues.OpponentReady |
-  GameStateValues.InProgress |
-  GameStateValues.Finished |
-  GameStateValues.OpponentDisconnected;
-
 export interface ScoreState {
   missedCells: Coordinates[];
   hitCells: Coordinates[];
@@ -27,15 +8,25 @@ export interface ScoreState {
   sunkenShips: PlacedShip[];
 }
 
+export enum PlayerStatus {
+  Disconnected = 'Disconnected',
+  Connected = 'Connected',
+  Ready = 'Ready',
+}
+
 export interface SliceStateInactive {
-  gameState: Exclude<GameState, GameStateValues.InProgress>;
   roomID?: string;
-  inviteCode: string | undefined;
   gameSettings?: GameSettings;
+  playerStatus: PlayerStatus,
+  opponentStatus: PlayerStatus,
   playerName?: string;
   opponentName?: string;
   currentPlayer?: string;
   playerShips?: PlacedShip[];
+  inviteCode: string | undefined;
+  gameStarted: boolean;
+  playerScore: ScoreState;
+  opponentScore: ScoreState;
   requestStatus: {
     loadingNewRoom: boolean;
     loadingJoinRoom: boolean;
@@ -43,21 +34,23 @@ export interface SliceStateInactive {
   }
 }
 
-export type SliceStateActive = Required<Omit<SliceStateInactive, 'gameState'>> & {
-  gameState: GameStateValues.InProgress;
-  playerScore: ScoreState;
-  opponentScore: ScoreState;
-};
+export type SliceStateActive = Required<SliceStateInactive>;
 
 // eslint-disable-next-line arrow-body-style
-export const StateIsActive = (state: SliceState): state is SliceStateActive => {
+export const GameRoomIsReady = (state: SliceState): state is SliceStateActive => {
   return state.roomID !== undefined
     && state.gameSettings !== undefined
     && state.playerName !== undefined
     && state.opponentName !== undefined
     && state.currentPlayer !== undefined
     && state.playerShips !== undefined
-    && state.gameState === GameStateValues.OpponentReady;
+    && state.opponentStatus === PlayerStatus.Ready
+    && state.playerStatus === PlayerStatus.Ready;
+};
+
+// eslint-disable-next-line arrow-body-style
+export const GameIsInProgress = (state: SliceState): state is SliceStateActive => {
+  return state.gameStarted && GameRoomIsReady(state);
 };
 
 export type SliceState = SliceStateInactive | SliceStateActive;

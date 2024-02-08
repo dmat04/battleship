@@ -1,8 +1,7 @@
 import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
-import { GameStateValues, SliceStateActive } from './stateTypes';
+import { PlayerStatus, SliceStateActive } from './stateTypes';
 
 const stateStub: SliceStateActive = {
-  gameState: GameStateValues.InProgress,
   roomID: '',
   inviteCode: '',
   requestStatus: {
@@ -12,6 +11,9 @@ const stateStub: SliceStateActive = {
   },
   playerName: 'PlayerName',
   opponentName: 'OpponentName',
+  playerStatus: PlayerStatus.Connected,
+  opponentStatus: PlayerStatus.Disconnected,
+  gameStarted: true,
   gameSettings: {
     boardHeight: 10,
     boardWidth: 10,

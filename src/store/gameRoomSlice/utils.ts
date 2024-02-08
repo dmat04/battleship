@@ -12,17 +12,16 @@ import {
   MoveResultMessageBase,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
-  RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
 } from '../wsMiddleware/messageTypes';
 import { assertNever } from '../../utils/typeUtils';
 import {
-  GameStateValues,
+  PlayerStatus,
   ScoreState,
   SliceState,
   SliceStateActive,
-  StateIsActive,
+  GameRoomIsReady,
 } from './stateTypes';
 
 const isWithinShip = (
@@ -121,7 +120,7 @@ const moveResultMessageReceived = (
   state: SliceState,
   message: OpponentMoveResultMessage | OwnMoveResultMessage,
 ) => {
-  if (state.gameState !== GameStateValues.InProgress) return;
+  if (!GameRoomIsReady(state)) return;
 
   const { code } = message;
   switch (code) {
@@ -135,26 +134,6 @@ const moveResultMessageReceived = (
   }
 };
 
-const getGameState = (roomStatus: GameRoomStatus, sliceState: SliceState): GameStateValues => {
-  let state: GameStateValues = GameStateValues.WaitingForOpponentToConnect;
-
-  if (roomStatus.opponentSocketConnected
-    || roomStatus.opponentShipsPlaced) state = GameStateValues.WaitingForOpponentToGetReady;
-
-  if (roomStatus.opponentSocketConnected
-    && roomStatus.opponentShipsPlaced) state = GameStateValues.OpponentReady;
-
-  if (state === GameStateValues.OpponentReady) {
-    if (!sliceState.roomID
-      || !sliceState.inviteCode
-      || !sliceState.gameSettings
-      || !sliceState.playerName
-      || !sliceState.playerShips) state = GameStateValues.PlayerNotReady;
-  }
-
-  return state;
-};
-
 export const processRoomStatus = (
   state: SliceState,
   roomStatus: GameRoomStatus,
@@ -162,27 +141,26 @@ export const processRoomStatus = (
   state.playerName = roomStatus.player;
   state.opponentName = roomStatus.opponent ?? undefined;
   state.currentPlayer = roomStatus.currentPlayer ?? undefined;
-  state.gameState = getGameState(roomStatus, state);
+
+  if (roomStatus.playerShipsPlaced && roomStatus.playerSocketConnected) {
+    state.playerStatus = PlayerStatus.Ready;
+  }
+
+  if (roomStatus.opponent) {
+    state.opponentStatus = PlayerStatus.Connected;
+  }
+
+  if (roomStatus.opponent
+    && roomStatus.opponentShipsPlaced
+    && roomStatus.opponentSocketConnected
+  ) {
+    state.opponentStatus = PlayerStatus.Ready;
+  }
 };
 
 const processGameStartedMessage = (state: SliceState, message: GameStartedMessage) => {
-  if (StateIsActive(state)) {
-    state.gameState = GameStateValues.InProgress;
-    state.currentPlayer = message.playsFirst;
-
-    state.playerScore = {
-      hitCells: [],
-      missedCells: [],
-      inaccessibleCells: [],
-      sunkenShips: [],
-    };
-    state.opponentScore = {
-      hitCells: [],
-      missedCells: [],
-      inaccessibleCells: [],
-      sunkenShips: [],
-    };
-  }
+  state.currentPlayer = message.playsFirst;
+  state.gameStarted = true;
 };
 
 export const processMessageReceived = (
@@ -214,7 +192,7 @@ export const processMessageReceived = (
 };
 
 export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
-  if (state.gameState !== GameStateValues.InProgress) return false;
+  if (!GameRoomIsReady(state)) return false;
 
   if (state.currentPlayer !== state.playerName) return false;
 
