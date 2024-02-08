@@ -24,6 +24,8 @@ import {
   GameRoomIsReady,
 } from './stateTypes';
 
+const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
+
 const isWithinShip = (
   { x, y }: Coordinates,
   {
@@ -93,8 +95,10 @@ const applyMoveResult = (
 
     let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
     shipSurroundingCells = shipSurroundingCells
-      .filter((coord) => !score.missedCells
-        .some((existing) => existing.x === coord.x && existing.y === coord.y));
+      .filter((coord) => (
+        !score.missedCells.some((existing) => isEqual(existing, coord))
+        && !score.inaccessibleCells.some((existing) => isEqual(existing, coord))
+      ));
 
     score.inaccessibleCells = score.inaccessibleCells
       .concat(shipSurroundingCells);
@@ -199,11 +203,11 @@ export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolea
   const { opponentScore } = state;
 
   if (opponentScore.hitCells.some(
-    (c) => c.x === cell.x && c.y === cell.y,
+    (c) => isEqual(c, cell),
   )) return false;
 
   if (opponentScore.missedCells.some(
-    (c) => c.x === cell.x && c.y === cell.y,
+    (c) => isEqual(c, cell),
   )) return false;
 
   if (opponentScore.sunkenShips.some(
@@ -211,7 +215,7 @@ export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolea
   )) return false;
 
   if (opponentScore.inaccessibleCells.some(
-    (c) => c.x === cell.x && c.y === cell.y,
+    (c) => isEqual(c, cell),
   )) return false;
 
   return true;
