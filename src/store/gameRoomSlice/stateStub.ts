@@ -1,9 +1,16 @@
 import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
-import { GameState, SliceState } from './stateTypes';
+import { GameStateValues, SliceStateActive } from './stateTypes';
 
-const stateStub: SliceState = {
-  gameState: GameState.InProgress,
-  playerName: 'Guest#17315',
+const stateStub: SliceStateActive = {
+  gameState: GameStateValues.InProgress,
+  roomID: '',
+  inviteCode: '',
+  requestStatus: {
+    loadingJoinRoom: false,
+    loadingNewRoom: false,
+    loadingSettings: false,
+  },
+  playerName: 'PlayerName',
   opponentName: 'OpponentName',
   gameSettings: {
     boardHeight: 10,
@@ -47,7 +54,7 @@ const stateStub: SliceState = {
       },
     ],
   },
-  currentPlayer: 'Guest#17315',
+  currentPlayer: 'PlayerName',
   playerShips: [
     {
       ship: {
@@ -120,7 +127,7 @@ const stateStub: SliceState = {
       y: 7,
     },
   ],
-  playerGridState: {
+  playerScore: {
     hitCells: [
       { x: 0, y: 1 },
       { x: 1, y: 7 },
@@ -177,7 +184,7 @@ const stateStub: SliceState = {
     ],
     inaccessibleCells: [],
   },
-  opponentGridState: {
+  opponentScore: {
     hitCells: [],
     missedCells: [],
     sunkenShips: [],

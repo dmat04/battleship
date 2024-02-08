@@ -1,23 +1,11 @@
-import { Middleware, createAction } from '@reduxjs/toolkit';
+import { Middleware } from '@reduxjs/toolkit';
 import type { AppDispatch } from '../store';
-import {
-  hitOpponentCell,
-  messageReceived,
-  requestRoomStatus,
-} from '../activeGameSlice';
 import MessageParser from './MessageParser';
 import {
   ClientMessageCode,
   RoomStatusRequestMessage,
-  ShootMessage,
 } from './messageTypes';
-
-interface WSConnectionArgs {
-  roomID: string,
-  wsAuthCode: string,
-}
-
-export const openWSConnection = createAction<WSConnectionArgs>('wsMiddleware/connect');
+import { messageReceived, openWSConnection, sendMessage } from './actions';
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
@@ -80,22 +68,9 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
       const uriEncodedUsername = encodeURIComponent(username);
       const url = `ws://localhost:5000/game/${roomID}/${uriEncodedUsername}`;
       socket = createSocket(url, wsAuthCode, dispatch);
-    } else if (hitOpponentCell.match(action)) {
+    } else if (sendMessage.match(action)) {
       const { payload } = action;
-
-      const message: ShootMessage = {
-        code: ClientMessageCode.Shoot,
-        x: payload.x,
-        y: payload.y,
-      };
-
-      socket?.send(JSON.stringify(message));
-    } else if (requestRoomStatus.match(action)) {
-      const message: RoomStatusRequestMessage = {
-        code: ClientMessageCode.RoomStatusRequest,
-      };
-
-      socket?.send(JSON.stringify(message));
+      socket?.send(JSON.stringify(payload));
     }
 
     return next(action);

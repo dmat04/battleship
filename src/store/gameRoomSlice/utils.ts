@@ -1,17 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
 import {
-  GameRoomStatus,
   GameSettings,
   ShipOrientation,
   PlacedShip,
+  GameRoomStatus,
 } from '../../__generated__/graphql';
-import {
-  GameInitArgs,
-  GameState,
-  GridState,
-  SliceState,
-} from './stateTypes';
 import { Coordinates } from '../shipPlacementSlice/types';
 import {
   GameStartedMessage,
@@ -23,30 +17,13 @@ import {
   ServerMessageCode,
 } from '../wsMiddleware/messageTypes';
 import { assertNever } from '../../utils/typeUtils';
-
-const getInitialGameState = (gameRoomStatus: GameRoomStatus): GameState => {
-  const {
-    playerSocketConnected,
-    playerShipsPlaced,
-    opponent,
-    opponentSocketConnected,
-    opponentShipsPlaced,
-  } = gameRoomStatus;
-
-  if (!playerSocketConnected || !playerShipsPlaced) {
-    return GameState.PlayerNotReady;
-  }
-
-  if (opponentShipsPlaced && opponentSocketConnected) {
-    return GameState.OpponentReady;
-  }
-
-  if (!opponentShipsPlaced && !opponentSocketConnected && !opponent) {
-    return GameState.WaitingForOpponentToConnect;
-  }
-
-  return GameState.WaitingForOpponentToGetReady;
-};
+import {
+  GameStateValues,
+  ScoreState,
+  SliceState,
+  SliceStateActive,
+  StateIsActive,
+} from './stateTypes';
 
 const isWithinShip = (
   { x, y }: Coordinates,
@@ -94,7 +71,11 @@ const getShipSurroundingCells = (
   return cells;
 };
 
-const applyMoveResult = (message: MoveResultMessageBase, state: SliceState, grid: GridState) => {
+const applyMoveResult = (
+  message: MoveResultMessageBase,
+  state: SliceStateActive,
+  score: ScoreState,
+) => {
   const {
     x,
     y,
@@ -106,40 +87,42 @@ const applyMoveResult = (message: MoveResultMessageBase, state: SliceState, grid
   state.currentPlayer = currentPlayer;
 
   if (shipSunk) {
-    grid.sunkenShips.push(shipSunk);
+    score.sunkenShips.push(shipSunk);
 
-    grid.hitCells = grid.hitCells
+    score.hitCells = score.hitCells
       .filter((coord) => !isWithinShip(coord, shipSunk));
 
     let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
     shipSurroundingCells = shipSurroundingCells
-      .filter((coord) => !grid.missedCells
+      .filter((coord) => !score.missedCells
         .some((existing) => existing.x === coord.x && existing.y === coord.y));
 
-    grid.inaccessibleCells = grid.inaccessibleCells
+    score.inaccessibleCells = score.inaccessibleCells
       .concat(shipSurroundingCells);
   } else if (hit) {
-    grid.hitCells.push({ x, y });
+    score.hitCells.push({ x, y });
   } else {
-    grid.missedCells.push({ x, y });
+    score.missedCells.push({ x, y });
   }
 };
 
-const applyOwnMoveResultMessage = (state: SliceState, message: OwnMoveResultMessage) => {
-  applyMoveResult(message, state, state.opponentGridState);
+const applyOwnMoveResultMessage = (state: SliceStateActive, message: OwnMoveResultMessage) => {
+  applyMoveResult(message, state, state.opponentScore);
 };
 
 const applyOpponentMoveResultMessage = (
-  state: SliceState,
+  state: SliceStateActive,
   message: OpponentMoveResultMessage,
 ) => {
-  applyMoveResult(message, state, state.playerGridState);
+  applyMoveResult(message, state, state.playerScore);
 };
 
 const moveResultMessageReceived = (
   state: SliceState,
   message: OpponentMoveResultMessage | OwnMoveResultMessage,
 ) => {
+  if (state.gameState !== GameStateValues.InProgress) return;
+
   const { code } = message;
   switch (code) {
     case ServerMessageCode.OpponentMoveResult:
@@ -152,62 +135,54 @@ const moveResultMessageReceived = (
   }
 };
 
-const processRoomStatusResponseMessage = (
+const getGameState = (roomStatus: GameRoomStatus, sliceState: SliceState): GameStateValues => {
+  let state: GameStateValues = GameStateValues.WaitingForOpponentToConnect;
+
+  if (roomStatus.opponentSocketConnected
+    || roomStatus.opponentShipsPlaced) state = GameStateValues.WaitingForOpponentToGetReady;
+
+  if (roomStatus.opponentSocketConnected
+    && roomStatus.opponentShipsPlaced) state = GameStateValues.OpponentReady;
+
+  if (state === GameStateValues.OpponentReady) {
+    if (!sliceState.roomID
+      || !sliceState.inviteCode
+      || !sliceState.gameSettings
+      || !sliceState.playerName
+      || !sliceState.playerShips) state = GameStateValues.PlayerNotReady;
+  }
+
+  return state;
+};
+
+export const processRoomStatus = (
   state: SliceState,
-  { roomStatus }: RoomStatusResponseMessage,
+  roomStatus: GameRoomStatus,
 ) => {
-  const newState = getInitialGameState(roomStatus);
-  const { gameState } = state;
-
-  if (
-    gameState === GameState.PlayerNotReady
-    || gameState === GameState.WaitingForOpponentToConnect
-    || gameState === GameState.WaitingForOpponentToGetReady
-  ) {
-    state.gameState = newState;
-  }
-
-  if (roomStatus.opponent) {
-    state.opponentName = roomStatus.opponent;
-  }
+  state.playerName = roomStatus.player;
+  state.opponentName = roomStatus.opponent ?? undefined;
+  state.currentPlayer = roomStatus.currentPlayer ?? undefined;
+  state.gameState = getGameState(roomStatus, state);
 };
 
 const processGameStartedMessage = (state: SliceState, message: GameStartedMessage) => {
-  state.gameState = GameState.InProgress;
-  state.currentPlayer = message.playsFirst;
-};
+  if (StateIsActive(state)) {
+    state.gameState = GameStateValues.InProgress;
+    state.currentPlayer = message.playsFirst;
 
-export const processGameInitAction = (state: SliceState, action: PayloadAction<GameInitArgs>) => {
-  const {
-    playerName,
-    opponentName,
-    playerShips,
-    gameSettings,
-    gameRoomStatus,
-  } = action.payload;
-
-  const newState: SliceState = {
-    gameState: getInitialGameState(gameRoomStatus),
-    playerName,
-    opponentName,
-    gameSettings: { ...gameSettings },
-    currentPlayer: gameRoomStatus.currentPlayer ?? null,
-    playerShips: [...playerShips],
-    playerGridState: {
+    state.playerScore = {
       hitCells: [],
       missedCells: [],
-      sunkenShips: [],
       inaccessibleCells: [],
-    },
-    opponentGridState: {
+      sunkenShips: [],
+    };
+    state.opponentScore = {
       hitCells: [],
       missedCells: [],
-      sunkenShips: [],
       inaccessibleCells: [],
-    },
-  };
-
-  return newState;
+      sunkenShips: [],
+    };
+  }
 };
 
 export const processMessageReceived = (
@@ -215,12 +190,13 @@ export const processMessageReceived = (
   { payload }: PayloadAction<ServerMessage>,
 ) => {
   const { code } = payload;
+  console.log(JSON.stringify(payload, null, 2));
 
   switch (code) {
     case ServerMessageCode.AuthenticatedResponse:
       break;
     case ServerMessageCode.RoomStatusResponse:
-      processRoomStatusResponseMessage(state, payload);
+      processRoomStatus(state, payload.roomStatus);
       break;
     case ServerMessageCode.Error:
       break;
@@ -238,25 +214,25 @@ export const processMessageReceived = (
 };
 
 export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
-  if (state.gameState !== GameState.InProgress) return false;
+  if (state.gameState !== GameStateValues.InProgress) return false;
 
   if (state.currentPlayer !== state.playerName) return false;
 
-  const { opponentGridState } = state;
+  const { opponentScore } = state;
 
-  if (opponentGridState.hitCells.some(
+  if (opponentScore.hitCells.some(
     (c) => c.x === cell.x && c.y === cell.y,
   )) return false;
 
-  if (opponentGridState.missedCells.some(
+  if (opponentScore.missedCells.some(
     (c) => c.x === cell.x && c.y === cell.y,
   )) return false;
 
-  if (opponentGridState.sunkenShips.some(
+  if (opponentScore.sunkenShips.some(
     (ship) => isWithinShip(cell, ship),
   )) return false;
 
-  if (opponentGridState.inaccessibleCells.some(
+  if (opponentScore.inaccessibleCells.some(
     (c) => c.x === cell.x && c.y === cell.y,
   )) return false;
 
