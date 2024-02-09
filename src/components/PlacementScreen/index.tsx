@@ -8,20 +8,17 @@ import { submitPlacement } from '../../store/shipPlacementSlice/thunks';
 import InviteCodeInfo from '../InviteCodeInfo';
 
 const Container = styled.div<{ theme: Theme }>`
+  width: min(90vw, 30rem);
   display: flex;
   flex-direction: column;
   gap: ${(props) => props.theme.paddingSm};
-
-  @media (max-width: 35em) {
-    gap: ${(props) => props.theme.paddingMin};
-  }
 `;
 
-const Header = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+const Header = styled.div<{ theme: Theme }>`
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
+  gap: ${(props) => props.theme.paddingSm}
 `;
 
 const PlacementScreen = () => {

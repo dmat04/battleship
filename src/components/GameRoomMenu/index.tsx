@@ -8,13 +8,15 @@ import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
 import { createGameRoom } from '../../store/gameRoomSlice/thunks';
 import Spinner from '../Spinner';
-import { MenuItemButton } from '../Button';
+import { Button } from '../Button';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: ${(props) => props.theme.paddingMin};
+  min-width: 20rem;
+  width: min(90vw, 20rem);
 `;
 
 const GameRoomMenu = () => {
@@ -43,13 +45,13 @@ const GameRoomMenu = () => {
 
   return (
     <MenuContainer>
-      <MenuItemButton $variant="primary" onClick={startNewGame}>
+      <Button $variant="primary" onClick={startNewGame}>
         {
           loadingNewRoom
             ? <Spinner $visible />
             : <MenuItemLabel>Start a new game</MenuItemLabel>
         }
-      </MenuItemButton>
+      </Button>
 
       <CollapsibleContainer
         ref={collapsible}

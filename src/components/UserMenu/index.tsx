@@ -11,6 +11,8 @@ const MenuContainer = styled.div<{ theme: Theme }>`
   flex-direction: column;
   align-items: center;
   gap: ${(props) => props.theme.paddingMin};
+  min-width: 20rem;
+  width: min(90vw, 20rem);
 `;
 
 interface CollapsibleHandles {

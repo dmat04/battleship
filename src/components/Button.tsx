@@ -22,6 +22,7 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
     }
   }};
 
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,8 +35,4 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   &:hover {
     background-color: var(--colorBgHover);
   }
-`;
-
-export const MenuItemButton = styled(Button)`
-  width: 20rem;
 `;

@@ -17,11 +17,11 @@ const Container = styled.form<{ theme: Theme }>`
   grid-row-gap: ${(props) => props.theme.paddingMin};
   grid-column-gap: ${(props) => props.theme.paddingMin};
   padding: ${(props) => props.theme.paddingMin} 0 0 0;
+  width: 100%;
 `;
 
 const Label = styled.p`
   grid-area: label;
-  width: 100%;
   text-align: center;
 `;
 
@@ -48,6 +48,7 @@ const JoinGameForm = ({ disabled }: Props) => {
     <Container onSubmit={handleSubmit}>
       <TextInput
         type="text"
+        inputMode="numeric"
         placeholder="Room code"
         style={{ gridArea: 'code' }}
         value={code}

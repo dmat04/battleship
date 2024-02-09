@@ -13,18 +13,19 @@ const Container = styled.div<{ theme: Theme }>`
   grid-template-rows: 1fr 5fr;
   grid-row-gap: ${(props) => props.theme.paddingSm};
   grid-column-gap: ${(props) => props.theme.paddingSm};
-  width: 60vw;
+  width: min(60vw, 70rem);
 
-  @media (max-width: 60em) {
+  @media (max-width: 40rem) {
+    width: 95vw;
+  }
+
+  @media (max-width: 60rem) {
     grid-template-areas: 
       ". player ."
       "score score score"
       "opponent opponent opponent";
     grid-template-rows: none;
-    grid-template-columns: 1fr 4fr 1fr;
-    grid-row-gap: ${(props) => props.theme.paddingMin};
-    align-items: center;
-    width: 95vw;
+    grid-template-columns: 1fr 2.5fr 1fr;
   }
 `;
 

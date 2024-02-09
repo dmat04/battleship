@@ -11,7 +11,8 @@ import GameScreen from './components/GameScreen';
 
 const ScreenContainer = styled.div`
   display: grid;
-  grid-template-rows: 1.5fr 10fr 1.5fr;
+  min-height: 100vh;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas: 
     "navbar"
     "content"
@@ -21,8 +22,7 @@ const ScreenContainer = styled.div`
 const MainContentContainer = styled.div<{ theme: Theme }>`
   grid-area: content;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   padding-block: ${(props) => props.theme.paddingSm};
 
@@ -34,6 +34,7 @@ const MainContentContainer = styled.div<{ theme: Theme }>`
 const TempFooter = styled.footer`
   background-color: antiquewhite;
   grid-area: footer;
+  height: 10vh;
 `;
 
 // eslint-disable-next-line arrow-body-style

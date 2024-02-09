@@ -7,8 +7,7 @@ import { RootState } from '../../../store/store';
 import GameGrid from '../../GameGrid';
 
 const Container = styled.div`
-  width: 35vh;
-  margin: auto;
+  width: 100%;
 `;
 
 const NavyGrid = styled.div`

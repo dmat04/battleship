@@ -4,7 +4,6 @@ import { Theme } from './assets/themes/themeDefault';
 import { PlayerStatus } from '../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ theme: Theme }>`
-  width: min(90vw, 30rem);
   padding: ${(props) => props.theme.paddingMin};
   border: 2px solid black;
   background-color: #8bd2d6;

@@ -16,7 +16,6 @@ const Container = styled.form<{ theme: Theme }>`
     "button";
   grid-row-gap: ${(props) => props.theme.paddingMin};
   grid-column-gap: ${(props) => props.theme.paddingMin};
-  /* align-items: stretch; */
   padding: ${(props) => props.theme.paddingMin} 0 0 0;
 `;
 
