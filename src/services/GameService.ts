@@ -276,9 +276,6 @@ const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult =>
     throw new EntityNotFoundError('GameRoom', inviteCode);
   }
 
-  // delete the invite code
-  inviteCodes.delete(inviteCode);
-
   // find the game instance for the retrieved game id
   const gameRoom = getRoom(roomID);
   if (!gameRoom) {
@@ -286,7 +283,7 @@ const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult =>
   }
 
   // make sure that the user who created the game doesn't join as player 2
-  if (gameRoom.player2?.user.id === user.id) {
+  if (gameRoom.player1.user.id === user.id) {
     throw new Error('Cannot join room - you have already joined this room');
   }
 
@@ -294,6 +291,9 @@ const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult =>
   if (gameRoom.player2) {
     throw new Error('Cannot join room - a player already joined');
   }
+
+  // delete the invite code
+  inviteCodes.delete(inviteCode);
 
   // 'join' the player to the game
   gameRoom.player2 = {
