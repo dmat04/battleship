@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useAppSelector } from '../store/store';
 import { Theme } from './assets/themes/themeDefault';
+import { PlayerStatus } from '../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(90vw, 30rem);
@@ -15,9 +16,9 @@ const Highlight = styled.span`
 `;
 
 const InviteCodeInfo = () => {
-  const inviteCode = useAppSelector((state) => state.gameRoom.inviteCode);
+  const { inviteCode, opponentStatus } = useAppSelector((state) => state.gameRoom);
 
-  if (!inviteCode) return null;
+  if (!inviteCode || opponentStatus !== PlayerStatus.Disconnected) return null;
 
   return (
     <Container>
