@@ -5,6 +5,7 @@ import PlacementGrid from './PlacementGrid';
 import { Button } from '../Button';
 import { Theme } from '../assets/themes/themeDefault';
 import { submitPlacement } from '../../store/shipPlacementSlice/thunks';
+import InviteCodeInfo from '../InviteCodeInfo';
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;
@@ -21,10 +22,6 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-`;
-
-const Info = styled.p`
-  font-size: larger;
 `;
 
 const PlacementScreen = () => {
@@ -47,8 +44,9 @@ const PlacementScreen = () => {
 
   return (
     <Container>
+      <InviteCodeInfo />
       <Header>
-        <Info>Place your ships</Info>
+        <p>Place your ships</p>
         <Button
           $variant="primary"
           disabled={nonPlacedCount > 0}

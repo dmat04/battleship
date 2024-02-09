@@ -4,6 +4,7 @@ import { Theme } from '../../assets/themes/themeDefault';
 import Spinner from '../../Spinner';
 import { useAppSelector } from '../../../store/store';
 import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
+import InviteCodeInfo from '../../InviteCodeInfo';
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: 1 / 1 / span 1 / span 2;
@@ -15,13 +16,8 @@ const Container = styled.div<{ theme: Theme }>`
 `;
 
 const Label = styled.p<{ theme: Theme }>`
-  font-size: x-large;
   padding-inline: ${(props) => props.theme.paddingMin};
   text-align: center;
-
-  @media (max-width: 35em) {
-    font-size: small;
-  }
 `;
 
 const StatusMessage = () => {
@@ -44,6 +40,7 @@ const StatusMessage = () => {
 
   return (
     <Container>
+      <InviteCodeInfo />
       <Label>
         {message}
       </Label>

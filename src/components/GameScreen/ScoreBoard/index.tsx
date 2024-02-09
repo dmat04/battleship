@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { useAppSelector } from '../../../store/store';
-import StatusMessage from './StatusMessage';
 import PlayerScorecard from './PlayerScorecard';
 import { Theme } from '../../assets/themes/themeDefault';
 import { GameIsInProgress } from '../../../store/gameRoomSlice/stateTypes';
+import StatusMessage from './StatusMessage';
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: score;
