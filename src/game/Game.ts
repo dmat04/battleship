@@ -163,6 +163,8 @@ class Game {
 
     this.advanceRound(result);
 
+    if (result.gameWon) this.finishGame();
+
     return result;
   };
 

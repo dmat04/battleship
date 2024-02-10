@@ -528,14 +528,20 @@ const handleShootMessage = (room: GameRoom, player: string, message: ShootMessag
     const result = room.gameInstance.makeMove(playerData.user.username, x, y);
     const currentPlayer = room.gameInstance.getCurrentPlayer();
 
+    const gameState = room.gameInstance.getGameState();
+
+    if (gameState === GameState.InProgress) {
+      room.turnTimer.refresh();
+    } else if (gameState === GameState.Finished) {
+      clearTimeout(room.turnTimer);
+    }
+
     sendMoveResultResponse(
       currentPlayer,
       result,
       playerData,
       opponentData,
     );
-
-    room.turnTimer.refresh();
   } catch (error) {
     let errorMessage = 'An unknown error has occured';
 
