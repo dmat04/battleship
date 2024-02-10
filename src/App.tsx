@@ -20,6 +20,7 @@ const ScreenContainer = styled.div`
 `;
 
 const MainContentContainer = styled.div<{ theme: Theme }>`
+  position: relative;
   grid-area: content;
   display: flex;
   justify-content: center;
