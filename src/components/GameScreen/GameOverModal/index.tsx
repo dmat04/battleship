@@ -1,6 +1,10 @@
 import styled, { keyframes } from 'styled-components';
 import { Theme } from '../../assets/themes/themeDefault';
 import { Button } from '../../Button';
+import { useAppDispatch, useAppSelector } from '../../../store/store';
+import { GameResult } from '../../../store/gameRoomSlice/stateTypes';
+import { assertNever } from '../../../utils/typeUtils';
+import { clearRoom } from '../../../store/gameRoomSlice';
 
 const Blur = keyframes`
   from {
@@ -34,6 +38,7 @@ const Container = styled.div`
   background: hsl(0 0% 100% / 0.1);
   backdrop-filter: blur(0);
   animation: ${Blur} 500ms linear forwards;
+  z-index: 999;
 `;
 
 const Card = styled.div<{ theme: Theme }>`
@@ -42,7 +47,9 @@ const Card = styled.div<{ theme: Theme }>`
     "header"
     "body"
     "footer";
+  width: fit-content;
   border: 2px solid black;
+  margin: ${(props) => props.theme.paddingSm};
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
   opacity: 0;
@@ -62,6 +69,7 @@ const CardBody = styled.div<{ theme: Theme }>`
   padding: ${(props) => props.theme.paddingSm};
   text-align: center;
   font-weight: 800;
+  white-space: pre-line;
 `;
 
 const CardFooter = styled.div<{ theme: Theme }>`
@@ -72,14 +80,34 @@ const CardFooter = styled.div<{ theme: Theme }>`
 `;
 
 const GameOverModal = () => {
+  const { gameResult, opponentName } = useAppSelector((state) => state.gameRoom);
+  const dispatch = useAppDispatch();
+  let message = '';
+
+  if (!gameResult || !opponentName) return null;
+
+  switch (gameResult) {
+    case GameResult.PlayerWon:
+      message = 'Congratulations, you won!';
+      break;
+    case GameResult.OpponentWon:
+      message = `${opponentName} has won.\nBetter luck next time.`;
+      break;
+    default:
+      assertNever(gameResult);
+      break;
+  }
+
+  const exit = () => dispatch(clearRoom());
+
   return (
     <Container>
       <Card>
         <CardHeader>Game Over</CardHeader>
-        <CardBody>Congratulations, you won!</CardBody>
+        <CardBody>{message}</CardBody>
         <CardFooter>
-          <Button $variant="primary">Rematch</Button>
-          <Button $variant="warning">Exit</Button>
+          <Button $variant="primary" onClick={exit}>Rematch</Button>
+          <Button $variant="warning" onClick={exit}>Exit</Button>
         </CardFooter>
       </Card>
     </Container>

@@ -4,6 +4,7 @@ import { useAppSelector } from '../../store/store';
 import Scoreboard from './ScoreBoard';
 import LiveGameGrid from './LiveGameGrid';
 import { Theme } from '../assets/themes/themeDefault';
+import GameOverModal from './GameOverModal';
 
 const Container = styled.div<{ theme: Theme }>`
   display: grid;
@@ -41,6 +42,10 @@ const GameScreen = () => {
       <LiveGameGrid owner="player" />
       <Scoreboard />
       <LiveGameGrid owner="opponent" />
+      {
+        gameRoom.gameResult
+        && <GameOverModal />
+      }
     </Container>
   );
 };
