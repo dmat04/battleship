@@ -14,6 +14,11 @@ export enum PlayerStatus {
   Ready = 'Ready',
 }
 
+export enum GameResult {
+  PlayerWon = 'PlayerWon',
+  OpponentWon = 'OpponentWon',
+}
+
 export interface SliceStateInactive {
   roomID?: string;
   gameSettings?: GameSettings;
@@ -28,6 +33,7 @@ export interface SliceStateInactive {
   round: number;
   playerScore: ScoreState;
   opponentScore: ScoreState;
+  gameResult: GameResult | null;
   requestStatus: {
     loadingNewRoom: boolean;
     loadingJoinRoom: boolean;

@@ -22,6 +22,7 @@ import {
   SliceState,
   SliceStateActive,
   GameRoomIsReady,
+  GameResult,
 } from './stateTypes';
 
 const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
@@ -111,6 +112,10 @@ const applyMoveResult = (
 
 const applyOwnMoveResultMessage = (state: SliceStateActive, message: OwnMoveResultMessage) => {
   applyMoveResult(message, state, state.opponentScore);
+
+  if (message.gameWon) {
+    state.gameResult = GameResult.PlayerWon;
+  }
 };
 
 const applyOpponentMoveResultMessage = (
@@ -118,6 +123,10 @@ const applyOpponentMoveResultMessage = (
   message: OpponentMoveResultMessage,
 ) => {
   applyMoveResult(message, state, state.playerScore);
+
+  if (message.gameWon) {
+    state.gameResult = GameResult.OpponentWon;
+  }
 };
 
 const moveResultMessageReceived = (

@@ -51,6 +51,7 @@ const initialState: SliceStateInactive = {
   inviteCode: undefined,
   gameStarted: false,
   round: 0,
+  gameResult: null,
   playerScore: {
     hitCells: [],
     missedCells: [],
@@ -73,7 +74,9 @@ const initialState: SliceStateInactive = {
 const gameRoomSlice = createSlice({
   name: 'activeGame',
   initialState: initialState as SliceState,
-  reducers: { },
+  reducers: {
+    clearRoom: () => initialState,
+  },
   extraReducers: (builder) => {
     builder.addCase(messageReceived, (state, action) => {
       processMessageReceived(state, action);
@@ -116,5 +119,9 @@ const gameRoomSlice = createSlice({
     });
   },
 });
+
+export const {
+  clearRoom,
+} = gameRoomSlice.actions;
 
 export default gameRoomSlice.reducer;
