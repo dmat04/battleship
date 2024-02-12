@@ -17,7 +17,7 @@ interface Props {
 }
 
 const TurnTimer = ({ owner }: Props) => {
-  const { gameSettings, round } = useAppSelector((state) => state.gameRoom);
+  const { gameSettings, round, gameResult } = useAppSelector((state) => state.gameRoom);
 
   const [timerSpring, timerSpringApi] = useSpring(
     () => ({
@@ -38,6 +38,12 @@ const TurnTimer = ({ owner }: Props) => {
       },
     });
   }, [round, gameSettings?.turnDuration, timerSpringApi]);
+
+  useEffect(() => {
+    if (gameResult) {
+      timerSpringApi.pause();
+    }
+  }, [gameResult, timerSpringApi]);
 
   return <Container $owner={owner} style={timerSpring} />;
 };
