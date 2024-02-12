@@ -1,6 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { UnknownAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { PlayerStatus, SliceState, SliceStateInactive } from './stateTypes';
+import {
+  PlayerStatus,
+  SliceState,
+  initialState,
+} from './stateTypes';
 import {
   processMessageReceived,
   canHitOpponentCell,
@@ -39,38 +43,6 @@ export const opponentCellClicked = createAsyncThunk<
     }
   },
 );
-
-const initialState: SliceStateInactive = {
-  roomID: undefined,
-  gameSettings: undefined,
-  playerStatus: PlayerStatus.Disconnected,
-  opponentStatus: PlayerStatus.Disconnected,
-  playerName: undefined,
-  opponentName: undefined,
-  currentPlayer: undefined,
-  playerShips: undefined,
-  inviteCode: undefined,
-  gameStarted: false,
-  round: 0,
-  gameResult: null,
-  playerScore: {
-    hitCells: [],
-    missedCells: [],
-    inaccessibleCells: [],
-    sunkenShips: [],
-  },
-  opponentScore: {
-    hitCells: [],
-    missedCells: [],
-    inaccessibleCells: [],
-    sunkenShips: [],
-  },
-  requestStatus: {
-    loadingJoinRoom: false,
-    loadingNewRoom: false,
-    loadingSettings: false,
-  },
-};
 
 const gameRoomSlice = createSlice({
   name: 'activeGame',

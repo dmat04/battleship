@@ -61,3 +61,35 @@ export const GameIsInProgress = (state: SliceState): state is SliceStateActive =
 };
 
 export type SliceState = SliceStateInactive | SliceStateActive;
+
+export const initialState: SliceStateInactive = {
+  roomID: undefined,
+  gameSettings: undefined,
+  playerStatus: PlayerStatus.Disconnected,
+  opponentStatus: PlayerStatus.Disconnected,
+  playerName: undefined,
+  opponentName: undefined,
+  currentPlayer: undefined,
+  playerShips: undefined,
+  inviteCode: undefined,
+  gameStarted: false,
+  round: 0,
+  gameResult: null,
+  playerScore: {
+    hitCells: [],
+    missedCells: [],
+    inaccessibleCells: [],
+    sunkenShips: [],
+  },
+  opponentScore: {
+    hitCells: [],
+    missedCells: [],
+    inaccessibleCells: [],
+    sunkenShips: [],
+  },
+  requestStatus: {
+    loadingJoinRoom: false,
+    loadingNewRoom: false,
+    loadingSettings: false,
+  },
+};

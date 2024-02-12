@@ -23,6 +23,7 @@ import {
   SliceStateActive,
   GameRoomIsReady,
   GameResult,
+  initialState,
 } from './stateTypes';
 
 const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
@@ -178,6 +179,14 @@ const processGameStartedMessage = (state: SliceState, message: GameStartedMessag
   state.gameStarted = true;
 };
 
+const processOpponentDisconnectedMessage = (state: SliceState) => {
+  if (state.opponentStatus !== PlayerStatus.Disconnected) {
+    return initialState;
+  }
+
+  return state;
+};
+
 export const processMessageReceived = (
   state: SliceState,
   { payload }: PayloadAction<ServerMessage>,
@@ -203,7 +212,7 @@ export const processMessageReceived = (
       moveResultMessageReceived(state, payload);
       break;
     case ServerMessageCode.OpponentDisconnected:
-      // TODO: handle this!!!
+      processOpponentDisconnectedMessage(state);
       break;
     default: assertNever(code);
   }
