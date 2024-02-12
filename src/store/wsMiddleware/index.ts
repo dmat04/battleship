@@ -5,7 +5,12 @@ import {
   ClientMessageCode,
   RoomStatusRequestMessage,
 } from './messageTypes';
-import { messageReceived, openWSConnection, sendMessage } from './actions';
+import {
+  closeWSConnection,
+  messageReceived,
+  openWSConnection,
+  sendMessage,
+} from './actions';
 
 const onOpenBuilder = (authCode: string, socket: WebSocket) => () => {
   socket.send(authCode);
@@ -71,6 +76,11 @@ const wsMiddleware: Middleware = ({ dispatch, getState }) => {
     } else if (sendMessage.match(action)) {
       const { payload } = action;
       socket?.send(JSON.stringify(payload));
+    } else if (closeWSConnection.match(action)) {
+      if (socket !== null) {
+        socket.close();
+        socket = null;
+      }
     }
 
     return next(action);

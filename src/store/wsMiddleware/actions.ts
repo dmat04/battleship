@@ -8,6 +8,8 @@ export interface WSConnectionArgs {
 
 export const openWSConnection = createAction<WSConnectionArgs>('ws/connect');
 
+export const closeWSConnection = createAction('ws/disconnect');
+
 export const sendMessage = createAction<ClientMessage>('ws/sendMessage');
 
 export const messageReceived = createAction<ServerMessage>('ws/messageReceived');
