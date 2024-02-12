@@ -5,10 +5,11 @@ import {
   processMessageReceived,
   canHitOpponentCell,
   processRoomStatus,
+  processRematchAction,
 } from './utils';
 import { Coordinates } from '../shipPlacementSlice/types';
 import type { AppDispatch, RootState } from '../store';
-import { sendMessage, messageReceived } from '../wsMiddleware/actions';
+import { sendMessage, messageReceived, connectionOpened } from '../wsMiddleware/actions';
 import { ClientMessageCode, ShootMessage } from '../wsMiddleware/messageTypes';
 import { submitPlacement } from '../shipPlacementSlice/thunks';
 import { createGameRoom, joinGameRoom, fetchGameSettings } from './thunks';
@@ -42,7 +43,7 @@ export const opponentCellClicked = createAsyncThunk<
 const initialState: SliceStateInactive = {
   roomID: undefined,
   gameSettings: undefined,
-  playerStatus: PlayerStatus.Connected,
+  playerStatus: PlayerStatus.Disconnected,
   opponentStatus: PlayerStatus.Disconnected,
   playerName: undefined,
   opponentName: undefined,
@@ -76,8 +77,12 @@ const gameRoomSlice = createSlice({
   initialState: initialState as SliceState,
   reducers: {
     clearRoom: () => initialState,
+    rematch: processRematchAction,
   },
   extraReducers: (builder) => {
+    builder.addCase(connectionOpened, (state) => {
+      state.playerStatus = PlayerStatus.Connected;
+    });
     builder.addCase(messageReceived, (state, action) => {
       processMessageReceived(state, action);
     });
@@ -122,6 +127,7 @@ const gameRoomSlice = createSlice({
 
 export const {
   clearRoom,
+  rematch,
 } = gameRoomSlice.actions;
 
 export default gameRoomSlice.reducer;

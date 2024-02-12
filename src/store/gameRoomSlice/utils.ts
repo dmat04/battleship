@@ -202,8 +202,34 @@ export const processMessageReceived = (
     case ServerMessageCode.OwnMoveResult:
       moveResultMessageReceived(state, payload);
       break;
+    case ServerMessageCode.OpponentDisconnected:
+      // TODO: handle this!!!
+      break;
     default: assertNever(code);
   }
+};
+
+export const processRematchAction = (state: SliceState) => {
+  if (!state.gameResult) return;
+
+  state.playerShips = undefined;
+  state.gameStarted = false;
+  state.round = 0;
+  state.gameResult = null;
+
+  state.playerScore = {
+    hitCells: [],
+    missedCells: [],
+    inaccessibleCells: [],
+    sunkenShips: [],
+  };
+
+  state.opponentScore = {
+    hitCells: [],
+    missedCells: [],
+    inaccessibleCells: [],
+    sunkenShips: [],
+  };
 };
 
 export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
