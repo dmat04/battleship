@@ -1,10 +1,9 @@
-import { MoveResult } from '../../src/game/Board';
 import Game, { GameState } from '../../src/game/Game';
-
 import DefaultSettings from '../../src/game/DefaultSettings';
 import {
   p1Placements, p2Placements, firstPlayer, secondPlayer, moves,
 } from './gameTestData';
+import { CellHitResult } from '../../src/game/Board';
 
 let gameSubject: Game;
 
@@ -75,7 +74,9 @@ describe('A game in progress', () => {
         and moves on to the next player`, () => {
     const result = gameSubject.makeMove(firstPlayer, 5, 5);
     const currentPlayer = gameSubject.getCurrentPlayer();
-    const expectedResult: MoveResult = {
+    const expectedResult: CellHitResult = {
+      x: 5,
+      y: 5,
       hit: false,
       gameWon: false,
     };
@@ -89,7 +90,9 @@ describe('A game in progress', () => {
     const result = gameSubject.makeMove(firstPlayer, 0, 0);
     const currentPlayer = gameSubject.getCurrentPlayer();
 
-    const expectedResult: MoveResult = {
+    const expectedResult: CellHitResult = {
+      x: 0,
+      y: 0,
       hit: true,
       gameWon: false,
     };
@@ -127,7 +130,44 @@ describe('A game in progress', () => {
       player, x, y, result,
     }) => {
       const actualResult = gameSubject.makeMove(player, x, y);
-      expect(actualResult).toEqual(result as MoveResult);
+      expect(actualResult).toEqual(result as CellHitResult);
+    });
+  });
+});
+
+describe('A finished game', () => {
+  beforeEach(() => {
+    gameSubject = new Game(firstPlayer, secondPlayer, DefaultSettings);
+    gameSubject.initialize(p1Placements, p2Placements);
+    gameSubject.start();
+    moves.forEach(({
+      player, x, y,
+    }) => {
+      gameSubject.makeMove(player, x, y);
+    });
+  });
+
+  test('can be restarted and played again', () => {
+    gameSubject.resetGame();
+    gameSubject.initialize(p1Placements, p2Placements);
+    gameSubject.start();
+
+    // Since the game was restarted and previously 'firstPlayer' made the first
+    // move, now 'secondPlayer' needs to make the first move.
+    const firstMove = gameSubject.makeMove(secondPlayer, 9, 0);
+    expect(firstMove).toEqual({
+      x: 9,
+      y: 0,
+      hit: false,
+      gameWon: false,
+    });
+
+    // After 'secondPlayer' has made the first move, continue testing
+    // with the rest of the test moves.
+    moves.forEach(({
+      player, x, y,
+    }) => {
+      gameSubject.makeMove(player, x, y);
     });
   });
 });

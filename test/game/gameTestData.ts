@@ -99,6 +99,8 @@ export const moves = [
     x: 0,
     y: 3,
     result: {
+      x: 0,
+      y: 3,
       hit: false,
       gameWon: false,
     },
@@ -108,6 +110,8 @@ export const moves = [
     x: 0,
     y: 0,
     result: {
+      x: 0,
+      y: 0,
       hit: false,
       gameWon: false,
     },
@@ -117,6 +121,8 @@ export const moves = [
     x: 0,
     y: 9,
     result: {
+      x: 0,
+      y: 9,
       hit: true,
       gameWon: false,
     },
@@ -126,6 +132,8 @@ export const moves = [
     x: 1,
     y: 8,
     result: {
+      x: 1,
+      y: 8,
       hit: false,
       gameWon: false,
     },
@@ -135,6 +143,8 @@ export const moves = [
     x: 1,
     y: 0,
     result: {
+      x: 1,
+      y: 0,
       hit: false,
       gameWon: false,
     },
@@ -144,6 +154,8 @@ export const moves = [
     x: 2,
     y: 8,
     result: {
+      x: 2,
+      y: 8,
       hit: false,
       gameWon: false,
     },
@@ -153,6 +165,8 @@ export const moves = [
     x: 1,
     y: 1,
     result: {
+      x: 1,
+      y: 1,
       hit: true,
       gameWon: false,
     },
@@ -162,6 +176,8 @@ export const moves = [
     x: 1,
     y: 2,
     result: {
+      x: 1,
+      y: 2,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -181,6 +197,8 @@ export const moves = [
     x: 3,
     y: 2,
     result: {
+      x: 3,
+      y: 2,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -200,6 +218,8 @@ export const moves = [
     x: 3,
     y: 1,
     result: {
+      x: 3,
+      y: 1,
       hit: false,
       gameWon: false,
     },
@@ -209,6 +229,8 @@ export const moves = [
     x: 3,
     y: 8,
     result: {
+      x: 3,
+      y: 8,
       hit: false,
       gameWon: false,
     },
@@ -218,6 +240,8 @@ export const moves = [
     x: 3,
     y: 0,
     result: {
+      x: 3,
+      y: 0,
       hit: false,
       gameWon: false,
     },
@@ -227,6 +251,8 @@ export const moves = [
     x: 0,
     y: 0,
     result: {
+      x: 0,
+      y: 0,
       hit: true,
       gameWon: false,
     },
@@ -236,6 +262,8 @@ export const moves = [
     x: 1,
     y: 0,
     result: {
+      x: 1,
+      y: 0,
       hit: true,
       gameWon: false,
     },
@@ -245,6 +273,8 @@ export const moves = [
     x: 2,
     y: 0,
     result: {
+      x: 2,
+      y: 0,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -264,6 +294,8 @@ export const moves = [
     x: 8,
     y: 1,
     result: {
+      x: 8,
+      y: 1,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -283,6 +315,8 @@ export const moves = [
     x: 8,
     y: 3,
     result: {
+      x: 8,
+      y: 3,
       hit: true,
       gameWon: false,
     },
@@ -292,6 +326,8 @@ export const moves = [
     x: 8,
     y: 4,
     result: {
+      x: 8,
+      y: 4,
       hit: true,
       gameWon: false,
     },
@@ -301,6 +337,8 @@ export const moves = [
     x: 8,
     y: 5,
     result: {
+      x: 8,
+      y: 5,
       hit: true,
       gameWon: false,
     },
@@ -310,6 +348,8 @@ export const moves = [
     x: 8,
     y: 6,
     result: {
+      x: 8,
+      y: 6,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -329,6 +369,8 @@ export const moves = [
     x: 0,
     y: 6,
     result: {
+      x: 0,
+      y: 6,
       hit: true,
       gameWon: false,
     },
@@ -338,6 +380,8 @@ export const moves = [
     x: 0,
     y: 7,
     result: {
+      x: 0,
+      y: 7,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -357,6 +401,8 @@ export const moves = [
     x: 1,
     y: 9,
     result: {
+      x: 1,
+      y: 9,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -376,6 +422,8 @@ export const moves = [
     x: 4,
     y: 9,
     result: {
+      x: 4,
+      y: 9,
       hit: true,
       gameWon: false,
     },
@@ -385,6 +433,8 @@ export const moves = [
     x: 5,
     y: 9,
     result: {
+      x: 5,
+      y: 9,
       hit: true,
       gameWon: false,
     },
@@ -394,6 +444,8 @@ export const moves = [
     x: 6,
     y: 9,
     result: {
+      x: 6,
+      y: 9,
       hit: true,
       gameWon: false,
     },
@@ -403,6 +455,8 @@ export const moves = [
     x: 7,
     y: 9,
     result: {
+      x: 7,
+      y: 9,
       hit: true,
       gameWon: false,
     },
@@ -412,6 +466,8 @@ export const moves = [
     x: 9,
     y: 9,
     result: {
+      x: 9,
+      y: 9,
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -431,6 +487,8 @@ export const moves = [
     x: 3,
     y: 9,
     result: {
+      x: 3,
+      y: 9,
       hit: true,
       gameWon: true,
       shipSunk: {
