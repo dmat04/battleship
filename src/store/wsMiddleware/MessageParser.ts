@@ -5,6 +5,7 @@ import {
   ErrorMessage,
   GameStartedMessage,
   MoveResultMessageBase,
+  OpponentDisconnectedMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
   RoomStatusResponseMessage,
@@ -135,6 +136,14 @@ const isGameStartedMessage = (message: object): message is GameStartedMessage =>
   );
 };
 
+const isOpponentDisconectedMessage = (
+  message: object,
+): message is OpponentDisconnectedMessage => {
+  const { code } = message as OpponentDisconnectedMessage;
+
+  return code === ServerMessageCode.OpponentDisconnected;
+};
+
 const parseMessage = (jsonMessage: string): ServerMessage | undefined => {
   let message = null;
 
@@ -171,6 +180,8 @@ const parseMessage = (jsonMessage: string): ServerMessage | undefined => {
       return isAuthenticatedResponseMessage(message) ? message : undefined;
     case ServerMessageCode.GameStarted:
       return isGameStartedMessage(message) ? message : undefined;
+    case ServerMessageCode.OpponentDisconnected:
+      return isOpponentDisconectedMessage(message) ? message : undefined;
     default: return assertNever(code);
   }
 };
