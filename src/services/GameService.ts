@@ -237,6 +237,18 @@ const attemptToStartGame = (room: GameRoom) => {
   );
 };
 
+const resetGame = (room: GameRoom) => {
+  clearTimeout(room.turnTimer);
+
+  room.gameInstance?.resetGame();
+  // eslint-disable-next-line no-param-reassign
+  room.player1.shipPlacements = undefined;
+  if (room.player2) {
+    // eslint-disable-next-line no-param-reassign
+    room.player2.shipPlacements = undefined;
+  }
+};
+
 const roomStatusUpdated = (room: GameRoom) => {
   if (room.player1.socket) {
     const message: RoomStatusResponseMessage = {
@@ -533,7 +545,7 @@ const handleShootMessage = (room: GameRoom, player: string, message: ShootMessag
     if (gameState === GameState.InProgress) {
       room.turnTimer.refresh();
     } else if (gameState === GameState.Finished) {
-      clearTimeout(room.turnTimer);
+      resetGame(room);
     }
 
     sendMoveResultResponse(
