@@ -225,6 +225,23 @@ export const processRotateShipAction = (
   state.shipStates[shipIndex] = newState;
 };
 
+export const processResetShipsAction = (state: SliceState) => {
+  let id = state.placedIDs.pop();
+  while (id) {
+    if (!state.nonPlacedIDs.includes(id)) state.nonPlacedIDs.push(id);
+    id = state.placedIDs.pop();
+  }
+
+  state.shipStates.forEach((shipState) => {
+    shipState.position = null;
+    shipState.orientation = ShipOrientation.Horizontal;
+  });
+
+  state.grid.cellStates.forEach((row) => {
+    row.forEach((_, idx) => { row[idx] = null; });
+  });
+};
+
 export const initializeState = (gameSettings: GameSettings): SliceState => {
   const shipStates: ShipState[] = gameSettings.availableShips.map((availableShip) => ({
     ship: availableShip,

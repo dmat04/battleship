@@ -4,6 +4,7 @@ import {
   initializeState,
   processPlaceShipAction,
   processResetShipAction,
+  processResetShipsAction,
   processRotateShipAction,
 } from './utils';
 import { fetchGameSettings } from '../gameRoomSlice/thunks';
@@ -26,6 +27,7 @@ const shipPlacementSlice = createSlice({
     placeShip: processPlaceShipAction,
     resetShip: processResetShipAction,
     rotateShip: processRotateShipAction,
+    resetShips: processResetShipsAction,
   },
   extraReducers: (builder) => {
     builder.addCase(
@@ -39,6 +41,7 @@ export const {
   placeShip,
   resetShip,
   rotateShip,
+  resetShips,
 } = shipPlacementSlice.actions;
 
 export default shipPlacementSlice.reducer;

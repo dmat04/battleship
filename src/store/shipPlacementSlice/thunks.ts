@@ -3,6 +3,7 @@ import { ShipsPlacedResult, ShipPlacementInput } from '../../__generated__/graph
 import { PLACE_SHIPS } from '../../graphql/mutations';
 import Dependencies from '../../utils/Dependencies';
 import type { AppDispatch, RootState } from '../store';
+import { resetShips } from '.';
 
 export const submitPlacement = createAsyncThunk<
 // eslint-disable-next-line @typescript-eslint/indent
@@ -41,6 +42,8 @@ export const submitPlacement = createAsyncThunk<
     if (!result?.data?.placeShips) {
       return thunkAPI.rejectWithValue({ error: 'Ship placement submission failed' });
     }
+
+    thunkAPI.dispatch(resetShips());
 
     return result.data.placeShips;
   },
