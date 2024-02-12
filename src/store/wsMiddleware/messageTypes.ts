@@ -20,6 +20,7 @@ export enum ServerMessageCode {
   RoomStatusResponse = 'RoomStatusResponse',
   AuthenticatedResponse = 'AuthenticatedResponse',
   GameStarted = 'GameStarted',
+  OpponentDisconnected = 'OpponentDisconnected',
 }
 
 export interface ShootMessage {
@@ -63,6 +64,10 @@ export interface GameStartedMessage {
   playsFirst: string;
 }
 
+export interface OpponentDisconnectedMessage {
+  code: ServerMessageCode.OpponentDisconnected;
+}
+
 export type ClientMessage =
   | ShootMessage
   | RoomStatusRequestMessage;
@@ -73,4 +78,5 @@ export type ServerMessage =
  | OwnMoveResultMessage
  | RoomStatusResponseMessage
  | AuthenticatedResponseMessage
- | GameStartedMessage;
+ | GameStartedMessage
+ | OpponentDisconnectedMessage;
