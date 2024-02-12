@@ -4,12 +4,14 @@ import authReducer from './authSlice';
 import shipPlacementReducer from './shipPlacementSlice';
 import gameRoomReducer from './gameRoomSlice';
 import wsMiddleware from './wsMiddleware';
+import notificationReducer from './notificationSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     shipPlacement: shipPlacementReducer,
     gameRoom: gameRoomReducer,
+    notifiaction: notificationReducer,
   },
   middleware: (getDefaultMiddleware) => (getDefaultMiddleware().concat(wsMiddleware)),
 });
