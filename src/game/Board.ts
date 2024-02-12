@@ -95,6 +95,19 @@ class Board {
     return board;
   };
 
+  /**
+   * Reset a PlayerBoard in place. Sets all of the cell values
+   * to 'CellState.Empty'.
+   *
+   * @param board The PlayerBoard to be reset.
+   */
+  private static resetPlayerBoard = (board: PlayerBoard): void => {
+    board.forEach((row) => {
+      // eslint-disable-next-line no-param-reassign
+      row.forEach((_, index, arr) => { arr[index] = CellState.Empty; });
+    });
+  };
+
   private static mapShipIDsToShips = (
     shipPlacements: ShipPlacementInput[],
     settings: GameSettings,
@@ -654,6 +667,17 @@ class Board {
    * @returns The GameSettings
    */
   getSettings = (): GameSettings => this.settings;
+
+  /**
+   * Reset this Board instance. Clears the player ship placements,
+   * and resets all of the grid cells to an empty state.
+   */
+  reset = () => {
+    this.p1Ships = [];
+    this.p2Ships = [];
+    Board.resetPlayerBoard(this.player1Board);
+    Board.resetPlayerBoard(this.player2Board);
+  };
 }
 
 export default Board;

@@ -36,6 +36,9 @@ class Game {
   // The current round number
   private round: number;
 
+  // The player making the first move
+  private playsFirst: string | null = null;
+
   // The current player - the player who can make the next move
   private currentPlayer: string;
 
@@ -61,6 +64,7 @@ class Game {
     this.player1 = player1;
     this.player2 = player2;
     this.currentPlayer = player1;
+    this.playsFirst = player1;
   }
 
   /**
@@ -186,6 +190,21 @@ class Game {
    */
   finishGame = (): void => {
     this.state = GameState.Finished;
+  };
+
+  /**
+   * Reset this Game instance. Sets the Game into the 'Created' state.
+   * Switches the player making the first move. After this, the game may be
+   * initialized and started again;
+   */
+  resetGame = (): void => {
+    this.board.reset();
+    this.state = GameState.Created;
+    this.round = 0;
+    this.playsFirst = this.playsFirst === this.player1
+      ? this.player2
+      : this.player1;
+    this.currentPlayer = this.playsFirst;
   };
 
   /**
