@@ -19,6 +19,7 @@ import {
   ClientMessageCode,
   ErrorMessage,
   GameStartedMessage,
+  OpponentDisconnectedMessage,
   OpponentMoveResultMessage,
   OwnMoveResultMessage,
   RoomStatusResponseMessage,
@@ -511,13 +512,23 @@ const clientSocketClosed = (roomID: string, username: string): void => {
     throw new Error('Game room not found');
   }
 
-  const { playerData } = getPlayerData(room, username);
+  const { playerData, opponentData } = getPlayerData(room, username);
 
   if (!playerData) {
     throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
   }
 
   playerData.socket = undefined;
+
+  if (opponentData?.socket) {
+    const message: OpponentDisconnectedMessage = {
+      code: ServerMessageCode.OpponentDisconnected,
+    };
+
+    opponentData.socket.send(JSON.stringify(message));
+  }
+
+  // TODO: delete the GameRoom?
 };
 
 const handleShootMessage = (room: GameRoom, player: string, message: ShootMessage) => {
