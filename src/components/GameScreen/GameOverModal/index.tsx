@@ -4,7 +4,9 @@ import { Button } from '../../Button';
 import { useAppDispatch, useAppSelector } from '../../../store/store';
 import { GameResult } from '../../../store/gameRoomSlice/stateTypes';
 import { assertNever } from '../../../utils/typeUtils';
-import { clearRoom } from '../../../store/gameRoomSlice';
+import { clearRoom, rematch } from '../../../store/gameRoomSlice';
+import { closeWSConnection, sendMessage } from '../../../store/wsMiddleware/actions';
+import { ClientMessageCode, RoomStatusRequestMessage } from '../../../store/wsMiddleware/messageTypes';
 
 const Blur = keyframes`
   from {
@@ -98,7 +100,20 @@ const GameOverModal = () => {
       break;
   }
 
-  const exit = () => dispatch(clearRoom());
+  const handleExit = () => {
+    dispatch(clearRoom());
+    dispatch(closeWSConnection());
+  };
+
+  const handleRematch = () => {
+    dispatch(rematch());
+
+    const statusRequest: RoomStatusRequestMessage = {
+      code: ClientMessageCode.RoomStatusRequest,
+    };
+
+    dispatch(sendMessage(statusRequest));
+  };
 
   return (
     <Container>
@@ -106,8 +121,8 @@ const GameOverModal = () => {
         <CardHeader>Game Over</CardHeader>
         <CardBody>{message}</CardBody>
         <CardFooter>
-          <Button $variant="primary" onClick={exit}>Rematch</Button>
-          <Button $variant="warning" onClick={exit}>Exit</Button>
+          <Button $variant="primary" onClick={handleRematch}>Rematch</Button>
+          <Button $variant="warning" onClick={handleExit}>Exit</Button>
         </CardFooter>
       </Card>
     </Container>
