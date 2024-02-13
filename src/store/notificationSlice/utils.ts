@@ -1,11 +1,16 @@
+/* eslint-disable no-param-reassign */
 import { PayloadAction } from '@reduxjs/toolkit';
-import { NotificationArgs, SliceState } from './stateTypes';
+import { SliceState } from './stateTypes';
 
-export const processAddNotification = (
+export const processRemoveNotification = (
   state: SliceState,
-  action: PayloadAction<NotificationArgs>,
+  { payload }: PayloadAction<string>,
 ) => {
+  const index = state.notifications.findIndex((n) => n.id === payload);
 
+  if (index < 0) return;
+
+  state.notifications.splice(index, 1);
 };
 
-export default {};
+export default { };

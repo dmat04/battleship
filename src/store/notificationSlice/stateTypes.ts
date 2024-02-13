@@ -1,5 +1,3 @@
-import { Interface } from "readline";
-
 export enum NotificationType {
   Info = 'Info',
   Warning = 'Warning',
@@ -7,19 +5,13 @@ export enum NotificationType {
 }
 
 export interface Notification {
-  id: number;
+  id: string;
   type: NotificationType;
   message: string;
-  timeoutID: number | null;
-  dismissible: boolean;
 }
 
 export interface SliceState {
   notifications: Notification[];
 }
 
-export interface NotificationArgs {
-  message: string;
-  timeout?: number;
-  dismissible?: boolean;
-}
+export type NotificationArgs = Omit<Notification, 'id'> & { timeoutMs?: number };
