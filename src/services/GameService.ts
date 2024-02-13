@@ -519,6 +519,7 @@ const clientSocketClosed = (roomID: string, username: string): void => {
   }
 
   playerData.socket = undefined;
+  resetGame(room);
 
   if (opponentData?.socket) {
     const message: OpponentDisconnectedMessage = {
