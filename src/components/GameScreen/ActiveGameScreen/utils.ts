@@ -1,5 +1,5 @@
-import { GameSettings } from '../../__generated__/graphql';
-import { Coordinates } from '../../store/shipPlacementSlice/types';
+import { Coordinates } from '@dnd-kit/utilities';
+import { GameSettings } from '../../../__generated__/graphql';
 
 export const calculateGridPosition = (
   ev: React.MouseEvent<HTMLDivElement, MouseEvent>,

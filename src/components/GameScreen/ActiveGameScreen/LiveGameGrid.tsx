@@ -2,15 +2,15 @@
 import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
 import { useCallback, useRef } from 'react';
-import GameGrid from '../GameGrid';
-import { Theme } from '../assets/themes/themeDefault';
-import { PlacedShip, ShipOrientation } from '../../__generated__/graphql';
-import { Coordinates } from '../../store/shipPlacementSlice/types';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { assertNever } from '../../utils/typeUtils';
+import { Coordinates } from '@dnd-kit/utilities';
+import { ShipOrientation, PlacedShip } from '../../../__generated__/graphql';
+import { opponentCellClicked } from '../../../store/gameRoomSlice';
+import { GameRoomIsReady } from '../../../store/gameRoomSlice/stateTypes';
+import { useAppDispatch, useAppSelector } from '../../../store/store';
+import { assertNever } from '../../../utils/typeUtils';
+import GameGrid from '../../GameGrid';
+import { Theme } from '../../assets/themes/themeDefault';
 import { calculateGridPosition } from './utils';
-import { opponentCellClicked } from '../../store/gameRoomSlice';
-import { GameRoomIsReady } from '../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ $owner: Props['owner'], $active: boolean }>`
   grid-area: ${(props) => props.$owner};

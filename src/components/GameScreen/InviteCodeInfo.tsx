@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { useAppSelector } from '../store/store';
-import { Theme } from './assets/themes/themeDefault';
-import { PlayerStatus } from '../store/gameRoomSlice/stateTypes';
+import { useAppSelector } from '../../store/store';
+import { Theme } from '../assets/themes/themeDefault';
+import { PlayerStatus } from '../../store/gameRoomSlice/stateTypes';
 
 const Container = styled.div<{ theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { assertNever } from '../../../utils/typeUtils';
-import { Theme } from '../../assets/themes/themeDefault';
-import Spinner from '../../Spinner';
-import { useAppSelector } from '../../../store/store';
-import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
+import { PlayerStatus } from '../../../../store/gameRoomSlice/stateTypes';
+import { useAppSelector } from '../../../../store/store';
+import { assertNever } from '../../../../utils/typeUtils';
+import Spinner from '../../../Spinner';
+import { Theme } from '../../../assets/themes/themeDefault';
 import InviteCodeInfo from '../../InviteCodeInfo';
 
 const Container = styled.div<{ theme: Theme }>`

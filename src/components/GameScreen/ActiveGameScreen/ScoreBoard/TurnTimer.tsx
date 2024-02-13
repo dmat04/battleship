@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useEffect } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import { useAppSelector } from '../../../store/store';
 import type { Owner } from '.';
+import { useAppSelector } from '../../../../store/store';
 
 const Container = styled(animated.div) <{ $owner: Owner }>`
   position: relative;

@@ -41,7 +41,7 @@ const UserMenu = () => {
   }, []);
 
   if (auth?.accessToken) {
-    return <Navigate to="/start" replace />;
+    return <Navigate to="/menu" replace />;
   }
 
   return (

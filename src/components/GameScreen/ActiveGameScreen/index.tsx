@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { Navigate } from 'react-router-dom';
-import { useAppSelector } from '../../store/store';
-import Scoreboard from './ScoreBoard';
-import LiveGameGrid from './LiveGameGrid';
-import { Theme } from '../assets/themes/themeDefault';
 import GameOverModal from './GameOverModal';
+import { useAppSelector } from '../../../store/store';
+import { Theme } from '../../assets/themes/themeDefault';
+import LiveGameGrid from './LiveGameGrid';
+import Scoreboard from './ScoreBoard';
 
 const Container = styled.div<{ theme: Theme }>`
   display: grid;
@@ -34,7 +34,7 @@ const GameScreen = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
 
   if (!gameRoom.playerShips) {
-    return <Navigate to="/getReady" replace />;
+    return <Navigate to="/game/getReady" replace />;
   }
 
   return (

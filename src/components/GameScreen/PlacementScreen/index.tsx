@@ -1,11 +1,10 @@
 import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAppDispatch, useAppSelector } from '../../store/store';
 import PlacementGrid from './PlacementGrid';
-import { Button } from '../Button';
-import { Theme } from '../assets/themes/themeDefault';
-import { submitPlacement } from '../../store/shipPlacementSlice/thunks';
-import InviteCodeInfo from '../InviteCodeInfo';
+import { submitPlacement } from '../../../store/shipPlacementSlice/thunks';
+import { useAppDispatch, useAppSelector } from '../../../store/store';
+import { Button } from '../../Button';
+import { Theme } from '../../assets/themes/themeDefault';
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(90vw, 30rem);
@@ -27,10 +26,10 @@ const PlacementScreen = () => {
   const shipPlacementState = useAppSelector((state) => state.shipPlacement);
   const nonPlacedCount = useAppSelector((state) => state.shipPlacement.nonPlacedIDs.length);
 
-  if (!roomID) return <Navigate to="/start" replace />;
+  if (!roomID) return <Navigate to="/menu" replace />;
 
   if (playerShips) {
-    return <Navigate to="/game" replace />;
+    return <Navigate to="/game/play" replace />;
   }
 
   if (shipPlacementState.shipStates.length === 0) return null;
@@ -41,7 +40,6 @@ const PlacementScreen = () => {
 
   return (
     <Container>
-      <InviteCodeInfo />
       <Header>
         <p>Place your ships</p>
         <Button

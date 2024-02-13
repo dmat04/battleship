@@ -6,8 +6,9 @@ import themeDefault, { Theme } from './components/assets/themes/themeDefault';
 import Navbar from './components/Navbar';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
-import PlacementScreen from './components/PlacementScreen';
 import GameScreen from './components/GameScreen';
+import PlacementScreen from './components/GameScreen/PlacementScreen';
+import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
 
 const ScreenContainer = styled.div`
   display: grid;
@@ -48,11 +49,13 @@ const App = () => {
             <Navbar />
             <MainContentContainer>
               <Routes>
-                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route index element={<Navigate to="/login" replace />} />
                 <Route path="/login" element={<UserMenu />} />
-                <Route path="/start" element={<GameRoomMenu />} />
-                <Route path="/getReady" element={<PlacementScreen />} />
-                <Route path="/game" element={<GameScreen />} />
+                <Route path="/menu" element={<GameRoomMenu />} />
+                <Route path="/game" element={<GameScreen />}>
+                  <Route path="getReady" element={<PlacementScreen />} />
+                  <Route path="play" element={<ActiveGameScreen />} />
+                </Route>
               </Routes>
             </MainContentContainer>
             <TempFooter />

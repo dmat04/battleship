@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { useAppSelector } from '../../../store/store';
+import { GameIsInProgress } from '../../../../store/gameRoomSlice/stateTypes';
+import { useAppSelector } from '../../../../store/store';
+import { Theme } from '../../../assets/themes/themeDefault';
 import PlayerScorecard from './PlayerScorecard';
-import { Theme } from '../../assets/themes/themeDefault';
-import { GameIsInProgress } from '../../../store/gameRoomSlice/stateTypes';
-import StatusMessage from './StatusMessage';
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: score;
@@ -17,13 +16,7 @@ export type Owner = 'player' | 'opponent';
 const Scoreboard = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
 
-  if (!GameIsInProgress(gameRoom)) {
-    return (
-      <Container>
-        <StatusMessage />
-      </Container>
-    );
-  }
+  if (!GameIsInProgress(gameRoom)) return null;
 
   return (
     <Container>

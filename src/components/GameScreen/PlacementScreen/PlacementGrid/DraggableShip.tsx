@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { animated } from '@react-spring/web';
 import { useRef } from 'react';
-import useShipDrag from '../../../hooks/useShipDrag';
-import { ShipOrientation } from '../../../__generated__/graphql';
+import { ShipOrientation } from '../../../../__generated__/graphql';
+import useShipDrag from '../../../../hooks/useShipDrag';
 
 const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }>`
   display: grid;

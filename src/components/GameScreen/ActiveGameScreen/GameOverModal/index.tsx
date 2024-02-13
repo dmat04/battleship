@@ -1,12 +1,12 @@
 import styled, { keyframes } from 'styled-components';
-import { Theme } from '../../assets/themes/themeDefault';
-import { Button } from '../../Button';
-import { useAppDispatch, useAppSelector } from '../../../store/store';
-import { GameResult } from '../../../store/gameRoomSlice/stateTypes';
-import { assertNever } from '../../../utils/typeUtils';
-import { clearRoom, rematch } from '../../../store/gameRoomSlice';
-import { closeWSConnection, sendMessage } from '../../../store/wsMiddleware/actions';
-import { ClientMessageCode, RoomStatusRequestMessage } from '../../../store/wsMiddleware/messageTypes';
+import { clearRoom, rematch } from '../../../../store/gameRoomSlice';
+import { GameResult } from '../../../../store/gameRoomSlice/stateTypes';
+import { useAppSelector, useAppDispatch } from '../../../../store/store';
+import { closeWSConnection, sendMessage } from '../../../../store/wsMiddleware/actions';
+import { RoomStatusRequestMessage, ClientMessageCode } from '../../../../store/wsMiddleware/messageTypes';
+import { assertNever } from '../../../../utils/typeUtils';
+import { Button } from '../../../Button';
+import { Theme } from '../../../assets/themes/themeDefault';
 
 const Blur = keyframes`
   from {

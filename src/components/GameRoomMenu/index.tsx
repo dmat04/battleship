@@ -40,7 +40,7 @@ const GameRoomMenu = () => {
   }
 
   if (roomID) {
-    return <Navigate to="/getReady" replace />;
+    return <Navigate to="/game/getReady" replace />;
   }
 
   return (

@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { useMemo } from 'react';
 import { animated, useTransition } from '@react-spring/web';
-import { useAppSelector } from '../../../store/store';
-import { Theme } from '../../assets/themes/themeDefault';
-import { type Ship, PlacedShip } from '../../../__generated__/graphql';
-import type { Owner } from '.';
-import { GameRoomIsReady, ScoreState } from '../../../store/gameRoomSlice/stateTypes';
 import TurnTimer from './TurnTimer';
+import type { Owner } from '.';
+import { Ship, PlacedShip } from '../../../../__generated__/graphql';
+import { ScoreState, GameRoomIsReady } from '../../../../store/gameRoomSlice/stateTypes';
+import { useAppSelector } from '../../../../store/store';
+import { Theme } from '../../../assets/themes/themeDefault';
 
 const Container = styled.div<{ $owner: Owner }>`
   position: relative;
