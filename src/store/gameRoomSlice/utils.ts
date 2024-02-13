@@ -24,6 +24,7 @@ import {
   GameRoomIsReady,
   GameResult,
   initialState,
+  GameIsInProgress,
 } from './stateTypes';
 
 const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
@@ -180,11 +181,12 @@ const processGameStartedMessage = (state: SliceState, message: GameStartedMessag
 };
 
 const processOpponentDisconnectedMessage = (state: SliceState) => {
-  if (state.opponentStatus !== PlayerStatus.Disconnected) {
-    return initialState;
+  if (GameIsInProgress(state)) {
+    state.gameResult = GameResult.OpponentDisconnected;
+    state.opponentStatus = PlayerStatus.Disconnected;
+  } else {
+    state = { ...initialState };
   }
-
-  return state;
 };
 
 export const processMessageReceived = (
@@ -192,8 +194,6 @@ export const processMessageReceived = (
   { payload }: PayloadAction<ServerMessage>,
 ) => {
   const { code } = payload;
-  console.log(JSON.stringify(payload, null, 2));
-
   switch (code) {
     case ServerMessageCode.AuthenticatedResponse:
       break;
@@ -219,7 +219,7 @@ export const processMessageReceived = (
 };
 
 export const processRematchAction = (state: SliceState) => {
-  if (!state.gameResult) return;
+  if (GameIsInProgress(state)) return;
 
   state.playerShips = undefined;
   state.gameStarted = false;

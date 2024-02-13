@@ -17,6 +17,7 @@ export enum PlayerStatus {
 export enum GameResult {
   PlayerWon = 'PlayerWon',
   OpponentWon = 'OpponentWon',
+  OpponentDisconnected = 'OpponentDisconnected',
 }
 
 export interface SliceStateInactive {
@@ -57,7 +58,15 @@ export const GameRoomIsReady = (state: SliceState): state is SliceStateActive =>
 
 // eslint-disable-next-line arrow-body-style
 export const GameIsInProgress = (state: SliceState): state is SliceStateActive => {
-  return state.gameStarted && GameRoomIsReady(state);
+  return GameRoomIsReady(state)
+    && state.gameStarted
+    && state.gameResult === null;
+};
+
+// eslint-disable-next-line arrow-body-style
+export const GameIsFinished = (state: SliceState): boolean => {
+  return GameRoomIsReady(state)
+    && state.gameResult !== null;
 };
 
 export type SliceState = SliceStateInactive | SliceStateActive;
