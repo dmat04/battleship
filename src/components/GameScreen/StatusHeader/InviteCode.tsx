@@ -4,6 +4,7 @@ import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 
 const Container = styled(animated.div)<{ theme: Theme }>`
+  width: min(100%, 30rem);
   padding: ${(props) => props.theme.paddingMin};
   border: 2px solid black;
   background-color: #8bd2d6;

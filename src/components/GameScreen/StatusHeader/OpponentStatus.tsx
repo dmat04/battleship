@@ -7,16 +7,14 @@ import Spinner from '../../Spinner';
 import { Theme } from '../../assets/themes/themeDefault';
 
 const Container = styled(animated.div)<{ theme: Theme }>`
-  grid-area: 1 / 1 / span 1 / span 2;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: stretch;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: ${(props) => props.theme.paddingMin};
 `;
 
 const Label = styled.p<{ theme: Theme }>`
-  padding-inline: ${(props) => props.theme.paddingMin};
   text-align: center;
 `;
 

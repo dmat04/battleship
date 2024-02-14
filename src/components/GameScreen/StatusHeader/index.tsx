@@ -1,9 +1,18 @@
 import { useTransition } from '@react-spring/web';
+import styled from 'styled-components';
 import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
 import { useAppSelector } from '../../../store/store';
 import OpponentStatus from './OpponentStatus';
 import InviteCode from './InviteCode';
 import { assertNever } from '../../../utils/typeUtils';
+import { Theme } from '../../assets/themes/themeDefault';
+
+const Container = styled.div<{ theme: Theme }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${(props) => props.theme.paddingMin};
+`;
 
 type StatusItem = 'inviteCode' | 'opponentStatus';
 
@@ -30,7 +39,7 @@ const StatusHeader = () => {
   );
 
   return (
-    <div>
+    <Container>
       {
         itemTranistion((style, item) => {
           switch (item) {
@@ -40,7 +49,7 @@ const StatusHeader = () => {
           }
         })
       }
-    </div>
+    </Container>
   );
 };
 
