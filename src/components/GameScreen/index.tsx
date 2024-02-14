@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
-import StatusMessage from './ActiveGameScreen/ScoreBoard/StatusMessage';
+import StatusHeader from './StatusHeader';
 
 const GameScreen = () => (
   <div>
-    <StatusMessage />
+    <StatusHeader />
     <Outlet />
   </div>
 );

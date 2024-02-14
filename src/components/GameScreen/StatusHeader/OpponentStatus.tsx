@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-import { PlayerStatus } from '../../../../store/gameRoomSlice/stateTypes';
-import { useAppSelector } from '../../../../store/store';
-import { assertNever } from '../../../../utils/typeUtils';
-import Spinner from '../../../Spinner';
-import { Theme } from '../../../assets/themes/themeDefault';
-import InviteCodeInfo from '../../InviteCodeInfo';
+import { SpringValues, animated } from '@react-spring/web';
+import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
+import { useAppSelector } from '../../../store/store';
+import { assertNever } from '../../../utils/typeUtils';
+import Spinner from '../../Spinner';
+import { Theme } from '../../assets/themes/themeDefault';
 
-const Container = styled.div<{ theme: Theme }>`
+const Container = styled(animated.div)<{ theme: Theme }>`
   grid-area: 1 / 1 / span 1 / span 2;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
+  align-items: stretch;
   gap: ${(props) => props.theme.paddingMin};
 `;
 
@@ -20,7 +20,7 @@ const Label = styled.p<{ theme: Theme }>`
   text-align: center;
 `;
 
-const StatusMessage = () => {
+const OpponentStatus = ({ style }: { style: SpringValues }) => {
   const { opponentStatus } = useAppSelector((state) => state.gameRoom);
 
   let message = '';
@@ -39,8 +39,7 @@ const StatusMessage = () => {
   }
 
   return (
-    <Container>
-      <InviteCodeInfo />
+    <Container style={style}>
       <Label>
         {message}
       </Label>
@@ -49,4 +48,4 @@ const StatusMessage = () => {
   );
 };
 
-export default StatusMessage;
+export default OpponentStatus;
