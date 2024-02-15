@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { GameIsInProgress } from '../../../../store/gameRoomSlice/stateTypes';
 import { useAppSelector } from '../../../../store/store';
 import { Theme } from '../../../assets/themes/themeDefault';
 import PlayerScorecard from './PlayerScorecard';
@@ -16,12 +15,12 @@ export type Owner = 'player' | 'opponent';
 const Scoreboard = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
 
-  if (!GameIsInProgress(gameRoom)) return null;
+  if (!gameRoom.gameStarted) return null;
 
   return (
     <Container>
-      <PlayerScorecard owner="player" username={gameRoom.playerName} />
-      <PlayerScorecard owner="opponent" username={gameRoom.opponentName} />
+      <PlayerScorecard owner="player" username={gameRoom.playerName ?? ''} />
+      <PlayerScorecard owner="opponent" username={gameRoom.opponentName ?? ''} />
     </Container>
   );
 };
