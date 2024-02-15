@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
-import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
+import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from '../CollapsibleContainer';
 import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
 import { createGameRoom } from '../../store/gameRoomSlice/thunks';
@@ -26,12 +26,12 @@ const GameRoomMenu = () => {
   const loadingNewRoom = useAppSelector((state) => state.gameRoom.requestStatus.loadingNewRoom);
 
   const collapsible = useRef<CollapsibleAPI>(null);
-  const [collapsibleOpen, setCollapsibleOpen] = useState<boolean>(false);
+  const [collapsibleOpen, setCollapsibleOpen] = useState<CollapsibleState>('closed');
 
   const startNewGame = () => {
     if (loadingNewRoom) return;
 
-    collapsible.current?.setCollapsed(true);
+    collapsible.current?.setState('closed');
     dispatch(createGameRoom());
   };
 
@@ -56,9 +56,10 @@ const GameRoomMenu = () => {
       <CollapsibleContainer
         ref={collapsible}
         label="Join a game"
+        initialState="closed"
         onCollapsedStateChange={(collapsed) => setCollapsibleOpen(collapsed)}
       >
-        <JoinGameForm disabled={collapsibleOpen} />
+        <JoinGameForm disabled={collapsibleOpen === 'closed'} />
       </CollapsibleContainer>
     </MenuContainer>
   );

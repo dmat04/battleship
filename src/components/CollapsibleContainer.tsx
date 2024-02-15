@@ -16,23 +16,32 @@ const Container = styled(animated.div) <{ theme: Theme }>`
   overflow: clip;
 `;
 
+export type CollapsibleState = 'open' | 'closed';
+
 interface Props {
   label: string;
   // eslint-disable-next-line react/require-default-props
-  onCollapsedStateChange?: (collapsed: boolean) => void;
+  onCollapsedStateChange?: (collapsed: CollapsibleState) => void;
+  // eslint-disable-next-line react/require-default-props
+  initialState: CollapsibleState;
 }
 
 export interface CollapsibleAPI {
-  setCollapsed: (collapsed: boolean) => void;
+  setState: (collapsed: CollapsibleState) => void;
 }
 
 const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
-  ({ label, onCollapsedStateChange, children }: React.PropsWithChildren<Props>, ref) => {
+  (
+    {
+      label, onCollapsedStateChange, initialState, children,
+    }: React.PropsWithChildren<Props>,
+    ref,
+  ) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const labelRef = useRef<HTMLParagraphElement>(null);
     const childrenContainerRef = useRef<HTMLDivElement>(null);
 
-    const isCollapsed = useRef<boolean>(true);
+    const collapsibleState = useRef<CollapsibleState>(initialState);
 
     const theme = useContext(ThemeContext) ?? themeDefault;
 
@@ -48,12 +57,10 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
       config: { duration: theme.durationTransitionDefault },
     }));
 
-    const setCollapsed = useCallback((collapsed: boolean) => {
-      if (collapsed === isCollapsed.current) return;
+    const setState = useCallback((collapsed: CollapsibleState) => {
+      if (collapsed === collapsibleState.current) return;
 
-      isCollapsed.current = collapsed;
-
-      if (isCollapsed.current) {
+      if (collapsibleState.current === 'open') {
         springAPI.start({
           from: {
             height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
@@ -77,18 +84,20 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
         backgroundColor.start(theme.colorSecondary);
       }
 
-      if (onCollapsedStateChange) onCollapsedStateChange(isCollapsed.current);
+      collapsibleState.current = collapsed;
+
+      if (onCollapsedStateChange) onCollapsedStateChange(collapsibleState.current);
     }, [backgroundColor, onCollapsedStateChange, springAPI, theme.colorBg, theme.colorSecondary]);
 
     useImperativeHandle(ref, () => ({
-      setCollapsed,
+      setState,
     }));
 
     const onClickHandler = (ev: React.MouseEvent) => {
       if (ev.target !== containerRef.current
         && ev.target !== labelRef.current) return;
 
-      setCollapsed(!isCollapsed.current);
+      setState(collapsibleState.current === 'open' ? 'closed' : 'open');
     };
 
     return (
@@ -96,7 +105,7 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
         ref={containerRef}
         onClick={onClickHandler}
         onPointerEnter={() => backgroundColor.start(theme.colorSecondary)}
-        onPointerLeave={() => isCollapsed.current && backgroundColor.start(theme.colorBg)}
+        onPointerLeave={() => collapsibleState.current && backgroundColor.start(theme.colorBg)}
         style={{ backgroundColor }}
       >
         <MenuItemLabel ref={labelRef}>{label}</MenuItemLabel>

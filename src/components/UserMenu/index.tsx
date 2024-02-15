@@ -34,7 +34,7 @@ const UserMenu = () => {
 
   const closeOthers = useCallback((key: string) => {
     collapsibleRefs.current.forEach((handle) => {
-      if (handle.key !== key) handle.collapsible.setCollapsed(true);
+      if (handle.key !== key) handle.collapsible.setState('closed');
     });
 
     setOpened(key);
@@ -48,9 +48,10 @@ const UserMenu = () => {
     <MenuContainer>
       <CollapsibleContainer
         label="Continue as guest"
+        initialState="closed"
         ref={(api) => addCollapsibleRef('guest', api)}
         onCollapsedStateChange={
-          (collapsed) => (collapsed ? setOpened(null) : closeOthers('guest'))
+          (state) => (state === 'closed' ? setOpened(null) : closeOthers('guest'))
         }
       >
         <GuestForm disabled={opened !== 'guest'} />
@@ -58,9 +59,10 @@ const UserMenu = () => {
 
       <CollapsibleContainer
         label="Login"
+        initialState="closed"
         ref={(api) => addCollapsibleRef('login', api)}
         onCollapsedStateChange={
-          (collapsed) => (collapsed ? setOpened(null) : closeOthers('login'))
+          (state) => (state === 'closed' ? setOpened(null) : closeOthers('login'))
         }
       >
         <form>
@@ -72,9 +74,10 @@ const UserMenu = () => {
 
       <CollapsibleContainer
         label="Register"
+        initialState="closed"
         ref={(api) => addCollapsibleRef('register', api)}
         onCollapsedStateChange={
-          (collapsed) => (collapsed ? setOpened(null) : closeOthers('register'))
+          (state) => (state === 'closed' ? setOpened(null) : closeOthers('register'))
         }
       >
         <form>
