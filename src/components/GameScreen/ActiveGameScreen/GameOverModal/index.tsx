@@ -124,7 +124,10 @@ const GameOverModal = () => {
         <CardHeader>Game Over</CardHeader>
         <CardBody>{message}</CardBody>
         <CardFooter>
-          <Button $variant="primary" onClick={handleRematch}>Rematch</Button>
+          {
+            gameResult !== GameResult.OpponentDisconnected
+            && <Button $variant="primary" onClick={handleRematch}>Rematch</Button>
+          }
           <Button $variant="warning" onClick={handleExit}>Exit</Button>
         </CardFooter>
       </Card>
