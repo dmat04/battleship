@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import { useCallback, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Theme } from '../assets/themes/themeDefault';
-import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
+import { CollapsibleAPI } from '../CollapsibleContainer';
 import GuestForm from './GuestForm';
 import { useAppSelector } from '../../store/store';
+import CollapsibleButton from '../CollapsibleButton';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -46,7 +47,7 @@ const UserMenu = () => {
 
   return (
     <MenuContainer>
-      <CollapsibleContainer
+      <CollapsibleButton
         label="Continue as guest"
         initialState="closed"
         ref={(api) => addCollapsibleRef('guest', api)}
@@ -55,9 +56,9 @@ const UserMenu = () => {
         }
       >
         <GuestForm disabled={opened !== 'guest'} />
-      </CollapsibleContainer>
+      </CollapsibleButton>
 
-      <CollapsibleContainer
+      <CollapsibleButton
         label="Login"
         initialState="closed"
         ref={(api) => addCollapsibleRef('login', api)}
@@ -70,9 +71,9 @@ const UserMenu = () => {
           <input type="password" placeholder="Password" />
           <button type="button">Log in</button>
         </form>
-      </CollapsibleContainer>
+      </CollapsibleButton>
 
-      <CollapsibleContainer
+      <CollapsibleButton
         label="Register"
         initialState="closed"
         ref={(api) => addCollapsibleRef('register', api)}
@@ -85,7 +86,7 @@ const UserMenu = () => {
           <input type="password" placeholder="Password" />
           <button type="button">Log in</button>
         </form>
-      </CollapsibleContainer>
+      </CollapsibleButton>
     </MenuContainer>
   );
 };

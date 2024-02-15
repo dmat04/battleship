@@ -3,12 +3,13 @@ import { useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
-import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from '../CollapsibleContainer';
+import { CollapsibleAPI, CollapsibleState } from '../CollapsibleContainer';
 import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
 import { createGameRoom } from '../../store/gameRoomSlice/thunks';
 import Spinner from '../Spinner';
 import { Button } from '../Button';
+import CollapsibleButton from '../CollapsibleButton';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -53,14 +54,14 @@ const GameRoomMenu = () => {
         }
       </Button>
 
-      <CollapsibleContainer
+      <CollapsibleButton
         ref={collapsible}
         label="Join a game"
         initialState="closed"
-        onCollapsedStateChange={(collapsed) => setCollapsibleOpen(collapsed)}
+        onCollapsedStateChange={(state) => setCollapsibleOpen(state)}
       >
         <JoinGameForm disabled={collapsibleOpen === 'closed'} />
-      </CollapsibleContainer>
+      </CollapsibleButton>
     </MenuContainer>
   );
 };
