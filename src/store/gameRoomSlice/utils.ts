@@ -185,7 +185,7 @@ const processOpponentDisconnectedMessage = (state: SliceState) => {
     state.gameResult = GameResult.OpponentDisconnected;
     state.opponentStatus = PlayerStatus.Disconnected;
   } else {
-    state = { ...initialState };
+    Object.assign(state, { ...initialState });
   }
 };
 

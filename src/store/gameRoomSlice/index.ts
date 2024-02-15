@@ -46,7 +46,7 @@ export const opponentCellClicked = createAsyncThunk<
 
 const gameRoomSlice = createSlice({
   name: 'activeGame',
-  initialState: initialState as SliceState,
+  initialState: { ...initialState } as SliceState,
   reducers: {
     clearRoom: () => initialState,
     rematch: processRematchAction,
