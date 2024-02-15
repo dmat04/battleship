@@ -22,7 +22,7 @@ const OpponentStatus = () => {
   const { opponentStatus } = useAppSelector((state) => state.gameRoom);
 
   let message = '';
-  let spinner = true;
+  let success = false;
 
   switch (opponentStatus) {
     case PlayerStatus.Disconnected:
@@ -33,7 +33,7 @@ const OpponentStatus = () => {
       break;
     case PlayerStatus.Ready:
       message = 'Opponent ready';
-      spinner = false;
+      success = true;
       break;
     default: assertNever(opponentStatus);
   }
@@ -43,7 +43,7 @@ const OpponentStatus = () => {
       <Label>
         {message}
       </Label>
-      <Spinner $visible={spinner} />
+      <Spinner $visible $success={success} />
     </Container>
   );
 };
