@@ -6,6 +6,10 @@ import { animated, useSpring } from '@react-spring/web';
 import themeDefault, { Theme } from './assets/themes/themeDefault';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: clip;
 `;
 
@@ -35,7 +39,14 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
     const theme = useContext(ThemeContext) ?? themeDefault;
 
     const [springStyle, springAPI] = useSpring(() => ({
-      from: { height: '0px', opacity: 0 },
+      from: {
+        height: initialState === 'closed'
+          ? '0px'
+          : `${childrenContainerRef.current?.offsetHeight}px` ?? '0px',
+        opacity: initialState === 'closed'
+          ? 0
+          : 1,
+      },
       config: { duration: theme.durationTransitionDefault },
     }));
 
@@ -85,9 +96,9 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
 
     return (
       <Container style={springStyle}>
-        <div ref={childrenContainerRef}>
+        <Container ref={childrenContainerRef}>
           {children}
-        </div>
+        </Container>
       </Container>
     );
   },
