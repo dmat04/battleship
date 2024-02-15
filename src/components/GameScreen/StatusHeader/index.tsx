@@ -15,16 +15,28 @@ const Container = styled.div<{ theme: Theme }>`
 `;
 
 const StatusHeader = () => {
-  const { inviteCode, opponentStatus } = useAppSelector((state) => state.gameRoom);
+  const {
+    inviteCode,
+    opponentStatus,
+    gameStarted,
+    gameResult,
+  } = useAppSelector((state) => state.gameRoom);
   const inviteCodeCollapsible = useRef<CollapsibleAPI>(null);
+  const opponentStatusCollapsible = useRef<CollapsibleAPI>(null);
 
   useEffect(() => {
+    if (gameResult || gameStarted) {
+      inviteCodeCollapsible.current?.setState('closed');
+      opponentStatusCollapsible.current?.setState('closed');
+      return;
+    }
+
     if (inviteCode && opponentStatus === PlayerStatus.Disconnected) {
       inviteCodeCollapsible.current?.setState('open');
     } else {
       inviteCodeCollapsible.current?.setState('closed');
     }
-  }, [inviteCode, opponentStatus]);
+  }, [inviteCode, opponentStatus, gameResult, gameStarted]);
 
   return (
     <Container>
@@ -34,7 +46,12 @@ const StatusHeader = () => {
       >
         <InviteCode />
       </CollapsibleContainer>
-      <OpponentStatus />
+      <CollapsibleContainer
+        initialState="open"
+        ref={opponentStatusCollapsible}
+      >
+        <OpponentStatus />
+      </CollapsibleContainer>
     </Container>
   );
 };
