@@ -1,16 +1,16 @@
 import styled from 'styled-components';
-import { SpringValues, animated } from '@react-spring/web';
 import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
 import { useAppSelector } from '../../../store/store';
 import { assertNever } from '../../../utils/typeUtils';
 import Spinner from '../../Spinner';
 import { Theme } from '../../assets/themes/themeDefault';
 
-const Container = styled(animated.div)<{ theme: Theme }>`
+const Container = styled.div<{ theme: Theme }>`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: ${(props) => props.theme.paddingMin};
 `;
 
@@ -18,10 +18,11 @@ const Label = styled.p<{ theme: Theme }>`
   text-align: center;
 `;
 
-const OpponentStatus = ({ style }: { style: SpringValues }) => {
+const OpponentStatus = () => {
   const { opponentStatus } = useAppSelector((state) => state.gameRoom);
 
   let message = '';
+  let spinner = true;
 
   switch (opponentStatus) {
     case PlayerStatus.Disconnected:
@@ -31,17 +32,18 @@ const OpponentStatus = ({ style }: { style: SpringValues }) => {
       message = 'Opponent connected, waiting for opponent to get ready';
       break;
     case PlayerStatus.Ready:
-      message = 'Opponent ready, game starting...';
+      message = 'Opponent ready';
+      spinner = false;
       break;
     default: assertNever(opponentStatus);
   }
 
   return (
-    <Container style={style}>
+    <Container>
       <Label>
         {message}
       </Label>
-      <Spinner $visible />
+      <Spinner $visible={spinner} />
     </Container>
   );
 };

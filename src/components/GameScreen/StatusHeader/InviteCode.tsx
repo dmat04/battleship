@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { SpringValues, animated } from '@react-spring/web';
 import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
 
-const Container = styled(animated.div)<{ theme: Theme }>`
+const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 30rem);
   padding: ${(props) => props.theme.paddingMin};
   border: 2px solid black;
@@ -15,13 +14,13 @@ const Highlight = styled.span`
   font-weight: bolder;
 `;
 
-const InviteCode = ({ style }: { style: SpringValues }) => {
+const InviteCode = () => {
   const { inviteCode } = useAppSelector((state) => state.gameRoom);
 
   if (!inviteCode) return null;
 
   return (
-    <Container style={style}>
+    <Container>
       <p>
         Game invite code:&nbsp;
         <Highlight>

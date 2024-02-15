@@ -1,11 +1,11 @@
-import { useTransition } from '@react-spring/web';
 import styled from 'styled-components';
+import { useEffect, useRef } from 'react';
 import { PlayerStatus } from '../../../store/gameRoomSlice/stateTypes';
 import { useAppSelector } from '../../../store/store';
 import OpponentStatus from './OpponentStatus';
 import InviteCode from './InviteCode';
-import { assertNever } from '../../../utils/typeUtils';
 import { Theme } from '../../assets/themes/themeDefault';
+import CollapsibleContainer, { CollapsibleAPI } from '../../CollapsibleContainer';
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;
@@ -14,41 +14,27 @@ const Container = styled.div<{ theme: Theme }>`
   gap: ${(props) => props.theme.paddingMin};
 `;
 
-type StatusItem = 'inviteCode' | 'opponentStatus';
-
 const StatusHeader = () => {
   const { inviteCode, opponentStatus } = useAppSelector((state) => state.gameRoom);
+  const inviteCodeCollapsible = useRef<CollapsibleAPI>(null);
 
-  const items: StatusItem[] = [];
-
-  if (inviteCode && opponentStatus === PlayerStatus.Disconnected) {
-    items.push('inviteCode');
-  }
-
-  if (opponentStatus !== PlayerStatus.Ready) {
-    items.push('opponentStatus');
-  }
-
-  const itemTranistion = useTransition<StatusItem, any>(
-    items,
-    {
-      from: { opacity: 0 },
-      enter: { opacity: 1 },
-      leave: { opacity: 0 },
-    },
-  );
+  useEffect(() => {
+    if (inviteCode && opponentStatus === PlayerStatus.Disconnected) {
+      inviteCodeCollapsible.current?.setState('open');
+    } else {
+      inviteCodeCollapsible.current?.setState('closed');
+    }
+  }, [inviteCode, opponentStatus]);
 
   return (
     <Container>
-      {
-        itemTranistion((style, item) => {
-          switch (item) {
-            case 'inviteCode': return <InviteCode style={style} />;
-            case 'opponentStatus': return <OpponentStatus style={style} />;
-            default: return assertNever(item);
-          }
-        })
-      }
+      <CollapsibleContainer
+        initialState={inviteCode ? 'open' : 'closed'}
+        ref={inviteCodeCollapsible}
+      >
+        <InviteCode />
+      </CollapsibleContainer>
+      <OpponentStatus />
     </Container>
   );
 };
