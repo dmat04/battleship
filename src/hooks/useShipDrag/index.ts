@@ -52,11 +52,19 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   const [springProps, springAPI] = useSpring(
     () => ({
       from: springStart,
-      config: {
-        mass: 0.5,
-        tension: 500,
-        friction: 15,
-        precision: 0.0001,
+      config: (key) => {
+        if (key === 'zIndex') {
+          return {
+            duration: 0,
+          };
+        }
+
+        return {
+          mass: 0.5,
+          tension: 500,
+          friction: 15,
+          precision: 0.0001,
+        };
       },
     }),
   );
@@ -154,7 +162,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         y: dy,
         scale: 1.2,
         borderColor,
-        zIndex: 50,
+        zIndex: 1000,
       },
     });
   }, [containerRect, gridRect, gridState, shipRect, shipState, springAPI]);
