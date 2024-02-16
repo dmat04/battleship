@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import {
-  Notification, TransientNotificationArgs, SliceState, PermanentNotificationArgs,
+  Notification, TransientNotificationArgs, SliceState, PermanentNotificationArgs, NotificationType,
 } from './stateTypes';
 import { processRemoveNotification } from './utils';
 import type { AppDispatch, RootState } from '../store';
@@ -55,9 +55,29 @@ const initialState: SliceState = {
   notifications: [],
 };
 
+const stubState: SliceState = {
+  notifications: [
+    {
+      id: 'first',
+      message: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea consectetur non inventore.',
+      type: NotificationType.Info,
+    },
+    {
+      id: 'second',
+      message: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea consectetur non inventore.',
+      type: NotificationType.Warning,
+    },
+    {
+      id: 'third',
+      message: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea consectetur non inventore.',
+      type: NotificationType.Error,
+    },
+  ],
+};
+
 const notificationSlice = createSlice({
   name: 'notification',
-  initialState,
+  initialState: stubState,
   reducers: {
     removeNotification: processRemoveNotification,
   },

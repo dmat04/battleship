@@ -9,6 +9,7 @@ import GameRoomMenu from './components/GameRoomMenu';
 import GameScreen from './components/GameScreen';
 import PlacementScreen from './components/GameScreen/PlacementScreen';
 import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
+import NotificationOverlay from './components/NotificationOverlay';
 
 const ScreenContainer = styled.div`
   display: grid;
@@ -61,6 +62,7 @@ const App = () => {
             <TempFooter />
           </ScreenContainer>
         </BrowserRouter>
+        <NotificationOverlay />
       </div>
     </ThemeProvider>
   );
