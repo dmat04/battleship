@@ -8,10 +8,12 @@ export interface Notification {
   id: string;
   type: NotificationType;
   message: string;
+  expiresAt?: number
 }
 
 export interface SliceState {
   notifications: Notification[];
 }
 
-export type NotificationArgs = Omit<Notification, 'id'> & { timeoutMs?: number };
+export type PermanentNotificationArgs = Omit<Notification, 'id' | 'expiresAt'>;
+export type TransientNotificationArgs = PermanentNotificationArgs & { timeoutArg: number };

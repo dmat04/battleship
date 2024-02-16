@@ -3,7 +3,7 @@ import { messageReceived } from '../wsMiddleware/actions';
 import { ServerMessageCode } from '../wsMiddleware/messageTypes';
 import { NotificationType } from '../notificationSlice/stateTypes';
 import type { AppDispatch } from '../store';
-import { addNotification } from '../notificationSlice';
+import { PushTransientNotification } from '../notificationSlice';
 
 const messageListenerMiddleware: Middleware = (
   { dispatch }: { dispatch: AppDispatch },
@@ -12,10 +12,10 @@ const messageListenerMiddleware: Middleware = (
     const message = action.payload;
 
     if (message.code === ServerMessageCode.OpponentDisconnected) {
-      dispatch(addNotification({
+      dispatch(PushTransientNotification({
         type: NotificationType.Warning,
         message: 'The opponent has disconnected',
-        timeoutMs: 5000,
+        timeoutArg: 5000,
       }));
     }
   }
