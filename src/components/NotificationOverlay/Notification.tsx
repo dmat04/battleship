@@ -1,8 +1,11 @@
-import { animated } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 import styled from 'styled-components';
 import { Notification as NotificationData, NotificationType } from '../../store/notificationSlice/stateTypes';
 import { Theme } from '../assets/themes/themeDefault';
 import { assertNever } from '../../utils/typeUtils';
+import CloseIcon from '../assets/icons/ic_close.svg';
+import { useAppDispatch } from '../../store/store';
+import { removeNotification } from '../../store/notificationSlice';
 
 interface ContainerProps {
   theme: Theme;
@@ -10,7 +13,6 @@ interface ContainerProps {
 }
 
 const Container = styled(animated.div) <ContainerProps>`
-  padding: ${(props) => props.theme.paddingMin};
   background-color: #8bd2d6;
   background-color: ${(props) => {
     switch (props.$type) {
@@ -22,6 +24,34 @@ const Container = styled(animated.div) <ContainerProps>`
   }};
   border: 2px solid black;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+  display: grid;
+  grid-template-areas: 
+    "life life"
+    "message button";
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr;
+`;
+
+const Life = styled(animated.div)`
+  grid-area: life;
+  width: 100%;
+  height: 0.25rem;
+  background-color: green;
+`;
+
+const Message = styled.p<{ theme: Theme }>`
+  grid-area: message;
+  margin: ${(props) => props.theme.paddingMin}
+`;
+
+const DismissButton = styled.button`
+  grid-area: button;
+  width: 2rem;
+  aspect-ratio: 1;
+  background: ${`url(${CloseIcon})`};
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: ${(props) => props.theme.paddingMin}
 `;
 
 interface Props {
@@ -29,13 +59,34 @@ interface Props {
 }
 
 const Notification = ({ notification }: Props) => {
-  const { type, message } = notification;
+  const {
+    id,
+    type,
+    message,
+    expiresAt,
+  } = notification;
+
+  const now = Date.now();
+  const dispatch = useAppDispatch();
+
+  const dismiss = () => {
+    dispatch(removeNotification(id));
+  };
+
+  const lifeSpring = useSpring({
+    from: { width: '100%' },
+    to: { width: '0%' },
+    config: { duration: (expiresAt ?? now) - now },
+  });
 
   return (
     <Container $type={type}>
-      {type}
-      -
-      {message}
+      {
+        expiresAt
+        && <Life style={lifeSpring} />
+      }
+      <Message>{message}</Message>
+      <DismissButton onClick={dismiss} />
     </Container>
   );
 };
