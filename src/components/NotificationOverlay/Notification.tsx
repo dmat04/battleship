@@ -1,18 +1,19 @@
 import { animated, useSpring } from '@react-spring/web';
 import styled from 'styled-components';
+import { forwardRef } from 'react';
 import { Notification as NotificationData, NotificationType } from '../../store/notificationSlice/stateTypes';
 import { Theme } from '../assets/themes/themeDefault';
 import { assertNever } from '../../utils/typeUtils';
 import CloseIcon from '../assets/icons/ic_close.svg';
 import { useAppDispatch } from '../../store/store';
-import { removeNotification } from '../../store/notificationSlice';
+import { dismissNotification } from '../../store/notificationSlice';
 
 interface ContainerProps {
   theme: Theme;
   $type: NotificationType;
 }
 
-const Container = styled(animated.div) <ContainerProps>`
+const Container = styled.div<ContainerProps>`
   background-color: #8bd2d6;
   background-color: ${(props) => {
     switch (props.$type) {
@@ -55,40 +56,39 @@ const DismissButton = styled.button`
 `;
 
 interface Props {
-  notification: NotificationData
+  notification: NotificationData;
 }
 
-const Notification = ({ notification }: Props) => {
+const Notification = forwardRef<HTMLDivElement, Props>(({ notification }: Props, ref) => {
   const {
     id,
     type,
     message,
-    expiresAt,
+    transientInfo,
   } = notification;
 
-  const now = Date.now();
   const dispatch = useAppDispatch();
 
   const dismiss = () => {
-    dispatch(removeNotification(id));
+    dispatch(dismissNotification(id));
   };
 
   const lifeSpring = useSpring({
     from: { width: '100%' },
     to: { width: '0%' },
-    config: { duration: (expiresAt ?? now) - now },
+    config: { duration: (transientInfo?.expiresAt ?? 0) - Date.now() },
   });
 
   return (
-    <Container $type={type}>
+    <Container $type={type} ref={ref}>
       {
-        expiresAt
+        transientInfo
         && <Life style={lifeSpring} />
       }
       <Message>{message}</Message>
       <DismissButton onClick={dismiss} />
     </Container>
   );
-};
+});
 
 export default Notification;
