@@ -5,16 +5,38 @@ import LocalStorage from '../utils/localStorageUtils';
 import { GUEST_LOGIN } from '../graphql/mutations';
 import { CHECK_USERNAME } from '../graphql/queries';
 import Dependencies from '../utils/Dependencies';
+import type { AppDispatch, RootState } from './store';
+import { PushTransientNotification } from './notificationSlice';
+import { NotificationType } from './notificationSlice/stateTypes';
 
-export const guestLogin = createAsyncThunk(
+export const guestLogin = createAsyncThunk<
+// eslint-disable-next-line @typescript-eslint/indent
+  LoginResult | undefined, string | null, { dispatch: AppDispatch, state: RootState }
+>(
   'auth/guestLogin',
-  async (username: string | null) => Dependencies.getApolloClient()?.mutate({
-    mutation: GUEST_LOGIN,
-    fetchPolicy: 'no-cache',
-    variables: {
-      username,
-    },
-  }),
+  async (username: string | null, thunkAPI) => {
+    const result = await Dependencies.getApolloClient()?.mutate({
+      mutation: GUEST_LOGIN,
+      fetchPolicy: 'no-cache',
+      variables: {
+        username,
+      },
+    });
+
+    if (result?.data?.guestLogin) {
+      thunkAPI.dispatch(PushTransientNotification({
+        type: NotificationType.Info,
+        timeoutArg: 5000,
+        message: `Logged in as '${result.data.guestLogin.username}'`,
+      }));
+
+      return result.data.guestLogin;
+    }
+
+    return thunkAPI.rejectWithValue({
+      error: 'Guest login unsuccessful',
+    });
+  },
 );
 
 export const checkUsername = createAsyncThunk(
@@ -59,11 +81,10 @@ const authSlice = createSlice({
     builder.addCase(guestLogin.fulfilled, (state, action) => {
       state.loginRequestPending = false;
 
-      const loginResult = action.payload?.data?.guestLogin;
-      state.loginResult = loginResult ?? null;
+      state.loginResult = action.payload ?? null;
 
-      if (loginResult) {
-        LocalStorage.saveAccessToken(loginResult);
+      if (action.payload) {
+        LocalStorage.saveAccessToken(action.payload);
       }
     });
     builder.addCase(guestLogin.rejected, (state) => {
