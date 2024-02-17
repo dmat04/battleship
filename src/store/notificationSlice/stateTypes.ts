@@ -6,7 +6,7 @@ export enum NotificationType {
 
 export interface TransientData {
   timeoutID: ReturnType<typeof setTimeout>;
-  expiresAt: number;
+  duration: number;
 }
 
 export interface Notification {

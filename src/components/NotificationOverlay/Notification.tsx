@@ -76,7 +76,7 @@ const Notification = forwardRef<HTMLDivElement, Props>(({ notification }: Props,
   const lifeSpring = useSpring({
     from: { width: '100%' },
     to: { width: '0%' },
-    config: { duration: (transientInfo?.expiresAt ?? 0) - Date.now() },
+    config: { duration: transientInfo?.duration ?? 0 },
   });
 
   return (

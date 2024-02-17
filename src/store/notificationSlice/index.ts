@@ -18,7 +18,7 @@ export const PushPermanentNotification = createAsyncThunk<
   Notification, PermanentNotificationArgs, { dispatch: AppDispatch, state: RootState }
 >(
   'notification/addPermanent',
-  async (args, thunkAPI) => {
+  (args, thunkAPI) => {
     const { message, type } = args;
 
     const notification: Notification = {
@@ -36,13 +36,13 @@ export const PushTransientNotification = createAsyncThunk<
   Notification, TransientNotificationArgs, { dispatch: AppDispatch, state: RootState }
 >(
   'notification/addTransient',
-  async (args, thunkAPI) => {
+  (args, thunkAPI) => {
     const { message, type, timeoutArg } = args;
 
     const timeout = Math.max(MIN_TIMEOUT, timeoutArg);
 
     const transientInfo: TransientData = {
-      expiresAt: Date.now() + timeout,
+      duration: timeout,
       timeoutID: setTimeout(
         () => thunkAPI.dispatch(dismissNotification(thunkAPI.requestId)),
         timeout,
