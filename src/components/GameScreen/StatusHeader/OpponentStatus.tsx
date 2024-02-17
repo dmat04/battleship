@@ -19,7 +19,7 @@ const Label = styled.p<{ theme: Theme }>`
 `;
 
 const OpponentStatus = () => {
-  const { opponentStatus } = useAppSelector((state) => state.gameRoom);
+  const { opponentStatus, opponentName } = useAppSelector((state) => state.gameRoom);
 
   let message = '';
   let success = false;
@@ -29,10 +29,10 @@ const OpponentStatus = () => {
       message = 'Waiting for an opponent to connect';
       break;
     case PlayerStatus.Connected:
-      message = 'Opponent connected, waiting for opponent to get ready';
+      message = `${opponentName ?? 'Opponent'} connected, waiting for them to get ready`;
       break;
     case PlayerStatus.Ready:
-      message = 'Opponent ready';
+      message = `${opponentName ?? 'Opponent'} ready`;
       success = true;
       break;
     default: assertNever(opponentStatus);

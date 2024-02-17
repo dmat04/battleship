@@ -96,7 +96,7 @@ const GameOverModal = () => {
       message = `${opponentName} has won.\nBetter luck next time.`;
       break;
     case GameResult.OpponentDisconnected:
-      message = `${opponentName} has quit, you win!.`;
+      message = `${opponentName} has quit, you win!`;
       break;
     default:
       assertNever(gameResult);
