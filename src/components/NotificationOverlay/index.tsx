@@ -1,11 +1,10 @@
 import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
 import { useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '../../store/store';
+import { useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
 import NotificationComponent from './Notification';
-import { Notification as NotificationData, NotificationType } from '../../store/notificationSlice/stateTypes';
-import { PushPermanentNotification, PushTransientNotification } from '../../store/notificationSlice';
+import { Notification as NotificationData } from '../../store/notificationSlice/stateTypes';
 
 const Container = styled.div<{ theme: Theme }>`
   position: fixed;
@@ -25,23 +24,12 @@ const NotificationAnimationContainer = styled(animated.div)`
 `;
 
 const NotificationOverlay = () => {
-  const dispatch = useAppDispatch();
   const theme = useTheme() as Theme;
   const notifications = useAppSelector((state) => state.notification.notifications);
   const notificationRefMap = useMemo(
     () => new WeakMap<NotificationData, HTMLDivElement>(),
     [],
   );
-
-  const notificationPusher = (type: NotificationType, timeout: number | undefined) => () => {
-    const message = 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ea consectetur non inventore';
-
-    if (timeout) {
-      dispatch(PushTransientNotification({ message, type, timeoutArg: timeout }));
-    } else {
-      dispatch(PushPermanentNotification({ message, type }));
-    }
-  };
 
   const notificationTransitions = useTransition<NotificationData, any>(notifications, {
     keys: (item: NotificationData) => item.id,
@@ -70,11 +58,6 @@ const NotificationOverlay = () => {
           </NotificationAnimationContainer>
         ))
       }
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}>
-        <button type="button" onClick={notificationPusher(NotificationType.Info, undefined)}>Push info</button>
-        <button type="button" onClick={notificationPusher(NotificationType.Warning, 10000)}>Push warning</button>
-        <button type="button" onClick={notificationPusher(NotificationType.Error, 5000)}>Push error</button>
-      </div>
     </Container>
   );
 };
