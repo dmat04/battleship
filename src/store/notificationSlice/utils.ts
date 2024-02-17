@@ -10,7 +10,11 @@ export const processRemoveNotification = (
 
   if (index < 0) return;
 
-  state.notifications.splice(index, 1);
+  const removed = state.notifications.splice(index, 1);
+
+  removed.forEach((n) => {
+    if (n.transientInfo) clearTimeout(n.transientInfo.timeoutID);
+  });
 };
 
-export default { };
+export default {};
