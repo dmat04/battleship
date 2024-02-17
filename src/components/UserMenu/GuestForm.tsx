@@ -8,6 +8,7 @@ import { guestLogin } from '../../store/authSlice';
 import Spinner from '../Spinner';
 
 const Container = styled.form<{ theme: Theme }>`
+  width: 100%;
   display: grid;
   grid-template-rows: 0.75fr 0.75fr 1fr;
   grid-template-areas: 
