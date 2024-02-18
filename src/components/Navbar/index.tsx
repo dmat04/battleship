@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, useTheme } from 'styled-components';
 import { Theme } from '../assets/themes/themeDefault';
 import Logo from './Logo';
 
@@ -22,6 +22,7 @@ const bgImageURL = (color: string) => `url("data:image/svg+xml,${encodeURICompon
 
 interface WaveContainerProps {
   $color: string;
+  $opacity: number;
   $width: number;
   $height: number;
   $offset: number;
@@ -33,6 +34,7 @@ const WaveContainer = styled.div<WaveContainerProps>`
     bottom: 0;
     height: 100%;
     width: 100%;
+    opacity: ${(props) => props.$opacity};
     background-image: ${(props) => bgImageURL(props.$color)};
     background-repeat: repeat-x;
     background-size: ${(props) => props.$width}% ${(props) => props.$height}%;
@@ -44,28 +46,58 @@ const WaveContainer = styled.div<WaveContainerProps>`
 `;
 
 const NavContainer = styled.nav<{ theme: Theme }>`
-  --bg-color: ${(props) => props.theme.colorSecondary};
-  --border-color: ${(props) => props.theme.colorPrimary};
-  --gap: ${(props) => props.theme.paddingSm};
-  --gap-smaller: ${(props) => props.theme.paddingMin};
-  --border-size: ${(props) => props.theme.dimensionBorderSm};
-
   position: relative;
   grid-area: navbar;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: white;
+  background-color: ${(props) => props.theme.color100};
   isolation: isolate;
 `;
 
-const Navbar = () => (
-  <NavContainer>
-    <WaveContainer $color="hsl(200, 100%, 50%, 50%)" $offset={66} $width={300} $height={60} $duration={40} />
-    <WaveContainer $color="hsl(200, 100%, 50%, 50%)" $offset={33} $width={400} $height={50} $duration={60} />
-    <WaveContainer $color="hsl(200, 100%, 50%, 50%)" $offset={0} $width={500} $height={45} $duration={90} />
-    <Logo />
-  </NavContainer>
-);
+const Navbar = () => {
+  const theme = useTheme() as Theme;
+
+  const waveColor = theme.color300;
+  const appBgColor = theme.color200;
+
+  return (
+    <NavContainer>
+      <WaveContainer
+        $color={waveColor}
+        $opacity={0.5}
+        $offset={75}
+        $width={500}
+        $height={65}
+        $duration={80}
+      />
+      <WaveContainer
+        $color={waveColor}
+        $opacity={0.5}
+        $offset={50}
+        $width={400}
+        $height={60}
+        $duration={60}
+      />
+      <WaveContainer
+        $color={waveColor}
+        $opacity={0.5}
+        $offset={25}
+        $width={300}
+        $height={55}
+        $duration={40}
+      />
+      <WaveContainer
+        $color={appBgColor}
+        $opacity={1}
+        $offset={0}
+        $width={200}
+        $height={25}
+        $duration={30}
+      />
+      <Logo />
+    </NavContainer>
+  );
+};
 
 export default Navbar;

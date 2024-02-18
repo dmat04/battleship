@@ -23,7 +23,6 @@ const themeDefault = {
   paddingMin: '1rem',
   paddingSm: '2rem',
   paddingLg: '5rem',
-  colorBg: 'white',
   colorSecondary: '#e5e5f7',
   colorPrimary: '#444cf7',
   durationTransitionDefault: 250,
@@ -31,6 +30,14 @@ const themeDefault = {
   dimensionBorder: '2px',
   dimensionIconSize: '2rem',
   gameScreenTheme: gameScreenThemeDefault,
+  color100: 'white',
+  color200: 'hsl(200, 100%, 90%)',
+  color300: 'hsl(200, 100%, 50%)',
+  color400: 'hsl(207, 73%, 66%)',
+  color500: 'hsl(209, 81%, 50%)',
+  color600: 'hsl(231, 75%, 63%)',
+  color700: 'hsl(250, 73%, 65%)',
+  colorLogo: '#975218',
 };
 
 export default themeDefault;

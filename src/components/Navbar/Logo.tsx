@@ -1,17 +1,18 @@
 import styled from 'styled-components';
+import { Theme } from '../assets/themes/themeDefault';
 
-const SvgText = styled.text`
+const SvgText = styled.text<{ theme: Theme }>`
   font-weight: 900;
   font-stretch: normal;
   font-size: 5rem;
-  fill: #975218;
-  stroke: #975218;
-  stroke-width: 2px;
+  fill: ${(props) => props.theme.colorLogo};
+  stroke: ${(props) => props.theme.colorLogo};
+  stroke-width: 1px;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: none;
-  stroke-opacity: 1;
-  paint-order: stroke markers fill;
+  paint-order: stroke fill markers;
+  user-select: none;
 `;
 
 const WIDTH = 700;
