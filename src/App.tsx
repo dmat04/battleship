@@ -27,6 +27,7 @@ const MainContentContainer = styled.div<{ theme: Theme }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: hsl(200, 100%, 50%, 87.5%);
   padding-block: ${(props) => props.theme.paddingSm};
 
   @media (max-width: 35em) {
