@@ -58,8 +58,8 @@ const NavContainer = styled.nav<{ theme: Theme }>`
 const Navbar = () => {
   const theme = useTheme() as Theme;
 
-  const waveColor = theme.color300;
-  const appBgColor = theme.color200;
+  const waveColor = theme.color400;
+  const appBgColor = theme.color300;
 
   return (
     <NavContainer>
