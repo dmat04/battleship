@@ -11,7 +11,7 @@ import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from './Collap
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   width: 100%;
-  background-color: ${(props) => props.theme.colorBg};
+  background-color: ${(props) => props.theme.color100};
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   overflow: clip;
@@ -38,7 +38,7 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
 
     const theme = useContext(ThemeContext) ?? themeDefault;
 
-    const backgroundColor = useSpringValue(theme.colorBg, {
+    const backgroundColor = useSpringValue(theme.color100, {
       config: {
         duration: theme.durationTransitionDefault,
         easing: easings.easeOutCubic,
@@ -73,19 +73,19 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     }, []);
 
     const interceptCollapsedStateChange = useCallback((state: CollapsibleState) => {
-      if (state === 'closed') backgroundColor.start(theme.colorBg);
+      if (state === 'closed') backgroundColor.start(theme.color100);
       if (onCollapsedStateChange) onCollapsedStateChange(state);
-    }, [backgroundColor, onCollapsedStateChange, theme.colorBg]);
+    }, [backgroundColor, onCollapsedStateChange, theme.color100]);
 
     const handlePointerEnter = useCallback(() => {
-      backgroundColor.start(theme.colorSecondary);
-    }, [backgroundColor, theme.colorSecondary]);
+      backgroundColor.start(theme.color200);
+    }, [backgroundColor, theme.color200]);
 
     const handlePointerLeave = useCallback(() => {
       if (collapsibleRef.current?.getState() === 'open') return;
 
-      backgroundColor.start(theme.colorBg);
-    }, [backgroundColor, theme.colorBg]);
+      backgroundColor.start(theme.color100);
+    }, [backgroundColor, theme.color100]);
 
     return (
       <Container

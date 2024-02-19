@@ -7,17 +7,17 @@ export type ButtonVariant = 'primary' | 'warning' | 'danger';
 export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.colorBg;
-      case 'warning': return props.theme.colorSecondary;
-      case 'danger': return props.theme.colorBg;
+      case 'primary': return props.theme.color700;
+      case 'warning': return props.theme.color700;
+      case 'danger': return props.theme.color700;
       default: return assertNever(props.$variant);
     }
   }};
   --colorBgHover: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.colorPrimary;
-      case 'warning': return props.theme.colorPrimary;
-      case 'danger': return props.theme.colorPrimary;
+      case 'primary': return props.theme.color400;
+      case 'warning': return props.theme.color400;
+      case 'danger': return props.theme.color400;
       default: return assertNever(props.$variant);
     }
   }};

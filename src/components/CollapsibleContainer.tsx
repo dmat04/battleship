@@ -3,9 +3,9 @@ import React, {
   forwardRef, useCallback, useContext, useImperativeHandle, useRef,
 } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import themeDefault, { Theme } from './assets/themes/themeDefault';
+import themeDefault from './assets/themes/themeDefault';
 
-const Container = styled(animated.div) <{ theme: Theme }>`
+const Container = styled(animated.div)`
   width: 100%;
   display: flex;
   justify-content: center;
