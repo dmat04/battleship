@@ -5,8 +5,8 @@ const SvgText = styled.text<{ theme: Theme }>`
   font-weight: 900;
   font-stretch: normal;
   font-size: 5rem;
-  fill: ${(props) => props.theme.colorLogo};
-  stroke: ${(props) => props.theme.colorLogo};
+  fill: ${(props) => props.theme.colors.heroComplementary};
+  stroke: ${(props) => props.theme.colors.heroComplementary};
   stroke-width: 1px;
   stroke-linecap: round;
   stroke-linejoin: round;

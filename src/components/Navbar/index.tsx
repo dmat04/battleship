@@ -51,15 +51,15 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${(props) => props.theme.color100};
+  background-color: ${(props) => props.theme.colors.surfaceTertiary};
   isolation: isolate;
 `;
 
 const Navbar = () => {
   const theme = useTheme() as Theme;
 
-  const waveColor = theme.color400;
-  const appBgColor = theme.color300;
+  const waveColor = theme.colors.hero;
+  const appBgColor = theme.colors.surfacePrimary;
 
   return (
     <NavContainer>

@@ -27,7 +27,7 @@ const MainContentContainer = styled.div<{ theme: Theme }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => props.theme.color300};
+  background-color: ${(props) => props.theme.colors.surfacePrimary};
   padding-block: ${(props) => props.theme.paddingSm};
 
   @media (max-width: 35em) {
@@ -36,7 +36,7 @@ const MainContentContainer = styled.div<{ theme: Theme }>`
 `;
 
 const TempFooter = styled.footer<{ theme: Theme }>`
-  background-color: ${(props) => props.theme.color300};
+  background-color: ${(props) => props.theme.colors.surfacePrimary};
   grid-area: footer;
   height: 10vh;
 `;
