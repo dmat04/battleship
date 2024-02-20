@@ -1,17 +1,18 @@
 import styled, { ThemeContext } from 'styled-components';
 import React, {
-  forwardRef, useCallback, useContext, useImperativeHandle, useRef,
+  forwardRef, useCallback, useContext, useImperativeHandle, useMemo, useRef,
 } from 'react';
 import {
-  animated, easings, useSpringValue,
+  animated, easings, useSpring,
 } from '@react-spring/web';
 import themeDefault, { Theme } from './assets/themes/themeDefault';
 import MenuItemLabel from './MemuItemLabel';
 import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from './CollapsibleContainer';
+import { assertNever } from '../utils/typeUtils';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   width: 100%;
-  background-color: ${(props) => props.theme.color100};
+  background-color: ${(props) => props.theme.colors.containerPrimary};
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   overflow: clip;
@@ -36,14 +37,25 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     const collapsibleRef = useRef<CollapsibleAPI>(null);
     const labelRef = useRef<HTMLParagraphElement>(null);
 
-    const theme = useContext(ThemeContext) ?? themeDefault;
+    const theme = (useContext(ThemeContext) ?? themeDefault) as Theme;
 
-    const backgroundColor = useSpringValue(theme.color100, {
+    const springCollapsed = useMemo(() => ({
+      background: theme.colors.containerPrimary,
+      color: theme.colors.onContainerPrimary,
+    }), [theme]);
+
+    const springExpanded = useMemo(() => ({
+      background: theme.colors.containerSecondary,
+      color: theme.colors.onContainerSecondary,
+    }), [theme]);
+
+    const [springStyles, springApi] = useSpring(() => ({
+      from: initialState === 'closed' ? springCollapsed : springExpanded,
       config: {
         duration: theme.durationTransitionDefault,
         easing: easings.easeOutCubic,
       },
-    });
+    }));
 
     // eslint-disable-next-line arrow-body-style
     const getState = useCallback(() => {
@@ -73,19 +85,24 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     }, []);
 
     const interceptCollapsedStateChange = useCallback((state: CollapsibleState) => {
-      if (state === 'closed') backgroundColor.start(theme.color100);
+      switch (state) {
+        case 'open': springApi.start({ to: springExpanded }); break;
+        case 'closed': springApi.start({ to: springCollapsed }); break;
+        default: assertNever(state);
+      }
+
       if (onCollapsedStateChange) onCollapsedStateChange(state);
-    }, [backgroundColor, onCollapsedStateChange, theme.color100]);
+    }, [onCollapsedStateChange, springApi, springCollapsed, springExpanded]);
 
     const handlePointerEnter = useCallback(() => {
-      backgroundColor.start(theme.color200);
-    }, [backgroundColor, theme.color200]);
+      springApi.start({ to: springExpanded });
+    }, [springApi, springExpanded]);
 
     const handlePointerLeave = useCallback(() => {
       if (collapsibleRef.current?.getState() === 'open') return;
 
-      backgroundColor.start(theme.color100);
-    }, [backgroundColor, theme.color100]);
+      springApi.start({ to: springCollapsed });
+    }, [springApi, springCollapsed]);
 
     return (
       <Container
@@ -93,7 +110,7 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
         onClick={onClickHandler}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        style={{ backgroundColor }}
+        style={springStyles}
       >
         <MenuItemLabel ref={labelRef}>{label}</MenuItemLabel>
         <CollapsibleContainer
