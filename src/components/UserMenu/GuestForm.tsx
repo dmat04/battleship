@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import TextInput from '../TextInput';
 import { Theme } from '../assets/themes/themeDefault';
-import FormButton from '../FormButton';
 import useUsernameChecker from '../../hooks/useUsernameChecker';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { guestLogin } from '../../store/authSlice';
 import Spinner from '../Spinner';
+import { Button } from '../Button';
 
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
@@ -72,9 +72,9 @@ const GuestForm = ({ disabled }: Props) => {
         <p>{message}</p>
         <Spinner $visible={checkIsPending} />
       </Status>
-      <FormButton
+      <Button
         type="submit"
-        $variant="skip"
+        $variant="primary"
         style={{ gridArea: 'button' }}
         disabled={disabled}
       >
@@ -83,7 +83,7 @@ const GuestForm = ({ disabled }: Props) => {
             ? <Spinner $visible />
             : <div>Continue</div>
         }
-      </FormButton>
+      </Button>
     </Container>
   );
 };

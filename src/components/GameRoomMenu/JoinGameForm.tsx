@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import TextInput from '../TextInput';
 import { Theme } from '../assets/themes/themeDefault';
-import FormButton from '../FormButton';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import Spinner from '../Spinner';
 import { joinGameRoom } from '../../store/gameRoomSlice/thunks';
+import { Button } from '../Button';
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;
@@ -58,9 +58,9 @@ const JoinGameForm = ({ disabled }: Props) => {
       <Label>
         Join using an invite code.
       </Label>
-      <FormButton
+      <Button
         type="submit"
-        $variant="submit"
+        $variant="primary"
         style={{ gridArea: 'button' }}
         disabled={disabled || code.length === 0}
       >
@@ -69,7 +69,7 @@ const JoinGameForm = ({ disabled }: Props) => {
             ? <Spinner $visible />
             : <div>Join</div>
         }
-      </FormButton>
+      </Button>
     </Container>
   );
 };
