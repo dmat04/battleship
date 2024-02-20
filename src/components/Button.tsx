@@ -7,20 +7,20 @@ export type ButtonVariant = 'primary' | 'warning' | 'danger';
 export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.color700;
-      case 'warning': return props.theme.color700;
-      case 'danger': return props.theme.color700;
+      case 'primary': return props.theme.colors.containerSuccess;
+      case 'warning': return props.theme.colors.containerWarning;
+      case 'danger': return props.theme.colors.containerDanger;
       default: return assertNever(props.$variant);
     }
   }};
-  --colorBgHover: ${(props) => {
+  --colorContent: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.color400;
-      case 'warning': return props.theme.color400;
-      case 'danger': return props.theme.color400;
+      case 'primary': return props.theme.colors.onContainerSuccess;
+      case 'warning': return props.theme.colors.onContainerWarning;
+      case 'danger': return props.theme.colors.onContainerDanger;
       default: return assertNever(props.$variant);
     }
-  }};
+  }}; 
 
   width: 100%;
   display: flex;
@@ -33,6 +33,6 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};
 
   &:hover {
-    background-color: var(--colorBgHover);
+    filter: saturate(300%);
   }
 `;
