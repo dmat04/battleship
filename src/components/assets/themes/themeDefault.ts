@@ -36,7 +36,7 @@ const themeDefault = {
     containerPrimary: 'hsl(0, 100%, 100%)',
     containerSecondary: 'hsl(229, 100%, 90%)',
     containerTertiary: 'hsl(250, 73%, 65%)',
-    containerSuccess: 'hsl(200, 100%, 90%)',
+    containerSuccess: 'hsl(229, 100%, 90%)',
     containerWarning: 'hsl(50, 100%, 90%)',
     containerDanger: 'hsl(0, 85%, 85%)',
     surfacePrimaryComp: 'hsl(27, 73%, 34%)',

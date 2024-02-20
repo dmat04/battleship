@@ -40,13 +40,13 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     const theme = (useContext(ThemeContext) ?? themeDefault) as Theme;
 
     const springCollapsed = useMemo(() => ({
-      background: theme.colors.containerPrimary,
-      color: theme.colors.onContainerPrimary,
+      background: theme.colors.containerSecondary,
+      color: theme.colors.onContainerSecondary,
     }), [theme]);
 
     const springExpanded = useMemo(() => ({
-      background: theme.colors.containerSecondary,
-      color: theme.colors.onContainerSecondary,
+      background: theme.colors.containerPrimary,
+      color: theme.colors.onContainerPrimary,
     }), [theme]);
 
     const [springStyles, springApi] = useSpring(() => ({
