@@ -34,6 +34,10 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};
 
   &:hover {
-    filter: saturate(300%);
+    filter: invert(10%) saturate(300%);
+  }
+
+  &:disabled {
+    filter: opacity(60%);
   }
 `;
