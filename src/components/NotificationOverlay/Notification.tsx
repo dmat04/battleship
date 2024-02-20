@@ -13,16 +13,27 @@ interface ContainerProps {
   $type: NotificationType;
 }
 
-const Container = styled.div<ContainerProps>`
-  background-color: #8bd2d6;
+const ColoredBase = styled(animated.div)<ContainerProps>`
   background-color: ${(props) => {
     switch (props.$type) {
-      case NotificationType.Info: return '#8bd2d6';
-      case NotificationType.Warning: return '#ced68b';
-      case NotificationType.Error: return '#d69d8b';
+      case NotificationType.Info: return props.theme.colors.containerSuccess;
+      case NotificationType.Warning: return props.theme.colors.containerWarning;
+      case NotificationType.Error: return props.theme.colors.containerDanger;
       default: return assertNever(props.$type);
     }
   }};
+
+  color: ${(props) => {
+    switch (props.$type) {
+      case NotificationType.Info: return props.theme.colors.onContainerSuccess;
+      case NotificationType.Warning: return props.theme.colors.onContainerWarning;
+      case NotificationType.Error: return props.theme.colors.onContainerDanger;
+      default: return assertNever(props.$type);
+    }
+  }};
+`;
+
+const Container = styled(ColoredBase)`
   border: 2px solid black;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
   display: grid;
@@ -33,11 +44,12 @@ const Container = styled.div<ContainerProps>`
   grid-template-rows: auto 1fr;
 `;
 
-const Life = styled(animated.div)`
+const Life = styled(ColoredBase)`
   grid-area: life;
   width: 100%;
   height: 0.25rem;
-  background-color: green;
+
+  filter: invert(20%) saturate(2000%); 
 `;
 
 const Message = styled.p<{ theme: Theme }>`
@@ -83,7 +95,7 @@ const Notification = forwardRef<HTMLDivElement, Props>(({ notification }: Props,
     <Container $type={type} ref={ref}>
       {
         transientInfo
-        && <Life style={lifeSpring} />
+        && <Life $type={type} style={lifeSpring} />
       }
       <Message>{message}</Message>
       <DismissButton onClick={dismiss} />
