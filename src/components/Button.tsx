@@ -27,6 +27,7 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   justify-content: center;
   align-items: center;
   background-color: var(--colorBg);
+  color: var(--colorContent);
   border: 2px solid black;
   transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
 
