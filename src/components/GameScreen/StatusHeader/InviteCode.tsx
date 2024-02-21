@@ -6,7 +6,8 @@ const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 30rem);
   padding: ${(props) => props.theme.paddingMin};
   border: 2px solid black;
-  background-color: #8bd2d6;
+  background-color: ${(props) => props.theme.colors.containerWarning};
+  color: ${(props) => props.theme.colors.onContainerWarning};
   text-align: center;
 `;
 

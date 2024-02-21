@@ -9,6 +9,7 @@ const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   grid-template-columns: repeat(var(--cols), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   aspect-ratio: 1;
+  background-color: ${(props) => props.theme.colors.surfaceSecondary};
   background-image:
     linear-gradient(black .2em, transparent .2em),
     linear-gradient(to right, black .2em, transparent .2em),
