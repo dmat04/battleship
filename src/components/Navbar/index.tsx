@@ -69,7 +69,7 @@ const Navbar = () => {
         $offset={75}
         $width={500}
         $height={65}
-        $duration={80}
+        $duration={60}
       />
       <WaveContainer
         $color={waveColor}
@@ -85,7 +85,7 @@ const Navbar = () => {
         $offset={25}
         $width={300}
         $height={55}
-        $duration={40}
+        $duration={60}
       />
       <WaveContainer
         $color={appBgColor}
@@ -93,7 +93,7 @@ const Navbar = () => {
         $offset={0}
         $width={200}
         $height={25}
-        $duration={30}
+        $duration={60}
       />
       <Logo />
     </NavContainer>
