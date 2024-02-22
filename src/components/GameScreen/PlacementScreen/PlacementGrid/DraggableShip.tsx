@@ -3,16 +3,7 @@ import { animated } from '@react-spring/web';
 import { useRef } from 'react';
 import { ShipOrientation } from '../../../../__generated__/graphql';
 import useShipDrag from '../../../../hooks/useShipDrag';
-import { ReactComponent as Ship1Horizontal } from '../../../assets/images/ship_1_horizontal.svg';
-import { ReactComponent as Ship1Vertical } from '../../../assets/images/ship_1_vertical.svg';
-import { ReactComponent as Ship2Horizontal } from '../../../assets/images/ship_2_horizontal.svg';
-import { ReactComponent as Ship2Vertical } from '../../../assets/images/ship_2_vertical.svg';
-import { ReactComponent as Ship3Horizontal } from '../../../assets/images/ship_3_horizontal.svg';
-import { ReactComponent as Ship3Vertical } from '../../../assets/images/ship_3_vertical.svg';
-import { ReactComponent as Ship4Horizontal } from '../../../assets/images/ship_4_horizontal.svg';
-import { ReactComponent as Ship4Vertical } from '../../../assets/images/ship_4_vertical.svg';
-import { ReactComponent as Ship5Horizontal } from '../../../assets/images/ship_5_horizontal.svg';
-import { ReactComponent as Ship5Vertical } from '../../../assets/images/ship_5_vertical.svg';
+import ShipImage from './ShipImage';
 
 const NavyHolderContainer = styled.div<{ $shipSize: number, $vertical: boolean }>`
   display: grid;
@@ -38,19 +29,6 @@ const ShipContainer = styled(animated.div)<ShipProps>`
     display: flex;
     align-items: center;
     justify-content: center;
-    /* background-color: greenyellow; */
-    /* opacity: 0.75; */
-
-    & > svg {
-      width: 90%;
-      height: 90%;
-    }
-
-    & > svg > path {
-      fill: #BDBDBD;
-      stroke: black;
-      stroke-width: 1.5;
-    }
 `;
 
 interface PropTypes {
@@ -69,36 +47,8 @@ const DraggableShip = ({ id }: PropTypes) => {
     gridPosition,
     listeners,
     springProps,
+    svgSpringProps,
   } = dragProps;
-
-  let ImageComponent = <Ship1Horizontal />;
-  switch (ship.size) {
-    case 2:
-      ImageComponent = orientation === ShipOrientation.Vertical
-        ? <Ship2Vertical />
-        : <Ship2Horizontal />;
-      break;
-    case 3:
-      ImageComponent = orientation === ShipOrientation.Vertical
-        ? <Ship3Vertical />
-        : <Ship3Horizontal />;
-      break;
-    case 4:
-      ImageComponent = orientation === ShipOrientation.Vertical
-        ? <Ship4Vertical />
-        : <Ship4Horizontal />;
-      break;
-    case 5:
-      ImageComponent = orientation === ShipOrientation.Vertical
-        ? <Ship5Vertical />
-        : <Ship5Horizontal />;
-      break;
-    default:
-      ImageComponent = orientation === ShipOrientation.Vertical
-        ? <Ship1Vertical />
-        : <Ship1Horizontal />;
-      break;
-  }
 
   if (gridPosition !== null) {
     return (
@@ -111,7 +61,7 @@ const DraggableShip = ({ id }: PropTypes) => {
         $vertical={orientation === ShipOrientation.Vertical}
         {...listeners}
       >
-        {ImageComponent}
+        <ShipImage shipSize={ship.size} shipOrientation={orientation} pathStyle={svgSpringProps} />
       </ShipContainer>
     );
   }
@@ -132,7 +82,7 @@ const DraggableShip = ({ id }: PropTypes) => {
         $vertical={orientation === ShipOrientation.Vertical}
         {...listeners}
       >
-        {ImageComponent}
+        <ShipImage shipSize={ship.size} shipOrientation={orientation} pathStyle={svgSpringProps} />
       </ShipContainer>
     </NavyHolderContainer>
   );
