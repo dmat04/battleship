@@ -5,6 +5,7 @@ const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   --cols: ${(props) => props.$cols};
   --rows: ${(props) => props.$rows};
   --thickness: 0.2em;
+  --borderColor: ${(props) => props.theme.colors.shipBorder};
   
   display: grid;
   grid-template-columns: repeat(var(--cols), 1fr);
@@ -12,10 +13,10 @@ const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.surfaceSecondary};
   background-image:
-    linear-gradient(white var(--thickness), transparent var(--thickness)),
-    linear-gradient(to right, white var(--thickness), transparent var(--thickness)),
-    linear-gradient(white var(--thickness), transparent var(--thickness)),
-    linear-gradient(to right, white var(--thickness), transparent var(--thickness));
+    linear-gradient(var(--borderColor) var(--thickness), transparent var(--thickness)),
+    linear-gradient(to right, var(--borderColor) var(--thickness), transparent var(--thickness)),
+    linear-gradient(var(--borderColor) var(--thickness), transparent var(--thickness)),
+    linear-gradient(to right, var(--borderColor) var(--thickness), transparent var(--thickness));
   background-size: 
     100% calc(100% - var(--thickness)),
     calc(100% - var(--thickness)) 100%,
