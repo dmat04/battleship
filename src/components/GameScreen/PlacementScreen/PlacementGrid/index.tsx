@@ -5,17 +5,19 @@ import DraggableShip from './DraggableShip';
 import PlacementGridContext, { IPlacementGridContext } from '../../../../hooks/useShipDrag/PlacementGridContext';
 import { RootState } from '../../../../store/store';
 import GameGrid from '../../../GameGrid';
+import { Theme } from '../../../assets/themes/themeDefault';
 
-const Container = styled.div`
+const Container = styled.div<{ theme: Theme }>`
   width: 100%;
 `;
 
-const NavyGrid = styled.div`
+const NavyGrid = styled.div<{ theme: Theme }>`
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(8, 1fr);
   grid-auto-flow: dense;
   aspect-ratio: 10 / 8;
+  background-color: ${(props) => props.theme.colors.surfacePrimary};
 `;
 
 const RightSpacer = styled.div`

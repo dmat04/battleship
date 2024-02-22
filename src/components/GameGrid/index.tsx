@@ -4,6 +4,7 @@ import { Theme } from '../assets/themes/themeDefault';
 const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   --cols: ${(props) => props.$cols};
   --rows: ${(props) => props.$rows};
+  --thickness: 0.2em;
   
   display: grid;
   grid-template-columns: repeat(var(--cols), 1fr);
@@ -11,20 +12,20 @@ const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   aspect-ratio: 1;
   background-color: ${(props) => props.theme.colors.surfaceSecondary};
   background-image:
-    linear-gradient(black .2em, transparent .2em),
-    linear-gradient(to right, black .2em, transparent .2em),
-    linear-gradient(black .4em, transparent .4em),
-    linear-gradient(to right, black .4em, transparent .4em);
+    linear-gradient(white var(--thickness), transparent var(--thickness)),
+    linear-gradient(to right, white var(--thickness), transparent var(--thickness)),
+    linear-gradient(white var(--thickness), transparent var(--thickness)),
+    linear-gradient(to right, white var(--thickness), transparent var(--thickness));
   background-size: 
+    100% calc(100% - var(--thickness)),
+    calc(100% - var(--thickness)) 100%,
     calc(100% / var(--cols)) calc(100% / var(--rows)),
-    calc(100% / var(--cols)) calc(100% / var(--rows)),
-    100% 100%,
-    100% 100%;
+    calc(100% / var(--cols)) calc(100% / var(--rows));
   background-position: 
-    left -.1em top -.1em,
-    left -.1em top -.1em,
-    left -.2em top -.2em,
-    left -.2em top -.2em;
+    left 0 top 0,
+    left 0 top 0,
+    left calc(var(--thickness) / -2) top calc(var(--thickness) / -2),
+    left calc(var(--thickness) / -2) top calc(var(--thickness) / -2);
 `;
 
 export default GameGrid;
