@@ -3,6 +3,7 @@ import {
   useCallback, useContext, useMemo, useRef,
 } from 'react';
 import { useSpring } from '@react-spring/web';
+import { useTheme } from 'styled-components';
 import type { RootState } from '../../store/store';
 import { Coordinates } from '../../store/shipPlacementSlice/types';
 import useBoundingRects from '../useBoundingRects';
@@ -10,6 +11,7 @@ import { canPlaceShip } from '../../store/shipPlacementSlice/utils';
 import { placeShip, resetShip, rotateShip } from '../../store/shipPlacementSlice';
 import { calculateGridPosition, calculateTranslation, isWithinGrid } from './utils';
 import PlacementGridContext from './PlacementGridContext';
+import { Theme } from '../../components/assets/themes/themeDefault';
 
 interface UseShipDragArgs {
   id: string;
@@ -18,6 +20,7 @@ interface UseShipDragArgs {
 
 const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   const dispatch = useDispatch();
+  const theme = useTheme() as Theme;
 
   const allShips = useSelector((state: RootState) => state.shipPlacement.shipStates);
   const gridState = useSelector(({ shipPlacement }: RootState) => shipPlacement.grid);
@@ -45,9 +48,13 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     x: 0,
     y: 0,
     scale: 1,
-    borderColor: 'transparent',
     zIndex: 5,
+    filter: 'drop-shadow(rgba(0, 0, 0, 0.2) 0px 0px 0px)',
   }), []);
+
+  const svgSpringStart = useMemo(() => ({
+    stroke: theme.colors.shipBorder,
+  }), [theme.colors.shipBorder]);
 
   const [springProps, springAPI] = useSpring(
     () => ({
@@ -69,6 +76,18 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     }),
   );
 
+  const [svgSpringProps, svgSpringAPI] = useSpring(
+    () => ({
+      from: svgSpringStart,
+      config: {
+        mass: 0.5,
+        tension: 500,
+        friction: 15,
+        precision: 0.0001,
+      },
+    }),
+  );
+
   const pointerId = useRef<number | null>(null);
   const startPos = useRef<Coordinates>({ x: 0, y: 0 });
 
@@ -77,7 +96,15 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     pointerId.current = ev.pointerId;
     startPos.current.x = ev.clientX;
     startPos.current.y = ev.clientY;
-  }, []);
+
+    springAPI.start({
+      to: {
+        scale: 1.2,
+        zIndex: 1000,
+        filter: `drop-shadow(${theme.boxShadow})`,
+      },
+    });
+  }, [springAPI, theme.boxShadow]);
 
   const onPointerUp = useCallback((ev: React.PointerEvent) => {
     ev.currentTarget.releasePointerCapture(ev.pointerId);
@@ -110,25 +137,25 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         dispatch(placeShip({ position: gridPosition, shipID: id }));
       } else if (isOutsideGrid) {
         dispatch(resetShip(id));
-      } else {
-        springAPI.start({ to: springStart });
       }
     } else if (canBePlaced) {
       dispatch(placeShip({ position: gridPosition, shipID: id }));
-    } else {
-      springAPI.start({ to: springStart });
     }
+
+    springAPI.start({ to: springStart });
+    svgSpringAPI.start({ to: svgSpringStart });
   }, [
     id,
     dispatch,
+    shipState,
+    gridState,
+    shipRect,
     containerRect,
     gridRect,
-    shipRect,
-    gridState,
-    shipState,
     springAPI,
     springStart,
-  ]);
+    svgSpringAPI,
+    svgSpringStart]);
 
   const onPointerMove = useCallback((ev: React.PointerEvent) => {
     if (
@@ -147,25 +174,34 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       dySnapped,
     } = calculateGridPosition(gridState, shipRect, gridRect, dx, dy);
 
-    let borderColor = 'transparent';
+    let borderColor = theme.colors.shipBorder;
     if (isWithinGrid(gridPosition, gridState)) {
       dx = dxSnapped;
       dy = dySnapped;
       borderColor = canPlaceShip(gridState, shipState, gridPosition)
-        ? 'green'
-        : 'red';
+        ? theme.colors.shipBorderSuccess
+        : theme.colors.shipBorderError;
     }
 
     springAPI.start({
       to: {
         x: dx,
         y: dy,
-        scale: 1.2,
-        borderColor,
-        zIndex: 1000,
       },
     });
-  }, [containerRect, gridRect, gridState, shipRect, shipState, springAPI]);
+    svgSpringAPI.start({ to: { stroke: borderColor } });
+  }, [
+    containerRect,
+    gridRect,
+    gridState,
+    shipRect,
+    shipState,
+    springAPI,
+    svgSpringAPI,
+    theme.colors.shipBorder,
+    theme.colors.shipBorderSuccess,
+    theme.colors.shipBorderError,
+  ]);
 
   const onDoubleClick = useCallback(() => {
     dispatch(rotateShip(id));
@@ -187,6 +223,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     gridPosition: shipState.position,
     listeners,
     springProps,
+    svgSpringProps,
   };
 };
 
