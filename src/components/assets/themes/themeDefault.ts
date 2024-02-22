@@ -27,6 +27,7 @@ const themeDefault = {
   dimensionBorderSm: '1px',
   dimensionBorder: '2px',
   dimensionIconSize: '2rem',
+  boxShadow: 'rgba(0, 0, 0, 0.4) 0px 20px 10px',
   colors: {
     hero: 'hsl(200, 100%, 50%)',
     heroComplementary: 'hsl(27, 73%, 34%)',
@@ -49,6 +50,10 @@ const themeDefault = {
     onContainerSuccess: '#212121',
     onContainerWarning: '#424242',
     onContainerDanger: '#212121',
+    shipColor: '#90A4AE',
+    shipBorder: '#37474F',
+    shipBorderSuccess: '#00796B',
+    shipBorderError: '#ff5500',
   },
   gameScreenTheme: gameScreenThemeDefault,
 };
