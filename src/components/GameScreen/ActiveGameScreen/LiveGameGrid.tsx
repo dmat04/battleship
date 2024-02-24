@@ -3,7 +3,7 @@ import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
 import { useCallback, useRef } from 'react';
 import { Coordinates } from '@dnd-kit/utilities';
-import { ShipOrientation, PlacedShip } from '../../../__generated__/graphql';
+import { PlacedShip } from '../../../__generated__/graphql';
 import { opponentCellClicked } from '../../../store/gameRoomSlice';
 import { GameRoomIsReady } from '../../../store/gameRoomSlice/stateTypes';
 import { useAppDispatch, useAppSelector } from '../../../store/store';
@@ -11,6 +11,7 @@ import { assertNever } from '../../../utils/typeUtils';
 import GameGrid from '../../GameGrid';
 import { Theme } from '../../assets/themes/themeDefault';
 import { calculateGridPosition } from './utils';
+import Ship from '../Ship';
 
 const Container = styled.div<{ $owner: Props['owner'], $active: boolean }>`
   grid-area: ${(props) => props.$owner};
@@ -24,26 +25,6 @@ const Cell = styled(animated.div) <{ $col: number, $row: number }>`
   z-index: 2;
 `;
 
-const ShipContainer = styled(animated.div) <{
-  $col: number,
-  $row: number,
-  $size: number,
-  $orientation: ShipOrientation
-}>`
-  grid-row-start: ${(props) => props.$row + 1};
-  grid-row-end: span ${(props) => (props.$orientation === ShipOrientation.Vertical
-    ? props.$size
-    : 1
-  )};
-  grid-column-start: ${(props) => props.$col + 1};
-  grid-column-end: span ${(props) => (props.$orientation === ShipOrientation.Horizontal
-    ? props.$size
-    : 1
-  )};
-  background-color: slategrey;
-  z-index: 1;
-`;
-
 interface Props {
   owner: 'player' | 'opponent';
 }
@@ -51,7 +32,7 @@ interface Props {
 const LiveGameGrid = ({ owner }: Props) => {
   const dispatch = useAppDispatch();
   const gridRef = useRef<HTMLDivElement>(null);
-  const { gameScreenTheme: theme } = useTheme() as Theme;
+  const theme = useTheme() as Theme;
 
   const { gameStarted, currentPlayer } = useAppSelector((state) => state.gameRoom);
   const ownerName = useAppSelector((state) => {
@@ -73,6 +54,10 @@ const LiveGameGrid = ({ owner }: Props) => {
     }
   });
 
+  const playerShips = useAppSelector((state) => (owner === 'player'
+    ? state.gameRoom.playerShips
+    : undefined));
+
   const gridClickHandler: React.MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
     if (owner === 'player') return;
 
@@ -84,8 +69,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.hitCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
-      from: theme.hitCellAnimStart,
-      enter: theme.hitCellAnimSteps,
+      from: theme.gameScreen.hitCellAnimStart,
+      enter: theme.gameScreen.hitCellAnimSteps,
     },
   );
 
@@ -93,8 +78,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.missedCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
-      from: theme.missedCellAnimStart,
-      enter: theme.missedCellAnimSteps,
+      from: theme.gameScreen.missedCellAnimStart,
+      enter: theme.gameScreen.missedCellAnimSteps,
     },
   );
 
@@ -102,8 +87,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.inaccessibleCells ?? [],
     () => ({
       keys: (coord: Coordinates) => `${owner}-empty-${coord.x}-${coord.y}`,
-      from: theme.missedCellAnimStart,
-      enter: theme.missedCellAnimSteps,
+      from: theme.gameScreen.missedCellAnimStart,
+      enter: theme.gameScreen.missedCellAnimSteps,
     }),
   );
 
@@ -111,8 +96,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.sunkenShips ?? [],
     {
       keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
-      from: theme.sunkShipAnimStart,
-      enter: theme.sunkShipAnimSteps,
+      from: theme.gameScreen.sunkShipAnimStart,
+      enter: theme.gameScreen.sunkShipAnimSteps,
       onRest: () => { inaccessibleTransitionApi.start(); },
     },
   );
@@ -131,12 +116,13 @@ const LiveGameGrid = ({ owner }: Props) => {
       >
         {
           sinkTransition((style, item) => (
-            <ShipContainer
-              style={style}
-              $col={item.x}
-              $row={item.y}
-              $orientation={item.orientation}
-              $size={item.ship.size}
+            <Ship
+              ref={() => { }}
+              col={item.x}
+              row={item.y}
+              size={item.ship.size}
+              orientation={item.orientation}
+              containerStyle={style}
             />
           ))
         }
@@ -164,6 +150,18 @@ const LiveGameGrid = ({ owner }: Props) => {
               style={style}
               $col={item.x}
               $row={item.y}
+            />
+          ))
+        }
+        {
+          playerShips?.map((ship) => (
+            <Ship
+              ref={() => { }}
+              key={ship.ship.shipID}
+              col={ship.x}
+              row={ship.y}
+              size={ship.ship.size}
+              orientation={ship.orientation}
             />
           ))
         }

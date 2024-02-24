@@ -12,10 +12,10 @@ const gameScreenThemeDefault = {
     { opacity: 0.9, scale: 1, background: '#ff6d00', zIndex: 1 },
   ],
 
-  sunkShipAnimStart: { opacity: 1, scale: 1, background: '#ffffff', zIndex: 10 },
+  sunkShipAnimStart: { opacity: 1, scale: 0.5, fill: 'transparent', stroke: 'transparent', zIndex: 20 },
   sunkShipAnimSteps: [
-    { opacity: 1, scale: 1.1, background: '#ffd600', zIndex: 10 },
-    { opacity: 0.9, scale: 1, background: '#a62d24', zIndex: 1 },
+    { opacity: 1, scale: 1.5, fill: '#ffd600', stroke: '#ffd600', zIndex: 20 },
+    { opacity: 1, scale: 1, fill: '#a62d24', stroke: '#a62d24', zIndex: 1 },
   ],
 };
 
@@ -55,7 +55,7 @@ const themeDefault = {
     shipBorderSuccess: '#00796B',
     shipBorderError: '#ff5500',
   },
-  gameScreenTheme: gameScreenThemeDefault,
+  gameScreen: gameScreenThemeDefault,
 };
 
 export default themeDefault;

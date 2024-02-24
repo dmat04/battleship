@@ -12,6 +12,7 @@ const Container = styled.div<{ theme: Theme }>`
     "score score"
     "player opponent";
   grid-template-rows: 1fr 5fr;
+  grid-template-columns: 1fr 1fr;
   grid-row-gap: ${(props) => props.theme.paddingSm};
   grid-column-gap: ${(props) => props.theme.paddingSm};
   width: min(60vw, 70rem);
