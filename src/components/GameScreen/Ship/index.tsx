@@ -28,9 +28,9 @@ interface ShipProps {
   col: number;
   size: number;
   orientation: ShipOrientation;
-  containerStyle: React.CSSProperties | ContainerSpringValues;
-  imageStyle: React.CSSProperties | ImageSpringValues;
-  listeners: Record<string, Function>;
+  containerStyle?: React.CSSProperties | ContainerSpringValues;
+  imageStyle?: React.CSSProperties | ImageSpringValues;
+  listeners?: Record<string, Function>;
 }
 
 const Ship = forwardRef<HTMLDivElement, ShipProps>((
@@ -51,5 +51,11 @@ const Ship = forwardRef<HTMLDivElement, ShipProps>((
     <ShipImage shipSize={size} shipOrientation={orientation} pathStyle={imageStyle} />
   </ShipContainer>
 ));
+
+Ship.defaultProps = {
+  containerStyle: undefined,
+  imageStyle: undefined,
+  listeners: undefined,
+};
 
 export default Ship;
