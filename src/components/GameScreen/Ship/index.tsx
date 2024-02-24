@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { animated } from '@react-spring/web';
+import { SpringValues, animated } from '@react-spring/web';
 import { forwardRef } from 'react';
 import ShipImage from './ShipImage';
 import { ShipOrientation } from '../../../__generated__/graphql';
-import { ContainerSpringValues, ImageSpringValues } from '../../../hooks/useShipDrag';
 
 interface ContainerProps {
   $row: number;
@@ -28,8 +27,8 @@ interface ShipProps {
   col: number;
   size: number;
   orientation: ShipOrientation;
-  containerStyle?: React.CSSProperties | ContainerSpringValues;
-  imageStyle?: React.CSSProperties | ImageSpringValues;
+  containerStyle?: React.CSSProperties | SpringValues<{ [key: symbol]: string | number }>;
+  imageStyle?: React.CSSProperties | SpringValues<{ [key: symbol]: string | number }>;
   listeners?: Record<string, Function>;
 }
 
