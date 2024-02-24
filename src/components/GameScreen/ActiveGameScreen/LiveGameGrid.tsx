@@ -92,12 +92,16 @@ const LiveGameGrid = ({ owner }: Props) => {
     }),
   );
 
-  const sinkTransition = useTransition<PlacedShip, any>(
+  const shipTransition = useTransition<PlacedShip, any>(
     gridState?.sunkenShips ?? [],
     {
       keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
       from: theme.gameScreen.sunkShipAnimStart,
-      enter: theme.gameScreen.sunkShipAnimSteps,
+      enter: () => async (next: Function) => {
+        await next({ scale: 1.2, fill: '#ffd600', stroke: '#ffd600' });
+        await next({ scale: 1, fill: '#a62d24', stroke: '#a62d24' });
+        await next({ opacity: 0.9, zIndex: 1, background: '#01579b', stroke: theme.colors.shipBorder });
+      },
       onRest: () => { inaccessibleTransitionApi.start(); },
     },
   );
@@ -115,14 +119,15 @@ const LiveGameGrid = ({ owner }: Props) => {
         $cols={boardWidth}
       >
         {
-          sinkTransition((style, item) => (
+          shipTransition(({ fill, stroke, ...style }, item) => (
             <Ship
               ref={() => { }}
               col={item.x}
               row={item.y}
               size={item.ship.size}
               orientation={item.orientation}
-              containerStyle={style}
+              containerStyle={{ ...style }}
+              imageStyle={{ fill, stroke }}
             />
           ))
         }
