@@ -11,6 +11,7 @@ const GameGrid = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   grid-template-columns: repeat(var(--cols), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   aspect-ratio: 1;
+  isolation: isolate;
   background-color: ${(props) => props.theme.colors.surfaceSecondary};
   background-image:
     linear-gradient(var(--borderColor) var(--thickness), transparent var(--thickness)),
