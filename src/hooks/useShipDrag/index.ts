@@ -44,7 +44,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     [gridState, allShips],
   );
 
-  const springStart = useMemo(() => ({
+  const containerSpringStart = useMemo(() => ({
     x: 0,
     y: 0,
     scale: 1,
@@ -52,13 +52,13 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     filter: 'drop-shadow(rgba(0, 0, 0, 0.2) 0px 0px 0px)',
   }), []);
 
-  const svgSpringStart = useMemo(() => ({
+  const imageSpringStart = useMemo(() => ({
     stroke: theme.colors.shipBorder,
   }), [theme.colors.shipBorder]);
 
-  const [springProps, springAPI] = useSpring(
+  const [containerSpring, containerSpringAPI] = useSpring(
     () => ({
-      from: springStart,
+      from: containerSpringStart,
       config: (key) => {
         if (key === 'zIndex') {
           return {
@@ -76,9 +76,9 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     }),
   );
 
-  const [svgSpringProps, svgSpringAPI] = useSpring(
+  const [imageSpring, imageSpringAPI] = useSpring(
     () => ({
-      from: svgSpringStart,
+      from: imageSpringStart,
       config: {
         mass: 0.5,
         tension: 500,
@@ -97,14 +97,14 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     startPos.current.x = ev.clientX;
     startPos.current.y = ev.clientY;
 
-    springAPI.start({
+    containerSpringAPI.start({
       to: {
         scale: 1.2,
         zIndex: 1000,
         filter: `drop-shadow(${theme.boxShadow})`,
       },
     });
-  }, [springAPI, theme.boxShadow]);
+  }, [containerSpringAPI, theme.boxShadow]);
 
   const onPointerUp = useCallback((ev: React.PointerEvent) => {
     ev.currentTarget.releasePointerCapture(ev.pointerId);
@@ -142,8 +142,8 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       dispatch(placeShip({ position: gridPosition, shipID: id }));
     }
 
-    springAPI.start({ to: springStart });
-    svgSpringAPI.start({ to: svgSpringStart });
+    containerSpringAPI.start({ to: containerSpringStart });
+    imageSpringAPI.start({ to: imageSpringStart });
   }, [
     id,
     dispatch,
@@ -152,10 +152,10 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     shipRect,
     containerRect,
     gridRect,
-    springAPI,
-    springStart,
-    svgSpringAPI,
-    svgSpringStart]);
+    containerSpringAPI,
+    containerSpringStart,
+    imageSpringAPI,
+    imageSpringStart]);
 
   const onPointerMove = useCallback((ev: React.PointerEvent) => {
     if (
@@ -183,21 +183,21 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         : theme.colors.shipBorderError;
     }
 
-    springAPI.start({
+    containerSpringAPI.start({
       to: {
         x: dx,
         y: dy,
       },
     });
-    svgSpringAPI.start({ to: { stroke: borderColor } });
+    imageSpringAPI.start({ to: { stroke: borderColor } });
   }, [
     containerRect,
     gridRect,
     gridState,
     shipRect,
     shipState,
-    springAPI,
-    svgSpringAPI,
+    containerSpringAPI,
+    imageSpringAPI,
     theme.colors.shipBorder,
     theme.colors.shipBorderSuccess,
     theme.colors.shipBorderError,
@@ -222,8 +222,8 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     orientation: shipState.orientation,
     gridPosition: shipState.position,
     listeners,
-    springProps,
-    svgSpringProps,
+    containerSpring,
+    imageSpring,
   };
 };
 
