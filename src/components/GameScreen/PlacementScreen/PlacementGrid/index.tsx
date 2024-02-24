@@ -41,7 +41,7 @@ const PlacementGrid = () => {
   return (
     <PlacementGridContext.Provider value={contextValue}>
       <Container ref={componentContainerRef}>
-        <GameGrid ref={gridContainerRef} $cols={columns} $rows={rows}>
+        <GameGrid ref={gridContainerRef} columns={columns} rows={rows}>
           {
             ships
               .filter(({ position }) => position !== null)

@@ -57,6 +57,7 @@ const themeDefault = {
     shipBorderError: '#ff5500',
   },
   gameScreen: gameScreenThemeDefault,
+  gameGridLineThickness: '0.1em',
 };
 
 export default themeDefault;

@@ -19,7 +19,7 @@ const Container = styled.div<{ $owner: Props['owner'], $active: boolean }>`
   transition: opacity 0.5s;
 `;
 
-const Cell = styled(animated.div) <{ $col: number, $row: number }>`
+const Cell = styled(animated.div) <{ $col: number, $row: number, theme: Theme }>`
   grid-column: ${(props) => props.$col + 1} / span 1;
   grid-row: ${(props) => props.$row + 1} / span 1;
   z-index: 2;
@@ -115,8 +115,8 @@ const LiveGameGrid = ({ owner }: Props) => {
       <GameGrid
         ref={gridRef}
         onClick={gridClickHandler}
-        $rows={boardHeight}
-        $cols={boardWidth}
+        rows={boardHeight}
+        columns={boardWidth}
       >
         {
           shipTransition(({ fill, stroke, ...style }, item) => (
