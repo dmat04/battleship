@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useCallback, useContext, useMemo, useRef,
 } from 'react';
-import { useSpring } from '@react-spring/web';
+import { SpringValues, useSpring } from '@react-spring/web';
 import { useTheme } from 'styled-components';
 import type { RootState } from '../../store/store';
 import { Coordinates } from '../../store/shipPlacementSlice/types';
@@ -12,6 +12,18 @@ import { placeShip, resetShip, rotateShip } from '../../store/shipPlacementSlice
 import { calculateGridPosition, calculateTranslation, isWithinGrid } from './utils';
 import PlacementGridContext from './PlacementGridContext';
 import { Theme } from '../../components/assets/themes/themeDefault';
+
+export type ContainerSpringValues = SpringValues<{
+  x: number;
+  y: number;
+  scale: number;
+  zIndex: number;
+  filter: string;
+}>;
+
+export type ImageSpringValues = SpringValues<{
+  stroke: string;
+}>;
 
 interface UseShipDragArgs {
   id: string;
