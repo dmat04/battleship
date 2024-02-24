@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { animated } from '@react-spring/web';
-import { ShipOrientation } from '../../../../__generated__/graphql';
-import { Theme } from '../../../assets/themes/themeDefault';
+import { ShipOrientation } from '../../../__generated__/graphql';
+import { Theme } from '../../assets/themes/themeDefault';
 
 const getPath = (shipSize: number, vertical: boolean) => {
   switch (shipSize) {
