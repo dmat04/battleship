@@ -1,24 +1,5 @@
 /* eslint-disable object-curly-newline */
 export type Theme = typeof themeDefault;
-export type GameScreenTheme = typeof gameScreenThemeDefault;
-
-const gameScreenThemeDefault = {
-  missedCellAnimStart: { opacity: 1, scale: 0.66, background: 'transparent', zIndex: 10 },
-  missedCellAnimSteps: { opacity: 0.9, scale: 1, background: '#01579b', zIndex: 1 },
-
-  hitCellAnimStart: { opacity: 1, scale: 0.66, background: 'transparent', zIndex: 10 },
-  hitCellAnimSteps: [
-    { opacity: 1, scale: 1.33, background: '#ffd600', zIndex: 10 },
-    { opacity: 0.9, scale: 1, background: '#ff6d00', zIndex: 1 },
-  ],
-
-  sunkShipAnimStart: { opacity: 1, scale: 0.5, background: 'transparent', fill: 'transparent', stroke: 'transparent', zIndex: 20 },
-  sunkShipAnimSteps: [
-    { opacity: 1, scale: 1.2, fill: '#ffd600', stroke: '#ffd600', zIndex: 20 },
-    { opacity: 1, scale: 1, fill: '#a62d24', stroke: '#a62d24', zIndex: 20 },
-    { opacity: 0.9, zIndex: 1 },
-  ],
-};
 
 const themeDefault = {
   paddingMin: '1rem',
@@ -51,12 +32,17 @@ const themeDefault = {
     onContainerSuccess: '#212121',
     onContainerWarning: '#424242',
     onContainerDanger: '#212121',
-    shipColor: '#90A4AE',
-    shipBorder: '#37474F',
+    shipFill: 'rgb(143 163 174 / 80%)',
+    shipStroke: 'rgb(54 70 78 / 80%)',
     shipBorderSuccess: '#00796B',
     shipBorderError: '#ff5500',
+    hitCell: 'hsl(27 73% 50% / 70%)',
+    hitCellHighlight: 'hsl(50 100% 50% / 80%)',
+    missedCell: 'hsl(211 92% 30% / 70%)',
+    sunkShipHighlight: 'rgb(255 213 0 / 80%)',
+    sunkShipFill: 'rgb(191 64 64 / 60%)',
+    sunkShipStroke: 'rgb(54 70 78 / 80%)',
   },
-  gameScreen: gameScreenThemeDefault,
   gameGridLineThickness: '0.1em',
 };
 
