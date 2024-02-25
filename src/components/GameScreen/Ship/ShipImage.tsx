@@ -59,8 +59,8 @@ const SvgContainer = styled.svg`
 `;
 
 const SvgPath = styled(animated.path)<{ theme: Theme }>`
-  fill: ${(props) => props.theme.colors.shipColor};
-  stroke: ${(props) => props.theme.colors.shipBorder};
+  fill: ${(props) => props.theme.colors.shipFill};
+  stroke: ${(props) => props.theme.colors.shipStroke};
   stroke-width: 1.5;
 `;
 

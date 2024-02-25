@@ -4,7 +4,7 @@ import { Theme } from '../assets/themes/themeDefault';
 
 const Cell = styled.div<{ $col: number, $row: number, theme: Theme }>`
   border-width: ${(props) => props.theme.gameGridLineThickness};
-  border-color: ${(props) => props.theme.colors.shipBorder};
+  border-color: ${(props) => props.theme.colors.shipStroke};
   border-style: solid;
 
   grid-row: ${(props) => props.$row + 1} / span 1;
@@ -16,7 +16,7 @@ const Container = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   --cols: ${(props) => props.$cols};
   --rows: ${(props) => props.$rows};
   --thickness: ${(props) => props.theme.gameGridLineThickness};
-  --borderColor: ${(props) => props.theme.colors.shipBorder};
+  --borderColor: ${(props) => props.theme.colors.shipStroke};
   
   display: grid;
   grid-template-columns: repeat(var(--cols), 1fr);

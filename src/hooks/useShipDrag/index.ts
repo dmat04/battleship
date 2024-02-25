@@ -53,8 +53,8 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   }), []);
 
   const imageSpringStart = useMemo(() => ({
-    stroke: theme.colors.shipBorder,
-  }), [theme.colors.shipBorder]);
+    stroke: theme.colors.shipStroke,
+  }), [theme.colors.shipStroke]);
 
   const [containerSpring, containerSpringAPI] = useSpring(
     () => ({
@@ -174,7 +174,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       dySnapped,
     } = calculateGridPosition(gridState, shipRect, gridRect, dx, dy);
 
-    let borderColor = theme.colors.shipBorder;
+    let borderColor = theme.colors.shipStroke;
     if (isWithinGrid(gridPosition, gridState)) {
       dx = dxSnapped;
       dy = dySnapped;
@@ -198,7 +198,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
     shipState,
     containerSpringAPI,
     imageSpringAPI,
-    theme.colors.shipBorder,
+    theme.colors.shipStroke,
     theme.colors.shipBorderSuccess,
     theme.colors.shipBorderError,
   ]);

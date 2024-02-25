@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { Coordinates } from '@dnd-kit/utilities';
 import { PlacedShip } from '../../../__generated__/graphql';
 import { opponentCellClicked } from '../../../store/gameRoomSlice';
@@ -33,6 +33,7 @@ const LiveGameGrid = ({ owner }: Props) => {
   const dispatch = useAppDispatch();
   const gridRef = useRef<HTMLDivElement>(null);
   const theme = useTheme() as Theme;
+  const { colors } = theme;
 
   const { gameStarted, currentPlayer } = useAppSelector((state) => state.gameRoom);
   const ownerName = useAppSelector((state) => {
@@ -54,9 +55,18 @@ const LiveGameGrid = ({ owner }: Props) => {
     }
   });
 
-  const playerShips = useAppSelector((state) => (owner === 'player'
-    ? state.gameRoom.playerShips
-    : undefined));
+  const playerShips = useAppSelector((state) => {
+    if (owner !== 'player' || !state.gameRoom.playerShips) return undefined;
+
+    return state.gameRoom.playerShips;
+  });
+
+  const aliveShips = useMemo(
+    () => playerShips
+      ?.filter((ship) => gridState?.sunkenShips
+        .find((sunken) => sunken.ship.shipID === ship.ship.shipID) === undefined),
+    [gridState?.sunkenShips, playerShips],
+  );
 
   const gridClickHandler: React.MouseEventHandler<HTMLDivElement> = useCallback((ev) => {
     if (owner === 'player') return;
@@ -69,8 +79,11 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.hitCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
-      from: theme.gameScreen.hitCellAnimStart,
-      enter: theme.gameScreen.hitCellAnimSteps,
+      from: { opacity: 0.5, scale: 0.66, background: colors.hitCellHighlight, zIndex: 10 },
+      enter: [
+        { opacity: 1, scale: 1.2, background: colors.hitCellHighlight, zIndex: 10 },
+        { scale: 1, background: colors.hitCell, zIndex: 1 },
+      ],
     },
   );
 
@@ -78,8 +91,11 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.missedCells ?? [],
     {
       keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
-      from: theme.gameScreen.missedCellAnimStart,
-      enter: theme.gameScreen.missedCellAnimSteps,
+      from: { opacity: 0.5, scale: 0.66, background: colors.missedCell, zIndex: 10 },
+      enter: [
+        { opacity: 1, scale: 1.2, zIndex: 10 },
+        { scale: 1, zIndex: 1 },
+      ],
     },
   );
 
@@ -87,8 +103,8 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.inaccessibleCells ?? [],
     () => ({
       keys: (coord: Coordinates) => `${owner}-empty-${coord.x}-${coord.y}`,
-      from: theme.gameScreen.missedCellAnimStart,
-      enter: theme.gameScreen.missedCellAnimSteps,
+      from: { opacity: 0, scale: 0.66, background: colors.missedCell, zIndex: 10 },
+      enter: { opacity: 1, scale: 1, background: colors.missedCell, zIndex: 1 },
     }),
   );
 
@@ -96,13 +112,31 @@ const LiveGameGrid = ({ owner }: Props) => {
     gridState?.sunkenShips ?? [],
     {
       keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
-      from: theme.gameScreen.sunkShipAnimStart,
-      enter: () => async (next: Function) => {
-        await next({ scale: 1.2, fill: '#ffd600', stroke: '#ffd600' });
-        await next({ scale: 1, fill: '#a62d24', stroke: '#a62d24' });
-        await next({ opacity: 0.9, zIndex: 1, background: '#01579b', stroke: theme.colors.shipBorder });
+      from: {
+        opacity: 1,
+        scale: 1,
+        background: 'transparent',
+        fill: colors.shipFill,
+        stroke: colors.shipStroke,
+        zIndex: 20,
       },
-      onRest: () => { inaccessibleTransitionApi.start(); },
+      enter: () => async (next: Function) => {
+        await next({
+          scale: 1.2,
+          fill: colors.sunkShipHighlight,
+          stroke: colors.sunkShipHighlight,
+        });
+        await next({
+          scale: 1,
+          fill: colors.sunkShipFill,
+          stroke: colors.sunkShipStroke,
+        });
+        await next({
+          zIndex: 1,
+          background: colors.missedCell,
+        });
+        inaccessibleTransitionApi.start();
+      },
     },
   );
 
@@ -159,7 +193,7 @@ const LiveGameGrid = ({ owner }: Props) => {
           ))
         }
         {
-          playerShips?.map((ship) => (
+          aliveShips?.map((ship) => (
             <Ship
               ref={() => { }}
               key={ship.ship.shipID}
