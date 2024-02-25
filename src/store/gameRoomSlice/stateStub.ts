@@ -1,5 +1,5 @@
 import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
-import { GameResult, PlayerStatus, SliceStateActive } from './stateTypes';
+import { PlayerStatus, SliceStateActive } from './stateTypes';
 
 const stubScore = {
   hitCells: [
