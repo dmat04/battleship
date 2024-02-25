@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import GameOverModal from './GameOverModal';
 import { useAppSelector } from '../../../store/store';
 import { Theme } from '../../assets/themes/themeDefault';
@@ -33,6 +34,15 @@ const Container = styled.div<{ theme: Theme }>`
 
 const GameScreen = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
+  const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (gameRoom.gameResult) {
+      setTimeout(() => {
+        setShowGameOverModal(true);
+      }, 2000);
+    }
+  }, [gameRoom.gameResult]);
 
   if (!gameRoom.playerShips) {
     return <Navigate to="/game/getReady" replace />;
@@ -44,7 +54,7 @@ const GameScreen = () => {
       <Scoreboard />
       <LiveGameGrid owner="opponent" />
       {
-        gameRoom.gameResult
+        showGameOverModal
         && <GameOverModal />
       }
     </Container>
