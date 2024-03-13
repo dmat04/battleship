@@ -66,7 +66,7 @@ const JoinGameForm = ({ disabled }: Props) => {
       >
         {
           loadingJoinRoom
-            ? <Spinner $visible />
+            ? <Spinner />
             : <div>Join</div>
         }
       </Button>

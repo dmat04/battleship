@@ -70,7 +70,7 @@ const GuestForm = ({ disabled }: Props) => {
       />
       <Status>
         <p>{message}</p>
-        <Spinner $visible={checkIsPending} />
+        <Spinner visible={checkIsPending} />
       </Status>
       <Button
         type="submit"
@@ -80,7 +80,7 @@ const GuestForm = ({ disabled }: Props) => {
       >
         {
           loginRequestPending
-            ? <Spinner $visible />
+            ? <Spinner />
             : <div>Continue</div>
         }
       </Button>

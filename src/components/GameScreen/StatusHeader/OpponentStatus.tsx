@@ -43,7 +43,7 @@ const OpponentStatus = () => {
       <Label>
         {message}
       </Label>
-      <Spinner $visible $success={success} />
+      <Spinner success={success} />
     </Container>
   );
 };

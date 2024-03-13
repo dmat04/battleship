@@ -49,7 +49,7 @@ const GameRoomMenu = () => {
       <Button $variant="primary" onClick={startNewGame}>
         {
           loadingNewRoom
-            ? <Spinner $visible />
+            ? <Spinner />
             : <MenuItemLabel>Start a new game</MenuItemLabel>
         }
       </Button>
