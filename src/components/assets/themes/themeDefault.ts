@@ -42,6 +42,8 @@ const themeDefault = {
     sunkShipHighlight: 'rgb(255 213 0 / 80%)',
     sunkShipFill: 'rgb(191 64 64 / 60%)',
     sunkShipStroke: 'rgb(54 70 78 / 80%)',
+    scoreGreen: '#388E3C',
+    scoreRed: '#E64A19',
   },
   gameGridLineThickness: '0.1em',
 };

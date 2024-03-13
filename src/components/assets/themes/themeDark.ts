@@ -36,6 +36,8 @@ const themeDark: Theme = {
     sunkShipHighlight: 'rgb(255 213 0 / 80%)',
     sunkShipFill: 'rgb(191 64 64 / 60%)',
     sunkShipStroke: 'rgb(54 70 78 / 80%)',
+    scoreGreen: '#1B5E20',
+    scoreRed: '#BF360C',
   },
   gameGridLineThickness: '0.1em',
 };

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useMemo } from 'react';
 import { animated, useTransition } from '@react-spring/web';
 import TurnTimer from './TurnTimer';
@@ -84,6 +84,7 @@ export interface Props {
 
 const PlayerScorecard = ({ owner, username }: Props) => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
+  const theme = useTheme() as Theme;
 
   let score: ScoreState = {
     hitCells: [],
@@ -116,7 +117,11 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     {
       keys: (item: ShipScoreItem) => `${item.shipID}-${item.sunken ? 'dead' : 'alive'}`,
       from: { background: 'green' },
-      enter: (item: ShipScoreItem) => ({ background: item.sunken ? 'red' : 'green' }),
+      enter: (item: ShipScoreItem) => ({
+        background: item.sunken
+          ? theme.colors.scoreRed
+          : theme.colors.scoreGreen,
+      }),
     },
   );
 

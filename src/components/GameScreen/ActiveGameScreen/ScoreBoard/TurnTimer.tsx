@@ -3,13 +3,17 @@ import { useEffect } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import type { Owner } from '.';
 import { useAppSelector } from '../../../../store/store';
+import { Theme } from '../../../assets/themes/themeDefault';
 
-const Container = styled(animated.div) <{ $owner: Owner }>`
+const Container = styled(animated.div) <{ $owner: Owner, theme: Theme }>`
   position: relative;
   grid-area: timer;
   height: 100%;
   width: 100%;
-  background-color: ${(props) => (props.$owner === 'player' ? 'green' : 'red')};
+  background-color: ${(props) => (props.$owner === 'player'
+    ? props.theme.colors.scoreGreen
+    : props.theme.colors.scoreRed
+  )};
 `;
 
 interface Props {
