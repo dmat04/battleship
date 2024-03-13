@@ -52,7 +52,8 @@ const Card = styled.div<{ theme: Theme }>`
   width: fit-content;
   border: 2px solid black;
   margin: ${(props) => props.theme.paddingSm};
-  background-color: white;
+  color: ${(props) => props.theme.colors.onContainerPrimary};
+  background-color: ${(props) => props.theme.colors.containerPrimary};
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
   opacity: 0;
   animation: ${FadeIn} 100ms 400ms linear forwards;
