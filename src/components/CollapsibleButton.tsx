@@ -1,18 +1,17 @@
-import styled, { ThemeContext } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import React, {
-  forwardRef, useCallback, useContext, useImperativeHandle, useMemo, useRef,
+  forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef,
 } from 'react';
 import {
   animated, easings, useSpring,
 } from '@react-spring/web';
-import themeDefault, { Theme } from './assets/themes/themeDefault';
+import { Theme } from './assets/themes/themeDefault';
 import MenuItemLabel from './MemuItemLabel';
 import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from './CollapsibleContainer';
 import { assertNever } from '../utils/typeUtils';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   width: 100%;
-  background-color: ${(props) => props.theme.colors.containerPrimary};
   border: 2px solid black;
   padding: ${(props) => props.theme.paddingMin};
   overflow: clip;
@@ -37,7 +36,7 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     const collapsibleRef = useRef<CollapsibleAPI>(null);
     const labelRef = useRef<HTMLParagraphElement>(null);
 
-    const theme = (useContext(ThemeContext) ?? themeDefault) as Theme;
+    const theme = useTheme() as Theme;
 
     const springCollapsed = useMemo(() => ({
       background: theme.colors.containerSecondary,
@@ -55,7 +54,14 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
         duration: theme.durationTransitionDefault,
         easing: easings.easeOutCubic,
       },
-    }));
+    }), [theme]);
+
+    useEffect(() => {
+      switch (collapsibleRef.current?.getState()) {
+        case 'open': springApi.start({ to: springExpanded }); break;
+        default: springApi.start({ to: springCollapsed });
+      }
+    }, [theme, springApi, springCollapsed, springExpanded]);
 
     // eslint-disable-next-line arrow-body-style
     const getState = useCallback(() => {
