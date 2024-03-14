@@ -2,7 +2,8 @@ import {
   BrowserRouter, Navigate, Route, Routes,
 } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
-import { Theme } from './components/assets/themes/themeDefault';
+import themeDefault, { Theme } from './components/assets/themes/themeDefault';
+import themeDark from './components/assets/themes/themeDark';
 import Navbar from './components/Navbar';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
@@ -10,7 +11,8 @@ import GameScreen from './components/GameScreen';
 import PlacementScreen from './components/GameScreen/PlacementScreen';
 import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
 import NotificationOverlay from './components/NotificationOverlay';
-import themeDark from './components/assets/themes/themeDark';
+import useThemePreference from './hooks/useThemePreference';
+import { assertNever } from './utils/typeUtils';
 
 const ScreenContainer = styled.div`
   display: grid;
@@ -45,8 +47,17 @@ const TempFooter = styled.footer<{ theme: Theme }>`
 
 // eslint-disable-next-line arrow-body-style
 const App = () => {
+  const { themePreference } = useThemePreference();
+
+  let theme = themeDefault;
+  switch (themePreference) {
+    case 'light': break;
+    case 'dark': theme = themeDark; break;
+    default: assertNever(themePreference);
+  }
+
   return (
-    <ThemeProvider theme={themeDark}>
+    <ThemeProvider theme={theme}>
       <div className="App">
         <BrowserRouter>
           <ScreenContainer>
