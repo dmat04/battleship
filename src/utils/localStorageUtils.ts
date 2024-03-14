@@ -1,7 +1,9 @@
 import { LoginResult } from '../__generated__/graphql';
+import { ThemeType } from '../components/assets/themes/themeDefault';
 import { isInteger, isString } from './typeUtils';
 
 const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
+const KEY_THEME = 'KEY_THEME';
 
 const saveAccessToken = (loginResult: LoginResult): boolean => {
   try {
@@ -47,8 +49,23 @@ const clearAccessToken = (): void => {
   localStorage.removeItem(KEY_AUTH_TOKEN);
 };
 
+const saveThemePreference = (theme: ThemeType) => {
+  localStorage.setItem(KEY_THEME, theme);
+};
+
+const getThemePreference = (): ThemeType | undefined => {
+  const value = localStorage.getItem(KEY_THEME);
+  if (value === 'light' || value === 'dark') {
+    return value;
+  }
+
+  return undefined;
+};
+
 export default {
   saveAccessToken,
   getAccessToken,
   clearAccessToken,
+  saveThemePreference,
+  getThemePreference,
 };
