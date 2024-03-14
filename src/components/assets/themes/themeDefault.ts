@@ -1,3 +1,5 @@
+export type ThemeType = 'light' | 'dark';
+
 /* eslint-disable object-curly-newline */
 export type Theme = typeof themeDefault;
 
