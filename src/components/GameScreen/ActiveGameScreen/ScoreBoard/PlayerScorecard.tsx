@@ -1,5 +1,5 @@
 import styled, { useTheme } from 'styled-components';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { animated, useTransition } from '@react-spring/web';
 import TurnTimer from './TurnTimer';
 import type { Owner } from '.';
@@ -112,18 +112,31 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     return [];
   }, [gameSettings?.availableShips, score.sunkenShips]);
 
-  const animatedScoreItems = useTransition<ShipScoreItem, any>(
+  const [animatedScoreItems, transitionApi] = useTransition<ShipScoreItem, any>(
     scoreItems,
-    {
+    () => ({
       keys: (item: ShipScoreItem) => `${item.shipID}-${item.sunken ? 'dead' : 'alive'}`,
-      from: { background: 'green' },
+      from: (item: ShipScoreItem) => ({
+        background: item.sunken
+          ? theme.colors.scoreRed
+          : theme.colors.scoreGreen,
+      }),
       enter: (item: ShipScoreItem) => ({
         background: item.sunken
           ? theme.colors.scoreRed
           : theme.colors.scoreGreen,
       }),
-    },
+    }),
+    [theme],
   );
+
+  useEffect(() => {
+    transitionApi.start((itemIdx: number) => ({
+      background: scoreItems[itemIdx].sunken
+        ? theme.colors.scoreRed
+        : theme.colors.scoreGreen,
+    }));
+  }, [theme, scoreItems]);
 
   if (!gameSettings) return null;
 
