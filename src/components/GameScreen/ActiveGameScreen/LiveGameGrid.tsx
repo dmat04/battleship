@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 import styled, { useTheme } from 'styled-components';
 import { animated, useTransition } from '@react-spring/web';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Coordinates } from '@dnd-kit/utilities';
 import { PlacedShip } from '../../../__generated__/graphql';
 import { opponentCellClicked } from '../../../store/gameRoomSlice';
@@ -75,28 +75,28 @@ const LiveGameGrid = ({ owner }: Props) => {
     if (coords) dispatch(opponentCellClicked(coords));
   }, [dispatch, settings, owner]);
 
-  const hitTransition = useTransition<Coordinates, any>(
+  const [hitTransition, hitTransitionApi] = useTransition<Coordinates, any>(
     gridState?.hitCells ?? [],
-    {
+    () => ({
       keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
       from: { opacity: 0.5, scale: 0.66, background: colors.hitCellHighlight, zIndex: 10 },
       enter: [
         { opacity: 1, scale: 1.2, background: colors.hitCellHighlight, zIndex: 10 },
         { scale: 1, background: colors.hitCell, zIndex: 1 },
       ],
-    },
+    }),
   );
 
-  const missTransition = useTransition<Coordinates, any>(
+  const [missTransition, missTransitionApi] = useTransition<Coordinates, any>(
     gridState?.missedCells ?? [],
-    {
+    () => ({
       keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
       from: { opacity: 0.5, scale: 0.66, background: colors.missedCell, zIndex: 10 },
       enter: [
         { opacity: 1, scale: 1.2, zIndex: 10 },
         { scale: 1, zIndex: 1 },
       ],
-    },
+    }),
   );
 
   const [inaccessibleTransition, inaccessibleTransitionApi] = useTransition<Coordinates, any>(
@@ -108,9 +108,9 @@ const LiveGameGrid = ({ owner }: Props) => {
     }),
   );
 
-  const shipTransition = useTransition<PlacedShip, any>(
+  const [shipTransition, shipTransitionApi] = useTransition<PlacedShip, any>(
     gridState?.sunkenShips ?? [],
-    {
+    () => ({
       keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
       from: {
         opacity: 1,
@@ -137,7 +137,33 @@ const LiveGameGrid = ({ owner }: Props) => {
         });
         inaccessibleTransitionApi.start();
       },
+    }),
+  );
+
+  useEffect(() => {
+    hitTransitionApi.start();
+  }, [gridState?.hitCells]);
+
+  useEffect(() => {
+    missTransitionApi.start();
+  }, [gridState?.missedCells]);
+
+  useEffect(() => {
+    shipTransitionApi.start();
+  }, [gridState?.sunkenShips]);
+
+  useEffect(
+    () => {
+      hitTransitionApi.set({ background: colors.hitCell });
+      missTransitionApi.set({ background: colors.missedCell });
+      shipTransitionApi.set({
+        fill: colors.sunkShipFill,
+        stroke: colors.sunkShipStroke,
+        background: colors.missedCell,
+      });
+      inaccessibleTransitionApi.set({ background: colors.missedCell });
     },
+    [theme, colors.hitCell, colors.missedCell, colors.sunkShipFill, colors.sunkShipStroke],
   );
 
   const { boardWidth, boardHeight } = settings ?? { boardWidth: 10, boardHeight: 10 };
