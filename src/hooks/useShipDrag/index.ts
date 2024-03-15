@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  useCallback, useContext, useMemo, useRef,
+  useCallback, useContext, useEffect, useMemo, useRef,
 } from 'react';
 import { useSpring } from '@react-spring/web';
 import { useTheme } from 'styled-components';
@@ -74,6 +74,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         };
       },
     }),
+    [theme],
   );
 
   const [imageSpring, imageSpringAPI] = useSpring(
@@ -86,7 +87,12 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         precision: 0.0001,
       },
     }),
+    [theme, imageSpringStart],
   );
+
+  useEffect(() => {
+    imageSpringAPI.start({ to: imageSpringStart });
+  }, [imageSpringAPI, imageSpringStart]);
 
   const pointerId = useRef<number | null>(null);
   const startPos = useRef<Coordinates>({ x: 0, y: 0 });
