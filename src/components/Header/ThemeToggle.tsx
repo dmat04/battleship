@@ -10,12 +10,13 @@ const Container = styled.div<{ theme: Theme }>`
     justify-self: end;
     align-self: flex-end;
     margin: ${(props) => props.theme.paddingMin};
+    color: ${(props) => props.theme.colors.onSurfaceTertiary};
 `;
 
 const ThemeToggle = () => {
   const { themePreference, setTheme } = useThemePreference();
 
-  const icon = themePreference === 'dark'
+  const icon = themePreference === 'light'
     ? <IconDark height={24} width={24} />
     : <IconLight height={24} width={24} />;
 
