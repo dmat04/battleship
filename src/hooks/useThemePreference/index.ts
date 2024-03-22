@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import localStorageUtils from '../utils/localStorageUtils';
-import { ThemeType } from '../components/assets/themes/themeDefault';
+import { useCallback, useEffect } from 'react';
+import localStorageUtils from '../../utils/localStorageUtils';
+import { ThemeType } from '../../components/assets/themes/themeDefault';
+import { useThemePreferenceContext } from './ThemePreferenceContext';
 
 const useThemePreference = () => {
-  const [themePreference, setThemePreference] = useState<ThemeType>('light');
+  const themePreferenceContext = useThemePreferenceContext();
 
   const setTheme = useCallback((theme: ThemeType) => {
     localStorageUtils.saveThemePreference(theme);
-    setThemePreference(theme);
-  }, []);
+    themePreferenceContext?.setThemePreference(theme);
+  }, [themePreferenceContext]);
 
   useEffect(() => {
     const savedPreference = localStorageUtils.getThemePreference();
@@ -18,32 +19,32 @@ const useThemePreference = () => {
 
     prefersLightQuery.onchange = (ev) => {
       if (ev.matches) {
-        setThemePreference('light');
+        themePreferenceContext?.setThemePreference('light');
       }
     };
 
     prefersDarkQuery.onchange = (ev) => {
       if (ev.matches) {
-        setThemePreference('dark');
+        themePreferenceContext?.setThemePreference('dark');
       }
     };
 
     if (savedPreference) {
-      setThemePreference(savedPreference);
+      themePreferenceContext?.setThemePreference(savedPreference);
     } else if (prefersLightQuery.matches) {
-      setThemePreference('light');
+      themePreferenceContext?.setThemePreference('light');
     } else if (prefersDarkQuery.matches) {
-      setThemePreference('dark');
+      themePreferenceContext?.setThemePreference('dark');
     }
 
     return () => {
       prefersLightQuery.onchange = null;
       prefersDarkQuery.onchange = null;
     };
-  }, []);
+  }, [themePreferenceContext]);
 
   return {
-    themePreference,
+    themePreference: themePreferenceContext?.themePreference ?? 'light',
     setTheme,
   };
 };
