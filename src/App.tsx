@@ -4,7 +4,6 @@ import {
 import styled, { ThemeProvider } from 'styled-components';
 import themeDefault, { Theme } from './components/assets/themes/themeDefault';
 import themeDark from './components/assets/themes/themeDark';
-import Navbar from './components/Navbar';
 import UserMenu from './components/UserMenu';
 import GameRoomMenu from './components/GameRoomMenu';
 import GameScreen from './components/GameScreen';
@@ -13,13 +12,14 @@ import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
 import NotificationOverlay from './components/NotificationOverlay';
 import useThemePreference from './hooks/useThemePreference';
 import { assertNever } from './utils/typeUtils';
+import Header from './components/Header';
 
 const ScreenContainer = styled.div`
   display: grid;
   min-height: 100vh;
   grid-template-rows: auto 1fr auto;
   grid-template-areas: 
-    "navbar"
+    "header"
     "content"
     "footer";
 `;
@@ -61,7 +61,7 @@ const App = () => {
       <div className="App">
         <BrowserRouter>
           <ScreenContainer>
-            <Navbar />
+            <Header />
             <MainContentContainer>
               <Routes>
                 <Route index element={<Navigate to="/login" replace />} />

@@ -45,9 +45,9 @@ const WaveContainer = styled.div<WaveContainerProps>`
       linear;
 `;
 
-const NavContainer = styled.nav<{ theme: Theme }>`
+const Container = styled.nav<{ theme: Theme }>`
   position: relative;
-  grid-area: navbar;
+  grid-area: hero;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -55,14 +55,14 @@ const NavContainer = styled.nav<{ theme: Theme }>`
   isolation: isolate;
 `;
 
-const Navbar = () => {
+const HeroBanner = () => {
   const theme = useTheme() as Theme;
 
   const waveColor = theme.colors.hero;
   const appBgColor = theme.colors.surfacePrimary;
 
   return (
-    <NavContainer>
+    <Container>
       <WaveContainer
         $color={waveColor}
         $opacity={0.5}
@@ -96,8 +96,8 @@ const Navbar = () => {
         $duration={60}
       />
       <Logo />
-    </NavContainer>
+    </Container>
   );
 };
 
-export default Navbar;
+export default HeroBanner;
