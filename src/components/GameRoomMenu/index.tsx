@@ -7,8 +7,7 @@ import { CollapsibleAPI, CollapsibleState } from '../CollapsibleContainer';
 import MenuItemLabel from '../MemuItemLabel';
 import JoinGameForm from './JoinGameForm';
 import { createGameRoom } from '../../store/gameRoomSlice/thunks';
-import Spinner from '../Spinner';
-import { Button } from '../Button';
+import Button from '../Button';
 import CollapsibleButton from '../CollapsibleButton';
 
 const MenuContainer = styled.div<{ theme: Theme }>`
@@ -46,12 +45,12 @@ const GameRoomMenu = () => {
 
   return (
     <MenuContainer>
-      <Button $variant="primary" onClick={startNewGame}>
-        {
-          loadingNewRoom
-            ? <Spinner />
-            : <MenuItemLabel>Start a new game</MenuItemLabel>
-        }
+      <Button
+        variant="primary"
+        loading={loadingNewRoom}
+        onClick={startNewGame}
+      >
+        <MenuItemLabel>Start a new game</MenuItemLabel>
       </Button>
 
       <CollapsibleButton

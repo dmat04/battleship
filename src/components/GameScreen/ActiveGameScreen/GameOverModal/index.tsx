@@ -5,7 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/store';
 import { closeWSConnection, sendMessage } from '../../../../store/wsMiddleware/actions';
 import { RoomStatusRequestMessage, ClientMessageCode } from '../../../../store/wsMiddleware/messageTypes';
 import { assertNever } from '../../../../utils/typeUtils';
-import { Button } from '../../../Button';
+import Button from '../../../Button';
 import { Theme } from '../../../assets/themes/themeDefault';
 
 const Blur = keyframes`
@@ -127,9 +127,9 @@ const GameOverModal = () => {
         <CardFooter>
           {
             gameResult !== GameResult.OpponentDisconnected
-            && <Button $variant="primary" onClick={handleRematch}>Rematch</Button>
+            && <Button variant="primary" onClick={handleRematch}>Rematch</Button>
           }
-          <Button $variant="warning" onClick={handleExit}>Exit</Button>
+          <Button variant="warning" onClick={handleExit}>Exit</Button>
         </CardFooter>
       </Card>
     </Container>

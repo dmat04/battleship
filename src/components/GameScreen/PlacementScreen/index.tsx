@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PlacementGrid from './PlacementGrid';
 import { submitPlacement } from '../../../store/shipPlacementSlice/thunks';
 import { useAppDispatch, useAppSelector } from '../../../store/store';
-import { Button } from '../../Button';
+import Button from '../../Button';
 import { Theme } from '../../assets/themes/themeDefault';
 
 const Container = styled.div<{ theme: Theme }>`
@@ -43,7 +43,7 @@ const PlacementScreen = () => {
       <Header>
         <p>Place your ships</p>
         <Button
-          $variant="primary"
+          variant="primary"
           disabled={nonPlacedCount > 0}
           onClick={handleSubmit}
         >

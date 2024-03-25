@@ -5,7 +5,7 @@ import useUsernameChecker from '../../hooks/useUsernameChecker';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { guestLogin } from '../../store/authSlice';
 import Spinner from '../Spinner';
-import { Button } from '../Button';
+import Button from '../Button';
 
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
@@ -50,7 +50,6 @@ const GuestForm = ({ disabled }: Props) => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (ev) => {
     ev.preventDefault();
-
     if (username.length === 0) {
       dispatch(guestLogin(null));
     } else if (isValid) {
@@ -74,15 +73,18 @@ const GuestForm = ({ disabled }: Props) => {
       </Status>
       <Button
         type="submit"
-        $variant="primary"
+        variant="primary"
         style={{ gridArea: 'button' }}
         disabled={disabled}
+        loading={loginRequestPending}
       >
-        {
-          loginRequestPending
-            ? <Spinner />
+        {/* {
+          loginRequestPending || loading
+            ? <Spinner visible={loading} />
             : <div>Continue</div>
-        }
+        } */}
+        {/* <Spinner visible={loading} /> */}
+        <div>Continue</div>
       </Button>
     </Container>
   );
