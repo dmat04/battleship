@@ -1,27 +1,29 @@
 import styled from 'styled-components';
+import { CSSProperties } from 'react';
 import { Theme } from './assets/themes/themeDefault';
-import { assertNever } from '../utils/typeUtils';
+import Spinner from './Spinner';
 
 export type ButtonVariant = 'primary' | 'warning' | 'danger';
 
-export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
+const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.colors.containerSuccess;
       case 'warning': return props.theme.colors.containerWarning;
       case 'danger': return props.theme.colors.containerDanger;
-      default: return assertNever(props.$variant);
+      case 'primary':
+      default: return props.theme.colors.containerSuccess;
     }
   }};
   --colorContent: ${(props) => {
     switch (props.$variant) {
-      case 'primary': return props.theme.colors.onContainerSuccess;
       case 'warning': return props.theme.colors.onContainerWarning;
       case 'danger': return props.theme.colors.onContainerDanger;
-      default: return assertNever(props.$variant);
+      case 'primary':
+      default: return props.theme.colors.onContainerSuccess;
     }
-  }}; 
+  }};
 
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -30,7 +32,6 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   color: var(--colorContent);
   border: 2px solid black;
   transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
-
   padding: ${(props) => props.theme.paddingMin};
 
   &:hover {
@@ -41,3 +42,37 @@ export const Button = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
     filter: opacity(60%);
   }
 `;
+
+const SpinnerContainer = styled.div`
+  position: absolute;
+  width: min-content;
+`;
+
+const ChildrenContainer = styled.div<{ $visible: boolean }>`
+  visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
+`;
+
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  loading?: boolean;
+  style?: CSSProperties;
+}
+
+const Button = ({
+  children,
+  variant = 'primary',
+  loading = false,
+  style = {},
+  ...rest
+}: React.PropsWithChildren<Props>) => (
+  <ButtonElement $variant={variant} style={style} {...rest}>
+    <ChildrenContainer $visible={!loading}>
+      {children}
+    </ChildrenContainer>
+    <SpinnerContainer>
+      <Spinner visible={loading} />
+    </SpinnerContainer>
+  </ButtonElement>
+);
+
+export default Button;
