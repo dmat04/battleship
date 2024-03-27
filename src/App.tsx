@@ -9,7 +9,7 @@ import PlacementScreen from './components/GameScreen/PlacementScreen';
 import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
 import NotificationOverlay from './components/NotificationOverlay';
 import Header from './components/Header';
-import ThemeProvider from './hooks/useThemePreference/ThemeProvider';
+import ThemeProvider from './components/ThemeProvider';
 import { Theme } from './components/assets/themes/themeDefault';
 
 const ScreenContainer = styled.div`
