@@ -12,6 +12,8 @@ const themeDefault = {
   dimensionBorder: '2px',
   dimensionIconSize: '2rem',
   boxShadow: 'rgba(0, 0, 0, 0.4) 0px 20px 10px',
+  borderStyle: '2px solid #000000',
+  gameGridLineThickness: '0.1em',
   colors: {
     hero: 'hsl(200, 100%, 50%)',
     heroComplementary: 'hsl(27, 73%, 34%)',
@@ -47,7 +49,6 @@ const themeDefault = {
     scoreGreen: '#388E3C',
     scoreRed: '#E64A19',
   },
-  gameGridLineThickness: '0.1em',
 };
 
 export default themeDefault;

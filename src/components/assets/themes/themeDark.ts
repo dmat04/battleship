@@ -3,6 +3,8 @@ import themeDefault, { Theme } from './themeDefault';
 const themeDark: Theme = {
   ...themeDefault,
   boxShadow: 'rgba(0, 0, 0, 0.4) 0px 20px 10px',
+  borderStyle: '2px solid #bfbfbf',
+  gameGridLineThickness: '0.1em',
   colors: {
     ...themeDefault.colors,
     hero: 'hsl(200, 80%, 15%)',
@@ -39,7 +41,6 @@ const themeDark: Theme = {
     scoreGreen: '#1B5E20',
     scoreRed: '#BF360C',
   },
-  gameGridLineThickness: '0.1em',
 };
 
 export default themeDark;
