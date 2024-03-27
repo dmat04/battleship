@@ -5,12 +5,21 @@ import useThemePreference from '../../hooks/useThemePreference';
 import { Theme } from '../assets/themes/themeDefault';
 
 const Container = styled.div<{ theme: Theme }>`
-    grid-area: theme;
-    width: min-content;
-    justify-self: end;
-    align-self: flex-end;
-    margin: ${(props) => props.theme.paddingMin};
-    color: ${(props) => props.theme.colors.onSurfaceTertiary};
+  grid-area: theme;
+  width: min-content;
+  justify-self: start;
+  align-self: flex-end;
+  margin: ${(props) => props.theme.paddingMin};
+`;
+
+const IconContainer = styled.div<{ theme: Theme }>`
+  border-width: ${(props) => props.theme.dimensionBorder};
+  border-color: ${(props) => props.theme.colors.onContainerSecondary};
+  border-style: solid;
+  padding: 0.5rem;
+  display: flex;
+  background-color: ${(props) => props.theme.colors.containerSecondary};
+  color: ${(props) => props.theme.colors.onContainerSecondary};
 `;
 
 const ThemeToggle = () => {
@@ -21,16 +30,18 @@ const ThemeToggle = () => {
     : <IconLight height={24} width={24} />;
 
   const onClick = () => {
-    const theme = themePreference === 'dark'
+    const newTheme = themePreference === 'dark'
       ? 'light'
       : 'dark';
 
-    setTheme(theme);
+    setTheme(newTheme);
   };
 
   return (
     <Container onClick={onClick}>
-      { icon }
+      <IconContainer>
+        {icon}
+      </IconContainer>
     </Container>
   );
 };
