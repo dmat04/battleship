@@ -11,7 +11,7 @@ const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
       case 'warning': return props.theme.colors.containerWarning;
       case 'danger': return props.theme.colors.containerDanger;
       case 'primary':
-      default: return props.theme.colors.containerSuccess;
+      default: return props.theme.colors.containerSecondary;
     }
   }};
   --colorContent: ${(props) => {
@@ -19,7 +19,7 @@ const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
       case 'warning': return props.theme.colors.onContainerWarning;
       case 'danger': return props.theme.colors.onContainerDanger;
       case 'primary':
-      default: return props.theme.colors.onContainerSuccess;
+      default: return props.theme.colors.onContainerSecondary;
     }
   }};
 
@@ -30,7 +30,7 @@ const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   align-items: center;
   background-color: var(--colorBg);
   color: var(--colorContent);
-  border: 2px solid black;
+  border: ${(props) => props.theme.borderStyle};
   transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
   padding: ${(props) => props.theme.paddingMin};
 

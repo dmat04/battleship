@@ -3,7 +3,8 @@ import { Theme } from './assets/themes/themeDefault';
 
 const TextInput = styled.input<{ theme: Theme }>`
   padding: ${(props) => props.theme.paddingMin};
-  border: 2px solid ${(props) => props.theme.colors.surfacePrimary};
+  border: ${(props) => props.theme.borderStyle};
+  border-color: ${(props) => props.theme.colors.containerSecondary};
   border-radius: 9999px;
 
   &:focus {

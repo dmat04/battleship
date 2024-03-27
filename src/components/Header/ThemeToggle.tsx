@@ -13,9 +13,7 @@ const Container = styled.div<{ theme: Theme }>`
 `;
 
 const IconContainer = styled.div<{ theme: Theme }>`
-  border-width: ${(props) => props.theme.dimensionBorder};
-  border-color: ${(props) => props.theme.colors.onContainerSecondary};
-  border-style: solid;
+  border: ${(props) => props.theme.borderStyle};
   padding: 0.5rem;
   display: flex;
   background-color: ${(props) => props.theme.colors.containerSecondary};

@@ -12,7 +12,7 @@ import { assertNever } from '../utils/typeUtils';
 
 const Container = styled(animated.div) <{ theme: Theme }>`
   width: 100%;
-  border: 2px solid black;
+  border: ${(props) => props.theme.borderStyle};
   padding: ${(props) => props.theme.paddingMin};
   overflow: clip;
 `;

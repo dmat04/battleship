@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { Notification as NotificationData, NotificationType } from '../../store/notificationSlice/stateTypes';
 import { Theme } from '../assets/themes/themeDefault';
 import { assertNever } from '../../utils/typeUtils';
-import CloseIcon from '../assets/icons/ic_close.svg';
+import { ReactComponent as CloseIcon } from '../assets/icons/ic_close.svg';
 import { useAppDispatch } from '../../store/store';
 import { dismissNotification } from '../../store/notificationSlice';
 
@@ -33,8 +33,8 @@ const ColoredBase = styled(animated.div)<ContainerProps>`
   }};
 `;
 
-const Container = styled(ColoredBase)`
-  border: 2px solid black;
+const Container = styled(ColoredBase)<{ theme: Theme }>`
+  border: ${(props) => props.theme.borderStyle};
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
   display: grid;
   grid-template-areas: 
@@ -61,10 +61,12 @@ const DismissButton = styled.button`
   grid-area: button;
   width: 2rem;
   aspect-ratio: 1;
-  background: ${`url(${CloseIcon})`};
-  background-position: center;
-  background-repeat: no-repeat;
-  margin: ${(props) => props.theme.paddingMin}
+  display: flex;
+  background-color: transparent;
+  justify-content: center;
+  align-items: center;
+  margin: ${(props) => props.theme.paddingMin};
+  color: currentColor;
 `;
 
 interface Props {
@@ -98,7 +100,9 @@ const Notification = forwardRef<HTMLDivElement, Props>(({ notification }: Props,
         && <Life $type={type} style={lifeSpring} />
       }
       <Message>{message}</Message>
-      <DismissButton onClick={dismiss} />
+      <DismissButton onClick={dismiss}>
+        <CloseIcon />
+      </DismissButton>
     </Container>
   );
 });

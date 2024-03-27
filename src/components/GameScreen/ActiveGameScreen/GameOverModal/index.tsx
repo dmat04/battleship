@@ -50,7 +50,7 @@ const Card = styled.div<{ theme: Theme }>`
     "body"
     "footer";
   width: fit-content;
-  border: 2px solid black;
+  border: ${(props) => props.theme.borderStyle};
   margin: ${(props) => props.theme.paddingSm};
   color: ${(props) => props.theme.colors.onContainerPrimary};
   background-color: ${(props) => props.theme.colors.containerPrimary};
