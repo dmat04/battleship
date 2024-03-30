@@ -27,7 +27,7 @@ export const guestLogin = createAsyncThunk<
       thunkAPI.dispatch(PushTransientNotification({
         type: NotificationType.Info,
         timeoutArg: 5000,
-        message: `Logged in as '${result.data.guestLogin.username}'`,
+        message: 'Guest login successful',
       }));
 
       return result.data.guestLogin;
@@ -70,6 +70,7 @@ const authSlice = createSlice({
       LocalStorage.saveAccessToken(action.payload);
     },
     clearAuth: (state) => {
+      LocalStorage.clearAccessToken();
       state.loginResult = null;
       state.loginRequestPending = false;
     },
