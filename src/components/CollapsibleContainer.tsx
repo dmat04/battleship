@@ -19,7 +19,7 @@ interface Props {
   // eslint-disable-next-line react/require-default-props
   onCollapsedStateChange?: (state: CollapsibleState) => void;
   // eslint-disable-next-line react/require-default-props
-  initialState: CollapsibleState;
+  initialState?: CollapsibleState;
 }
 
 export interface CollapsibleAPI {
@@ -30,7 +30,7 @@ export interface CollapsibleAPI {
 
 const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
   (
-    { onCollapsedStateChange, initialState, children }: React.PropsWithChildren<Props>,
+    { onCollapsedStateChange, initialState = 'closed', children }: React.PropsWithChildren<Props>,
     ref,
   ) => {
     const childrenContainerRef = useRef<HTMLDivElement>(null);
