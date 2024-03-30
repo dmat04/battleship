@@ -28,7 +28,7 @@ const LogoutButton = styled.button<{ theme: Theme }>`
   background-color: ${(props) => props.theme.colors.surfaceTertiary};
   color: ${(props) => props.theme.colors.onSurfaceTertiary};
   
-  &:hover, &:active {
+  &:hover {
     filter: invert(10%) saturate(300%);
   }
 `;

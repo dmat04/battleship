@@ -4,7 +4,7 @@ import { Theme } from '../assets/themes/themeDefault';
 const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 75rem);
   margin-inline: auto;
-  padding-block: ${(props) => props.theme.paddingSm};
+  padding-block: ${(props) => props.theme.paddingMin};
 `;
 
 const SvgText = styled.text<{ theme: Theme }>`

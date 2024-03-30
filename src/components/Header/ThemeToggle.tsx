@@ -15,7 +15,7 @@ const Container = styled.div<{ theme: Theme }>`
 
   grid-area: theme;
   position: relative;
-  margin: var(--padding);
+  padding: var(--gap);
 `;
 
 const IconContainer = styled.button<{ theme: Theme }>`
@@ -26,7 +26,7 @@ const IconContainer = styled.button<{ theme: Theme }>`
   background-color: ${(props) => props.theme.colors.surfaceTertiary};
   color: ${(props) => props.theme.colors.onSurfaceTertiary};
 
-  &:hover, &:active {
+  &:hover {
     filter: invert(10%) saturate(300%);
   }
 `;
@@ -34,7 +34,6 @@ const IconContainer = styled.button<{ theme: Theme }>`
 const MenuContainer = styled.div`
   position: absolute;
   top: calc(100% + var(--gap));
-  left: calc(-1 * var(--gap));
   z-index: 9999;
 `;
 
