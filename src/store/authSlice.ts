@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { LoginResult } from '../__generated__/graphql';
 import LocalStorage from '../utils/localStorageUtils';
 import { GUEST_LOGIN } from '../graphql/mutations';
@@ -8,6 +8,8 @@ import Dependencies from '../utils/Dependencies';
 import type { AppDispatch, RootState } from './store';
 import { PushTransientNotification } from './notificationSlice';
 import { NotificationType } from './notificationSlice/stateTypes';
+import { clearRoom } from './gameRoomSlice';
+import { closeWSConnection } from './wsMiddleware/actions';
 
 export const guestLogin = createAsyncThunk<
 // eslint-disable-next-line @typescript-eslint/indent
@@ -50,6 +52,20 @@ export const checkUsername = createAsyncThunk(
   }),
 );
 
+export const logout = createAsyncThunk<
+// eslint-disable-next-line @typescript-eslint/indent
+  undefined, undefined, { dispatch: AppDispatch, state: RootState }
+>(
+  'auth/logout',
+  (_, thunkAPI) => {
+    // TODO: invalidate access token on the server
+    LocalStorage.clearAccessToken();
+    thunkAPI.dispatch(clearRoom());
+    thunkAPI.dispatch(closeWSConnection());
+    return undefined;
+  },
+);
+
 export interface AuthSliceState {
   loginResult: LoginResult | null;
   loginRequestPending: boolean;
@@ -63,18 +79,7 @@ const initialState: AuthSliceState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {
-    setAuth: (state, action: PayloadAction<LoginResult>) => {
-      state.loginResult = action.payload;
-      state.loginRequestPending = false;
-      LocalStorage.saveAccessToken(action.payload);
-    },
-    clearAuth: (state) => {
-      LocalStorage.clearAccessToken();
-      state.loginResult = null;
-      state.loginRequestPending = false;
-    },
-  },
+  reducers: { },
   extraReducers: (builder) => {
     builder.addCase(guestLogin.pending, (state) => {
       state.loginRequestPending = true;
@@ -91,9 +96,11 @@ const authSlice = createSlice({
     builder.addCase(guestLogin.rejected, (state) => {
       state.loginRequestPending = false;
     });
+    builder.addMatcher(logout.settled, () => ({
+      loginResult: null,
+      loginRequestPending: false,
+    }));
   },
 });
-
-export const { setAuth, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;

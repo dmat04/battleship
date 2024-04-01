@@ -3,7 +3,7 @@ import { ReactComponent as IconLogout } from '../assets/icons/ic_logout.svg';
 import { ReactComponent as IconUser } from '../assets/icons/ic_account_circe.svg';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { Theme } from '../assets/themes/themeDefault';
-import { clearAuth } from '../../store/authSlice';
+import { logout } from '../../store/authSlice';
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
@@ -40,7 +40,7 @@ const UserInfo = () => {
   if (!auth) return null;
 
   const doLogout = () => {
-    dispatch(clearAuth());
+    dispatch(logout());
   };
 
   return (
