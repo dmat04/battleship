@@ -4,6 +4,7 @@ import { isInteger, isString } from './typeUtils';
 
 const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
 const KEY_THEME = 'KEY_THEME';
+const KEY_GAME_HINTS_SEEN = 'KEY_GAME_HINTS_SEEN';
 
 const saveAccessToken = (loginResult: LoginResult): boolean => {
   try {
@@ -62,10 +63,16 @@ const getThemePreference = (): ThemePreference | undefined => {
   return undefined;
 };
 
+const hasSeenGameHints = (): boolean => localStorage.getItem(KEY_GAME_HINTS_SEEN) !== null;
+
+const setGameHintsSeen = () => localStorage.setItem(KEY_GAME_HINTS_SEEN, 'true');
+
 export default {
   saveAccessToken,
   getAccessToken,
   clearAccessToken,
   saveThemePreference,
   getThemePreference,
+  hasSeenGameHints,
+  setGameHintsSeen,
 };
