@@ -16,7 +16,7 @@ const HintContainer = styled.div<{ theme: Theme }>`
   padding: var(--gap);
   margin-inline: var(--gap);
   gap: var(--gap);
-  z-index: 100;
+  z-index: 9999;
   transform: translate3d(0, -80%, 0);
   filter: drop-shadow(${(props) => props.theme.boxShadow});
   border: ${(props) => props.theme.borderStyle};

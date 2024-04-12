@@ -9,7 +9,6 @@ const Cell = styled.div<{ $col: number, $row: number, theme: Theme }>`
 
   grid-row: ${(props) => props.$row + 1} / span 1;
   grid-column: ${(props) => props.$col + 1} / span 1;
-  z-index: -1;
 `;
 
 const Container = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
@@ -22,7 +21,6 @@ const Container = styled.div<{ $cols: number, $rows: number, theme: Theme }>`
   grid-template-columns: repeat(var(--cols), 1fr);
   grid-template-rows: repeat(var(--rows), 1fr);
   aspect-ratio: 1;
-  isolation: isolate;
   background-color: ${(props) => props.theme.colors.surfaceSecondary};
   border: var(--thickness) solid var(--borderColor);
 `;
