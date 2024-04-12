@@ -2,7 +2,7 @@ import themeDefault, { Theme } from './themeDefault';
 
 const themeDark: Theme = {
   ...themeDefault,
-  boxShadow: 'rgba(0, 0, 0, 0.4) 0px 20px 10px',
+  boxShadow: 'rgba(255, 255, 255, 0.15) 0px 20px 10px',
   borderStyle: '2px solid #bfbfbf',
   gameGridLineThickness: '0.1em',
   colors: {
