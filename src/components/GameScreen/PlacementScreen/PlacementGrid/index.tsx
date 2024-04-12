@@ -6,12 +6,14 @@ import PlacementGridContext, { IPlacementGridContext } from '../../../../hooks/u
 import { RootState } from '../../../../store/store';
 import GameGrid from '../../../GameGrid';
 import { Theme } from '../../../assets/themes/themeDefault';
+import HintBox from '../HintBox';
 
 const Container = styled.div<{ theme: Theme }>`
   width: 100%;
 `;
 
 const NavyGrid = styled.div<{ theme: Theme }>`
+  position: relative;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(8, 1fr);
@@ -65,6 +67,7 @@ const PlacementGrid = () => {
               ))
           }
           <RightSpacer />
+          <HintBox />
         </NavyGrid>
       </Container>
     </PlacementGridContext.Provider>
