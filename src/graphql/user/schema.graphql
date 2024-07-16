@@ -1,0 +1,21 @@
+extend type Mutation {
+  guestLogin(username: String): LoginResult
+  registeredLogin(username: String!, password: String!): LoginResult
+  registerUser(username: String!, password: String!): LoginResult
+}
+
+extend type Query {
+  checkUsername(username: String!): UsernameQueryResult!
+}
+
+type LoginResult {
+  username: String!
+  accessToken: String!
+  expiresAt: String!
+}
+
+type UsernameQueryResult {
+  username: String!
+  taken: Boolean!
+  validationError: String
+}
