@@ -8,7 +8,7 @@ const config: CodegenConfig = {
     './common/types/types.generated.ts': {
       plugins: ['typescript', 'typescript-operations']
     },
-    './server/src/graphql/resolvers.generated.ts': {
+    './server/src/graphql/resolverTypes.generated.ts': {
       plugins: [
         {
           add: {
@@ -22,9 +22,14 @@ const config: CodegenConfig = {
         },
       ]
     },
-    // './server/GENERATED/RESOLVERS/': defineConfig({
-    //   resolverTypesPath: 
-    // }),
+    './server/src/graphql/': defineConfig({
+      mode: 'merged',
+      resolverTypesPath: 'resolverTypes.generated.ts',
+      resolverRelativeTargetDir: 'resolvers',
+      resolverMainFileMode: 'merged',
+      typeDefsFilePath: false,
+      mergeSchema: false,
+    }),
   }
 }
 
