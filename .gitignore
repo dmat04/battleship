@@ -3,7 +3,9 @@
 node_modules
 **/build
 **/dist
-**/__generated__
 /test/coverage
 .env.production
 .env.development
+
+**/__generated__/*
+!server/src/graphql/__generated__/resolvers/
