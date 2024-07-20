@@ -1,13 +1,18 @@
-import Board, { CellHitResult, Player } from './Board';
-import GameplayError from './GameplayError';
-import { GameSettings, ShipPlacementInput } from '../graphql/types.generated';
-import DefaultSettings from './DefaultSettings';
+
+import {
+  GameSettings,
+  ShipPlacementInput,
+} from "@battleship/common/types/__generated__/types.generated";
+import { CellHitResult } from "@battleship/common/types/GameTypes";
+import GameplayError from "./GameplayError";
+import DefaultSettings from "./DefaultSettings";
+import Board, { Player } from "./Board";
 
 export enum GameState {
-  Created = 'Created',
-  Initialized = 'Initialized',
-  InProgress = 'InProgress',
-  Finished = 'Finished',
+  Created = "Created",
+  Initialized = "Initialized",
+  InProgress = "InProgress",
+  Finished = "Finished",
 }
 
 /**
@@ -54,7 +59,11 @@ class Game {
    * @param settings The GameSettings which will dictate the Board dimension and
    *                 the numbers of available ships
    */
-  constructor(player1: string, player2: string, settings: GameSettings = DefaultSettings) {
+  constructor(
+    player1: string,
+    player2: string,
+    settings: GameSettings = DefaultSettings,
+  ) {
     // set the initial state to Created
     this.state = GameState.Created;
     // create a Board instance with the provided GameSettings
@@ -75,12 +84,12 @@ class Game {
   private assertCanMakeMove = (player: string): void => {
     // Check that the Game is in the appropriate state
     if (this.state !== GameState.InProgress) {
-      throw new Error('Game error - game is not in progress');
+      throw new Error("Game error - game is not in progress");
     }
 
     // Check that it is the specified players move
     if (player !== this.currentPlayer) {
-      throw new GameplayError('Game error - not the players turn');
+      throw new GameplayError("Game error - not the players turn");
     }
   };
 
@@ -97,9 +106,8 @@ class Game {
     // If a hit is made, the current player gets another round, ...
     if (!moveResult.hit) {
       // .. otherwise move on to the next player
-      this.currentPlayer = this.currentPlayer === this.player1
-        ? this.player2
-        : this.player1;
+      this.currentPlayer =
+        this.currentPlayer === this.player1 ? this.player2 : this.player1;
     }
   };
 
@@ -112,10 +120,15 @@ class Game {
    * @param p1Placement Ship placements for Player 1
    * @param p2Placement Ship placements for Player 2
    */
-  initialize = (p1Placement: ShipPlacementInput[], p2Placement: ShipPlacementInput[]): void => {
+  initialize = (
+    p1Placement: ShipPlacementInput[],
+    p2Placement: ShipPlacementInput[],
+  ): void => {
     // Check that the current state is 'Created'
     if (this.state !== GameState.Created) {
-      throw new Error('Game initialization error - game is already initialized');
+      throw new Error(
+        "Game initialization error - game is already initialized",
+      );
     }
 
     // Place each players ships onto ther own grids
@@ -132,7 +145,9 @@ class Game {
    */
   start = (): void => {
     if (this.state !== GameState.Initialized) {
-      throw new Error('Game error - cannot start game not in initialized state');
+      throw new Error(
+        "Game error - cannot start game not in initialized state",
+      );
     }
 
     this.state = GameState.InProgress;
@@ -203,9 +218,8 @@ class Game {
     this.board.reset();
     this.state = GameState.Created;
     this.round = 0;
-    this.playsFirst = this.playsFirst === this.player1
-      ? this.player2
-      : this.player1;
+    this.playsFirst =
+      this.playsFirst === this.player1 ? this.player2 : this.player1;
     this.currentPlayer = this.playsFirst;
   };
 

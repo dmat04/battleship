@@ -1,12 +1,14 @@
-import { shuffle } from 'lodash';
-import { assertNever } from '../utils/typeUtils';
-import GameplayError from './GameplayError';
+import { shuffle } from "lodash";
+import { assertNever } from "../utils/typeUtils";
+import GameplayError from "./GameplayError";
+import DefaultSettings from "./DefaultSettings";
 import {
-  GameSettings,
   PlacedShip,
+  GameSettings,
   ShipPlacementInput,
-} from '../graphql/types.generated';
-import DefaultSettings from './DefaultSettings';
+  ShipOrientation,
+} from "@battleship/common/types/__generated__/types.generated";
+import type { CellHitResult } from '@battleship/common/types/GameTypes';
 
 export enum CellState {
   Empty = 1,
@@ -18,14 +20,6 @@ export enum CellState {
 export enum Player {
   Player1 = 1,
   Player2 = 2,
-}
-
-export interface CellHitResult {
-  x: number,
-  y: number,
-  hit: boolean,
-  gameWon: boolean,
-  shipSunk?: PlacedShip,
 }
 
 interface ShipState {
@@ -85,11 +79,11 @@ class Board {
   private static initPlayerBoard = (settings: GameSettings): PlayerBoard => {
     // initialize the grids as 2D arrays, the 'outer' array will
     // hold instances of Uint8Arrays, each of which represents a row of cells
-    const board = new Array(settings.boardHeight);
+    const board = new Array<BoardRowType>(settings.boardHeight);
 
     // create the row arrays and fill them with empty cells
     for (let row: number = 0; row < settings.boardHeight; row += 1) {
-      board[row] = (new Uint8Array(settings.boardWidth)).fill(CellState.Empty);
+      board[row] = new Uint8Array(settings.boardWidth).fill(CellState.Empty);
     }
 
     return board;
@@ -104,26 +98,30 @@ class Board {
   private static resetPlayerBoard = (board: PlayerBoard): void => {
     board.forEach((row) => {
       // eslint-disable-next-line no-param-reassign
-      row.forEach((_, index, arr) => { arr[index] = CellState.Empty; });
+      row.forEach((_, index, arr) => {
+        arr[index] = CellState.Empty;
+      });
     });
   };
 
   private static mapShipIDsToShips = (
     shipPlacements: ShipPlacementInput[],
     settings: GameSettings,
-  ): PlacedShip[] => shipPlacements.map((shipPlacement) => {
-    const ship = settings.availableShips
-      .find((availableShip) => availableShip.shipID === shipPlacement.shipID);
+  ): PlacedShip[] =>
+    shipPlacements.map((shipPlacement) => {
+      const ship = settings.availableShips.find(
+        (availableShip) => availableShip.shipID === shipPlacement.shipID,
+      );
 
-    if (!ship) throw new Error('Couldn\'t find ship in GameSettings');
+      if (!ship) throw new Error("Couldn't find ship in GameSettings");
 
-    return {
-      ship,
-      x: shipPlacement.x,
-      y: shipPlacement.y,
-      orientation: shipPlacement.orientation,
-    };
-  });
+      return {
+        ship,
+        x: shipPlacement.x,
+        y: shipPlacement.y,
+        orientation: shipPlacement.orientation,
+      };
+    });
 
   private static initShipStates = (
     ships: ShipPlacementInput[],
@@ -155,9 +153,7 @@ class Board {
     settings: GameSettings,
   ): boolean => {
     // Destructure the member properties
-    const {
-      ship, orientation, x, y,
-    } = placement;
+    const { ship, orientation, x, y } = placement;
 
     // Check that the whole ship is within bounds according to its orientation.
     // The coordinates (x, y) of the ship mark the topmost part of the ship when
@@ -165,7 +161,7 @@ class Board {
     // so in each case the ships size needs to be taken into account when checking
     // bounds.
     switch (orientation) {
-      case 'VERTICAL':
+      case ShipOrientation.Vertical:
         // For vertically oriented ships, make sure x is within bounds...
         if (x < 0 || x >= settings.boardWidth) return false;
         // ... and the topmost part (y) is >0 and the bottom-most part (y+shipSize)
@@ -173,7 +169,7 @@ class Board {
         // greater than board height).
         if (y < 0 || y + ship.size > settings.boardHeight) return false;
         return true;
-      case 'HORIZONTAL':
+      case ShipOrientation.Horizontal:
         // Analogous to the case for vartical orientation, same checks but
         // the directions are switched
         if (x < 0 || x + ship.size > settings.boardWidth) return false;
@@ -187,12 +183,11 @@ class Board {
   /**
    * Check if given coordinates are within grid bounds.
    */
-  private checkCellBounds = (x: number, y: number): boolean => (
-    x >= 0
-    && x < this.settings.boardWidth
-    && y >= 0
-    && y < this.settings.boardHeight
-  );
+  private checkCellBounds = (x: number, y: number): boolean =>
+    x >= 0 &&
+    x < this.settings.boardWidth &&
+    y >= 0 &&
+    y < this.settings.boardHeight;
 
   /**
    * Check for ship overlap when placing a ship onto a board.
@@ -210,28 +205,28 @@ class Board {
     settings: GameSettings,
   ): boolean => {
     // Destructure the placement values
-    const {
-      ship, x, y, orientation,
-    } = shipPlacement;
+    const { ship, x, y, orientation } = shipPlacement;
     const { boardWidth, boardHeight } = settings;
 
     // Calculate the bounds within which no other ship
     // should be placed
     const xStart = Math.max(0, x - 1);
-    const xEnd = orientation === 'HORIZONTAL'
-      ? Math.min(boardWidth - 1, x + ship.size)
-      : Math.min(boardWidth - 1, x + 1);
+    const xEnd =
+      orientation === ShipOrientation.Horizontal
+        ? Math.min(boardWidth - 1, x + ship.size)
+        : Math.min(boardWidth - 1, x + 1);
     const yStart = Math.max(0, y - 1);
-    const yEnd = orientation === 'VERTICAL'
-      ? Math.min(boardHeight - 1, y + ship.size)
-      : Math.min(boardHeight - 1, y + 1);
+    const yEnd =
+      orientation === ShipOrientation.Vertical
+        ? Math.min(boardHeight - 1, y + ship.size)
+        : Math.min(boardHeight - 1, y + 1);
 
     // Check that no other ship is placed within the calculated bounds
     for (let row = yStart; row <= yEnd; row += 1) {
       const rowArray = playerBoard[row];
 
       for (let col = xStart; col <= xEnd; col += 1) {
-        if (rowArray[col] !== CellState.Empty) {
+        if (rowArray[col] !== CellState.Empty as number) {
           return false;
         }
       }
@@ -259,13 +254,11 @@ class Board {
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
-    const {
-      ship, x, y,
-    } = shipPlacement;
+    const { ship, x, y } = shipPlacement;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
-      throw new Error('Ship placement error - ship crossover');
+      throw new Error("Ship placement error - ship crossover");
     }
 
     // After the overlap check is completed, place the ship.
@@ -298,13 +291,11 @@ class Board {
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
-    const {
-      ship, x, y,
-    } = shipPlacement;
+    const { ship, x, y } = shipPlacement;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
-      throw new Error('Ship placement error - ship crossover');
+      throw new Error("Ship placement error - ship crossover");
     }
 
     // When placing a ship horizontally, only the appropirate grid row needs
@@ -336,9 +327,9 @@ class Board {
 
     // Call the appropriate method for each orientaion
     switch (orientation) {
-      case 'VERTICAL':
+      case ShipOrientation.Vertical:
         return Board.placeShipVertical(playerBoard, ship, settings);
-      case 'HORIZONTAL':
+      case ShipOrientation.Horizontal:
         return Board.placeShipHorizontal(playerBoard, ship, settings);
       default:
         return assertNever(orientation);
@@ -362,7 +353,7 @@ class Board {
     const { errors, placedShips } = Board.verifyShipPlacements(ships, settings);
 
     if (errors || !placedShips) {
-      throw new Error('Cannot place ships - ship placements are invalid');
+      throw new Error("Cannot place ships - ship placements are invalid");
     }
 
     placedShips.forEach((placement) => {
@@ -386,8 +377,8 @@ class Board {
     ships: ShipPlacementInput[],
     settings: GameSettings,
   ): {
-    errors: string[] | null,
-    placedShips: PlacedShip[] | null,
+    errors: string[] | null;
+    placedShips: PlacedShip[] | null;
   } => {
     const testBoard = this.initPlayerBoard(settings);
 
@@ -397,7 +388,9 @@ class Board {
     // Check that all of the available ships (as defined in the given
     // game settings) are present in the given ship placements.
     settings.availableShips.forEach((availableShip) => {
-      const found = ships.find((placed) => placed.shipID === availableShip.shipID);
+      const found = ships.find(
+        (placed) => placed.shipID === availableShip.shipID,
+      );
       if (!found) {
         errors.push(`Missing ship ${availableShip.shipID}`);
       }
@@ -406,7 +399,7 @@ class Board {
     // Check that no extra ships are present in the given
     // ship placements
     if (ships.length > settings.availableShips.length) {
-      errors.push('Too many shipPlacements given');
+      errors.push("Too many shipPlacements given");
     }
 
     const placedShips = Board.mapShipIDsToShips(ships, settings);
@@ -415,8 +408,8 @@ class Board {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
-          `${placement.ship.type} at (${placement.x}, ${placement.y}) `
-          + `${placement.orientation.charAt(0)} - out of bounds`,
+          `${placement.ship.type} at (${placement.x}, ${placement.y}) ` +
+          `${placement.orientation.charAt(0)} - out of bounds`,
         );
       }
 
@@ -426,8 +419,8 @@ class Board {
       } catch {
         // If ship placement failed, ship overlap has been detected.
         errors.push(
-          `${placement.ship.type} at (${placement.x}, ${placement.y}) `
-          + `${placement.orientation.charAt(0)} - ship overlap`,
+          `${placement.ship.type} at (${placement.x}, ${placement.y}) ` +
+          `${placement.orientation.charAt(0)} - ship overlap`,
         );
       }
     });
@@ -506,21 +499,20 @@ class Board {
    *          undefined if the specified cell isn't occupied by a ship.
    */
   private getShip = (player: Player, col: number, row: number): ShipState => {
-    const ships = player === Player.Player1
-      ? this.p1Ships
-      : this.p2Ships;
+    const ships = player === Player.Player1 ? this.p1Ships : this.p2Ships;
 
-    const found = ships.find(((shipState) => {
-      const {
-        x, y, orientation, ship,
-      } = shipState.shipPlacement;
+    const found = ships.find((shipState) => {
+      const { x, y, orientation, ship } = shipState.shipPlacement;
 
       switch (orientation) {
-        case 'HORIZONTAL': return row === y && col >= x && col < x + ship.size;
-        case 'VERTICAL': return col === x && row >= y && row < y + ship.size;
-        default: return assertNever(orientation);
+        case ShipOrientation.Horizontal:
+          return row === y && col >= x && col < x + ship.size;
+        case ShipOrientation.Vertical:
+          return col === x && row >= y && row < y + ship.size;
+        default:
+          return assertNever(orientation);
       }
-    }));
+    });
 
     if (!found) throw new Error(`No ship at coordinates (${col}, ${row})`);
 
@@ -542,15 +534,15 @@ class Board {
   hitCell = (player: Player, x: number, y: number): CellHitResult => {
     // Check if hit is within bounds
     if (!this.checkCellBounds(x, y)) {
-      throw new GameplayError('Hit coordinates out of bounds');
+      throw new GameplayError("Hit coordinates out of bounds");
     }
 
-    const opponent: Player = player === Player.Player1 ? Player.Player2 : Player.Player1;
+    const opponent: Player =
+      player === Player.Player1 ? Player.Player2 : Player.Player1;
 
     // Get the opponents board
-    const targetBoard = opponent === Player.Player1
-      ? this.player1Board
-      : this.player2Board;
+    const targetBoard =
+      opponent === Player.Player1 ? this.player1Board : this.player2Board;
 
     // Read the current state of the cell to be hit
     const currentState = targetBoard[y][x] as CellState;
@@ -569,7 +561,7 @@ class Board {
       case CellState.Miss:
       case CellState.Hit:
         // If the cell had already been hit on, throw an error
-        throw new GameplayError('Cell has already been hit');
+        throw new GameplayError("Cell has already been hit");
       default:
         return assertNever(currentState);
     }
@@ -619,22 +611,27 @@ class Board {
    */
   hitRandomCell = (player: Player): CellHitResult => {
     // Select the opponent board
-    const targetBoard = player === Player.Player1
-      ? this.player2Board
-      : this.player1Board;
+    const targetBoard =
+      player === Player.Player1 ? this.player2Board : this.player1Board;
 
     // Filter out all row indices which contain at least one
     // 'hittable' cell (meaning its eaither 'empty' or 'populated', as
     // opposed to 'hit' or 'miss')
     const hittableRows: number[] = [];
     targetBoard.forEach((row, idx) => {
-      if (row.some((cell) => cell === CellState.Empty || cell === CellState.Populated)) {
+      if (
+        row.some(
+          (cell) => cell === CellState.Empty as number || cell === CellState.Populated as number,
+        )
+      ) {
         hittableRows.push(idx);
       }
     });
 
     if (hittableRows.length === 0) {
-      throw new GameplayError('Making a random hit - no more cells left to hit');
+      throw new GameplayError(
+        "Making a random hit - no more cells left to hit",
+      );
     }
 
     // Select a random row
@@ -645,13 +642,15 @@ class Board {
     // filter out all column indices which are 'hittable'
     const hittableColumns: number[] = [];
     row.forEach((cell, idx) => {
-      if (cell === CellState.Empty || cell === CellState.Populated) {
+      if (cell === CellState.Empty as number || cell === CellState.Populated as number) {
         hittableColumns.push(idx);
       }
     });
 
     if (hittableColumns.length === 0) {
-      throw new GameplayError('Making a random hit - no more cells left to hit');
+      throw new GameplayError(
+        "Making a random hit - no more cells left to hit",
+      );
     }
 
     // Select a random column
