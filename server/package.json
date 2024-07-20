@@ -7,6 +7,8 @@
     "test": "test"
   },
   "scripts": {
+    "start:dev": "nodemon src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +16,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@battleship/common": "^1.0.0"
+    "@battleship/common": "^1.0.0",
+    "mongoose": "^8.5.1",
+    "mongoose-unique-validator": "^5.0.1",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.44.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11"
   }
 }
