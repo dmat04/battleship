@@ -1,45 +1,46 @@
-import { ShipPlacementInput } from '../../src/graphql/types.generated';
+import { ShipOrientation, ShipPlacementInput } from "@battleship/common/types/__generated__/types.generated";
+
 
 export const p1Placements: ShipPlacementInput[] = [
   {
-    shipID: 'CARRIER-0',
-    orientation: 'VERTICAL',
+    shipID: "CARRIER-0",
+    orientation: ShipOrientation.Vertical,
     x: 9,
     y: 1,
   },
   {
-    shipID: 'BATTLESHIP-0',
-    orientation: 'VERTICAL',
+    shipID: "BATTLESHIP-0",
+    orientation: ShipOrientation.Vertical,
     x: 7,
     y: 4,
   },
   {
-    shipID: 'CRUISER-0',
-    orientation: 'HORIZONTAL',
+    shipID: "CRUISER-0",
+    orientation: ShipOrientation.Horizontal,
     x: 7,
     y: 9,
   },
   {
-    shipID: 'DESTROYER-0',
-    orientation: 'VERTICAL',
+    shipID: "DESTROYER-0",
+    orientation: ShipOrientation.Vertical,
     x: 1,
     y: 1,
   },
   {
-    shipID: 'DESTROYER-1',
-    orientation: 'HORIZONTAL',
+    shipID: "DESTROYER-1",
+    orientation: ShipOrientation.Horizontal,
     x: 3,
     y: 4,
   },
   {
-    shipID: 'SUBMARINE-0',
-    orientation: 'VERTICAL',
+    shipID: "SUBMARINE-0",
+    orientation: ShipOrientation.Vertical,
     x: 3,
     y: 2,
   },
   {
-    shipID: 'SUBMARINE-1',
-    orientation: 'VERTICAL',
+    shipID: "SUBMARINE-1",
+    orientation: ShipOrientation.Vertical,
     x: 0,
     y: 9,
   },
@@ -47,55 +48,55 @@ export const p1Placements: ShipPlacementInput[] = [
 
 export const p2Placements: ShipPlacementInput[] = [
   {
-    shipID: 'CARRIER-0',
-    orientation: 'HORIZONTAL',
+    shipID: "CARRIER-0",
+    orientation: ShipOrientation.Horizontal,
     x: 3,
     y: 9,
   },
   {
-    shipID: 'BATTLESHIP-0',
-    orientation: 'VERTICAL',
+    shipID: "BATTLESHIP-0",
+    orientation: ShipOrientation.Vertical,
     x: 8,
     y: 3,
   },
   {
-    shipID: 'CRUISER-0',
-    orientation: 'HORIZONTAL',
+    shipID: "CRUISER-0",
+    orientation: ShipOrientation.Horizontal,
     x: 0,
     y: 0,
   },
   {
-    shipID: 'DESTROYER-0',
-    orientation: 'VERTICAL',
+    shipID: "DESTROYER-0",
+    orientation: ShipOrientation.Vertical,
     x: 0,
     y: 6,
   },
   {
-    shipID: 'DESTROYER-1',
-    orientation: 'HORIZONTAL',
+    shipID: "DESTROYER-1",
+    orientation: ShipOrientation.Horizontal,
     x: 0,
     y: 9,
   },
   {
-    shipID: 'SUBMARINE-0',
-    orientation: 'HORIZONTAL',
+    shipID: "SUBMARINE-0",
+    orientation: ShipOrientation.Horizontal,
     x: 8,
     y: 1,
   },
   {
-    shipID: 'SUBMARINE-1',
-    orientation: 'HORIZONTAL',
+    shipID: "SUBMARINE-1",
+    orientation: ShipOrientation.Horizontal,
     x: 9,
     y: 9,
   },
 ];
 
-export const firstPlayer = 'playerA';
-export const secondPlayer = 'playerB';
+export const firstPlayer = "playerA";
+export const secondPlayer = "playerB";
 
 export const moves = [
   {
-    player: 'playerA',
+    player: "playerA",
     x: 0,
     y: 3,
     result: {
@@ -106,7 +107,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 0,
     y: 0,
     result: {
@@ -117,7 +118,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 0,
     y: 9,
     result: {
@@ -128,7 +129,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 1,
     y: 8,
     result: {
@@ -139,7 +140,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 1,
     y: 0,
     result: {
@@ -150,7 +151,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 2,
     y: 8,
     result: {
@@ -161,7 +162,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 1,
     y: 1,
     result: {
@@ -172,7 +173,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 1,
     y: 2,
     result: {
@@ -182,18 +183,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'DESTROYER-0',
-          type: 'DESTROYER',
+          shipID: "DESTROYER-0",
+          type: "DESTROYER",
           size: 2,
         },
-        orientation: 'VERTICAL',
+        orientation: ShipOrientation.Vertical,
         x: 1,
         y: 1,
       },
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 3,
     y: 2,
     result: {
@@ -203,18 +204,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'SUBMARINE-0',
-          type: 'SUBMARINE',
+          shipID: "SUBMARINE-0",
+          type: "SUBMARINE",
           size: 1,
         },
-        orientation: 'VERTICAL',
+        orientation: ShipOrientation.Vertical,
         x: 3,
         y: 2,
       },
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 3,
     y: 1,
     result: {
@@ -225,7 +226,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 3,
     y: 8,
     result: {
@@ -236,7 +237,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerB',
+    player: "playerB",
     x: 3,
     y: 0,
     result: {
@@ -247,7 +248,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 0,
     y: 0,
     result: {
@@ -258,7 +259,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 1,
     y: 0,
     result: {
@@ -269,7 +270,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 2,
     y: 0,
     result: {
@@ -279,18 +280,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'CRUISER-0',
-          type: 'CRUISER',
+          shipID: "CRUISER-0",
+          type: "CRUISER",
           size: 3,
         },
-        orientation: 'HORIZONTAL',
+        orientation: ShipOrientation.Horizontal,
         x: 0,
         y: 0,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 8,
     y: 1,
     result: {
@@ -300,18 +301,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'SUBMARINE-0',
-          type: 'SUBMARINE',
+          shipID: "SUBMARINE-0",
+          type: "SUBMARINE",
           size: 1,
         },
-        orientation: 'HORIZONTAL',
+        orientation: ShipOrientation.Horizontal,
         x: 8,
         y: 1,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 8,
     y: 3,
     result: {
@@ -322,7 +323,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 8,
     y: 4,
     result: {
@@ -333,7 +334,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 8,
     y: 5,
     result: {
@@ -344,7 +345,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 8,
     y: 6,
     result: {
@@ -354,18 +355,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'BATTLESHIP-0',
-          type: 'BATTLESHIP',
+          shipID: "BATTLESHIP-0",
+          type: "BATTLESHIP",
           size: 4,
         },
-        orientation: 'VERTICAL',
+        orientation: ShipOrientation.Vertical,
         x: 8,
         y: 3,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 0,
     y: 6,
     result: {
@@ -376,7 +377,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 0,
     y: 7,
     result: {
@@ -386,18 +387,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'DESTROYER-0',
-          type: 'DESTROYER',
+          shipID: "DESTROYER-0",
+          type: "DESTROYER",
           size: 2,
         },
-        orientation: 'VERTICAL',
+        orientation: ShipOrientation.Vertical,
         x: 0,
         y: 6,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 1,
     y: 9,
     result: {
@@ -407,18 +408,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'DESTROYER-1',
-          type: 'DESTROYER',
+          shipID: "DESTROYER-1",
+          type: "DESTROYER",
           size: 2,
         },
-        orientation: 'HORIZONTAL',
+        orientation: ShipOrientation.Horizontal,
         x: 0,
         y: 9,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 4,
     y: 9,
     result: {
@@ -429,7 +430,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 5,
     y: 9,
     result: {
@@ -440,7 +441,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 6,
     y: 9,
     result: {
@@ -451,7 +452,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 7,
     y: 9,
     result: {
@@ -462,7 +463,7 @@ export const moves = [
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 9,
     y: 9,
     result: {
@@ -472,18 +473,18 @@ export const moves = [
       gameWon: false,
       shipSunk: {
         ship: {
-          shipID: 'SUBMARINE-1',
-          type: 'SUBMARINE',
+          shipID: "SUBMARINE-1",
+          type: "SUBMARINE",
           size: 1,
         },
-        orientation: 'HORIZONTAL',
+        orientation: ShipOrientation.Horizontal,
         x: 9,
         y: 9,
       },
     },
   },
   {
-    player: 'playerA',
+    player: "playerA",
     x: 3,
     y: 9,
     result: {
@@ -493,11 +494,11 @@ export const moves = [
       gameWon: true,
       shipSunk: {
         ship: {
-          shipID: 'CARRIER-0',
-          type: 'CARRIER',
+          shipID: "CARRIER-0",
+          type: "CARRIER",
           size: 5,
         },
-        orientation: 'HORIZONTAL',
+        orientation: ShipOrientation.Horizontal,
         x: 3,
         y: 9,
       },
