@@ -26,7 +26,8 @@ export default tseslint.config(
   },
   {
     ignores: [
-      "**/*.config.js"
+      "**/*.config.js",
+      "**/__generated__/"
     ]
   }
 );
