@@ -1,3 +1,12 @@
+import { assertAuthorized } from "@battleship/common/utils/ApolloContext";
+import GameService from "../../../services/GameService";
+import type { QueryResolvers } from "./../../__generated__/resolverTypes.generated";
 
-        import type   { QueryResolvers } from './../../__generated__/resolverTypes.generated';
-        export const gameSettings: NonNullable<QueryResolvers['gameSettings']> = async (_parent, _arg, _ctx) => { /* Implement Query.gameSettings resolver logic here */ };
+export const gameSettings: NonNullable<QueryResolvers["gameSettings"]> = (
+  _,
+  _arg,
+  _ctx,
+) => {
+  assertAuthorized(_ctx);
+  return GameService.getGameSettings(_arg.gameId);
+};
