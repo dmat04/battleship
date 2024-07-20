@@ -5,14 +5,14 @@ const config: CodegenConfig = {
   schema: './common/graphql-schema/**/schema.graphql',
   documents: './client/src/graphql/*.ts',
   generates: {
-    './common/types/types.generated.ts': {
+    './common/types/__generated__/types.generated.ts': {
       plugins: ['typescript', 'typescript-operations']
     },
-    './server/src/graphql/resolverTypes.generated.ts': {
+    './server/src/graphql/__generated__/resolverTypes.generated.ts': {
       plugins: [
         {
           add: {
-            content: `import * as Types from '@battleship/common/types/types.generated';`
+            content: `import * as Types from '@battleship/common/types/__generated__/types.generated';`
           },
         },
         {
@@ -22,7 +22,7 @@ const config: CodegenConfig = {
         },
       ]
     },
-    './server/src/graphql/': defineConfig({
+    './server/src/graphql/__generated__': defineConfig({
       mode: 'merged',
       resolverTypesPath: 'resolverTypes.generated.ts',
       resolverRelativeTargetDir: 'resolvers',
@@ -30,7 +30,21 @@ const config: CodegenConfig = {
       typeDefsFilePath: false,
       mergeSchema: false,
     }),
-  }
-}
+    './client/src/graphql/__generated__/operationHooks.ts': {
+      plugins: [
+        {
+          add: {
+            content: `import * as Types from '@battleship/common/types/__generated__/types.generated';`
+          },
+        },
+        {
+          'typescript-react-apollo': {
+            importOperationTypesFrom: 'Types'
+          }
+        },
+      ],
+    },
+  },
+};
 
 export default config
