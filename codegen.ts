@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   schema: "./common/graphql-schema/**/schema.graphql",
   documents: "./client/src/graphql/*.ts",
   hooks: {
-    afterOneFileWrite: ['prettier --write'],
+    afterOneFileWrite: ["prettier --write"],
   },
   generates: {
     "./common/types/__generated__/types.generated.ts": {

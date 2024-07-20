@@ -11,6 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:client": "eslint client/",
+    "format": "prettier . --write",
     "codegen": "graphql-codegen"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@types/lodash": "^4.17.7",
     "@typescript-eslint/parser": "^7.16.1",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-react": "^7.34.4",
     "prettier": "^3.3.3",
