@@ -8,4 +8,3 @@ node_modules
 .env.development
 
 **/__generated__/*
-!server/src/graphql/__generated__/resolvers/
