@@ -1,10 +1,10 @@
-import { WebSocket, WebSocketBehavior } from 'uWebSockets.js';
-import AuthService, { WSAuthTicket } from '../services/AuthService';
-import { WSState, type WSData } from '../models/WSData';
-import { assertNever } from '../utils/typeUtils';
-import MessageParser from './MessageParser';
-import { ErrorMessage, ServerMessageCode } from './MessageTypes';
-import GameService from '../services/GameService';
+import { WebSocket, WebSocketBehavior } from "uWebSockets.js";
+import AuthService, { WSAuthTicket } from "../services/AuthService";
+import { WSState, type WSData } from "../models/WSData";
+import { assertNever } from "@battleship/common/utils/typeUtils";
+import MessageParser from "@battleship/common/messages/MessageParser";
+import { ErrorMessage, ServerMessageCode } from "@battleship/common/messages/MessageTypes";
+import GameService from "../services/GameService";
 
 const messageDecoder = new TextDecoder();
 
@@ -13,7 +13,7 @@ const handleErrorState = (ws: WebSocket<WSData>): void => {
   let code = 400;
 
   if (!errorMessage) {
-    errorMessage = 'Unknown error';
+    errorMessage = "Unknown error";
     code = 500;
   }
 
@@ -26,7 +26,10 @@ const handleErrorState = (ws: WebSocket<WSData>): void => {
   ws.end(code);
 };
 
-const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
+const handleAuthMessage = (
+  ws: WebSocket<WSData>,
+  message: ArrayBuffer,
+): void => {
   // decode the access code from raw data
   const decoded = messageDecoder.decode(message);
   // get the ws UserData
@@ -36,23 +39,23 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
   let ticket: WSAuthTicket | false = false;
 
   if (wsData.state !== WSState.Unauthenticated) {
-    errorMessage = 'Authentication failed - ws connection in wrong state';
+    errorMessage = "Authentication failed - ws connection in wrong state";
   }
 
   try {
     // try to decode the access code
     ticket = AuthService.decodeWSToken(decoded);
   } catch {
-    errorMessage = 'Authentication failed - invalid token';
+    errorMessage = "Authentication failed - invalid token";
   }
 
   // check that the decoded ticket data corresponds to the websocket data
   if (
-    !ticket
-    || ticket.roomID !== wsData.roomID
-    || ticket.username !== wsData.username
+    !ticket ||
+    ticket.roomID !== wsData.roomID ||
+    ticket.username !== wsData.username
   ) {
-    errorMessage = 'Authentication failed - invalid ticket';
+    errorMessage = "Authentication failed - invalid ticket";
   }
 
   // if the ticket is valid, and its data corresponds to the websocket
@@ -64,7 +67,8 @@ const handleAuthMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void =>
       // set the socket state
       wsData.state = WSState.Open;
     } catch (error) {
-      errorMessage = (error as Error).message ?? 'Couldn\'t authenticate socket connection';
+      errorMessage =
+        (error as Error).message ?? "Couldn't authenticate socket connection";
     }
   }
 
@@ -85,7 +89,7 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
   if (!parsedMessage) {
     const response: ErrorMessage = {
       code: ServerMessageCode.Error,
-      message: 'Couldn\'t parse incoming message',
+      message: "Couldn't parse incoming message",
     };
     ws.send(JSON.stringify(response));
     return;
@@ -114,7 +118,8 @@ const WsHandler: WebSocketBehavior<WSData> = {
       if (error instanceof Error) {
         errorMessage = error.message;
       } else {
-        errorMessage = 'Unkown error occured when attempting to open a websocket';
+        errorMessage =
+          "Unkown error occured when attempting to open a websocket";
       }
     }
 
@@ -142,9 +147,9 @@ const WsHandler: WebSocketBehavior<WSData> = {
     // for the websocket instance
     res.upgrade(
       socketData,
-      req.getHeader('sec-websocket-key'),
-      req.getHeader('sec-websocket-protocol'),
-      req.getHeader('sec-websocket-extensions'),
+      req.getHeader("sec-websocket-key"),
+      req.getHeader("sec-websocket-protocol"),
+      req.getHeader("sec-websocket-extensions"),
       context,
     );
   },

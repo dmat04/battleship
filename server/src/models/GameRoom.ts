@@ -1,8 +1,8 @@
-import { WebSocket } from 'uWebSockets.js';
-import type { User } from './User';
-import type { WSData } from './WSData';
-import Game from '../game/Game';
-import { GameSettings, ShipPlacementInput } from '../graphql/types.generated';
+import { WebSocket } from "uWebSockets.js";
+import type { User } from "./User";
+import type { WSData } from "./WSData";
+import Game from "../game/Game";
+import { ShipPlacementInput, GameSettings } from "@battleship/common/types/__generated__/types.generated";
 
 export interface PlayerData {
   readonly user: User;
@@ -31,9 +31,12 @@ export interface ActiveGameRoom extends GameRoom {
   turnTimer: NodeJS.Timeout;
 }
 
-export const getPlayerData = (room: GameRoom, player: string): {
-  playerData: PlayerData | undefined,
-  opponentData?: PlayerData | undefined,
+export const getPlayerData = (
+  room: GameRoom,
+  player: string,
+): {
+  playerData: PlayerData | undefined;
+  opponentData?: PlayerData | undefined;
 } => {
   let playerData: PlayerData | undefined;
   let opponentData: PlayerData | undefined;
@@ -54,9 +57,12 @@ export const getPlayerData = (room: GameRoom, player: string): {
   };
 };
 
-export const getActivePlayerData = (room: ActiveGameRoom, player: string): {
-  playerData: ActivePlayerData,
-  opponentData: ActivePlayerData,
+export const getActivePlayerData = (
+  room: ActiveGameRoom,
+  player: string,
+): {
+  playerData: ActivePlayerData;
+  opponentData: ActivePlayerData;
 } => {
   if (player === room.player1.user.username) {
     return {
@@ -80,10 +86,9 @@ export const getActivePlayerData = (room: ActiveGameRoom, player: string): {
  * @returns true if the given GameRoom has all of its components initialized and can
  *          be cast to an ActiveGameRoom object.
  */
-export const gameRoomIsActive = (room: GameRoom): room is ActiveGameRoom => (
-  room.gameInstance !== undefined
-  && room.player1.shipPlacements !== undefined
-  && room.player1.socket !== undefined
-  && room.player2?.shipPlacements !== undefined
-  && room.player2?.socket !== undefined
-);
+export const gameRoomIsActive = (room: GameRoom): room is ActiveGameRoom =>
+  room.gameInstance !== undefined &&
+  room.player1.shipPlacements !== undefined &&
+  room.player1.socket !== undefined &&
+  room.player2?.shipPlacements !== undefined &&
+  room.player2?.socket !== undefined;

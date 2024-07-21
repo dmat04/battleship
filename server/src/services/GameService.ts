@@ -1,19 +1,23 @@
-import { randomUUID } from 'crypto';
-import { WebSocket } from 'uWebSockets.js';
-import AuthService from './AuthService';
-import DefaultSettings from '../game/DefaultSettings';
-import ValidationError from './errors/ValidationError';
-import EntityNotFoundError from './errors/EntityNotFoundError';
+import { randomUUID } from "crypto";
+import { WebSocket } from "uWebSockets.js";
+import AuthService from "./AuthService";
+import DefaultSettings from "../game/DefaultSettings";
+import ValidationError from "./errors/ValidationError";
+import EntityNotFoundError from "./errors/EntityNotFoundError";
 import type {
   ActiveGameRoom,
   ActivePlayerData,
   GameRoom,
   PlayerData,
-} from '../models/GameRoom';
-import type { User } from '../models/User';
-import { WSData } from '../models/WSData';
-import Board, { CellHitResult } from '../game/Board';
-import { getPlayerData, gameRoomIsActive, getActivePlayerData } from '../models/GameRoom';
+} from "../models/GameRoom";
+import type { User } from "../models/User";
+import { WSData } from "../models/WSData";
+import Board from "../game/Board";
+import {
+  getPlayerData,
+  gameRoomIsActive,
+  getActivePlayerData,
+} from "../models/GameRoom";
 import {
   ClientMessage,
   ClientMessageCode,
@@ -25,7 +29,7 @@ import {
   RoomStatusResponseMessage,
   ServerMessageCode,
   ShootMessage,
-} from '../ws/MessageTypes';
+} from "@battleship/common/messages/MessageTypes";
 import {
   GameRoomStatus,
   GameSettings,
@@ -33,10 +37,11 @@ import {
   RoomJoinedResult,
   ShipPlacementInput,
   ShipsPlacedResult,
-} from '../graphql/types.generated';
-import { assertNever } from '../utils/typeUtils';
-import Game, { GameState } from '../game/Game';
-import GameplayError from '../game/GameplayError';
+} from "@battleship/common/types/__generated__/types.generated";
+import { CellHitResult } from "@battleship/common/types/GameTypes";
+import { assertNever } from "@battleship/common/utils/typeUtils";
+import Game, { GameState } from "../game/Game";
+import GameplayError from "../game/GameplayError";
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -98,13 +103,13 @@ const generateRoomID = (): string => {
  */
 const createInviteCode = (roomID: string): string => {
   // generate a random number between 100_000 and 999_999 ...
-  let number = (100_000 + Math.random() * 900_000);
+  let number = 100_000 + Math.random() * 900_000;
   // round it, and convert to string
   let code = Math.floor(number).toString();
 
   while (inviteCodes.has(code)) {
     // repeat the process if the geenrated code happens to already exist
-    number = (100_000 + Math.random() * 900_000);
+    number = 100_000 + Math.random() * 900_000;
     code = Math.floor(number).toString();
   }
 
@@ -141,7 +146,10 @@ const createNewRoom = (user: User): RoomCreatedResult => {
 
   gameRooms.set(id, room);
 
-  const wsAuthCode = AuthService.encodeWSToken({ username: user.username, roomID: id });
+  const wsAuthCode = AuthService.encodeWSToken({
+    username: user.username,
+    roomID: id,
+  });
 
   return {
     roomID: id,
@@ -150,11 +158,14 @@ const createNewRoom = (user: User): RoomCreatedResult => {
   };
 };
 
-const getRoomStatusInternal = (room: GameRoom, player: string): GameRoomStatus => {
+const getRoomStatusInternal = (
+  room: GameRoom,
+  player: string,
+): GameRoomStatus => {
   const { playerData, opponentData } = getPlayerData(room, player);
 
   return {
-    player: playerData?.user.username ?? '',
+    player: playerData?.user.username ?? "",
     playerShipsPlaced: playerData?.shipPlacements !== undefined,
     playerSocketConnected: playerData?.socket !== undefined,
     opponent: opponentData?.user.username,
@@ -187,10 +198,7 @@ const sendMoveResultResponse = (
 };
 
 const turnTimeExpired = (room: ActiveGameRoom) => {
-  const {
-    turnTimer,
-    gameInstance,
-  } = room;
+  const { turnTimer, gameInstance } = room;
 
   let currentPlayer = gameInstance.getCurrentPlayer();
   const { playerData, opponentData } = getActivePlayerData(room, currentPlayer);
@@ -282,27 +290,30 @@ const roomStatusUpdated = (room: GameRoom) => {
  * @returns A GameJoinedResult which includes the games Id and a wsAuthCode which can be used
  *          to initiate a websocket connection
  */
-const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult => {
+const joinWithInviteCode = (
+  inviteCode: string,
+  user: User,
+): RoomJoinedResult => {
   // find the corresponding game id for the invite code
   const roomID = inviteCodes.get(inviteCode);
   if (!roomID) {
-    throw new EntityNotFoundError('GameRoom', inviteCode);
+    throw new EntityNotFoundError("GameRoom", inviteCode);
   }
 
   // find the game instance for the retrieved game id
   const gameRoom = getRoom(roomID);
   if (!gameRoom) {
-    throw new Error('Cannot join room - room not found');
+    throw new Error("Cannot join room - room not found");
   }
 
   // make sure that the user who created the game doesn't join as player 2
   if (gameRoom.player1.user.id === user.id) {
-    throw new Error('Cannot join room - you have already joined this room');
+    throw new Error("Cannot join room - you have already joined this room");
   }
 
   // check that a second player hasn't joined already
   if (gameRoom.player2) {
-    throw new Error('Cannot join room - a player already joined');
+    throw new Error("Cannot join room - a player already joined");
   }
 
   // delete the invite code
@@ -319,7 +330,10 @@ const joinWithInviteCode = (inviteCode: string, user: User): RoomJoinedResult =>
     gameRoom.gameSettings,
   );
 
-  const wsAuthCode = AuthService.encodeWSToken({ username: user.username, roomID: gameRoom.id });
+  const wsAuthCode = AuthService.encodeWSToken({
+    username: user.username,
+    roomID: gameRoom.id,
+  });
 
   roomStatusUpdated(gameRoom);
 
@@ -339,7 +353,7 @@ const getGameSettings = (roomID: string): GameSettings => {
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Cannot get game settings - room not found');
+    throw new Error("Cannot get game settings - room not found");
   }
 
   return room.gameSettings;
@@ -355,7 +369,7 @@ const getRoomStatus = (roomID: string, player: string): GameRoomStatus => {
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Game room not found');
+    throw new Error("Game room not found");
   }
 
   return getRoomStatusInternal(room, player);
@@ -381,18 +395,21 @@ const placeShips = (
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Cannot submit ship placements - game room not found');
+    throw new Error("Cannot submit ship placements - game room not found");
   }
 
   // validate the ship placements and throw an error if
   // any placement is invalid
-  const { errors, placedShips } = Board.verifyShipPlacements(shipPlacements, room.gameSettings);
+  const { errors, placedShips } = Board.verifyShipPlacements(
+    shipPlacements,
+    room.gameSettings,
+  );
   if (errors || !placedShips) {
     throw new ValidationError({
-      property: 'shipPlacements',
-      errorKind: 'gameInput',
+      property: "shipPlacements",
+      errorKind: "gameInput",
       value: JSON.stringify(shipPlacements),
-      message: `Invalid ship placements: ${errors?.join('; ')}`,
+      message: `Invalid ship placements: ${errors?.join("; ")}`,
     });
   }
 
@@ -401,12 +418,14 @@ const placeShips = (
 
   // Throw an error if no playerData instance is selected
   if (!playerData) {
-    throw new Error(`User '${user.username}' is not part of game room id=${roomID}`);
+    throw new Error(
+      `User '${user.username}' is not part of game room id=${roomID}`,
+    );
   }
 
   // Throw an error if the user has already submitted ship placements
   if (playerData.shipPlacements) {
-    throw new Error('Player has already placed their ships');
+    throw new Error("Player has already placed their ships");
   }
 
   // Assign the ship placements
@@ -433,7 +452,7 @@ const clientSocketRequested = (username: string, gameID: string): void => {
   const room = getRoom(gameID);
 
   if (!room) {
-    throw new Error('Game room not found');
+    throw new Error("Game room not found");
   }
 
   // Select the correct player data
@@ -446,7 +465,7 @@ const clientSocketRequested = (username: string, gameID: string): void => {
 
   // Throw an error if the user has already opened a websocket connection
   if (playerData.socket) {
-    throw new Error('Player has already opened websocket');
+    throw new Error("Player has already opened websocket");
   }
 };
 
@@ -470,18 +489,22 @@ const clientSocketAuthenticated = (
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Game room not found');
+    throw new Error("Game room not found");
   }
 
   // Select the correct player data
   const { playerData } = getPlayerData(room, username);
 
   if (!playerData) {
-    throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
+    throw new Error(
+      `Game error - ${username} doesn't seem to be part of game ${roomID}`,
+    );
   }
 
   if (playerData.socket) {
-    throw new Error(`Connection already established for ${username} on game ${roomID}`);
+    throw new Error(
+      `Connection already established for ${username} on game ${roomID}`,
+    );
   }
 
   const responseMessage = {
@@ -509,13 +532,15 @@ const clientSocketClosed = (roomID: string, username: string): void => {
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Game room not found');
+    throw new Error("Game room not found");
   }
 
   const { playerData, opponentData } = getPlayerData(room, username);
 
   if (!playerData) {
-    throw new Error(`Game error - ${username} doesn't seem to be part of game ${roomID}`);
+    throw new Error(
+      `Game error - ${username} doesn't seem to be part of game ${roomID}`,
+    );
   }
 
   playerData.socket = undefined;
@@ -532,13 +557,17 @@ const clientSocketClosed = (roomID: string, username: string): void => {
   // TODO: delete the GameRoom?
 };
 
-const handleShootMessage = (room: GameRoom, player: string, message: ShootMessage) => {
+const handleShootMessage = (
+  room: GameRoom,
+  player: string,
+  message: ShootMessage,
+) => {
   const { playerData: maybePlayerData } = getPlayerData(room, player);
 
   if (!gameRoomIsActive(room)) {
     const response: ErrorMessage = {
       code: ServerMessageCode.Error,
-      message: 'Can\'t make move, game is not active.',
+      message: "Can't make move, game is not active.",
     };
 
     maybePlayerData?.socket?.send(JSON.stringify(response));
@@ -560,19 +589,14 @@ const handleShootMessage = (room: GameRoom, player: string, message: ShootMessag
       resetGame(room);
     }
 
-    sendMoveResultResponse(
-      currentPlayer,
-      result,
-      playerData,
-      opponentData,
-    );
+    sendMoveResultResponse(currentPlayer, result, playerData, opponentData);
   } catch (error) {
-    let errorMessage = 'An unknown error has occured';
+    let errorMessage = "An unknown error has occured";
 
     if (error instanceof Error) {
       errorMessage = error.message;
     } else {
-      errorMessage = 'An unknown error has occured';
+      errorMessage = "An unknown error has occured";
     }
 
     const response: ErrorMessage = {
@@ -599,11 +623,15 @@ const handleRoomStatusRequestMessage = (room: GameRoom, player: string) => {
   }
 };
 
-const handleClientMessage = (roomID: string, player: string, message: ClientMessage) => {
+const handleClientMessage = (
+  roomID: string,
+  player: string,
+  message: ClientMessage,
+) => {
   const room = getRoom(roomID);
 
   if (!room) {
-    throw new Error('Game room not found');
+    throw new Error("Game room not found");
   }
 
   const { code } = message;
@@ -615,7 +643,8 @@ const handleClientMessage = (roomID: string, player: string, message: ClientMess
     case ClientMessageCode.RoomStatusRequest:
       handleRoomStatusRequestMessage(room, player);
       break;
-    default: assertNever(code);
+    default:
+      assertNever(code);
   }
 };
 

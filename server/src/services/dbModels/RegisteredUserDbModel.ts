@@ -1,6 +1,6 @@
-import { Schema, Model } from 'mongoose';
-import UserDbModel, { usernameExists } from './UserDbModel';
-import type { RegisteredUser } from '../../models/User';
+import { Schema, Model } from "mongoose";
+import UserDbModel, { usernameExists } from "./UserDbModel";
+import type { RegisteredUser } from "../../models/User";
 
 /**
  * Mongoose Model for the RegisteredUser type is constructed here
@@ -11,7 +11,7 @@ import type { RegisteredUser } from '../../models/User';
  * with the usernameExists method
  */
 interface IRegisteredUserModel extends Model<RegisteredUser> {
-  usernameExists(username: string): Promise<boolean>
+  usernameExists(username: string): Promise<boolean>;
 }
 
 // Define the registered user schema
@@ -22,14 +22,13 @@ const registeredSchema = new Schema({
 // Add the usernameExists method as a static member to the
 // registered user schema (this will make the method present in the
 // constructed mongoose Model for RegisteredUser)
-registeredSchema.static('usernameExists', usernameExists);
+registeredSchema.static("usernameExists", usernameExists);
 
 // Compile the RegisteredUserModel as a discriminated type
 // on the generic User model
-const RegisteredUserDbModel: IRegisteredUserModel = UserDbModel
-  .discriminator<RegisteredUser, IRegisteredUserModel>(
-  'RegisteredUser',
-  registeredSchema,
-);
+const RegisteredUserDbModel: IRegisteredUserModel = UserDbModel.discriminator<
+  RegisteredUser,
+  IRegisteredUserModel
+>("RegisteredUser", registeredSchema);
 
 export default RegisteredUserDbModel;

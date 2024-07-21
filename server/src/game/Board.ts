@@ -1,5 +1,5 @@
 import { shuffle } from "lodash";
-import { assertNever } from "../utils/typeUtils";
+import { assertNever } from "@battleship/common/utils/typeUtils";
 import GameplayError from "./GameplayError";
 import DefaultSettings from "./DefaultSettings";
 import {

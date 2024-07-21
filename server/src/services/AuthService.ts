@@ -1,17 +1,17 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { add } from 'date-fns';
-import { Error, Error as MongooseError } from 'mongoose';
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { add } from "date-fns";
+import { Error, Error as MongooseError } from "mongoose";
 
-import config from '../utils/config';
-import ValidationError from './errors/ValidationError';
-import EntityNotFoundError from './errors/EntityNotFoundError';
-import AuthenticationError from './errors/AuthenticationError';
-import UserDbModel from './dbModels/UserDbModel';
-import GuestUserDbModel from './dbModels/GuestUserDbModel';
-import RegisteredUserDbModel from './dbModels/RegisteredUserDbModel';
-import type { User } from '../models/User';
-import { LoginResult, UsernameQueryResult } from '../graphql/types.generated';
+import config from "../utils/config";
+import ValidationError from "./errors/ValidationError";
+import EntityNotFoundError from "./errors/EntityNotFoundError";
+import AuthenticationError from "./errors/AuthenticationError";
+import UserDbModel from "./dbModels/UserDbModel";
+import GuestUserDbModel from "./dbModels/GuestUserDbModel";
+import RegisteredUserDbModel from "./dbModels/RegisteredUserDbModel";
+import type { User } from "../models/User";
+import { UsernameQueryResult, LoginResult } from "@battleship/common/types/__generated__/types.generated";
 
 interface AccessToken {
   token: string;
@@ -46,13 +46,9 @@ const encodeToken = (username: string): AccessToken => {
   const expiresAt = add(Date.now(), { seconds: config.GUEST_LIFETIME_SECONDS });
 
   // create the token with an expiration claim
-  const token = jwt.sign(
-    { username },
-    config.JWT_SECRET,
-    {
-      expiresIn: config.GUEST_LIFETIME_SECONDS,
-    },
-  );
+  const token = jwt.sign({ username }, config.JWT_SECRET, {
+    expiresIn: config.GUEST_LIFETIME_SECONDS,
+  });
 
   return {
     token,
@@ -69,12 +65,12 @@ const encodeToken = (username: string): AccessToken => {
  */
 const decodeToken = (token: string): string => {
   const payload = jwt.verify(token, config.JWT_SECRET);
-  if (typeof payload === 'object' && 'username' in payload) {
+  if (typeof payload === "object" && "username" in payload) {
     return payload.username;
   }
 
   // shouldn't really reach this
-  throw new Error('Unexpected error while verifying access token');
+  throw new Error("Unexpected error while verifying access token");
 };
 
 /**
@@ -85,13 +81,9 @@ const decodeToken = (token: string): string => {
  */
 const encodeWSToken = (ticket: WSAuthTicket): string => {
   // create the token with an expiration claim
-  const token = jwt.sign(
-    ticket,
-    config.JWT_SECRET,
-    {
-      expiresIn: config.WS_AUTH_TICKET_LIFETIME_SECONDS,
-    },
-  );
+  const token = jwt.sign(ticket, config.JWT_SECRET, {
+    expiresIn: config.WS_AUTH_TICKET_LIFETIME_SECONDS,
+  });
 
   return token;
 };
@@ -106,9 +98,11 @@ const encodeWSToken = (ticket: WSAuthTicket): string => {
 const decodeWSToken = (code: string): WSAuthTicket | false => {
   try {
     const payload = jwt.verify(code, config.JWT_SECRET);
-    if (typeof payload === 'object'
-      && 'username' in payload
-      && 'roomID' in payload) {
+    if (
+      typeof payload === "object" &&
+      "username" in payload &&
+      "roomID" in payload
+    ) {
       return {
         username: payload.username,
         roomID: payload.roomID,
@@ -128,7 +122,7 @@ const decodeWSToken = (code: string): WSAuthTicket | false => {
  */
 const createUserExiprationJob = (username: string): void => {
   setTimeout(() => {
-    GuestUserDbModel.deleteOne({ username });
+    void GuestUserDbModel.deleteOne({ username });
   }, config.GUEST_LIFETIME_SECONDS * 1000);
 };
 
@@ -139,20 +133,22 @@ const createUserExiprationJob = (username: string): void => {
  * @returns A UsernameQueryResult containing the passed username and properties
  *          indicating whether the username is taken already, or is valid.
  */
-const checkUsername = async (username: string): Promise<UsernameQueryResult> => {
+const checkUsername = async (
+  username: string,
+): Promise<UsernameQueryResult> => {
   let validationError: string | undefined;
   let taken: boolean = false;
 
   const newUser = new GuestUserDbModel({ username });
 
   try {
-    await newUser.validate('username');
+    await newUser.validate("username");
   } catch (error) {
     if (error instanceof Error.ValidationError) {
-      const usernameError = error.errors.username ?? {};
+      const usernameError = error.errors.username;
       const { kind } = usernameError;
 
-      if (kind !== 'unique') {
+      if (kind !== "unique") {
         validationError = usernameError.message;
       } else {
         taken = true;
@@ -179,15 +175,17 @@ const checkUsername = async (username: string): Promise<UsernameQueryResult> => 
  *                 is thrown.
  * @returns The user data, including: username, expiration timestamp and access token.
  */
-const createGuestUserAndToken = async (username: string | null): Promise<LoginResult> => {
+const createGuestUserAndToken = async (
+  username: string | null,
+): Promise<LoginResult> => {
   let name;
 
   if (username) {
     // If a username has been requested, check that it's available
     if (await GuestUserDbModel.usernameExists(username)) {
       throw new ValidationError({
-        property: 'username',
-        errorKind: 'unique',
+        property: "username",
+        errorKind: "unique",
         value: username,
         message: `Username ${username} is already taken`,
       });
@@ -271,13 +269,13 @@ const getUserFromToken = async (token: string): Promise<User> => {
       };
     }
     // throw a not found error if no user is found for the decoded username
-    throw new EntityNotFoundError('User', username);
+    throw new EntityNotFoundError("User", username);
   } catch (error) {
     // throw appropriate service errors
     if (error instanceof TokenExpiredError) {
-      throw new AuthenticationError('token expired');
+      throw new AuthenticationError("token expired");
     } else if (error instanceof JsonWebTokenError) {
-      throw new AuthenticationError('token invalid');
+      throw new AuthenticationError("token invalid");
     } else {
       throw error;
     }
@@ -294,19 +292,22 @@ const getUserFromToken = async (token: string): Promise<User> => {
  * @returns A promise rosolving to a LoginResult, which will contain the users username and
  *          a temporary access token.
  */
-const loginRegisteredUser = async (username: string, password: string): Promise<LoginResult> => {
+const loginRegisteredUser = async (
+  username: string,
+  password: string,
+): Promise<LoginResult> => {
   // find the db user entity for the provided username
   const user = await RegisteredUserDbModel.findOne({ username }).exec();
   if (!user) {
     // if no such user exists, throw an entity not found error
-    throw new EntityNotFoundError('User', username);
+    throw new EntityNotFoundError("User", username);
   }
 
   // if a user is found, compare the password with the saved hash
   const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
   if (!passwordCorrect) {
     // if the hashes don't match, throw the appropriate error
-    throw new AuthenticationError('incorrect password');
+    throw new AuthenticationError("incorrect password");
   }
 
   const token = encodeToken(user.username);
@@ -327,7 +328,10 @@ const loginRegisteredUser = async (username: string, password: string): Promise<
  * @returns A promise rosolving to a LoginResult, which will contain the users username and
  *          a temporary access token.
  */
-const registerUser = async (username: string, password: string): Promise<LoginResult> => {
+const registerUser = async (
+  username: string,
+  password: string,
+): Promise<LoginResult> => {
   // TODO: validate password before hashing !!!
   // calculate the password hash to be saved
   const passwordHash = await bcrypt.hash(password, config.PWD_HASH_SALT_ROUNDS);

@@ -1,7 +1,7 @@
 export enum WSState {
-  Error = 'Error',
-  Unauthenticated = 'Unauthenticated',
-  Open = 'Open',
+  Error = "Error",
+  Unauthenticated = "Unauthenticated",
+  Open = "Open",
 }
 
 export interface WSData {

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable prefer-destructuring */
-import dotenv from 'dotenv';
-import { isInteger, isString } from './typeUtils';
+import dotenv from "dotenv";
+import { isInteger, isString } from "@battleship/common/utils/typeUtils";
 
 dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 
@@ -43,13 +43,22 @@ if (!isInteger(process.env.PWD_HASH_SALT_ROUNDS)) {
 }
 
 // After asserting the types of the env variables, save them as members
-const GUEST_LIFETIME_SECONDS: number = Number.parseInt(process.env.GUEST_LIFETIME_SECONDS, 10);
-const WS_AUTH_TICKET_LIFETIME_SECONDS: number = Number.parseInt(process.env.WS_AUTH_TICKET_LIFETIME_SECONDS, 10);
+const GUEST_LIFETIME_SECONDS: number = Number.parseInt(
+  process.env.GUEST_LIFETIME_SECONDS,
+  10,
+);
+const WS_AUTH_TICKET_LIFETIME_SECONDS: number = Number.parseInt(
+  process.env.WS_AUTH_TICKET_LIFETIME_SECONDS,
+  10,
+);
 const JWT_SECRET: string = process.env.JWT_SECRET;
 const PORT: number = Number.parseInt(process.env.PORT, 10);
 const WS_PORT: number = Number.parseInt(process.env.WS_PORT, 10);
 const MONGODB_URI = process.env.MONGODB_URI;
-const PWD_HASH_SALT_ROUNDS = Number.parseInt(process.env.PWD_HASH_SALT_ROUNDS, 10);
+const PWD_HASH_SALT_ROUNDS = Number.parseInt(
+  process.env.PWD_HASH_SALT_ROUNDS,
+  10,
+);
 
 export default {
   GUEST_LIFETIME_SECONDS,

@@ -1,6 +1,6 @@
-import { Schema, Model } from 'mongoose';
-import UserDbModel, { usernameExists } from './UserDbModel';
-import type { GuestUser } from '../../models/User';
+import { Schema, Model } from "mongoose";
+import UserDbModel, { usernameExists } from "./UserDbModel";
+import type { GuestUser } from "../../models/User";
 
 /**
  * Mongoose Model for the GuestUser type is constructed here
@@ -11,7 +11,7 @@ import type { GuestUser } from '../../models/User';
  * with the usernameExists method
  */
 interface IGuestUserModel extends Model<GuestUser> {
-  usernameExists(username: string): Promise<boolean>
+  usernameExists(username: string): Promise<boolean>;
 }
 
 // Define the guest user schema
@@ -22,14 +22,13 @@ const guestSchema = new Schema({
 // Add the usernameExists method as a static member to the
 // guest user schema (this will make the method present in the constructed
 // mongoose Model for GuestUser)
-guestSchema.static('usernameExists', usernameExists);
+guestSchema.static("usernameExists", usernameExists);
 
 // Compile the GuestUserModel as a discriminated type
 // on the generic User model
-const GuestUserDbModel: IGuestUserModel = UserDbModel
-  .discriminator<GuestUser, IGuestUserModel>(
-  'GuestUser',
-  guestSchema,
-);
+const GuestUserDbModel: IGuestUserModel = UserDbModel.discriminator<
+  GuestUser,
+  IGuestUserModel
+>("GuestUser", guestSchema);
 
 export default GuestUserDbModel;

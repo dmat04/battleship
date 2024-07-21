@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
-import type { User } from '../../models/User';
+import { Schema, model } from "mongoose";
+import uniqueValidator from "mongoose-unique-validator";
+import type { User } from "../../models/User";
 
 /**
  * Mongoose Model for the generic User type is constructed here.
@@ -14,17 +14,17 @@ import type { User } from '../../models/User';
 const userSchema = new Schema<User>({
   username: {
     type: String,
-    required: [true, 'Username missing'],
+    required: [true, "Username missing"],
     unique: true,
-    minLength: [5, 'Username must be at least 5 characters long'],
+    minLength: [5, "Username must be at least 5 characters long"],
   },
 });
 
 // Apply the mongoose-unique-valiator plugin
-userSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
+userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 
 // Build the generic User Model
-const UserDbModel = model<User>('User', userSchema);
+const UserDbModel = model<User>("User", userSchema);
 
 /**
  * Method to check if a User document exists with a given username.
