@@ -1,15 +1,15 @@
-import styled from 'styled-components';
-import { Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import GameOverModal from './GameOverModal';
-import { useAppSelector } from '../../../store/store';
-import { Theme } from '../../assets/themes/themeDefault';
-import LiveGameGrid from './LiveGameGrid';
-import Scoreboard from './ScoreBoard';
+import styled from "styled-components";
+import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import GameOverModal from "./GameOverModal";
+import { useAppSelector } from "../../../store/store";
+import { Theme } from "../../assets/themes/themeDefault";
+import LiveGameGrid from "./LiveGameGrid";
+import Scoreboard from "./ScoreBoard";
 
 const Container = styled.div<{ theme: Theme }>`
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "score score"
     "player opponent";
   grid-template-rows: 1fr 5fr;
@@ -23,7 +23,7 @@ const Container = styled.div<{ theme: Theme }>`
   }
 
   @media (max-width: 60rem) {
-    grid-template-areas: 
+    grid-template-areas:
       ". player ."
       "score score score"
       "opponent opponent opponent";
@@ -53,10 +53,7 @@ const GameScreen = () => {
       <LiveGameGrid owner="player" />
       <Scoreboard />
       <LiveGameGrid owner="opponent" />
-      {
-        showGameOverModal
-        && <GameOverModal />
-      }
+      {showGameOverModal && <GameOverModal />}
     </Container>
   );
 };

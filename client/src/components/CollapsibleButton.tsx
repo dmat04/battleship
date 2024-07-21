@@ -1,16 +1,22 @@
-import styled, { useTheme } from 'styled-components';
+import styled, { useTheme } from "styled-components";
 import React, {
-  forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef,
-} from 'react';
-import {
-  animated, easings, useSpring,
-} from '@react-spring/web';
-import { Theme } from './assets/themes/themeDefault';
-import MenuItemLabel from './MemuItemLabel';
-import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from './CollapsibleContainer';
-import { assertNever } from '../utils/typeUtils';
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
+import { animated, easings, useSpring } from "@react-spring/web";
+import { Theme } from "./assets/themes/themeDefault";
+import MenuItemLabel from "./MemuItemLabel";
+import CollapsibleContainer, {
+  CollapsibleAPI,
+  CollapsibleState,
+} from "./CollapsibleContainer";
+import { assertNever } from "../utils/typeUtils";
 
-const Container = styled(animated.div) <{ theme: Theme }>`
+const Container = styled(animated.div)<{ theme: Theme }>`
   width: 100%;
   border: ${(props) => props.theme.borderStyle};
   padding: ${(props) => props.theme.paddingMin};
@@ -19,16 +25,20 @@ const Container = styled(animated.div) <{ theme: Theme }>`
 
 interface Props {
   label: string;
-  // eslint-disable-next-line react/require-default-props
   onCollapsedStateChange?: (collapsed: CollapsibleState) => void;
-  // eslint-disable-next-line react/require-default-props
   initialState: CollapsibleState;
 }
 
-const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
+const CollapsibleButton = forwardRef<
+  CollapsibleAPI,
+  React.PropsWithChildren<Props>
+>(
   (
     {
-      label, onCollapsedStateChange, initialState, children,
+      label,
+      onCollapsedStateChange,
+      initialState,
+      children,
     }: React.PropsWithChildren<Props>,
     ref,
   ) => {
@@ -38,28 +48,40 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
 
     const theme = useTheme() as Theme;
 
-    const springCollapsed = useMemo(() => ({
-      background: theme.colors.containerSecondary,
-      color: theme.colors.onContainerSecondary,
-    }), [theme]);
+    const springCollapsed = useMemo(
+      () => ({
+        background: theme.colors.containerSecondary,
+        color: theme.colors.onContainerSecondary,
+      }),
+      [theme],
+    );
 
-    const springExpanded = useMemo(() => ({
-      background: theme.colors.containerPrimary,
-      color: theme.colors.onContainerPrimary,
-    }), [theme]);
+    const springExpanded = useMemo(
+      () => ({
+        background: theme.colors.containerPrimary,
+        color: theme.colors.onContainerPrimary,
+      }),
+      [theme],
+    );
 
-    const [springStyles, springApi] = useSpring(() => ({
-      from: initialState === 'closed' ? springCollapsed : springExpanded,
-      config: {
-        duration: theme.durationTransitionDefault,
-        easing: easings.easeOutCubic,
-      },
-    }), [theme]);
+    const [springStyles, springApi] = useSpring(
+      () => ({
+        from: initialState === "closed" ? springCollapsed : springExpanded,
+        config: {
+          duration: theme.durationTransitionDefault,
+          easing: easings.easeOutCubic,
+        },
+      }),
+      [theme],
+    );
 
     useEffect(() => {
       switch (collapsibleRef.current?.getState()) {
-        case 'open': springApi.start({ to: springExpanded }); break;
-        default: springApi.start({ to: springCollapsed });
+        case "open":
+          springApi.start({ to: springExpanded });
+          break;
+        default:
+          springApi.start({ to: springCollapsed });
       }
     }, [theme, springApi, springCollapsed, springExpanded]);
 
@@ -84,28 +106,36 @@ const CollapsibleButton = forwardRef<CollapsibleAPI, React.PropsWithChildren<Pro
     }));
 
     const onClickHandler = useCallback((ev: React.MouseEvent) => {
-      if (ev.target !== containerRef.current
-        && ev.target !== labelRef.current) return;
+      if (ev.target !== containerRef.current && ev.target !== labelRef.current)
+        return;
 
       collapsibleRef.current?.toggleState();
     }, []);
 
-    const interceptCollapsedStateChange = useCallback((state: CollapsibleState) => {
-      switch (state) {
-        case 'open': springApi.start({ to: springExpanded }); break;
-        case 'closed': springApi.start({ to: springCollapsed }); break;
-        default: assertNever(state);
-      }
+    const interceptCollapsedStateChange = useCallback(
+      (state: CollapsibleState) => {
+        switch (state) {
+          case "open":
+            springApi.start({ to: springExpanded });
+            break;
+          case "closed":
+            springApi.start({ to: springCollapsed });
+            break;
+          default:
+            assertNever(state);
+        }
 
-      if (onCollapsedStateChange) onCollapsedStateChange(state);
-    }, [onCollapsedStateChange, springApi, springCollapsed, springExpanded]);
+        if (onCollapsedStateChange) onCollapsedStateChange(state);
+      },
+      [onCollapsedStateChange, springApi, springCollapsed, springExpanded],
+    );
 
     const handlePointerEnter = useCallback(() => {
       springApi.start({ to: springExpanded });
     }, [springApi, springExpanded]);
 
     const handlePointerLeave = useCallback(() => {
-      if (collapsibleRef.current?.getState() === 'open') return;
+      if (collapsibleRef.current?.getState() === "open") return;
 
       springApi.start({ to: springCollapsed });
     }, [springApi, springCollapsed]);

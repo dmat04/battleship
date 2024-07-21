@@ -1,24 +1,21 @@
-import {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
-import _ from 'lodash';
-import { useLazyQuery } from '@apollo/client';
-import { CHECK_USERNAME } from '../graphql/queries';
+import { useEffect, useMemo, useRef, useState } from "react";
+import _ from "lodash";
+import { useLazyQuery } from "@apollo/client";
+import { CHECK_USERNAME } from "../graphql/queries";
 
 const useUsernameChecker = (
   emptyStateMessage: string,
   usernameValidMessage: string,
   usernameTakenMessage: string,
 ) => {
-  const [username, setUsername] = useState<string>('');
+  const [username, setUsername] = useState<string>("");
   const [checkIsPending, setCheckIsPending] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(emptyStateMessage);
   const [isValid, setIsValid] = useState<boolean>(false);
 
-  const [checkUsername, { data, loading }] = useLazyQuery(
-    CHECK_USERNAME,
-    { fetchPolicy: 'no-cache' },
-  );
+  const [checkUsername, { data, loading }] = useLazyQuery(CHECK_USERNAME, {
+    fetchPolicy: "no-cache",
+  });
 
   const requestSender = useRef<(() => void) | null>(() => {
     checkUsername({ variables: { username } });
@@ -48,8 +45,7 @@ const useUsernameChecker = (
     if (loading === false) {
       setCheckIsPending(false);
       setIsValid(
-        !data?.checkUsername.taken
-        && !data?.checkUsername.validationError,
+        !data?.checkUsername.taken && !data?.checkUsername.validationError,
       );
     }
   }, [loading, data]);
@@ -64,7 +60,14 @@ const useUsernameChecker = (
     } else if (!loading) {
       setMessage(usernameValidMessage);
     }
-  }, [data, loading, username, emptyStateMessage, usernameTakenMessage, usernameValidMessage]);
+  }, [
+    data,
+    loading,
+    username,
+    emptyStateMessage,
+    usernameTakenMessage,
+    usernameValidMessage,
+  ]);
 
   return {
     username,

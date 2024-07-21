@@ -1,45 +1,61 @@
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
+import themeDefault, { ThemeType } from "../assets/themes/themeDefault";
+import themeDark from "../assets/themes/themeDark";
 import {
-  useCallback, useLayoutEffect, useMemo, useState,
-} from 'react';
-import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
-import themeDefault, { ThemeType } from '../assets/themes/themeDefault';
-import themeDark from '../assets/themes/themeDark';
-import { ThemePreference, ThemePreferenceContext } from './ThemePreferenceContext';
-import localStorageUtils from '../../utils/localStorageUtils';
+  ThemePreference,
+  ThemePreferenceContext,
+} from "./ThemePreferenceContext";
+import localStorageUtils from "../../utils/localStorageUtils";
 
 type MediaQueryResult = MediaQueryList | MediaQueryListEvent;
 
-const prefersLightQuery = window.matchMedia('(prefers-color-scheme: light)');
-const prefersDarkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const prefersLightQuery = window.matchMedia("(prefers-color-scheme: light)");
+const prefersDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-const initialSystemTheme: ThemeType = prefersDarkQuery.matches ? 'dark' : 'light';
-const initialUserPreference: ThemePreference = localStorageUtils.getThemePreference() ?? 'system';
-const initialTheme: ThemeType = initialUserPreference !== 'system' ? initialUserPreference : initialSystemTheme;
+const initialSystemTheme: ThemeType = prefersDarkQuery.matches
+  ? "dark"
+  : "light";
+const initialUserPreference: ThemePreference =
+  localStorageUtils.getThemePreference() ?? "system";
+const initialTheme: ThemeType =
+  initialUserPreference !== "system"
+    ? initialUserPreference
+    : initialSystemTheme;
 
 const ThemeProvider = ({ children }: React.PropsWithChildren<{}>) => {
-  const [systemPreference, setSystemPreference] = useState<ThemeType>(initialSystemTheme);
-  const [userPreference, setUserPreference] = useState<ThemePreference>(initialUserPreference);
+  const [systemPreference, setSystemPreference] =
+    useState<ThemeType>(initialSystemTheme);
+  const [userPreference, setUserPreference] = useState<ThemePreference>(
+    initialUserPreference,
+  );
   const [theme, setTheme] = useState<ThemeType>(initialTheme);
 
-  const prefersLightQueryChanged = useCallback(({ matches }: MediaQueryResult) => {
-    if (matches) {
-      setSystemPreference('light');
+  const prefersLightQueryChanged = useCallback(
+    ({ matches }: MediaQueryResult) => {
+      if (matches) {
+        setSystemPreference("light");
 
-      if (userPreference === 'system') {
-        setTheme('light');
+        if (userPreference === "system") {
+          setTheme("light");
+        }
       }
-    }
-  }, [userPreference]);
+    },
+    [userPreference],
+  );
 
-  const prefersDarkQueryChanged = useCallback(({ matches }: MediaQueryResult) => {
-    if (matches) {
-      setSystemPreference('dark');
+  const prefersDarkQueryChanged = useCallback(
+    ({ matches }: MediaQueryResult) => {
+      if (matches) {
+        setSystemPreference("dark");
 
-      if (userPreference === 'system') {
-        setTheme('dark');
+        if (userPreference === "system") {
+          setTheme("dark");
+        }
       }
-    }
-  }, [userPreference]);
+    },
+    [userPreference],
+  );
 
   useLayoutEffect(() => {
     prefersLightQuery.onchange = prefersLightQueryChanged;
@@ -54,27 +70,35 @@ const ThemeProvider = ({ children }: React.PropsWithChildren<{}>) => {
     };
   }, [prefersDarkQueryChanged, prefersLightQueryChanged]);
 
-  const handleUserPreferenceChange = useCallback((newTheme: ThemePreference) => {
-    localStorageUtils.saveThemePreference(newTheme);
-    setUserPreference(newTheme);
+  const handleUserPreferenceChange = useCallback(
+    (newTheme: ThemePreference) => {
+      localStorageUtils.saveThemePreference(newTheme);
+      setUserPreference(newTheme);
 
-    if (newTheme === 'system') {
-      setTheme(systemPreference);
-    } else {
-      setTheme(newTheme);
-    }
-  }, [systemPreference]);
+      if (newTheme === "system") {
+        setTheme(systemPreference);
+      } else {
+        setTheme(newTheme);
+      }
+    },
+    [systemPreference],
+  );
 
-  const themePreferenceContextValue = useMemo(() => ({
-    theme,
-    userPreference,
-    setUserPreference: handleUserPreferenceChange,
-  }), [theme, userPreference, handleUserPreferenceChange]);
+  const themePreferenceContextValue = useMemo(
+    () => ({
+      theme,
+      userPreference,
+      setUserPreference: handleUserPreferenceChange,
+    }),
+    [theme, userPreference, handleUserPreferenceChange],
+  );
 
   const themeObject = useMemo(() => {
     switch (theme) {
-      case 'dark': return themeDark;
-      default: return themeDefault;
+      case "dark":
+        return themeDark;
+      default:
+        return themeDefault;
     }
   }, [theme]);
 

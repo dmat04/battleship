@@ -1,5 +1,5 @@
-import { ShipClassName, ShipOrientation } from '../../__generated__/graphql';
-import { PlayerStatus, SliceStateActive } from './stateTypes';
+import { ShipClassName, ShipOrientation } from "../../__generated__/graphql";
+import { PlayerStatus, SliceStateActive } from "./stateTypes";
 
 const stubScore = {
   hitCells: [
@@ -21,7 +21,7 @@ const stubScore = {
   sunkenShips: [
     {
       ship: {
-        shipID: 'CRUISER-0',
+        shipID: "CRUISER-0",
         size: 3,
         type: ShipClassName.Cruiser,
       },
@@ -31,7 +31,7 @@ const stubScore = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -41,7 +41,7 @@ const stubScore = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },
@@ -82,15 +82,15 @@ const stubScore = {
 };
 
 const stateStub: SliceStateActive = {
-  roomID: 'asdf',
-  inviteCode: '',
+  roomID: "asdf",
+  inviteCode: "",
   requestStatus: {
     loadingJoinRoom: false,
     loadingNewRoom: false,
     loadingSettings: false,
   },
-  playerName: 'PlayerName',
-  opponentName: 'OpponentName',
+  playerName: "PlayerName",
+  opponentName: "OpponentName",
   playerStatus: PlayerStatus.Ready,
   opponentStatus: PlayerStatus.Ready,
   gameStarted: true,
@@ -102,47 +102,47 @@ const stateStub: SliceStateActive = {
     turnDuration: 20,
     availableShips: [
       {
-        shipID: 'CARRIER-0',
+        shipID: "CARRIER-0",
         size: 5,
         type: ShipClassName.Carrier,
       },
       {
-        shipID: 'BATTLESHIP-0',
+        shipID: "BATTLESHIP-0",
         size: 4,
         type: ShipClassName.Battleship,
       },
       {
-        shipID: 'CRUISER-0',
+        shipID: "CRUISER-0",
         size: 3,
         type: ShipClassName.Cruiser,
       },
       {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
       {
-        shipID: 'DESTROYER-1',
+        shipID: "DESTROYER-1",
         size: 2,
         type: ShipClassName.Destroyer,
       },
       {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },
       {
-        shipID: 'SUBMARINE-1',
+        shipID: "SUBMARINE-1",
         size: 1,
         type: ShipClassName.Submarine,
       },
     ],
   },
-  currentPlayer: 'OpponentName',
+  currentPlayer: "OpponentName",
   playerShips: [
     {
       ship: {
-        shipID: 'CARRIER-0',
+        shipID: "CARRIER-0",
         size: 5,
         type: ShipClassName.Carrier,
       },
@@ -152,7 +152,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'BATTLESHIP-0',
+        shipID: "BATTLESHIP-0",
         size: 4,
         type: ShipClassName.Battleship,
       },
@@ -162,7 +162,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'CRUISER-0',
+        shipID: "CRUISER-0",
         size: 3,
         type: ShipClassName.Cruiser,
       },
@@ -172,7 +172,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -182,7 +182,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-1',
+        shipID: "DESTROYER-1",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -192,7 +192,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },
@@ -202,7 +202,7 @@ const stateStub: SliceStateActive = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-1',
+        shipID: "SUBMARINE-1",
         size: 1,
         type: ShipClassName.Submarine,
       },

@@ -1,5 +1,5 @@
-import { isBoolean, isInteger } from 'lodash';
-import { assertNever, isObject, isString } from '../../utils/typeUtils';
+import { isBoolean, isInteger } from "lodash";
+import { assertNever, isObject, isString } from "../../utils/typeUtils";
 import {
   AuthenticatedResponseMessage,
   ErrorMessage,
@@ -11,21 +11,18 @@ import {
   RoomStatusResponseMessage,
   ServerMessage,
   ServerMessageCode,
-} from './messageTypes';
+} from "./messageTypes";
 import {
   GameRoomStatus,
   PlacedShip,
   Ship,
   ShipClassName,
   ShipOrientation,
-} from '../../__generated__/graphql';
+} from "../../__generated__/graphql";
 
 const isErrorMessage = (message: object): message is ErrorMessage => {
   const typed = message as ErrorMessage;
-  return (
-    typed.code === ServerMessageCode.Error
-    && isString(typed.message)
-  );
+  return typed.code === ServerMessageCode.Error && isString(typed.message);
 };
 
 const isShip = (obj: Object): obj is Ship => {
@@ -79,17 +76,20 @@ const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
   if (opponent && !isString(opponent)) return false;
 
   if (
-    !isString(player)
-    || !isBoolean(playerShipsPlaced)
-    || !isBoolean(playerSocketConnected)
-    || !isBoolean(opponentShipsPlaced)
-    || !isBoolean(opponentSocketConnected)
-  ) return false;
+    !isString(player) ||
+    !isBoolean(playerShipsPlaced) ||
+    !isBoolean(playerSocketConnected) ||
+    !isBoolean(opponentShipsPlaced) ||
+    !isBoolean(opponentSocketConnected)
+  )
+    return false;
 
   return true;
 };
 
-const isMoveResultMessage = (message: object): message is MoveResultMessageBase => {
+const isMoveResultMessage = (
+  message: object,
+): message is MoveResultMessageBase => {
   const typed = message as MoveResultMessageBase;
 
   if (!isInteger(typed.x) || !isInteger(typed.y)) return false;
@@ -102,20 +102,28 @@ const isMoveResultMessage = (message: object): message is MoveResultMessageBase 
   return true;
 };
 
-const isOpponentMoveResultMessage = (message: object): message is OpponentMoveResultMessage => 'code' in message
-  && message.code === ServerMessageCode.OpponentMoveResult
-  && isMoveResultMessage(message);
+const isOpponentMoveResultMessage = (
+  message: object,
+): message is OpponentMoveResultMessage =>
+  "code" in message &&
+  message.code === ServerMessageCode.OpponentMoveResult &&
+  isMoveResultMessage(message);
 
-const isOwnMoveResultMessage = (message: object): message is OwnMoveResultMessage => 'code' in message
-  && message.code === ServerMessageCode.OwnMoveResult
-  && isMoveResultMessage(message);
+const isOwnMoveResultMessage = (
+  message: object,
+): message is OwnMoveResultMessage =>
+  "code" in message &&
+  message.code === ServerMessageCode.OwnMoveResult &&
+  isMoveResultMessage(message);
 
-const isRoomStatusResponseMessage = (message: object): message is RoomStatusResponseMessage => {
+const isRoomStatusResponseMessage = (
+  message: object,
+): message is RoomStatusResponseMessage => {
   const { code, roomStatus } = message as RoomStatusResponseMessage;
 
   return (
-    code === ServerMessageCode.RoomStatusResponse
-    && isGameRoomStatus(roomStatus)
+    code === ServerMessageCode.RoomStatusResponse &&
+    isGameRoomStatus(roomStatus)
   );
 };
 
@@ -127,13 +135,12 @@ const isAuthenticatedResponseMessage = (
   return code === ServerMessageCode.AuthenticatedResponse;
 };
 
-const isGameStartedMessage = (message: object): message is GameStartedMessage => {
+const isGameStartedMessage = (
+  message: object,
+): message is GameStartedMessage => {
   const { code, playsFirst } = message as GameStartedMessage;
 
-  return (
-    code === ServerMessageCode.GameStarted
-    && isString(playsFirst)
-  );
+  return code === ServerMessageCode.GameStarted && isString(playsFirst);
 };
 
 const isOpponentDisconectedMessage = (
@@ -157,7 +164,7 @@ const parseMessage = (jsonMessage: string): ServerMessage | undefined => {
     return undefined;
   }
 
-  if (!('code' in message)) {
+  if (!("code" in message)) {
     return undefined;
   }
 
@@ -182,7 +189,8 @@ const parseMessage = (jsonMessage: string): ServerMessage | undefined => {
       return isGameStartedMessage(message) ? message : undefined;
     case ServerMessageCode.OpponentDisconnected:
       return isOpponentDisconectedMessage(message) ? message : undefined;
-    default: return assertNever(code);
+    default:
+      return assertNever(code);
   }
 };
 

@@ -1,11 +1,11 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CREATE_ROOM, JOIN_ROOM } from '../../graphql/mutations';
-import { GET_GAME_SETTINGS } from '../../graphql/queries';
-import Dependencies from '../../utils/Dependencies';
-import { openWSConnection } from '../wsMiddleware/actions';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { CREATE_ROOM, JOIN_ROOM } from "../../graphql/mutations";
+import { GET_GAME_SETTINGS } from "../../graphql/queries";
+import Dependencies from "../../utils/Dependencies";
+import { openWSConnection } from "../wsMiddleware/actions";
 
 export const fetchGameSettings = createAsyncThunk(
-  'gameRoom/fetchSettings',
+  "gameRoom/fetchSettings",
   async (gameId: string, thunkAPI) => {
     const settingsResponse = await Dependencies.getApolloClient()?.query({
       query: GET_GAME_SETTINGS,
@@ -15,7 +15,9 @@ export const fetchGameSettings = createAsyncThunk(
     const gameSettings = settingsResponse?.data.gameSettings;
 
     if (!gameSettings) {
-      return thunkAPI.rejectWithValue({ error: 'Error fetching game settings' });
+      return thunkAPI.rejectWithValue({
+        error: "Error fetching game settings",
+      });
     }
 
     return gameSettings;
@@ -23,17 +25,16 @@ export const fetchGameSettings = createAsyncThunk(
 );
 
 export const createGameRoom = createAsyncThunk(
-  'gameRoom/create',
+  "gameRoom/create",
   async (_, thunkAPI) => {
-    const roomResponse = await Dependencies.getApolloClient()?.mutate({ mutation: CREATE_ROOM });
-    const {
-      roomID,
-      inviteCode,
-      wsAuthCode,
-    } = roomResponse?.data?.createRoom ?? {};
+    const roomResponse = await Dependencies.getApolloClient()?.mutate({
+      mutation: CREATE_ROOM,
+    });
+    const { roomID, inviteCode, wsAuthCode } =
+      roomResponse?.data?.createRoom ?? {};
 
     if (!roomID || !inviteCode || !wsAuthCode) {
-      return thunkAPI.rejectWithValue({ error: 'Error creating game room' });
+      return thunkAPI.rejectWithValue({ error: "Error creating game room" });
     }
 
     thunkAPI.dispatch(openWSConnection({ roomID, wsAuthCode }));
@@ -47,7 +48,7 @@ export const createGameRoom = createAsyncThunk(
 );
 
 export const joinGameRoom = createAsyncThunk(
-  'gameRoom/join',
+  "gameRoom/join",
   async (inviteCode: string, thunkAPI) => {
     const roomResponse = await Dependencies.getApolloClient()?.mutate({
       mutation: JOIN_ROOM,
@@ -57,7 +58,7 @@ export const joinGameRoom = createAsyncThunk(
     const { roomID, wsAuthCode } = roomResponse?.data?.joinRoom ?? {};
 
     if (!roomID || !wsAuthCode) {
-      return thunkAPI.rejectWithValue({ error: 'Error joining game room' });
+      return thunkAPI.rejectWithValue({ error: "Error joining game room" });
     }
 
     thunkAPI.dispatch(openWSConnection({ roomID, wsAuthCode }));

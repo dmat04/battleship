@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { useAppSelector } from '../../../store/store';
-import { Theme } from '../../assets/themes/themeDefault';
+import styled from "styled-components";
+import { useAppSelector } from "../../../store/store";
+import { Theme } from "../../assets/themes/themeDefault";
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 30rem);
@@ -24,9 +24,7 @@ const InviteCode = () => {
     <Container>
       <p>
         Game invite code:&nbsp;
-        <Highlight>
-          {inviteCode}
-        </Highlight>
+        <Highlight>{inviteCode}</Highlight>
       </p>
     </Container>
   );

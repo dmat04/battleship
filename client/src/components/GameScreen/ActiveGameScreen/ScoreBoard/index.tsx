@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { useAppSelector } from '../../../../store/store';
-import { Theme } from '../../../assets/themes/themeDefault';
-import PlayerScorecard from './PlayerScorecard';
+import styled from "styled-components";
+import { useAppSelector } from "../../../../store/store";
+import { Theme } from "../../../assets/themes/themeDefault";
+import PlayerScorecard from "./PlayerScorecard";
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: score;
@@ -10,7 +10,7 @@ const Container = styled.div<{ theme: Theme }>`
   grid-column-gap: ${(props) => props.theme.paddingSm};
 `;
 
-export type Owner = 'player' | 'opponent';
+export type Owner = "player" | "opponent";
 
 const Scoreboard = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
@@ -19,8 +19,11 @@ const Scoreboard = () => {
 
   return (
     <Container>
-      <PlayerScorecard owner="player" username={gameRoom.playerName ?? ''} />
-      <PlayerScorecard owner="opponent" username={gameRoom.opponentName ?? ''} />
+      <PlayerScorecard owner="player" username={gameRoom.playerName ?? ""} />
+      <PlayerScorecard
+        owner="opponent"
+        username={gameRoom.opponentName ?? ""}
+      />
     </Container>
   );
 };

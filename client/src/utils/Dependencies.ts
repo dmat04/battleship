@@ -1,5 +1,5 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import type { Store } from '../store/store';
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import type { Store } from "../store/store";
 
 class Dependencies {
   private static instance: Dependencies | undefined = undefined;
@@ -9,9 +9,11 @@ class Dependencies {
   private store: Store | undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() { }
+  private constructor() {}
 
-  public static setApolloClient = (client: ApolloClient<NormalizedCacheObject>) => {
+  public static setApolloClient = (
+    client: ApolloClient<NormalizedCacheObject>,
+  ) => {
     if (this.instance === undefined) {
       this.instance = new Dependencies();
     }

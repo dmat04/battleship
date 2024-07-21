@@ -1,18 +1,18 @@
-import { Middleware } from '@reduxjs/toolkit';
-import type { AppDispatch } from '../store';
-import MessageParser from './MessageParser';
+import { Middleware } from "@reduxjs/toolkit";
+import type { AppDispatch } from "../store";
+import MessageParser from "./MessageParser";
 import {
   ClientMessageCode,
   RoomStatusRequestMessage,
   ServerMessageCode,
-} from './messageTypes';
+} from "./messageTypes";
 import {
   closeWSConnection,
   connectionOpened,
   messageReceived,
   openWSConnection,
   sendMessage,
-} from './actions';
+} from "./actions";
 
 interface ClientSocket {
   instance: WebSocket;
@@ -29,31 +29,36 @@ const onOpenBuilder = (authCode: string, socket: ClientSocket) => () => {
   socket.instance.send(JSON.stringify(message));
 };
 
-const onMessageBuilder = (dispatch: AppDispatch, socket: ClientSocket) => (event: MessageEvent) => {
-  const message = MessageParser.parseMessage(event.data);
+const onMessageBuilder =
+  (dispatch: AppDispatch, socket: ClientSocket) => (event: MessageEvent) => {
+    const message = MessageParser.parseMessage(event.data);
 
-  if (message) {
-    if (message.code === ServerMessageCode.AuthenticatedResponse) {
-      // eslint-disable-next-line no-param-reassign
-      socket.authenticated = true;
-      dispatch(connectionOpened());
+    if (message) {
+      if (message.code === ServerMessageCode.AuthenticatedResponse) {
+        // eslint-disable-next-line no-param-reassign
+        socket.authenticated = true;
+        dispatch(connectionOpened());
+      } else {
+        dispatch(messageReceived(message));
+      }
     } else {
-      dispatch(messageReceived(message));
+      // TODO: dispatch an error
     }
-  } else {
-    // TODO: dispatch an error
-  }
-};
+  };
 
 const onError = (event: Event) => {
-  console.log('socket error', event);
+  console.log("socket error", event);
 };
 
 const onCLose = (event: CloseEvent) => {
-  console.log('socket closed', event.reason);
+  console.log("socket closed", event.reason);
 };
 
-const createSocket = (url: string, authCode: string, dispatch: AppDispatch): ClientSocket => {
+const createSocket = (
+  url: string,
+  authCode: string,
+  dispatch: AppDispatch,
+): ClientSocket => {
   const socket: ClientSocket = {
     instance: new WebSocket(url),
     authenticated: false,

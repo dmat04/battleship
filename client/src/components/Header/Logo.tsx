@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Theme } from '../assets/themes/themeDefault';
+import styled from "styled-components";
+import { Theme } from "../assets/themes/themeDefault";
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 75rem);
@@ -32,7 +32,7 @@ const Logo = () => (
       id="svg1"
       xmlns="http://www.w3.org/2000/svg"
       style={{
-        mixBlendMode: 'difference',
+        mixBlendMode: "difference",
       }}
     >
       <defs id="defs1" />

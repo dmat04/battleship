@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router-dom';
-import styled from 'styled-components';
-import StatusHeader from './StatusHeader';
-import { Theme } from '../assets/themes/themeDefault';
+import { Outlet } from "react-router-dom";
+import styled from "styled-components";
+import StatusHeader from "./StatusHeader";
+import { Theme } from "../assets/themes/themeDefault";
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;

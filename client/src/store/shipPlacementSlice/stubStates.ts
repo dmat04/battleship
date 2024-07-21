@@ -1,21 +1,21 @@
-import { ShipOrientation, ShipClassName } from '../../__generated__/graphql';
-import { SliceState } from './types';
+import { ShipOrientation, ShipClassName } from "../../__generated__/graphql";
+import { SliceState } from "./types";
 
 export const placedState: SliceState = {
   placedIDs: [
-    'CARRIER-0',
-    'BATTLESHIP-0',
-    'CRUISER-0',
-    'DESTROYER-0',
-    'DESTROYER-1',
-    'SUBMARINE-1',
-    'SUBMARINE-0',
+    "CARRIER-0",
+    "BATTLESHIP-0",
+    "CRUISER-0",
+    "DESTROYER-0",
+    "DESTROYER-1",
+    "SUBMARINE-1",
+    "SUBMARINE-0",
   ],
   nonPlacedIDs: [],
   shipStates: [
     {
       ship: {
-        shipID: 'CARRIER-0',
+        shipID: "CARRIER-0",
         size: 5,
         type: ShipClassName.Carrier,
       },
@@ -27,7 +27,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'BATTLESHIP-0',
+        shipID: "BATTLESHIP-0",
         size: 4,
         type: ShipClassName.Battleship,
       },
@@ -39,7 +39,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'CRUISER-0',
+        shipID: "CRUISER-0",
         size: 3,
         type: ShipClassName.Cruiser,
       },
@@ -51,7 +51,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -63,7 +63,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-1',
+        shipID: "DESTROYER-1",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -75,7 +75,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },
@@ -87,7 +87,7 @@ export const placedState: SliceState = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-1',
+        shipID: "SUBMARINE-1",
         size: 1,
         type: ShipClassName.Submarine,
       },
@@ -109,41 +109,17 @@ export const placedState: SliceState = {
         null,
         null,
         null,
-        'BATTLESHIP-0',
-        'BATTLESHIP-0',
-        'BATTLESHIP-0',
-        'BATTLESHIP-0',
+        "BATTLESHIP-0",
+        "BATTLESHIP-0",
+        "BATTLESHIP-0",
+        "BATTLESHIP-0",
       ],
       [
-        'CARRIER-0',
-        'CARRIER-0',
-        'CARRIER-0',
-        'CARRIER-0',
-        'CARRIER-0',
-        null,
-        null,
-        null,
-        null,
-        null,
-      ],
-      [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        'DESTROYER-0',
-        'DESTROYER-0',
-        null,
-      ],
-      [
-        'CRUISER-0',
-        'CRUISER-0',
-        'CRUISER-0',
-        null,
-        null,
+        "CARRIER-0",
+        "CARRIER-0",
+        "CARRIER-0",
+        "CARRIER-0",
+        "CARRIER-0",
         null,
         null,
         null,
@@ -158,70 +134,50 @@ export const placedState: SliceState = {
         null,
         null,
         null,
+        "DESTROYER-0",
+        "DESTROYER-0",
+        null,
+      ],
+      [
+        "CRUISER-0",
+        "CRUISER-0",
+        "CRUISER-0",
+        null,
+        null,
+        null,
+        null,
         null,
         null,
         null,
       ],
+      [null, null, null, null, null, null, null, null, null, null],
       [
         null,
         null,
         null,
         null,
-        'DESTROYER-1',
-        'DESTROYER-1',
+        "DESTROYER-1",
+        "DESTROYER-1",
         null,
         null,
         null,
         null,
       ],
+      [null, null, null, null, null, null, null, null, null, null],
       [
         null,
+        "SUBMARINE-0",
         null,
         null,
         null,
         null,
         null,
         null,
-        null,
-        null,
-        null,
-      ],
-      [
-        null,
-        'SUBMARINE-0',
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        'SUBMARINE-1',
+        "SUBMARINE-1",
         null,
       ],
-      [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ],
-      [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ],
+      [null, null, null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null, null, null],
     ],
   },
 };
@@ -229,18 +185,18 @@ export const placedState: SliceState = {
 export const emptyState: SliceState = {
   placedIDs: [],
   nonPlacedIDs: [
-    'CARRIER-0',
-    'BATTLESHIP-0',
-    'CRUISER-0',
-    'DESTROYER-0',
-    'DESTROYER-1',
-    'SUBMARINE-0',
-    'SUBMARINE-1',
+    "CARRIER-0",
+    "BATTLESHIP-0",
+    "CRUISER-0",
+    "DESTROYER-0",
+    "DESTROYER-1",
+    "SUBMARINE-0",
+    "SUBMARINE-1",
   ],
   shipStates: [
     {
       ship: {
-        shipID: 'CARRIER-0',
+        shipID: "CARRIER-0",
         size: 5,
         type: ShipClassName.Carrier,
       },
@@ -249,7 +205,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'BATTLESHIP-0',
+        shipID: "BATTLESHIP-0",
         size: 4,
         type: ShipClassName.Battleship,
       },
@@ -258,7 +214,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'CRUISER-0',
+        shipID: "CRUISER-0",
         size: 3,
         type: ShipClassName.Cruiser,
       },
@@ -267,7 +223,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -276,7 +232,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'DESTROYER-0',
+        shipID: "DESTROYER-0",
         size: 2,
         type: ShipClassName.Destroyer,
       },
@@ -285,7 +241,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },
@@ -294,7 +250,7 @@ export const emptyState: SliceState = {
     },
     {
       ship: {
-        shipID: 'SUBMARINE-0',
+        shipID: "SUBMARINE-0",
         size: 1,
         type: ShipClassName.Submarine,
       },

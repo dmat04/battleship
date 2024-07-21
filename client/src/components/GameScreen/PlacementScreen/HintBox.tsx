@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { Theme } from '../../assets/themes/themeDefault';
-import { ReactComponent as IconInfo } from '../../assets/icons/ic_info.svg';
-import useGameHint from '../../../hooks/useGameHint';
-import Button from '../../Button';
+import styled from "styled-components";
+import { Theme } from "../../assets/themes/themeDefault";
+import IconInfo from "../../assets/icons/ic_info.svg";
+import useGameHint from "../../../hooks/useGameHint";
+import Button from "../../Button";
 
 const HintContainer = styled.div<{ theme: Theme }>`
   --tooltip-arrow-size: 12px;
@@ -55,9 +55,7 @@ const HintBox = () => {
   return (
     <HintContainer>
       <IconInfo />
-      <p>
-        { hint }
-      </p>
+      <p>{hint}</p>
       <Button onClick={nextHint}>Got it</Button>
     </HintContainer>
   );

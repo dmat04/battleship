@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Theme } from './assets/themes/themeDefault';
+import styled from "styled-components";
+import { Theme } from "./assets/themes/themeDefault";
 
 const MenuItemLabel = styled.p<{ theme: Theme }>`
   font-size: large;

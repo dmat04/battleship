@@ -1,13 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { SliceState } from './types';
+import { createSlice } from "@reduxjs/toolkit";
+import { SliceState } from "./types";
 import {
   initializeState,
   processPlaceShipAction,
   processResetShipAction,
   processResetShipsAction,
   processRotateShipAction,
-} from './utils';
-import { fetchGameSettings } from '../gameRoomSlice/thunks';
+} from "./utils";
+import { fetchGameSettings } from "../gameRoomSlice/thunks";
 
 const initialState: SliceState = {
   placedIDs: [],
@@ -21,7 +21,7 @@ const initialState: SliceState = {
 };
 
 const shipPlacementSlice = createSlice({
-  name: 'shipPlacement',
+  name: "shipPlacement",
   initialState,
   reducers: {
     placeShip: processPlaceShipAction,
@@ -30,18 +30,13 @@ const shipPlacementSlice = createSlice({
     resetShips: processResetShipsAction,
   },
   extraReducers: (builder) => {
-    builder.addCase(
-      fetchGameSettings.fulfilled,
-      (state, action) => initializeState(action.payload),
+    builder.addCase(fetchGameSettings.fulfilled, (state, action) =>
+      initializeState(action.payload),
     );
   },
 });
 
-export const {
-  placeShip,
-  resetShip,
-  rotateShip,
-  resetShips,
-} = shipPlacementSlice.actions;
+export const { placeShip, resetShip, rotateShip, resetShips } =
+  shipPlacementSlice.actions;
 
 export default shipPlacementSlice.reducer;

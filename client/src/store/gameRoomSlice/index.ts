@@ -1,51 +1,49 @@
 /* eslint-disable no-param-reassign */
-import { UnknownAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {
-  PlayerStatus,
-  SliceState,
-  initialState,
-} from './stateTypes';
+import { UnknownAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PlayerStatus, SliceState, initialState } from "./stateTypes";
 import {
   processMessageReceived,
   canHitOpponentCell,
   processRoomStatus,
   processRematchAction,
-} from './utils';
-import { Coordinates } from '../shipPlacementSlice/types';
-import type { AppDispatch, RootState } from '../store';
-import { sendMessage, messageReceived, connectionOpened } from '../wsMiddleware/actions';
-import { ClientMessageCode, ShootMessage } from '../wsMiddleware/messageTypes';
-import { submitPlacement } from '../shipPlacementSlice/thunks';
-import { createGameRoom, joinGameRoom, fetchGameSettings } from './thunks';
+} from "./utils";
+import { Coordinates } from "../shipPlacementSlice/types";
+import type { AppDispatch, RootState } from "../store";
+import {
+  sendMessage,
+  messageReceived,
+  connectionOpened,
+} from "../wsMiddleware/actions";
+import { ClientMessageCode, ShootMessage } from "../wsMiddleware/messageTypes";
+import { submitPlacement } from "../shipPlacementSlice/thunks";
+import { createGameRoom, joinGameRoom, fetchGameSettings } from "./thunks";
 
 const isRoomFullfilledAction = (
   action: UnknownAction,
-): action is ReturnType<typeof createGameRoom['fulfilled']> => (
-  action.type === createGameRoom.fulfilled.type
-  || action.type === joinGameRoom.fulfilled.type
-);
+): action is ReturnType<(typeof createGameRoom)["fulfilled"]> =>
+  action.type === createGameRoom.fulfilled.type ||
+  action.type === joinGameRoom.fulfilled.type;
 
 export const opponentCellClicked = createAsyncThunk<
-// eslint-disable-next-line @typescript-eslint/indent
-  void, Coordinates, { dispatch: AppDispatch, state: RootState }
->(
-  'gameRoom/opponentCellClicked',
-  async (cell: Coordinates, thunkAPI) => {
-    const gameState = thunkAPI.getState().gameRoom;
-    if (canHitOpponentCell(gameState, cell)) {
-      const message: ShootMessage = {
-        code: ClientMessageCode.Shoot,
-        x: cell.x,
-        y: cell.y,
-      };
+  // eslint-disable-next-line @typescript-eslint/indent
+  void,
+  Coordinates,
+  { dispatch: AppDispatch; state: RootState }
+>("gameRoom/opponentCellClicked", async (cell: Coordinates, thunkAPI) => {
+  const gameState = thunkAPI.getState().gameRoom;
+  if (canHitOpponentCell(gameState, cell)) {
+    const message: ShootMessage = {
+      code: ClientMessageCode.Shoot,
+      x: cell.x,
+      y: cell.y,
+    };
 
-      thunkAPI.dispatch(sendMessage(message));
-    }
-  },
-);
+    thunkAPI.dispatch(sendMessage(message));
+  }
+});
 
 const gameRoomSlice = createSlice({
-  name: 'activeGame',
+  name: "activeGame",
   initialState: { ...initialState } as SliceState,
   reducers: {
     clearRoom: () => initialState,
@@ -97,9 +95,6 @@ const gameRoomSlice = createSlice({
   },
 });
 
-export const {
-  clearRoom,
-  rematch,
-} = gameRoomSlice.actions;
+export const { clearRoom, rematch } = gameRoomSlice.actions;
 
 export default gameRoomSlice.reducer;

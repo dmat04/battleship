@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import { useCallback, useRef, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { Theme } from '../assets/themes/themeDefault';
-import { CollapsibleAPI } from '../CollapsibleContainer';
-import GuestForm from './GuestForm';
-import { useAppSelector } from '../../store/store';
-import CollapsibleButton from '../CollapsibleButton';
+import styled from "styled-components";
+import { useCallback, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { Theme } from "../assets/themes/themeDefault";
+import { CollapsibleAPI } from "../CollapsibleContainer";
+import GuestForm from "./GuestForm";
+import { useAppSelector } from "../../store/store";
+import CollapsibleButton from "../CollapsibleButton";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -26,16 +26,20 @@ const UserMenu = () => {
   const [opened, setOpened] = useState<string | null>(null);
   const auth = useAppSelector((state) => state.auth.loginResult);
 
-  const addCollapsibleRef = useCallback((key: string, handle: CollapsibleAPI | null) => {
-    if (!handle) return;
-    if (collapsibleRefs.current.findIndex((item) => item.key === key) >= 0) return;
+  const addCollapsibleRef = useCallback(
+    (key: string, handle: CollapsibleAPI | null) => {
+      if (!handle) return;
+      if (collapsibleRefs.current.findIndex((item) => item.key === key) >= 0)
+        return;
 
-    collapsibleRefs.current.push({ key, collapsible: handle });
-  }, []);
+      collapsibleRefs.current.push({ key, collapsible: handle });
+    },
+    [],
+  );
 
   const closeOthers = useCallback((key: string) => {
     collapsibleRefs.current.forEach((handle) => {
-      if (handle.key !== key) handle.collapsible.setState('closed');
+      if (handle.key !== key) handle.collapsible.setState("closed");
     });
 
     setOpened(key);
@@ -50,20 +54,20 @@ const UserMenu = () => {
       <CollapsibleButton
         label="Continue as guest"
         initialState="closed"
-        ref={(api) => addCollapsibleRef('guest', api)}
-        onCollapsedStateChange={
-          (state) => (state === 'closed' ? setOpened(null) : closeOthers('guest'))
+        ref={(api) => addCollapsibleRef("guest", api)}
+        onCollapsedStateChange={(state) =>
+          state === "closed" ? setOpened(null) : closeOthers("guest")
         }
       >
-        <GuestForm disabled={opened !== 'guest'} />
+        <GuestForm disabled={opened !== "guest"} />
       </CollapsibleButton>
 
       <CollapsibleButton
         label="Login"
         initialState="closed"
-        ref={(api) => addCollapsibleRef('login', api)}
-        onCollapsedStateChange={
-          (state) => (state === 'closed' ? setOpened(null) : closeOthers('login'))
+        ref={(api) => addCollapsibleRef("login", api)}
+        onCollapsedStateChange={(state) =>
+          state === "closed" ? setOpened(null) : closeOthers("login")
         }
       >
         <form>
@@ -76,9 +80,9 @@ const UserMenu = () => {
       <CollapsibleButton
         label="Register"
         initialState="closed"
-        ref={(api) => addCollapsibleRef('register', api)}
-        onCollapsedStateChange={
-          (state) => (state === 'closed' ? setOpened(null) : closeOthers('register'))
+        ref={(api) => addCollapsibleRef("register", api)}
+        onCollapsedStateChange={(state) =>
+          state === "closed" ? setOpened(null) : closeOthers("register")
         }
       >
         <form>

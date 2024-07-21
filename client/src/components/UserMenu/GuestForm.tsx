@@ -1,17 +1,17 @@
-import styled from 'styled-components';
-import TextInput from '../TextInput';
-import { Theme } from '../assets/themes/themeDefault';
-import useUsernameChecker from '../../hooks/useUsernameChecker';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { guestLogin } from '../../store/authSlice';
-import Spinner from '../Spinner';
-import Button from '../Button';
+import styled from "styled-components";
+import TextInput from "../TextInput";
+import { Theme } from "../assets/themes/themeDefault";
+import useUsernameChecker from "../../hooks/useUsernameChecker";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { guestLogin } from "../../store/authSlice";
+import Spinner from "../Spinner";
+import Button from "../Button";
 
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
   display: grid;
   grid-template-rows: 0.75fr 0.75fr 1fr;
-  grid-template-areas: 
+  grid-template-areas:
     "username"
     "status"
     "button";
@@ -33,17 +33,12 @@ interface Props {
 }
 
 const GuestForm = ({ disabled }: Props) => {
-  const {
-    username,
-    setUsername,
-    checkIsPending,
-    message,
-    isValid,
-  } = useUsernameChecker(
-    'Pick a username or continue and have one picked for you',
-    'Good to go!',
-    'Username is taken',
-  );
+  const { username, setUsername, checkIsPending, message, isValid } =
+    useUsernameChecker(
+      "Pick a username or continue and have one picked for you",
+      "Good to go!",
+      "Username is taken",
+    );
 
   const dispatch = useAppDispatch();
   const { loginRequestPending } = useAppSelector((state) => state.auth);
@@ -62,7 +57,7 @@ const GuestForm = ({ disabled }: Props) => {
       <TextInput
         type="text"
         placeholder="Pick a username?"
-        style={{ gridArea: 'username' }}
+        style={{ gridArea: "username" }}
         value={username}
         onChange={(ev) => setUsername(ev.target.value)}
         disabled={disabled}
@@ -74,7 +69,7 @@ const GuestForm = ({ disabled }: Props) => {
       <Button
         type="submit"
         variant="primary"
-        style={{ gridArea: 'button' }}
+        style={{ gridArea: "button" }}
         disabled={disabled}
         loading={loginRequestPending}
       >

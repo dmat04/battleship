@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { ReactComponent as SpinnerAnim } from './assets/icons/180-ring.svg';
-import { ReactComponent as CheckmarkIcon } from './assets/icons/ic_checkmark_cricle.svg';
+import styled from "styled-components";
+import SpinnerAnim from "./assets/icons/180-ring.svg";
+import CheckmarkIcon from "./assets/icons/ic_checkmark_cricle.svg";
 
 const Container = styled.div<{ $visible?: boolean }>`
   opacity: ${(props) => (props.$visible ? 1 : 0)};
@@ -21,9 +21,7 @@ const defaultProps: Props = {
 };
 
 const Spinner = ({ visible, success }: Props) => {
-  const Image = success
-    ? CheckmarkIcon
-    : SpinnerAnim;
+  const Image = success ? CheckmarkIcon : SpinnerAnim;
 
   return (
     <Container $visible={visible}>
@@ -32,6 +30,6 @@ const Spinner = ({ visible, success }: Props) => {
   );
 };
 
-Spinner.defaultProps = defaultProps;
+// Spinner.defaultProps = defaultProps;
 
 export default Spinner;

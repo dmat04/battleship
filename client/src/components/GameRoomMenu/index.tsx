@@ -1,14 +1,14 @@
-import styled from 'styled-components';
-import { useRef, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { Theme } from '../assets/themes/themeDefault';
-import { CollapsibleAPI, CollapsibleState } from '../CollapsibleContainer';
-import MenuItemLabel from '../MemuItemLabel';
-import JoinGameForm from './JoinGameForm';
-import { createGameRoom } from '../../store/gameRoomSlice/thunks';
-import Button from '../Button';
-import CollapsibleButton from '../CollapsibleButton';
+import styled from "styled-components";
+import { useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { Theme } from "../assets/themes/themeDefault";
+import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer";
+import MenuItemLabel from "../MemuItemLabel";
+import JoinGameForm from "./JoinGameForm";
+import { createGameRoom } from "../../store/gameRoomSlice/thunks";
+import Button from "../Button";
+import CollapsibleButton from "../CollapsibleButton";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -23,15 +23,18 @@ const GameRoomMenu = () => {
   const dispatch = useAppDispatch();
   const roomID = useAppSelector((state) => state.gameRoom.roomID);
   const auth = useAppSelector((state) => state.auth.loginResult);
-  const loadingNewRoom = useAppSelector((state) => state.gameRoom.requestStatus.loadingNewRoom);
+  const loadingNewRoom = useAppSelector(
+    (state) => state.gameRoom.requestStatus.loadingNewRoom,
+  );
 
   const collapsible = useRef<CollapsibleAPI>(null);
-  const [collapsibleOpen, setCollapsibleOpen] = useState<CollapsibleState>('closed');
+  const [collapsibleOpen, setCollapsibleOpen] =
+    useState<CollapsibleState>("closed");
 
   const startNewGame = () => {
     if (loadingNewRoom) return;
 
-    collapsible.current?.setState('closed');
+    collapsible.current?.setState("closed");
     dispatch(createGameRoom());
   };
 
@@ -45,11 +48,7 @@ const GameRoomMenu = () => {
 
   return (
     <MenuContainer>
-      <Button
-        variant="primary"
-        loading={loadingNewRoom}
-        onClick={startNewGame}
-      >
+      <Button variant="primary" loading={loadingNewRoom} onClick={startNewGame}>
         <MenuItemLabel>Start a new game</MenuItemLabel>
       </Button>
 
@@ -59,7 +58,7 @@ const GameRoomMenu = () => {
         initialState="closed"
         onCollapsedStateChange={(state) => setCollapsibleOpen(state)}
       >
-        <JoinGameForm disabled={collapsibleOpen === 'closed'} />
+        <JoinGameForm disabled={collapsibleOpen === "closed"} />
       </CollapsibleButton>
     </MenuContainer>
   );

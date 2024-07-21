@@ -1,6 +1,6 @@
-import styled, { keyframes, useTheme } from 'styled-components';
-import { Theme } from '../assets/themes/themeDefault';
-import Logo from './Logo';
+import styled, { keyframes, useTheme } from "styled-components";
+import { Theme } from "../assets/themes/themeDefault";
+import Logo from "./Logo";
 
 const bgAnim = (width: number, offset: number) => keyframes`
   0% {
@@ -18,7 +18,8 @@ const waveSVG = (color: string) => `
 </svg>
 `;
 
-const bgImageURL = (color: string) => `url("data:image/svg+xml,${encodeURIComponent(waveSVG(color))}")`;
+const bgImageURL = (color: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(waveSVG(color))}")`;
 
 interface WaveContainerProps {
   $color: string;
@@ -30,19 +31,16 @@ interface WaveContainerProps {
 }
 
 const WaveContainer = styled.div<WaveContainerProps>`
-    position: absolute;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-    opacity: ${(props) => props.$opacity};
-    background-image: ${(props) => bgImageURL(props.$color)};
-    background-repeat: repeat-x;
-    background-size: ${(props) => props.$width}% ${(props) => props.$height}%;
-    animation: 
-      ${(props) => props.$duration}s
-      ${(props) => bgAnim(props.$width, props.$offset)}
-      infinite
-      linear;
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  opacity: ${(props) => props.$opacity};
+  background-image: ${(props) => bgImageURL(props.$color)};
+  background-repeat: repeat-x;
+  background-size: ${(props) => props.$width}% ${(props) => props.$height}%;
+  animation: ${(props) => props.$duration}s
+    ${(props) => bgAnim(props.$width, props.$offset)} infinite linear;
 `;
 
 const Container = styled.nav<{ theme: Theme }>`

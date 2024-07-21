@@ -1,9 +1,13 @@
-import styled, { ThemeContext } from 'styled-components';
+import styled, { ThemeContext } from "styled-components";
 import React, {
-  forwardRef, useCallback, useContext, useImperativeHandle, useRef,
-} from 'react';
-import { animated, useSpring } from '@react-spring/web';
-import themeDefault from './assets/themes/themeDefault';
+  forwardRef,
+  useCallback,
+  useContext,
+  useImperativeHandle,
+  useRef,
+} from "react";
+import { animated, useSpring } from "@react-spring/web";
+import themeDefault from "./assets/themes/themeDefault";
 
 const Container = styled(animated.div)`
   width: 100%;
@@ -13,12 +17,10 @@ const Container = styled(animated.div)`
   overflow: clip;
 `;
 
-export type CollapsibleState = 'open' | 'closed';
+export type CollapsibleState = "open" | "closed";
 
 interface Props {
-  // eslint-disable-next-line react/require-default-props
   onCollapsedStateChange?: (state: CollapsibleState) => void;
-  // eslint-disable-next-line react/require-default-props
   initialState?: CollapsibleState;
 }
 
@@ -28,9 +30,16 @@ export interface CollapsibleAPI {
   toggleState: () => CollapsibleState;
 }
 
-const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<Props>>(
+const CollapsibleContainer = forwardRef<
+  CollapsibleAPI,
+  React.PropsWithChildren<Props>
+>(
   (
-    { onCollapsedStateChange, initialState = 'closed', children }: React.PropsWithChildren<Props>,
+    {
+      onCollapsedStateChange,
+      initialState = "closed",
+      children,
+    }: React.PropsWithChildren<Props>,
     ref,
   ) => {
     const childrenContainerRef = useRef<HTMLDivElement>(null);
@@ -40,51 +49,55 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
 
     const [springStyle, springAPI] = useSpring(() => ({
       from: {
-        height: initialState === 'closed'
-          ? '0px'
-          : `${childrenContainerRef.current?.offsetHeight}px` ?? '0px',
-        opacity: initialState === 'closed'
-          ? 0
-          : 1,
+        height:
+          initialState === "closed"
+            ? "0px"
+            : (`${childrenContainerRef.current?.offsetHeight}px` ?? "0px"),
+        opacity: initialState === "closed" ? 0 : 1,
       },
       config: { duration: theme.durationTransitionDefault },
     }));
 
     const getState = useCallback(() => collapsibleState.current, []);
 
-    const setState = useCallback((collapsed: CollapsibleState) => {
-      if (collapsed === collapsibleState.current) return;
+    const setState = useCallback(
+      (collapsed: CollapsibleState) => {
+        if (collapsed === collapsibleState.current) return;
 
-      if (collapsibleState.current === 'open') {
-        springAPI.start({
-          from: {
-            height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
-            opacity: 1,
-          },
-          to: {
-            height: '0px', opacity: 0,
-          },
-        });
-      } else {
-        springAPI.start({
-          from: {
-            height: '0px',
-            opacity: 0,
-          },
-          to: {
-            height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
-            opacity: 1,
-          },
-        });
-      }
+        if (collapsibleState.current === "open") {
+          springAPI.start({
+            from: {
+              height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+              opacity: 1,
+            },
+            to: {
+              height: "0px",
+              opacity: 0,
+            },
+          });
+        } else {
+          springAPI.start({
+            from: {
+              height: "0px",
+              opacity: 0,
+            },
+            to: {
+              height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+              opacity: 1,
+            },
+          });
+        }
 
-      collapsibleState.current = collapsed;
+        collapsibleState.current = collapsed;
 
-      if (onCollapsedStateChange) onCollapsedStateChange(collapsibleState.current);
-    }, [onCollapsedStateChange, springAPI]);
+        if (onCollapsedStateChange)
+          onCollapsedStateChange(collapsibleState.current);
+      },
+      [onCollapsedStateChange, springAPI],
+    );
 
     const toggleState = useCallback(() => {
-      setState(collapsibleState.current === 'open' ? 'closed' : 'open');
+      setState(collapsibleState.current === "open" ? "closed" : "open");
       return collapsibleState.current;
     }, [setState]);
 
@@ -96,9 +109,7 @@ const CollapsibleContainer = forwardRef<CollapsibleAPI, React.PropsWithChildren<
 
     return (
       <Container style={springStyle}>
-        <Container ref={childrenContainerRef}>
-          {children}
-        </Container>
+        <Container ref={childrenContainerRef}>{children}</Container>
       </Container>
     );
   },

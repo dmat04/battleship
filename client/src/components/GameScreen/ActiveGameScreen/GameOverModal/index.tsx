@@ -1,12 +1,18 @@
-import styled, { keyframes } from 'styled-components';
-import { clearRoom, rematch } from '../../../../store/gameRoomSlice';
-import { GameResult } from '../../../../store/gameRoomSlice/stateTypes';
-import { useAppSelector, useAppDispatch } from '../../../../store/store';
-import { closeWSConnection, sendMessage } from '../../../../store/wsMiddleware/actions';
-import { RoomStatusRequestMessage, ClientMessageCode } from '../../../../store/wsMiddleware/messageTypes';
-import { assertNever } from '../../../../utils/typeUtils';
-import Button from '../../../Button';
-import { Theme } from '../../../assets/themes/themeDefault';
+import styled, { keyframes } from "styled-components";
+import { clearRoom, rematch } from "../../../../store/gameRoomSlice";
+import { GameResult } from "../../../../store/gameRoomSlice/stateTypes";
+import { useAppSelector, useAppDispatch } from "../../../../store/store";
+import {
+  closeWSConnection,
+  sendMessage,
+} from "../../../../store/wsMiddleware/actions";
+import {
+  RoomStatusRequestMessage,
+  ClientMessageCode,
+} from "../../../../store/wsMiddleware/messageTypes";
+import { assertNever } from "../../../../utils/typeUtils";
+import Button from "../../../Button";
+import { Theme } from "../../../assets/themes/themeDefault";
 
 const Blur = keyframes`
   from {
@@ -83,15 +89,17 @@ const CardFooter = styled.div<{ theme: Theme }>`
 `;
 
 const GameOverModal = () => {
-  const { gameResult, opponentName } = useAppSelector((state) => state.gameRoom);
+  const { gameResult, opponentName } = useAppSelector(
+    (state) => state.gameRoom,
+  );
   const dispatch = useAppDispatch();
-  let message = '';
+  let message = "";
 
   if (!gameResult || !opponentName) return null;
 
   switch (gameResult) {
     case GameResult.PlayerWon:
-      message = 'Congratulations, you won!';
+      message = "Congratulations, you won!";
       break;
     case GameResult.OpponentWon:
       message = `${opponentName} has won.\nBetter luck next time.`;
@@ -125,11 +133,14 @@ const GameOverModal = () => {
         <CardHeader>Game Over</CardHeader>
         <CardBody>{message}</CardBody>
         <CardFooter>
-          {
-            gameResult !== GameResult.OpponentDisconnected
-            && <Button variant="primary" onClick={handleRematch}>Rematch</Button>
-          }
-          <Button variant="warning" onClick={handleExit}>Exit</Button>
+          {gameResult !== GameResult.OpponentDisconnected && (
+            <Button variant="primary" onClick={handleRematch}>
+              Rematch
+            </Button>
+          )}
+          <Button variant="warning" onClick={handleExit}>
+            Exit
+          </Button>
         </CardFooter>
       </Card>
     </Container>

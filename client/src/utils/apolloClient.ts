@@ -1,39 +1,45 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import Dependencies from './Dependencies';
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+  concat,
+} from "@apollo/client";
+import Dependencies from "./Dependencies";
 
 const createApolloClient = () => {
-  const httpLink = createHttpLink({
-    uri: 'http://localhost:4000',
-  });
+  const httpLink = new HttpLink({ uri: "http://localhost:4000" });
 
-  const authLink = setContext((_, { headers }) => {
-    const token = Dependencies.getStore()?.getState().auth?.loginResult?.accessToken;
+  const authLink = new ApolloLink((operation, forward) => {
+    const token =
+      Dependencies.getStore()?.getState().auth?.loginResult?.accessToken;
 
     if (!token) {
-      return { headers };
+      return forward(operation);
     }
 
-    return {
+    operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: `Bearer ${token}`,
+        authorization: localStorage.getItem("token") || null,
       },
-    };
+    }));
+
+    return forward(operation);
   });
 
   const client = new ApolloClient({
-    link: authLink.concat(httpLink),
+    link: concat(authLink, httpLink),
     cache: new InMemoryCache(),
     defaultOptions: {
       mutate: {
-        errorPolicy: 'all',
+        errorPolicy: "all",
       },
       query: {
-        errorPolicy: 'all',
+        errorPolicy: "all",
       },
       watchQuery: {
-        errorPolicy: 'all',
+        errorPolicy: "all",
       },
     },
   });

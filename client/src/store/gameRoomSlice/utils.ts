@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction } from "@reduxjs/toolkit";
 import {
   GameSettings,
   ShipOrientation,
   PlacedShip,
   GameRoomStatus,
-} from '../../__generated__/graphql';
-import { Coordinates } from '../shipPlacementSlice/types';
+} from "../../__generated__/graphql";
+import { Coordinates } from "../shipPlacementSlice/types";
 import {
   GameStartedMessage,
   MoveResultMessageBase,
@@ -14,8 +14,8 @@ import {
   OwnMoveResultMessage,
   ServerMessage,
   ServerMessageCode,
-} from '../wsMiddleware/messageTypes';
-import { assertNever } from '../../utils/typeUtils';
+} from "../wsMiddleware/messageTypes";
+import { assertNever } from "../../utils/typeUtils";
 import {
   PlayerStatus,
   ScoreState,
@@ -25,22 +25,21 @@ import {
   GameResult,
   initialState,
   GameIsInProgress,
-} from './stateTypes';
+} from "./stateTypes";
 
 const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
 
 const isWithinShip = (
   { x, y }: Coordinates,
-  {
-    ship, x: shipX, y: shipY, orientation,
-  }: PlacedShip,
+  { ship, x: shipX, y: shipY, orientation }: PlacedShip,
 ): boolean => {
   switch (orientation) {
     case ShipOrientation.Horizontal:
       return x >= shipX && x < shipX + ship.size && y === shipY;
     case ShipOrientation.Vertical:
       return y >= shipY && y < shipY + ship.size && x === shipX;
-    default: return assertNever(orientation);
+    default:
+      return assertNever(orientation);
   }
 };
 
@@ -50,19 +49,19 @@ const getShipSurroundingCells = (
 ): Coordinates[] => {
   if (!settings) return [];
 
-  const {
-    ship, orientation, x, y,
-  } = placedShip;
+  const { ship, orientation, x, y } = placedShip;
   const xStart = Math.max(0, x - 1);
   const yStart = Math.max(0, y - 1);
 
-  const xEnd = orientation === ShipOrientation.Horizontal
-    ? Math.min(x + ship.size, settings.boardWidth - 1)
-    : Math.min(x + 1, settings.boardWidth - 1);
+  const xEnd =
+    orientation === ShipOrientation.Horizontal
+      ? Math.min(x + ship.size, settings.boardWidth - 1)
+      : Math.min(x + 1, settings.boardWidth - 1);
 
-  const yEnd = orientation === ShipOrientation.Vertical
-    ? Math.min(y + ship.size, settings.boardHeight - 1)
-    : Math.min(y + 1, settings.boardHeight - 1);
+  const yEnd =
+    orientation === ShipOrientation.Vertical
+      ? Math.min(y + ship.size, settings.boardHeight - 1)
+      : Math.min(y + 1, settings.boardHeight - 1);
 
   const cells = [];
   for (let col = xStart; col <= xEnd; col += 1) {
@@ -80,31 +79,29 @@ const applyMoveResult = (
   state: SliceStateActive,
   score: ScoreState,
 ) => {
-  const {
-    x,
-    y,
-    hit,
-    shipSunk,
-    currentPlayer,
-  } = message;
+  const { x, y, hit, shipSunk, currentPlayer } = message;
 
   state.currentPlayer = currentPlayer;
 
   if (shipSunk) {
     score.sunkenShips.push(shipSunk);
 
-    score.hitCells = score.hitCells
-      .filter((coord) => !isWithinShip(coord, shipSunk));
+    score.hitCells = score.hitCells.filter(
+      (coord) => !isWithinShip(coord, shipSunk),
+    );
 
-    let shipSurroundingCells = getShipSurroundingCells(shipSunk, state.gameSettings);
-    shipSurroundingCells = shipSurroundingCells
-      .filter((coord) => (
-        !score.missedCells.some((existing) => isEqual(existing, coord))
-        && !score.inaccessibleCells.some((existing) => isEqual(existing, coord))
-      ));
+    let shipSurroundingCells = getShipSurroundingCells(
+      shipSunk,
+      state.gameSettings,
+    );
+    shipSurroundingCells = shipSurroundingCells.filter(
+      (coord) =>
+        !score.missedCells.some((existing) => isEqual(existing, coord)) &&
+        !score.inaccessibleCells.some((existing) => isEqual(existing, coord)),
+    );
 
-    score.inaccessibleCells = score.inaccessibleCells
-      .concat(shipSurroundingCells);
+    score.inaccessibleCells =
+      score.inaccessibleCells.concat(shipSurroundingCells);
   } else if (hit) {
     score.hitCells.push({ x, y });
   } else {
@@ -112,7 +109,10 @@ const applyMoveResult = (
   }
 };
 
-const applyOwnMoveResultMessage = (state: SliceStateActive, message: OwnMoveResultMessage) => {
+const applyOwnMoveResultMessage = (
+  state: SliceStateActive,
+  message: OwnMoveResultMessage,
+) => {
   applyMoveResult(message, state, state.opponentScore);
 
   if (message.gameWon) {
@@ -147,7 +147,8 @@ const moveResultMessageReceived = (
     case ServerMessageCode.OwnMoveResult:
       applyOwnMoveResultMessage(state, message);
       break;
-    default: assertNever(code);
+    default:
+      assertNever(code);
   }
 };
 
@@ -167,15 +168,19 @@ export const processRoomStatus = (
     state.opponentStatus = PlayerStatus.Connected;
   }
 
-  if (roomStatus.opponent
-    && roomStatus.opponentShipsPlaced
-    && roomStatus.opponentSocketConnected
+  if (
+    roomStatus.opponent &&
+    roomStatus.opponentShipsPlaced &&
+    roomStatus.opponentSocketConnected
   ) {
     state.opponentStatus = PlayerStatus.Ready;
   }
 };
 
-const processGameStartedMessage = (state: SliceState, message: GameStartedMessage) => {
+const processGameStartedMessage = (
+  state: SliceState,
+  message: GameStartedMessage,
+) => {
   state.currentPlayer = message.playsFirst;
   state.gameStarted = true;
 };
@@ -214,7 +219,8 @@ export const processMessageReceived = (
     case ServerMessageCode.OpponentDisconnected:
       processOpponentDisconnectedMessage(state);
       break;
-    default: assertNever(code);
+    default:
+      assertNever(code);
   }
 };
 
@@ -241,28 +247,25 @@ export const processRematchAction = (state: SliceState) => {
   };
 };
 
-export const canHitOpponentCell = (state: SliceState, cell: Coordinates): boolean => {
+export const canHitOpponentCell = (
+  state: SliceState,
+  cell: Coordinates,
+): boolean => {
   if (!GameRoomIsReady(state)) return false;
 
   if (state.currentPlayer !== state.playerName) return false;
 
   const { opponentScore } = state;
 
-  if (opponentScore.hitCells.some(
-    (c) => isEqual(c, cell),
-  )) return false;
+  if (opponentScore.hitCells.some((c) => isEqual(c, cell))) return false;
 
-  if (opponentScore.missedCells.some(
-    (c) => isEqual(c, cell),
-  )) return false;
+  if (opponentScore.missedCells.some((c) => isEqual(c, cell))) return false;
 
-  if (opponentScore.sunkenShips.some(
-    (ship) => isWithinShip(cell, ship),
-  )) return false;
+  if (opponentScore.sunkenShips.some((ship) => isWithinShip(cell, ship)))
+    return false;
 
-  if (opponentScore.inaccessibleCells.some(
-    (c) => isEqual(c, cell),
-  )) return false;
+  if (opponentScore.inaccessibleCells.some((c) => isEqual(c, cell)))
+    return false;
 
   return true;
 };

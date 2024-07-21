@@ -1,26 +1,26 @@
-import { PlacedShip, GameRoomStatus } from '../../__generated__/graphql';
+import { PlacedShip, GameRoomStatus } from "../../__generated__/graphql";
 
 export interface CellHitResult {
-  x: number,
-  y: number,
-  hit: boolean,
-  gameWon: boolean,
-  shipSunk?: PlacedShip,
+  x: number;
+  y: number;
+  hit: boolean;
+  gameWon: boolean;
+  shipSunk?: PlacedShip;
 }
 
 export enum ClientMessageCode {
-  Shoot = 'Shoot',
-  RoomStatusRequest = 'RoomStatusRequest',
+  Shoot = "Shoot",
+  RoomStatusRequest = "RoomStatusRequest",
 }
 
 export enum ServerMessageCode {
-  Error = 'Error',
-  OpponentMoveResult = 'OpponentMoveResult',
-  OwnMoveResult = 'OwnMoveResult',
-  RoomStatusResponse = 'RoomStatusResponse',
-  AuthenticatedResponse = 'AuthenticatedResponse',
-  GameStarted = 'GameStarted',
-  OpponentDisconnected = 'OpponentDisconnected',
+  Error = "Error",
+  OpponentMoveResult = "OpponentMoveResult",
+  OwnMoveResult = "OwnMoveResult",
+  RoomStatusResponse = "RoomStatusResponse",
+  AuthenticatedResponse = "AuthenticatedResponse",
+  GameStarted = "GameStarted",
+  OpponentDisconnected = "OpponentDisconnected",
 }
 
 export interface ShootMessage {
@@ -68,15 +68,13 @@ export interface OpponentDisconnectedMessage {
   code: ServerMessageCode.OpponentDisconnected;
 }
 
-export type ClientMessage =
-  | ShootMessage
-  | RoomStatusRequestMessage;
+export type ClientMessage = ShootMessage | RoomStatusRequestMessage;
 
 export type ServerMessage =
- | ErrorMessage
- | OpponentMoveResultMessage
- | OwnMoveResultMessage
- | RoomStatusResponseMessage
- | AuthenticatedResponseMessage
- | GameStartedMessage
- | OpponentDisconnectedMessage;
+  | ErrorMessage
+  | OpponentMoveResultMessage
+  | OwnMoveResultMessage
+  | RoomStatusResponseMessage
+  | AuthenticatedResponseMessage
+  | GameStartedMessage
+  | OpponentDisconnectedMessage;

@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import { ReactComponent as IconLogout } from '../assets/icons/ic_logout.svg';
-import { ReactComponent as IconUser } from '../assets/icons/ic_account_circe.svg';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { Theme } from '../assets/themes/themeDefault';
-import { logout } from '../../store/authSlice';
+import styled from "styled-components";
+import IconLogout from "../assets/icons/ic_logout.svg";
+import IconUser from "../assets/icons/ic_account_circe.svg";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { Theme } from "../assets/themes/themeDefault";
+import { logout } from "../../store/authSlice";
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
@@ -27,7 +27,7 @@ const LogoutButton = styled.button<{ theme: Theme }>`
   display: flex;
   background-color: ${(props) => props.theme.colors.surfaceTertiary};
   color: ${(props) => props.theme.colors.onSurfaceTertiary};
-  
+
   &:hover {
     filter: invert(10%) saturate(300%);
   }

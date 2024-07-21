@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { PayloadAction } from '@reduxjs/toolkit';
-import { SliceState } from './stateTypes';
+import { PayloadAction } from "@reduxjs/toolkit";
+import { SliceState } from "./stateTypes";
 
 export const processRemoveNotification = (
   state: SliceState,

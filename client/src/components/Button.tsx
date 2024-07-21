@@ -1,25 +1,31 @@
-import styled from 'styled-components';
-import { CSSProperties } from 'react';
-import { Theme } from './assets/themes/themeDefault';
-import Spinner from './Spinner';
+import styled from "styled-components";
+import { CSSProperties } from "react";
+import { Theme } from "./assets/themes/themeDefault";
+import Spinner from "./Spinner";
 
-export type ButtonVariant = 'primary' | 'warning' | 'danger';
+export type ButtonVariant = "primary" | "warning" | "danger";
 
-const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
+const ButtonElement = styled.button<{ $variant: ButtonVariant; theme: Theme }>`
   --colorBg: ${(props) => {
     switch (props.$variant) {
-      case 'warning': return props.theme.colors.containerWarning;
-      case 'danger': return props.theme.colors.containerDanger;
-      case 'primary':
-      default: return props.theme.colors.containerSecondary;
+      case "warning":
+        return props.theme.colors.containerWarning;
+      case "danger":
+        return props.theme.colors.containerDanger;
+      case "primary":
+      default:
+        return props.theme.colors.containerSecondary;
     }
   }};
   --colorContent: ${(props) => {
     switch (props.$variant) {
-      case 'warning': return props.theme.colors.onContainerWarning;
-      case 'danger': return props.theme.colors.onContainerDanger;
-      case 'primary':
-      default: return props.theme.colors.onContainerSecondary;
+      case "warning":
+        return props.theme.colors.onContainerWarning;
+      case "danger":
+        return props.theme.colors.onContainerDanger;
+      case "primary":
+      default:
+        return props.theme.colors.onContainerSecondary;
     }
   }};
 
@@ -31,7 +37,8 @@ const ButtonElement = styled.button<{ $variant: ButtonVariant, theme: Theme }>`
   background-color: var(--colorBg);
   color: var(--colorContent);
   border: ${(props) => props.theme.borderStyle};
-  transition: ${(props) => `all ${props.theme.durationTransitionDefault}ms ease-out`};
+  transition: ${(props) =>
+    `all ${props.theme.durationTransitionDefault}ms ease-out`};
   padding: ${(props) => props.theme.paddingMin};
 
   &:hover {
@@ -49,7 +56,7 @@ const SpinnerContainer = styled.div`
 `;
 
 const ChildrenContainer = styled.div<{ $visible: boolean }>`
-  visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
+  visibility: ${(props) => (props.$visible ? "visible" : "hidden")};
 `;
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -60,15 +67,13 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = ({
   children,
-  variant = 'primary',
+  variant = "primary",
   loading = false,
   style = {},
   ...rest
 }: React.PropsWithChildren<Props>) => (
   <ButtonElement $variant={variant} style={style} {...rest}>
-    <ChildrenContainer $visible={!loading}>
-      {children}
-    </ChildrenContainer>
+    <ChildrenContainer $visible={!loading}>{children}</ChildrenContainer>
     <SpinnerContainer>
       <Spinner visible={loading} />
     </SpinnerContainer>

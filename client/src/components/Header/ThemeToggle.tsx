@@ -1,12 +1,15 @@
-import styled from 'styled-components';
-import { useRef } from 'react';
-import { ReactComponent as IconContrast } from '../assets/icons/ic_contrast.svg';
-import { ReactComponent as IconDark } from '../assets/icons/ic_dark_mode.svg';
-import { ReactComponent as IconLight } from '../assets/icons/ic_light_mode.svg';
-import { ReactComponent as IconDevice } from '../assets/icons/ic_devices.svg';
-import { ThemePreference, useThemePreference } from '../ThemeProvider/ThemePreferenceContext';
-import { Theme } from '../assets/themes/themeDefault';
-import CollapsibleContainer, { CollapsibleAPI } from '../CollapsibleContainer';
+import styled from "styled-components";
+import { useRef } from "react";
+import IconContrast from "../assets/icons/ic_contrast.svg";
+import IconDark from "../assets/icons/ic_dark_mode.svg";
+import IconLight from "../assets/icons/ic_light_mode.svg";
+import IconDevice from "../assets/icons/ic_devices.svg";
+import {
+  ThemePreference,
+  useThemePreference,
+} from "../ThemeProvider/ThemePreferenceContext";
+import { Theme } from "../assets/themes/themeDefault";
+import CollapsibleContainer, { CollapsibleAPI } from "../CollapsibleContainer";
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
@@ -37,7 +40,7 @@ const MenuContainer = styled.div`
   z-index: 9999;
 `;
 
-const MenuItemsContainer = styled.div<{ theme: Theme }>`  
+const MenuItemsContainer = styled.div<{ theme: Theme }>`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -48,15 +51,15 @@ const MenuItemsContainer = styled.div<{ theme: Theme }>`
   color: ${(props) => props.theme.colors.onContainerPrimary};
 `;
 
-const MenuItem = styled.button<{ theme: Theme, $selected: boolean }>`
+const MenuItem = styled.button<{ theme: Theme; $selected: boolean }>`
   --selected-filter: invert(10%) saturate(300%);
-  
+
   display: flex;
   flex-direction: row;
   align-items: center;
   background-color: transparent;
   color: ${(props) => props.theme.colors.onContainerPrimary};
-  filter: ${(props) => (props.$selected ? 'var(--selected-filter)' : 'none')};
+  filter: ${(props) => (props.$selected ? "var(--selected-filter)" : "none")};
 
   &:hover {
     filter: var(--selected-filter);
@@ -92,19 +95,19 @@ interface MenuItemProps {
 
 const MenuItems: MenuItemProps[] = [
   {
-    option: 'light',
+    option: "light",
     icon: <IconLight height={24} width={24} />,
-    label: 'Light',
+    label: "Light",
   },
   {
-    option: 'dark',
+    option: "dark",
     icon: <IconDark height={24} width={24} />,
-    label: 'Dark',
+    label: "Dark",
   },
   {
-    option: 'system',
+    option: "system",
     icon: <IconDevice height={24} width={24} />,
-    label: 'System',
+    label: "System",
   },
 ];
 
@@ -128,22 +131,16 @@ const ThemeToggle = () => {
       <MenuContainer>
         <CollapsibleContainer ref={menuRef}>
           <MenuItemsContainer>
-            {
-              MenuItems.map(({ option, icon, label }) => (
-                <MenuItem
-                  key={option}
-                  $selected={option === userPreference}
-                  onClick={optionSelectedBuilder(option)}
-                >
-                  <MenuIconContainer>
-                    {icon}
-                  </MenuIconContainer>
-                  <MenuItemLabel>
-                    {label}
-                  </MenuItemLabel>
-                </MenuItem>
-              ))
-            }
+            {MenuItems.map(({ option, icon, label }) => (
+              <MenuItem
+                key={option}
+                $selected={option === userPreference}
+                onClick={optionSelectedBuilder(option)}
+              >
+                <MenuIconContainer>{icon}</MenuIconContainer>
+                <MenuItemLabel>{label}</MenuItemLabel>
+              </MenuItem>
+            ))}
           </MenuItemsContainer>
         </CollapsibleContainer>
       </MenuContainer>

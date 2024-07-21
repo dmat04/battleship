@@ -1,7 +1,7 @@
 export enum NotificationType {
-  Info = 'Info',
-  Warning = 'Warning',
-  Error = 'Error',
+  Info = "Info",
+  Warning = "Warning",
+  Error = "Error",
 }
 
 export interface TransientData {
@@ -20,5 +20,10 @@ export interface SliceState {
   notifications: Notification[];
 }
 
-export type PermanentNotificationArgs = Omit<Notification, 'id' | 'transientInfo'>;
-export type TransientNotificationArgs = PermanentNotificationArgs & { timeoutArg: number };
+export type PermanentNotificationArgs = Omit<
+  Notification,
+  "id" | "transientInfo"
+>;
+export type TransientNotificationArgs = PermanentNotificationArgs & {
+  timeoutArg: number;
+};

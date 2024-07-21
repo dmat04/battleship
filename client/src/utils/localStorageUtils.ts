@@ -1,10 +1,25 @@
-import { LoginResult } from '../__generated__/graphql';
-import { ThemePreference } from '../components/ThemeProvider/ThemePreferenceContext';
-import { isInteger, isString } from './typeUtils';
+import { LoginResult } from "../__generated__/graphql";
+import { ThemePreference } from "../components/ThemeProvider/ThemePreferenceContext";
+import { isString, isObject } from "@battleship/common/utils/typeUtils";
 
-const KEY_AUTH_TOKEN = 'KEY_AUTH_TOKEN';
-const KEY_THEME = 'KEY_THEME';
-const KEY_GAME_HINTS_SEEN = 'KEY_GAME_HINTS_SEEN';
+const KEY_AUTH_TOKEN = "KEY_AUTH_TOKEN";
+const KEY_THEME = "KEY_THEME";
+const KEY_GAME_HINTS_SEEN = "KEY_GAME_HINTS_SEEN";
+
+const isAccessToken = (value: unknown): value is LoginResult => {
+  if (!isObject(value)) return false;
+
+  if (!("username" in value)) return false;
+  if (!isString(value.username)) return false;
+
+  if (!("accessToken" in value)) return false;
+  if (!isString(value.accessToken)) return false;
+
+  if (!("expiresAt" in value)) return false;
+  if (!isString(value.expiresAt)) return false;
+
+  return true;
+};
 
 const saveAccessToken = (loginResult: LoginResult): boolean => {
   try {
@@ -20,7 +35,7 @@ const getAccessToken = (): LoginResult | null => {
   const value = localStorage.getItem(KEY_AUTH_TOKEN);
   if (value === null) return null;
 
-  let parsed = null;
+  let parsed: unknown = null;
   try {
     parsed = JSON.parse(value);
   } catch {
@@ -28,11 +43,10 @@ const getAccessToken = (): LoginResult | null => {
     return null;
   }
 
-  if ('username' in parsed && isString(parsed.username)
-    && 'accessToken' in parsed && isString(parsed.accessToken)
-    && 'expiresAt' in parsed && isInteger(parsed.expiresAt)
-  ) {
-    const expiresAt = Number.parseInt(parsed.expiresAt, 10);
+  if (isAccessToken(parsed)) {
+    const expiresAt = Number.parseInt(parsed.expiresAt, 10) || 0;
+    if (Number.isNaN(expiresAt)) return null;
+
     const now = Date.now();
     const left = expiresAt - now;
 
@@ -56,16 +70,18 @@ const saveThemePreference = (theme: ThemePreference) => {
 
 const getThemePreference = (): ThemePreference | undefined => {
   const value = localStorage.getItem(KEY_THEME);
-  if (value === 'light' || value === 'dark' || value === 'system') {
+  if (value === "light" || value === "dark" || value === "system") {
     return value;
   }
 
   return undefined;
 };
 
-const hasSeenGameHints = (): boolean => localStorage.getItem(KEY_GAME_HINTS_SEEN) !== null;
+const hasSeenGameHints = (): boolean =>
+  localStorage.getItem(KEY_GAME_HINTS_SEEN) !== null;
 
-const setGameHintsSeen = () => localStorage.setItem(KEY_GAME_HINTS_SEEN, 'true');
+const setGameHintsSeen = () =>
+  localStorage.setItem(KEY_GAME_HINTS_SEEN, "true");
 
 export default {
   saveAccessToken,

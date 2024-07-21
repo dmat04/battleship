@@ -1,14 +1,15 @@
-import styled, { useTheme } from 'styled-components';
-import { useEffect, useMemo } from 'react';
+import styled, { useTheme } from "styled-components";
+import { useEffect, useMemo } from "react";
+import { Controller, Lookup, animated, useTransition } from "@react-spring/web";
+import TurnTimer from "./TurnTimer";
+import type { Owner } from ".";
+import { Ship, PlacedShip } from "../../../../__generated__/graphql";
 import {
-  Controller, Lookup, animated, useTransition,
-} from '@react-spring/web';
-import TurnTimer from './TurnTimer';
-import type { Owner } from '.';
-import { Ship, PlacedShip } from '../../../../__generated__/graphql';
-import { ScoreState, GameRoomIsReady } from '../../../../store/gameRoomSlice/stateTypes';
-import { useAppSelector } from '../../../../store/store';
-import { Theme } from '../../../assets/themes/themeDefault';
+  ScoreState,
+  GameRoomIsReady,
+} from "../../../../store/gameRoomSlice/stateTypes";
+import { useAppSelector } from "../../../../store/store";
+import { Theme } from "../../../assets/themes/themeDefault";
 
 export type ShipScoreItem = Ship & { sunken: boolean };
 
@@ -21,7 +22,7 @@ const Container = styled.div<{ $owner: Owner }>`
     "score";
   gap: 1em;
   grid-template-rows: 0.5rem 0.5fr 1fr;
-  justify-items: ${(props) => (props.$owner === 'player' ? 'end' : 'start')};
+  justify-items: ${(props) => (props.$owner === "player" ? "end" : "start")};
 
   @media (max-width: 60em) {
     gap: 0.5em;
@@ -43,7 +44,8 @@ const PlayerName = styled.p<{ $owner: Owner }>`
 const PlayerScoreContainer = styled.div<{ $owner: Owner }>`
   grid-area: score;
   display: flex;
-  flex-direction: ${(props) => (props.$owner === 'player' ? 'row' : 'row-reverse')};
+  flex-direction: ${(props) =>
+    props.$owner === "player" ? "row" : "row-reverse"};
   gap: 0.33em;
 
   @media (max-width: 60em) {
@@ -51,7 +53,10 @@ const PlayerScoreContainer = styled.div<{ $owner: Owner }>`
   }
 `;
 
-const ShipIndicator = styled(animated.div) <{ $ship: ShipScoreItem, theme: Theme }>`
+const ShipIndicator = styled(animated.div)<{
+  $ship: ShipScoreItem;
+  theme: Theme;
+}>`
   width: 1em;
   height: ${(props) => `${props.$ship.size}em`};
 
@@ -61,10 +66,7 @@ const ShipIndicator = styled(animated.div) <{ $ship: ShipScoreItem, theme: Theme
   }
 `;
 
-const mapScoreItems = (
-  availableShips: Ship[],
-  sunkenShips: PlacedShip[],
-) => {
+const mapScoreItems = (availableShips: Ship[], sunkenShips: PlacedShip[]) => {
   const score: ShipScoreItem[] = availableShips
     .map((ship) => ({ ...ship, sunken: false }))
     .sort((a, b) => a.size - b.size);
@@ -80,9 +82,7 @@ const mapScoreItems = (
 };
 
 const getScoreItemStyle = (item: ShipScoreItem, theme: Theme) => ({
-  background: item.sunken
-    ? theme.colors.scoreRed
-    : theme.colors.scoreGreen,
+  background: item.sunken ? theme.colors.scoreRed : theme.colors.scoreGreen,
 });
 
 export interface Props {
@@ -102,15 +102,12 @@ const PlayerScorecard = ({ owner, username }: Props) => {
   };
 
   if (GameRoomIsReady(gameRoom)) {
-    score = owner === 'player'
-      ? gameRoom.playerScore
-      : gameRoom.opponentScore;
+    score = owner === "player" ? gameRoom.playerScore : gameRoom.opponentScore;
   }
 
   const { gameSettings, currentPlayer } = gameRoom;
-  const ownerName = owner === 'player'
-    ? gameRoom.playerName
-    : gameRoom.opponentName;
+  const ownerName =
+    owner === "player" ? gameRoom.playerName : gameRoom.opponentName;
 
   const scoreItems: ShipScoreItem[] = useMemo(() => {
     if (gameSettings?.availableShips) {
@@ -123,7 +120,8 @@ const PlayerScorecard = ({ owner, username }: Props) => {
   const [animatedScoreItems, transitionApi] = useTransition<ShipScoreItem, any>(
     scoreItems,
     () => ({
-      keys: (item: ShipScoreItem) => `${item.shipID}-${item.sunken ? 'dead' : 'alive'}`,
+      keys: (item: ShipScoreItem) =>
+        `${item.shipID}-${item.sunken ? "dead" : "alive"}`,
       from: (item: ShipScoreItem) => getScoreItemStyle(item, theme),
       enter: (item: ShipScoreItem) => getScoreItemStyle(item, theme),
     }),
@@ -131,10 +129,10 @@ const PlayerScorecard = ({ owner, username }: Props) => {
   );
 
   useEffect(() => {
-    transitionApi.start((
-      _: number,
-      transitionItem: Controller<Lookup<ShipScoreItem>>,
-    ) => getScoreItemStyle(transitionItem.item, theme));
+    transitionApi.start(
+      (_: number, transitionItem: Controller<Lookup<ShipScoreItem>>) =>
+        getScoreItemStyle(transitionItem.item, theme),
+    );
   }, [theme, scoreItems]);
 
   if (!gameSettings) return null;
@@ -143,20 +141,14 @@ const PlayerScorecard = ({ owner, username }: Props) => {
 
   return (
     <Container $owner={owner}>
-      {
-        active && <TurnTimer owner={owner} />
-      }
+      {active && <TurnTimer owner={owner} />}
 
-      <PlayerName $owner={owner}>
-        {username}
-      </PlayerName>
+      <PlayerName $owner={owner}>{username}</PlayerName>
 
       <PlayerScoreContainer $owner={owner}>
-        {
-          animatedScoreItems(
-            (style, item) => <ShipIndicator style={style} $ship={item} />,
-          )
-        }
+        {animatedScoreItems((style, item) => (
+          <ShipIndicator style={style} $ship={item} />
+        ))}
       </PlayerScoreContainer>
     </Container>
   );

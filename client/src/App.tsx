@@ -1,22 +1,20 @@
-import {
-  BrowserRouter, Navigate, Route, Routes,
-} from 'react-router-dom';
-import styled from 'styled-components';
-import UserMenu from './components/UserMenu';
-import GameRoomMenu from './components/GameRoomMenu';
-import GameScreen from './components/GameScreen';
-import PlacementScreen from './components/GameScreen/PlacementScreen';
-import ActiveGameScreen from './components/GameScreen/ActiveGameScreen';
-import NotificationOverlay from './components/NotificationOverlay';
-import Header from './components/Header';
-import ThemeProvider from './components/ThemeProvider';
-import { Theme } from './components/assets/themes/themeDefault';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import styled from "styled-components";
+import UserMenu from "./components/UserMenu";
+import GameRoomMenu from "./components/GameRoomMenu";
+import GameScreen from "./components/GameScreen";
+import PlacementScreen from "./components/GameScreen/PlacementScreen";
+import ActiveGameScreen from "./components/GameScreen/ActiveGameScreen";
+import NotificationOverlay from "./components/NotificationOverlay";
+import Header from "./components/Header";
+import ThemeProvider from "./components/ThemeProvider";
+import { Theme } from "./components/assets/themes/themeDefault";
 
 const ScreenContainer = styled.div`
   display: grid;
   min-height: 100vh;
   grid-template-rows: auto 1fr auto;
-  grid-template-areas: 
+  grid-template-areas:
     "header"
     "content"
     "footer";
