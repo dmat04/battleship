@@ -1,7 +1,7 @@
-import Board, { CellState } from '../../src/game/Board';
-import DefaultSettings from '../../src/game/DefaultSettings';
-import { GameSettings } from '../../src/graphql/types.generated';
-import { validPlacements, invalidPlacements } from './shipPlacementData';
+import Board, { CellState } from "../../src/game/Board";
+import DefaultSettings from "../../src/game/DefaultSettings";
+import { GameSettings } from "@battleship/common/types/__generated__/types.generated";
+import { validPlacements, invalidPlacements } from "./shipPlacementData";
 
 const gameSettings: GameSettings[] = [
   DefaultSettings,
@@ -9,9 +9,9 @@ const gameSettings: GameSettings[] = [
   { ...DefaultSettings, boardHeight: 16, boardWidth: 8 },
 ];
 
-describe('Board', () => {
-  test.each(gameSettings)('Constructor creates an empty board', (setting) => {
-    const playerBoards = (new Board(setting)).getPlayerBoardCopies();
+describe("Board", () => {
+  test.each(gameSettings)("Constructor creates an empty board", (setting) => {
+    const playerBoards = new Board(setting).getPlayerBoardCopies();
 
     playerBoards.forEach((board) => {
       expect(board).toHaveLength(setting.boardHeight);
@@ -25,7 +25,7 @@ describe('Board', () => {
   });
 
   test.each(validPlacements)(
-    'Placing a valid configuration of ships populates the correct cells',
+    "Placing a valid configuration of ships populates the correct cells",
     ({ populatedCells, placements }) => {
       const gameBoard = new Board(DefaultSettings);
 
@@ -39,7 +39,8 @@ describe('Board', () => {
         board.forEach((row) => {
           row.forEach((cell) => {
             expect([CellState.Empty, CellState.Populated]).toContain(cell);
-            if (cell === CellState.Populated) populatedCellCount += 1;
+            if (cell === (CellState.Populated as number))
+              populatedCellCount += 1;
           });
         });
 
@@ -49,14 +50,12 @@ describe('Board', () => {
   );
 
   test.each(invalidPlacements)(
-    'Placing an invalid configuration of ships throws an error',
+    "Placing an invalid configuration of ships throws an error",
     ({ placements }) => {
       const gameBoard = new Board(DefaultSettings);
 
-      expect(() => gameBoard.placePlayer1Ships(placements))
-        .toThrow();
-      expect(() => gameBoard.placePlayer2Ships(placements))
-        .toThrow();
+      expect(() => gameBoard.placePlayer1Ships(placements)).toThrow();
+      expect(() => gameBoard.placePlayer2Ships(placements)).toThrow();
     },
   );
 });
