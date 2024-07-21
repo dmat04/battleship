@@ -1,6 +1,6 @@
-import { isInteger } from 'lodash';
-import { assertNever } from '../utils/typeUtils';
-import { ClientMessageCode, ClientMessage, ShootMessage } from './MessageTypes';
+import { isInteger } from "lodash";
+import { assertNever } from "../utils/typeUtils";
+import { ClientMessageCode, ClientMessage, ShootMessage } from "./MessageTypes";
 
 const isShootMessage = (message: object): message is ShootMessage => {
   const typed = message as ShootMessage;
@@ -25,11 +25,11 @@ const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
     return undefined;
   }
 
-  if (typeof message !== 'object') {
+  if (typeof message !== "object") {
     return undefined;
   }
 
-  if (!('code' in message)) {
+  if (!("code" in message)) {
     return undefined;
   }
 
@@ -40,9 +40,12 @@ const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
   const code: ClientMessageCode = message.code as ClientMessageCode;
 
   switch (code) {
-    case ClientMessageCode.Shoot: return isShootMessage(message) ? message : undefined;
-    case ClientMessageCode.RoomStatusRequest: return { code };
-    default: return assertNever(code);
+    case ClientMessageCode.Shoot:
+      return isShootMessage(message) ? message : undefined;
+    case ClientMessageCode.RoomStatusRequest:
+      return { code };
+    default:
+      return assertNever(code);
   }
 };
 
