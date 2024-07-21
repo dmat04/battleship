@@ -6,5 +6,3 @@ node_modules
 /test/coverage
 .env.production
 .env.development
-
-**/__generated__/*

@@ -1,4 +1,4 @@
-import type { RoomJoinedResultResolvers } from "./../__generated__/resolverTypes.generated";
+import type { RoomJoinedResultResolvers } from "@battleship/common/types/__generated__/types.generated";
 export const RoomJoinedResult: RoomJoinedResultResolvers = {
   /* Implement RoomJoinedResult resolver logic here */
 };

@@ -1,4 +1,4 @@
-import { gql } from '../__generated__/gql';
+import { gql } from "@apollo/client";
 
 export const GUEST_LOGIN = gql(`
   mutation guestLogin($username: String) {

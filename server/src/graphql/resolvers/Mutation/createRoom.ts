@@ -1,7 +1,7 @@
 import { assertAuthorized } from "@battleship/common/utils/ApolloContext";
 import AuthService from "../../../services/AuthService";
 import GameService from "../../../services/GameService";
-import type { MutationResolvers } from "./../../__generated__/resolverTypes.generated";
+import type { MutationResolvers } from "@battleship/common/types/__generated__/types.generated";
 
 export const createRoom: NonNullable<MutationResolvers["createRoom"]> = async (
   _,
