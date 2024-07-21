@@ -15,12 +15,16 @@ const config: CodegenConfig = {
       plugins: [
         {
           add: {
-            content: `import * as Types from '@battleship/common/types/__generated__/types.generated';`,
+            content: [
+              `import * as Types from "@battleship/common/types/__generated__/types.generated";`,
+              `import type { ApolloContext } from "@battleship/common/utils/ApolloContext";`
+            ],
           },
         },
         {
           "typescript-resolvers": {
             namespacedImportName: "Types",
+            contextType: "ApolloContext",
           },
         },
       ],
