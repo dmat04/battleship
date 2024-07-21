@@ -3,7 +3,9 @@ class EntityNotFoundError extends Error {
     readonly entityType: string,
     readonly entityIdentifier: string,
   ) {
-    super(`Entity of type ${entityType} with identifier '${entityIdentifier}' wasn't found.`);
+    super(
+      `Entity of type ${entityType} with identifier '${entityIdentifier}' wasn't found.`,
+    );
   }
 }
 
