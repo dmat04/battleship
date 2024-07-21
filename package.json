@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "lint:client": "eslint client/",
     "format": "prettier . --write",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen --config ./codegen/config.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",
@@ -31,12 +31,14 @@
     "@types/lodash": "^4.17.7",
     "@types/mongoose-unique-validator": "^1.0.9",
     "@typescript-eslint/parser": "^7.16.1",
+    "del-cli": "^5.1.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-react": "^7.34.4",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
+    "replace-in-file": "^8.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.1"
