@@ -1,28 +1,37 @@
 /* eslint-disable max-len */
 /* eslint-disable prefer-destructuring */
 import dotenv from "dotenv";
-import { isInteger, isString } from "@battleship/common/utils/typeUtils";
+import {
+  isParsableAsInt,
+  isString,
+} from "@battleship/common/utils/typeUtils.js";
 
 dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 
 // Assert that the needed environment variables are present and
 // of the right types
-if (!isInteger(process.env.GUEST_LIFETIME_SECONDS)) {
+if (
+  !isString(process.env.GUEST_LIFETIME_SECONDS) ||
+  !isParsableAsInt(process.env.GUEST_LIFETIME_SECONDS)
+) {
   throw new Error(`Server configuration error: environment var 
   GUEST_LIFETIME_SECONDS missing or invalid`);
 }
 
-if (!isInteger(process.env.WS_AUTH_TICKET_LIFETIME_SECONDS)) {
+if (
+  !isString(process.env.WS_AUTH_TICKET_LIFETIME_SECONDS) ||
+  !isParsableAsInt(process.env.WS_AUTH_TICKET_LIFETIME_SECONDS)
+) {
   throw new Error(`Server configuration error: environment var 
   WS_AUTH_TICKET_LIFETIME_SECONDS missing or invalid`);
 }
 
-if (!isInteger(process.env.PORT)) {
+if (!isString(process.env.PORT) || !isParsableAsInt(process.env.PORT)) {
   throw new Error(`Server configuration error: environment var 
   PORT missing or invalid`);
 }
 
-if (!isInteger(process.env.WS_PORT)) {
+if (!isString(process.env.WS_PORT) || !isParsableAsInt(process.env.WS_PORT)) {
   throw new Error(`Server configuration error: environment var 
   WS_PORT missing or invalid`);
 }
@@ -37,7 +46,10 @@ if (!isString(process.env.MONGODB_URI)) {
   MONGODB_URI missing or invalid`);
 }
 
-if (!isInteger(process.env.PWD_HASH_SALT_ROUNDS)) {
+if (
+  !isString(process.env.PWD_HASH_SALT_ROUNDS) ||
+  !isParsableAsInt(process.env.PWD_HASH_SALT_ROUNDS)
+) {
   throw new Error(`Server configuration error: environment var 
   PWD_HASH_SALT_ROUNDS missing or invalid`);
 }
