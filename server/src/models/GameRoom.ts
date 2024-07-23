@@ -1,8 +1,8 @@
 import { WebSocket } from "uWebSockets.js";
-import type { User } from "./User";
-import type { WSData } from "./WSData";
-import Game from "../game/Game";
-import { ShipPlacementInput, GameSettings } from "@battleship/common/types/__generated__/types.generated";
+import type { User } from "./User.js";
+import type { WSData } from "./WSData.js";
+import Game from "../game/Game.js";
+import { ShipPlacementInput, GameSettings } from "@battleship/common/types/__generated__/types.generated.js";
 
 export interface PlayerData {
   readonly user: User;

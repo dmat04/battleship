@@ -1,7 +1,7 @@
 import {
   ShipOrientation,
   ShipPlacementInput,
-} from "@battleship/common/types/__generated__/types.generated";
+} from "@battleship/common/types/__generated__/types.generated.js";
 
 
 interface PlacementTestData {

@@ -2,11 +2,11 @@
 import {
   GameSettings,
   ShipPlacementInput,
-} from "@battleship/common/types/__generated__/types.generated";
-import { CellHitResult } from "@battleship/common/types/GameTypes";
-import GameplayError from "./GameplayError";
-import DefaultSettings from "./DefaultSettings";
-import Board, { Player } from "./Board";
+} from "@battleship/common/types/__generated__/types.generated.js";
+import { CellHitResult } from "@battleship/common/types/GameTypes.js";
+import GameplayError from "./GameplayError.js";
+import DefaultSettings from "./DefaultSettings.js";
+import Board, { Player } from "./Board.js";
 
 export enum GameState {
   Created = "Created",

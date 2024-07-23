@@ -1,10 +1,10 @@
 import { WebSocket, WebSocketBehavior } from "uWebSockets.js";
-import AuthService, { WSAuthTicket } from "../services/AuthService";
-import { WSState, type WSData } from "../models/WSData";
-import { assertNever } from "@battleship/common/utils/typeUtils";
-import MessageParser from "@battleship/common/messages/MessageParser";
-import { ErrorMessage, ServerMessageCode } from "@battleship/common/messages/MessageTypes";
-import GameService from "../services/GameService";
+import AuthService, { WSAuthTicket } from "../services/AuthService.js";
+import { WSState, type WSData } from "../models/WSData.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import MessageParser from "@battleship/common/messages/MessageParser.js";
+import { ErrorMessage, ServerMessageCode } from "@battleship/common/messages/MessageTypes.js";
+import GameService from "../services/GameService.js";
 
 const messageDecoder = new TextDecoder();
 

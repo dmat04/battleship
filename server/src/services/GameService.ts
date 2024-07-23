@@ -1,23 +1,23 @@
 import { randomUUID } from "crypto";
 import { WebSocket } from "uWebSockets.js";
-import AuthService from "./AuthService";
-import DefaultSettings from "../game/DefaultSettings";
-import ValidationError from "./errors/ValidationError";
-import EntityNotFoundError from "./errors/EntityNotFoundError";
+import AuthService from "./AuthService.js";
+import DefaultSettings from "../game/DefaultSettings.js";
+import ValidationError from "./errors/ValidationError.js";
+import EntityNotFoundError from "./errors/EntityNotFoundError.js";
 import type {
   ActiveGameRoom,
   ActivePlayerData,
   GameRoom,
   PlayerData,
-} from "../models/GameRoom";
-import type { User } from "../models/User";
-import { WSData } from "../models/WSData";
-import Board from "../game/Board";
+} from "../models/GameRoom.js";
+import type { User } from "../models/User.js";
+import { WSData } from "../models/WSData.js";
+import Board from "../game/Board.js";
 import {
   getPlayerData,
   gameRoomIsActive,
   getActivePlayerData,
-} from "../models/GameRoom";
+} from "../models/GameRoom.js";
 import {
   ClientMessage,
   ClientMessageCode,
@@ -29,7 +29,7 @@ import {
   RoomStatusResponseMessage,
   ServerMessageCode,
   ShootMessage,
-} from "@battleship/common/messages/MessageTypes";
+} from "@battleship/common/messages/MessageTypes.js";
 import {
   GameRoomStatus,
   GameSettings,
@@ -37,11 +37,11 @@ import {
   RoomJoinedResult,
   ShipPlacementInput,
   ShipsPlacedResult,
-} from "@battleship/common/types/__generated__/types.generated";
-import { CellHitResult } from "@battleship/common/types/GameTypes";
-import { assertNever } from "@battleship/common/utils/typeUtils";
-import Game, { GameState } from "../game/Game";
-import GameplayError from "../game/GameplayError";
+} from "@battleship/common/types/__generated__/types.generated.js";
+import { CellHitResult } from "@battleship/common/types/GameTypes.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import Game, { GameState } from "../game/Game.js";
+import GameplayError from "../game/GameplayError.js";
 
 /**
  * Registry of open game rooms, indexed by game Id's

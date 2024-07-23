@@ -1,7 +1,7 @@
-import Board, { CellState } from "../../src/game/Board";
-import DefaultSettings from "../../src/game/DefaultSettings";
-import { GameSettings } from "@battleship/common/types/__generated__/types.generated";
-import { validPlacements, invalidPlacements } from "./shipPlacementData";
+import Board, { CellState } from "../../src/game/Board.js";
+import DefaultSettings from "../../src/game/DefaultSettings.js";
+import { GameSettings } from "@battleship/common/types/__generated__/types.generated.js";
+import { validPlacements, invalidPlacements } from "./shipPlacementData.js";
 
 const gameSettings: GameSettings[] = [
   DefaultSettings,

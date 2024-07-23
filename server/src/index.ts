@@ -5,10 +5,10 @@ import mongoose from "mongoose";
 import http from "http";
 import cors from "cors";
 
-import config from "./utils/config";
-import { contextFn } from "@battleship/common/utils/ApolloContext";
-import createApolloServer from "./middleware/ApolloMiddleware";
-import WSBehaviour from "./ws/GameServiceWSBehaviour";
+import config from "./utils/config.js";
+import { contextFn } from "@battleship/common/utils/ApolloContext.js";
+import createApolloServer from "./middleware/ApolloMiddleware.js";
+import WSBehaviour from "./ws/GameServiceWSBehaviour.js";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -30,8 +30,8 @@ const start = async () => {
   try {
     await mongoose.connect(config.MONGODB_URI);
     console.log("Connected to MongoDB");
-  } catch {
-    console.log("Error connecting to MongoDB");
+  } catch (error) {
+    console.log("Error connecting to MongoDB", error);
   }
 
   await apolloServer.start();

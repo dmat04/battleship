@@ -1,4 +1,4 @@
-import { GameSettings, ShipClassName } from "@battleship/common/types/__generated__/types.generated";
+import { GameSettings, ShipClassName } from "@battleship/common/types/__generated__/types.generated.js";
 
 const DefaultSettings: GameSettings = {
   boardWidth: 10,

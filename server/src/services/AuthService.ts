@@ -1,17 +1,20 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { add } from "date-fns";
 import { Error, Error as MongooseError } from "mongoose";
 
-import config from "../utils/config";
-import ValidationError from "./errors/ValidationError";
-import EntityNotFoundError from "./errors/EntityNotFoundError";
-import AuthenticationError from "./errors/AuthenticationError";
-import UserDbModel from "./dbModels/UserDbModel";
-import GuestUserDbModel from "./dbModels/GuestUserDbModel";
-import RegisteredUserDbModel from "./dbModels/RegisteredUserDbModel";
-import type { User } from "../models/User";
-import { UsernameQueryResult, LoginResult } from "@battleship/common/types/__generated__/types.generated";
+import config from "../utils/config.js";
+import ValidationError from "./errors/ValidationError.js";
+import EntityNotFoundError from "./errors/EntityNotFoundError.js";
+import AuthenticationError from "./errors/AuthenticationError.js";
+import UserDbModel from "./dbModels/UserDbModel.js";
+import GuestUserDbModel from "./dbModels/GuestUserDbModel.js";
+import RegisteredUserDbModel from "./dbModels/RegisteredUserDbModel.js";
+import type { User } from "../models/User.js";
+import {
+  UsernameQueryResult,
+  LoginResult,
+} from "@battleship/common/types/__generated__/types.generated.js";
 
 interface AccessToken {
   token: string;
@@ -65,7 +68,11 @@ const encodeToken = (username: string): AccessToken => {
  */
 const decodeToken = (token: string): string => {
   const payload = jwt.verify(token, config.JWT_SECRET);
-  if (typeof payload === "object" && "username" in payload) {
+  if (
+    typeof payload === "object" &&
+    "username" in payload &&
+    typeof payload.username === "string"
+  ) {
     return payload.username;
   }
 
@@ -101,7 +108,9 @@ const decodeWSToken = (code: string): WSAuthTicket | false => {
     if (
       typeof payload === "object" &&
       "username" in payload &&
-      "roomID" in payload
+      "roomID" in payload &&
+      typeof payload.username === "string" &&
+      typeof payload.roomID === "string"
     ) {
       return {
         username: payload.username,
@@ -272,9 +281,9 @@ const getUserFromToken = async (token: string): Promise<User> => {
     throw new EntityNotFoundError("User", username);
   } catch (error) {
     // throw appropriate service errors
-    if (error instanceof TokenExpiredError) {
+    if (error instanceof jwt.TokenExpiredError) {
       throw new AuthenticationError("token expired");
-    } else if (error instanceof JsonWebTokenError) {
+    } else if (error instanceof jwt.JsonWebTokenError) {
       throw new AuthenticationError("token invalid");
     } else {
       throw error;

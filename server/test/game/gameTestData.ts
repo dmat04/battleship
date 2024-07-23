@@ -1,5 +1,4 @@
-import { ShipOrientation, ShipPlacementInput } from "@battleship/common/types/__generated__/types.generated";
-
+import { ShipOrientation, ShipPlacementInput } from "@battleship/common/types/__generated__/types.generated.js";
 
 export const p1Placements: ShipPlacementInput[] = [
   {

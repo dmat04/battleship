@@ -1,13 +1,13 @@
-import Game, { GameState } from "../../src/game/Game";
-import DefaultSettings from "../../src/game/DefaultSettings";
+import Game, { GameState } from "../../src/game/Game.js";
+import DefaultSettings from "../../src/game/DefaultSettings.js";
 import {
   p1Placements,
   p2Placements,
   firstPlayer,
   secondPlayer,
   moves,
-} from "./gameTestData";
-import { CellHitResult } from "@battleship/common/types/GameTypes";
+} from "./gameTestData.js";
+import { CellHitResult } from "@battleship/common/types/GameTypes.js";
 
 
 let gameSubject: Game;

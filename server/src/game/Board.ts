@@ -1,14 +1,14 @@
-import { shuffle } from "lodash";
-import { assertNever } from "@battleship/common/utils/typeUtils";
-import GameplayError from "./GameplayError";
-import DefaultSettings from "./DefaultSettings";
+import * as lodash from "lodash";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import GameplayError from "./GameplayError.js";
+import DefaultSettings from "./DefaultSettings.js";
 import {
   PlacedShip,
   GameSettings,
   ShipPlacementInput,
   ShipOrientation,
-} from "@battleship/common/types/__generated__/types.generated";
-import type { CellHitResult } from '@battleship/common/types/GameTypes';
+} from "@battleship/common/types/__generated__/types.generated.js";
+import type { CellHitResult } from '@battleship/common/types/GameTypes.js';
 
 export enum CellState {
   Empty = 1,
@@ -635,7 +635,7 @@ class Board {
     }
 
     // Select a random row
-    const rowIndex = shuffle(hittableRows)[0];
+    const rowIndex = lodash.shuffle(hittableRows)[0];
     const row = targetBoard[rowIndex];
 
     // Within the selected row,
@@ -654,7 +654,7 @@ class Board {
     }
 
     // Select a random column
-    const columnIndex = shuffle(hittableColumns)[0];
+    const columnIndex = lodash.shuffle(hittableColumns)[0];
 
     // Perform the hit on the selected row and column
     return this.hitCell(player, columnIndex, rowIndex);

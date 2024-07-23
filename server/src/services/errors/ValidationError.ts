@@ -7,7 +7,8 @@ export interface ErrorDetails {
   message: string;
 }
 
-export const objectIsErrorDetails = (object: any): object is ErrorDetails =>
+export const objectIsErrorDetails = (object: unknown): object is ErrorDetails =>
+  object !== null &&
   typeof object === "object" &&
   "property" in object &&
   "errorKind" in object &&

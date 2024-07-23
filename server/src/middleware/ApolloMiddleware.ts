@@ -2,10 +2,10 @@ import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import http from "http";
 
-import ApolloErrorFormatter from "./ApolloErrorFormatter";
-import type { ApolloContext } from "@battleship/common/utils/ApolloContext";
-import { typeDefs } from "../graphql/__generated__/typeDefs.generated";
-import { resolvers } from "../graphql/__generated__/resolvers.generated";
+import ApolloErrorFormatter from "./ApolloErrorFormatter.js";
+import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";
+import { typeDefs } from "../graphql/__generated__/typeDefs.generated.js";
+import { resolvers } from "../graphql/__generated__/resolvers.generated.js";
 
 const createApolloServer = (httpServer: http.Server): ApolloServer<ApolloContext> => {
   const server = new ApolloServer<ApolloContext>({

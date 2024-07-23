@@ -1,10 +1,10 @@
 import { GraphQLFormattedError } from "graphql";
 import { Error as MongooseError } from "mongoose";
-import EntityNotFoundError from "../services/errors/EntityNotFoundError";
-import AuthenticationError from "../services/errors/AuthenticationError";
+import EntityNotFoundError from "../services/errors/EntityNotFoundError.js";
+import AuthenticationError from "../services/errors/AuthenticationError.js";
 import ValidationError, {
   objectIsErrorDetails,
-} from "../services/errors/ValidationError";
+} from "../services/errors/ValidationError.js";
 
 enum ErrorCodes {
   Validation = "VALIDATION_FAILED",

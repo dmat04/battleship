@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import type { User } from "../../models/User";
+import type { User } from "../../models/User.js";
 
 /**
  * Mongoose Model for the generic User type is constructed here.
