@@ -1,23 +1,23 @@
 /* This file was automatically generated. DO NOT UPDATE MANUALLY. */
-import type { Resolvers } from "@battleship/common/types/__generated__/types.generated";
-import { checkUsername as Query_checkUsername } from "./../resolvers/Query/checkUsername";
-import { gameSettings as Query_gameSettings } from "./../resolvers/Query/gameSettings";
-import { ping as Query_ping } from "./../resolvers/Query/ping";
-import { createRoom as Mutation_createRoom } from "./../resolvers/Mutation/createRoom";
-import { guestLogin as Mutation_guestLogin } from "./../resolvers/Mutation/guestLogin";
-import { joinRoom as Mutation_joinRoom } from "./../resolvers/Mutation/joinRoom";
-import { placeShips as Mutation_placeShips } from "./../resolvers/Mutation/placeShips";
-import { registerUser as Mutation_registerUser } from "./../resolvers/Mutation/registerUser";
-import { registeredLogin as Mutation_registeredLogin } from "./../resolvers/Mutation/registeredLogin";
-import { GameRoomStatus } from "./../resolvers/GameRoomStatus";
-import { GameSettings } from "./../resolvers/GameSettings";
-import { LoginResult } from "./../resolvers/LoginResult";
-import { PlacedShip } from "./../resolvers/PlacedShip";
-import { RoomCreatedResult } from "./../resolvers/RoomCreatedResult";
-import { RoomJoinedResult } from "./../resolvers/RoomJoinedResult";
-import { Ship } from "./../resolvers/Ship";
-import { ShipsPlacedResult } from "./../resolvers/ShipsPlacedResult";
-import { UsernameQueryResult } from "./../resolvers/UsernameQueryResult";
+import type { Resolvers } from "@battleship/common/types/__generated__/types.generated.js";
+import { checkUsername as Query_checkUsername } from "./../resolvers/Query/checkUsername.js";
+import { gameSettings as Query_gameSettings } from "./../resolvers/Query/gameSettings.js";
+import { ping as Query_ping } from "./../resolvers/Query/ping.js";
+import { createRoom as Mutation_createRoom } from "./../resolvers/Mutation/createRoom.js";
+import { guestLogin as Mutation_guestLogin } from "./../resolvers/Mutation/guestLogin.js";
+import { joinRoom as Mutation_joinRoom } from "./../resolvers/Mutation/joinRoom.js";
+import { placeShips as Mutation_placeShips } from "./../resolvers/Mutation/placeShips.js";
+import { registerUser as Mutation_registerUser } from "./../resolvers/Mutation/registerUser.js";
+import { registeredLogin as Mutation_registeredLogin } from "./../resolvers/Mutation/registeredLogin.js";
+import { GameRoomStatus } from "./../resolvers/GameRoomStatus.js";
+import { GameSettings } from "./../resolvers/GameSettings.js";
+import { LoginResult } from "./../resolvers/LoginResult.js";
+import { PlacedShip } from "./../resolvers/PlacedShip.js";
+import { RoomCreatedResult } from "./../resolvers/RoomCreatedResult.js";
+import { RoomJoinedResult } from "./../resolvers/RoomJoinedResult.js";
+import { Ship } from "./../resolvers/Ship.js";
+import { ShipsPlacedResult } from "./../resolvers/ShipsPlacedResult.js";
+import { UsernameQueryResult } from "./../resolvers/UsernameQueryResult.js";
 export const resolvers: Resolvers = {
   Query: {
     checkUsername: Query_checkUsername,

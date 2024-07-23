@@ -17,7 +17,7 @@ const config: CodegenConfig = {
         {
           add: {
             content: [
-              `import type { ApolloContext } from "@battleship/common/utils/ApolloContext";`
+              `import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";`
             ]
           },
         },
@@ -61,11 +61,12 @@ const config: CodegenConfig = {
       resolverTypesPath: "./resolverTypes.generated.ts",
       resolverRelativeTargetDir: "../resolvers",
       resolverMainFileMode: "merged",
+      emitLegacyCommonJSImports: false,
       add: {
         './resolverTypes.generated.ts': {
           content: [
-            `import * as Types from "@battleship/common/types/__generated__/types.generated";`,
-            `import type { ApolloContext } from "@battleship/common/utils/ApolloContext";`
+            `import * as Types from "@battleship/common/types/__generated__/types.generated.js";`,
+            `import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";`
           ],
         }
       },

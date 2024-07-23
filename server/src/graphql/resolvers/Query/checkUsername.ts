@@ -1,5 +1,5 @@
-import AuthService from "../../../services/AuthService";
-import type { QueryResolvers } from "@battleship/common/types/__generated__/types.generated";
+import AuthService from "../../../services/AuthService.js";
+import type { QueryResolvers } from "@battleship/common/types/__generated__/types.generated.js";
 
 export const checkUsername: NonNullable<
   QueryResolvers["checkUsername"]

@@ -1,5 +1,5 @@
-import AuthService from "../../../services/AuthService";
-import type { MutationResolvers } from "@battleship/common/types/__generated__/types.generated";
+import AuthService from "../../../services/AuthService.js";
+import type { MutationResolvers } from "@battleship/common/types/__generated__/types.generated.js";
 
 export const guestLogin: NonNullable<MutationResolvers["guestLogin"]> = async (
   _,

@@ -1,4 +1,4 @@
-import type { ApolloContext } from "@battleship/common/utils/ApolloContext";
+import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
