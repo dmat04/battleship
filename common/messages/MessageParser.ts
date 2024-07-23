@@ -17,7 +17,7 @@ const isShootMessage = (message: object): message is ShootMessage => {
 };
 
 const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
-  let message = null;
+  let message: unknown = null;
 
   try {
     message = JSON.parse(jsonMessage);
@@ -33,7 +33,7 @@ const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
     return undefined;
   }
 
-  if (!Object.values(ClientMessageCode).includes(message.code)) {
+  if (!Object.values(ClientMessageCode).includes(message.code as ClientMessageCode)) {
     return undefined;
   }
 

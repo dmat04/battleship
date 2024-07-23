@@ -22,12 +22,12 @@ export const contextFn = async (
 ): Promise<ApolloContext> => {
   const { authorization } = args.req.headers;
   if (authorization && authorization.startsWith("Bearer ")) {
-    return {
+    return Promise.resolve({
       authToken: authorization.replace("Bearer ", ""),
-    };
+    });
   }
 
-  return {
+  return Promise.resolve({
     authToken: null,
-  };
+  });
 };
