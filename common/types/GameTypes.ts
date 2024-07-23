@@ -1,4 +1,4 @@
-import type { PlacedShip } from './__generated__/types.generated'
+import type { PlacedShip } from './__generated__/types.generated.js'
 
 export interface CellHitResult {
   x: number,

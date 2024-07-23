@@ -1,11 +1,11 @@
-import { isInteger } from "lodash";
-import { assertNever } from "../utils/typeUtils";
-import { ClientMessageCode, ClientMessage, ShootMessage } from "./MessageTypes";
+import * as lodash from "lodash";
+import { assertNever } from "../utils/typeUtils.js";
+import { ClientMessageCode, ClientMessage, ShootMessage } from "./MessageTypes.js";
 
 const isShootMessage = (message: object): message is ShootMessage => {
   const typed = message as ShootMessage;
 
-  if (!isInteger(typed.x) || !isInteger(typed.y)) {
+  if (!lodash.isInteger(typed.x) || !lodash.isInteger(typed.y)) {
     return false;
   }
 

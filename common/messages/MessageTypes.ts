@@ -1,5 +1,5 @@
-import type { CellHitResult } from '../types/GameTypes' 
-import { GameRoomStatus } from '../types/__generated__/types.generated';
+import type { CellHitResult } from '../types/GameTypes.js' 
+import { GameRoomStatus } from '../types/__generated__/types.generated.js';
 
 export enum ClientMessageCode {
   Shoot = "Shoot",
