@@ -1,26 +1,29 @@
 {
+  "extends": "@tsconfig/recommended",
   "compilerOptions": {
     "incremental": true,
-    "target": "es5",
-    "module": "es6",
-    "moduleResolution": "node",
-    "noEmitOnError": true,
+    "module": "node16",
+    // "moduleResolution": "Node16",
+    // "target": "es2019",
+    // "esModuleInterop": true,
+    "declaration": true,
     "sourceMap": true,
-    "noImplicitAny": true,
-    "jsx": "react-jsx",
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
     "composite": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "@battleship/common/*": ["./common"]
     }
   },
-  "files": [],
-  "references": [
-    { "path": "./common" },
-    { "path": "./server" },
-    { "path": "./client" }
-  ]
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": false
+  }
+  // "files": [],
+  // "references": [
+  //   { "path": "./common" },
+  //   { "path": "./server" },
+  //   { "path": "./client" }
+  // ]
 }
