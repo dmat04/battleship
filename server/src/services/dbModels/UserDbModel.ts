@@ -1,30 +1,9 @@
-import { Schema, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import type { User } from "../../models/User.js";
 
 /**
  * Mongoose Model for the generic User type is constructed here.
  */
-
-/**
- * Mongoose Schema for the generic User, only defines the usename property,
- * which is required, has a min length of 5, and must be unique (which is
- * ensured using the mongoose-unique-validator plugin)
- */
-const userSchema = new Schema<User>({
-  username: {
-    type: String,
-    required: [true, "Username missing"],
-    unique: true,
-    minLength: [5, "Username must be at least 5 characters long"],
-  },
-});
-
-// Apply the mongoose-unique-valiator plugin
-userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
-
-// Build the generic User Model
-const UserDbModel = model<User>("User", userSchema);
 
 /**
  * Method to check if a User document exists with a given username.
@@ -38,5 +17,41 @@ const UserDbModel = model<User>("User", userSchema);
 export const usernameExists = async (username: string): Promise<boolean> => {
   return (await UserDbModel.exists({ username })) !== null;
 };
+
+/**
+ * Generic user model interface - contains only the id and a username, the other two types
+ * of users are created as discriminated Models on the generic user.
+ */
+export interface User {
+  readonly id: string;
+  readonly username: string;
+}
+
+interface UserModel extends Model<User> {
+  usernameExists: typeof usernameExists;
+}
+
+/**
+ * Mongoose Schema for the generic User, only defines the usename property,
+ * which is required, has a min length of 5, and must be unique (which is
+ * ensured using the mongoose-unique-validator plugin)
+ */
+const userSchema = new Schema<User, UserModel>({
+  username: {
+    type: String,
+    required: [true, "Username missing"],
+    unique: true,
+    minLength: [5, "Username must be at least 5 characters long"],
+  },
+});
+
+// Add the usernameExists method as a static method on the userSchema
+userSchema.static('usernameExists', usernameExists)
+
+// Apply the mongoose-unique-valiator plugin
+userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+
+// Build the generic User Model
+const UserDbModel = model<User, UserModel>("User", userSchema);
 
 export default UserDbModel;

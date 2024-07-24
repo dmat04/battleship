@@ -1,34 +1,29 @@
-import { Schema, Model } from "mongoose";
-import UserDbModel, { usernameExists } from "./UserDbModel.js";
-import type { GuestUser } from "../../models/User.js";
+import { Schema } from "mongoose";
+import UserDbModel, { User } from "./UserDbModel.js";
 
 /**
  * Mongoose Model for the GuestUser type is constructed here
  */
 
 /**
- * Interface to extend the GuestUser mongoose Model interface
- * with the usernameExists method
+ * Interface to extend the genereci User interface
+ * with the usernameExists method and the expiresAt field
  */
-interface IGuestUserModel extends Model<GuestUser> {
-  usernameExists(username: string): Promise<boolean>;
+// TODO: take a look at https://mongoosejs.com/docs/typescript/statics-and-methods.html
+export interface GuestUser extends User {
+  readonly expiresAt: Date;
 }
 
 // Define the guest user schema
-const guestSchema = new Schema({
+const guestSchema = new Schema<GuestUser>({
   expiresAt: { type: Date, required: true },
 });
 
-// Add the usernameExists method as a static member to the
-// guest user schema (this will make the method present in the constructed
-// mongoose Model for GuestUser)
-guestSchema.static("usernameExists", usernameExists);
-
 // Compile the GuestUserModel as a discriminated type
 // on the generic User model
-const GuestUserDbModel: IGuestUserModel = UserDbModel.discriminator<
-  GuestUser,
-  IGuestUserModel
->("GuestUser", guestSchema);
+const GuestUserDbModel = UserDbModel.discriminator<GuestUser>(
+  "GuestUser",
+  guestSchema,
+);
 
 export default GuestUserDbModel;
