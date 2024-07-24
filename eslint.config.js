@@ -1,6 +1,5 @@
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
-import pluginJest from "eslint-plugin-jest";
 import pluginReact from "eslint-plugin-react";
 import eslintConfigPrettier from "eslint-config-prettier";
 
@@ -22,11 +21,10 @@ export default tseslint.config(
       },
     },
     plugins: {
-      pluginJest,
       pluginReact,
     },
   },
   {
-    ignores: ["**/*.config.js", "**/build/"],
+    ignores: ["**/*.config.js", "**/*.config.ts", "**/build/"],
   },
 );

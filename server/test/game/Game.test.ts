@@ -1,3 +1,4 @@
+import { describe, beforeEach, expect, test } from 'vitest'
 import Game, { GameState } from "../../src/game/Game.js";
 import DefaultSettings from "../../src/game/DefaultSettings.js";
 import {
