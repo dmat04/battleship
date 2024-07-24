@@ -29,7 +29,7 @@ const ParseMessage = (jsonMessage: string): ClientMessage | undefined => {
     return undefined;
   }
 
-  if (!("code" in message)) {
+  if (!message || !("code" in message)) {
     return undefined;
   }
 

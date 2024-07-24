@@ -14,7 +14,7 @@ enum ErrorCodes {
 
 const ApolloErrorFormatter = (
   formattedError: GraphQLFormattedError,
-  error: Error,
+  error: unknown,
 ): GraphQLFormattedError => {
   const editedError = {
     ...formattedError,
@@ -25,7 +25,7 @@ const ApolloErrorFormatter = (
   };
 
   let originalError = error;
-  if (error instanceof GraphQLError) {
+  if (error instanceof GraphQLError && error.originalError) {
     originalError = error.originalError
   }
 
