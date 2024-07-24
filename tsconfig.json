@@ -3,9 +3,6 @@
   "compilerOptions": {
     "incremental": true,
     "module": "node16",
-    // "moduleResolution": "Node16",
-    // "target": "es2019",
-    // "esModuleInterop": true,
     "declaration": true,
     "sourceMap": true,
     "composite": true,
@@ -13,17 +10,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@battleship/common/*": ["./common"]
+      "@battleship/common/*": ["./common"],
+      "@battleship/server/*": ["./server"],
+      "@battleship/client/*": ["./client"],      
     }
   },
   "ts-node": {
-    "esm": true,
-    "transpileOnly": false
+    "transpileOnly": false,
   }
-  // "files": [],
-  // "references": [
-  //   { "path": "./common" },
-  //   { "path": "./server" },
-  //   { "path": "./client" }
-  // ]
 }

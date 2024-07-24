@@ -1,5 +1,4 @@
 import path from "path";
-import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
 
