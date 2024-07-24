@@ -1,4 +1,4 @@
-import { GraphQLFormattedError } from "graphql";
+import { GraphQLError, GraphQLFormattedError } from "graphql";
 import { Error as MongooseError } from "mongoose";
 import EntityNotFoundError from "../services/errors/EntityNotFoundError.js";
 import AuthenticationError from "../services/errors/AuthenticationError.js";
@@ -14,7 +14,7 @@ enum ErrorCodes {
 
 const ApolloErrorFormatter = (
   formattedError: GraphQLFormattedError,
-  error: any,
+  error: Error,
 ): GraphQLFormattedError => {
   const editedError = {
     ...formattedError,
@@ -24,7 +24,10 @@ const ApolloErrorFormatter = (
     ...formattedError.extensions,
   };
 
-  const originalError = error?.originalError;
+  let originalError = error;
+  if (error instanceof GraphQLError) {
+    originalError = error.originalError
+  }
 
   if (originalError instanceof EntityNotFoundError) {
     editedError.message = `No '${originalError.entityType}' with id=${originalError.entityIdentifier} found`;
@@ -45,7 +48,7 @@ const ApolloErrorFormatter = (
         ([path, mongErr]) => ({
           property: path,
           errorKind: mongErr.kind,
-          value: mongErr.value,
+          value: JSON.stringify(mongErr.value),
           message: mongErr.message,
         }),
       );
