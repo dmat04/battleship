@@ -10,7 +10,7 @@ import type {
   GameRoom,
   PlayerData,
 } from "../models/GameRoom.js";
-import type { User } from "../models/User.js";
+import { User } from "./dbModels/UserDbModel.js";
 import { WSData } from "../models/WSData.js";
 import Board from "../game/Board.js";
 import {

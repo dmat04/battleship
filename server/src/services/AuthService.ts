@@ -10,7 +10,7 @@ import AuthenticationError from "./errors/AuthenticationError.js";
 import UserDbModel from "./dbModels/UserDbModel.js";
 import GuestUserDbModel from "./dbModels/GuestUserDbModel.js";
 import RegisteredUserDbModel from "./dbModels/RegisteredUserDbModel.js";
-import type { User } from "../models/User.js";
+import type { User } from "./dbModels/UserDbModel.js";
 import {
   UsernameQueryResult,
   LoginResult,
@@ -166,7 +166,7 @@ const checkUsername = async (
   }
 
   if (!taken && validationError === undefined) {
-    taken = await GuestUserDbModel.usernameExists(username);
+    taken = await UserDbModel.usernameExists(username);
   }
 
   return {
@@ -191,7 +191,7 @@ const createGuestUserAndToken = async (
 
   if (username) {
     // If a username has been requested, check that it's available
-    if (await GuestUserDbModel.usernameExists(username)) {
+    if (await UserDbModel.usernameExists(username)) {
       throw new ValidationError({
         property: "username",
         errorKind: "unique",
@@ -207,7 +207,7 @@ const createGuestUserAndToken = async (
 
     // ...and also make sure it's available
     // eslint-disable-next-line no-await-in-loop
-    while (await GuestUserDbModel.usernameExists(name)) {
+    while (await UserDbModel.usernameExists(name)) {
       name = generateGuestUsername();
     }
   }
