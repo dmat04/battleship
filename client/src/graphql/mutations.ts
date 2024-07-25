@@ -58,8 +58,10 @@ export const PLACE_SHIPS = gql(`
           size
           type
         }
-        x
-        y
+        position {
+          x
+          y
+        }
       }
     }
   }

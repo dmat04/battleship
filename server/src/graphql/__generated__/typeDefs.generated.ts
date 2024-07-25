@@ -419,6 +419,59 @@ export const typeDefs = {
     },
     {
       kind: "ObjectTypeDefinition",
+      name: { kind: "Name", value: "Coordinate" },
+      interfaces: [],
+      directives: [],
+      fields: [
+        {
+          kind: "FieldDefinition",
+          name: { kind: "Name", value: "x" },
+          arguments: [],
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+          directives: [],
+        },
+        {
+          kind: "FieldDefinition",
+          name: { kind: "Name", value: "y" },
+          arguments: [],
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+          directives: [],
+        },
+      ],
+    },
+    {
+      kind: "InputObjectTypeDefinition",
+      name: { kind: "Name", value: "CoordinateInput" },
+      directives: [],
+      fields: [
+        {
+          kind: "InputValueDefinition",
+          name: { kind: "Name", value: "x" },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+          directives: [],
+        },
+        {
+          kind: "InputValueDefinition",
+          name: { kind: "Name", value: "y" },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+          },
+          directives: [],
+        },
+      ],
+    },
+    {
+      kind: "ObjectTypeDefinition",
       name: { kind: "Name", value: "Ship" },
       interfaces: [],
       directives: [],
@@ -486,19 +539,13 @@ export const typeDefs = {
         },
         {
           kind: "InputValueDefinition",
-          name: { kind: "Name", value: "x" },
+          name: { kind: "Name", value: "position" },
           type: {
             kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-          },
-          directives: [],
-        },
-        {
-          kind: "InputValueDefinition",
-          name: { kind: "Name", value: "y" },
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "CoordinateInput" },
+            },
           },
           directives: [],
         },
@@ -535,21 +582,14 @@ export const typeDefs = {
         },
         {
           kind: "FieldDefinition",
-          name: { kind: "Name", value: "x" },
+          name: { kind: "Name", value: "position" },
           arguments: [],
           type: {
             kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "y" },
-          arguments: [],
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "Coordinate" },
+            },
           },
           directives: [],
         },

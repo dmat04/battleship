@@ -9,6 +9,7 @@ import { joinRoom as Mutation_joinRoom } from "./../resolvers/Mutation/joinRoom.
 import { placeShips as Mutation_placeShips } from "./../resolvers/Mutation/placeShips.js";
 import { registerUser as Mutation_registerUser } from "./../resolvers/Mutation/registerUser.js";
 import { registeredLogin as Mutation_registeredLogin } from "./../resolvers/Mutation/registeredLogin.js";
+import { Coordinate } from "./../resolvers/Coordinate.js";
 import { GameRoomStatus } from "./../resolvers/GameRoomStatus.js";
 import { GameSettings } from "./../resolvers/GameSettings.js";
 import { LoginResult } from "./../resolvers/LoginResult.js";
@@ -33,6 +34,7 @@ export const resolvers: Resolvers = {
     registeredLogin: Mutation_registeredLogin,
   },
 
+  Coordinate: Coordinate,
   GameRoomStatus: GameRoomStatus,
   GameSettings: GameSettings,
   LoginResult: LoginResult,
