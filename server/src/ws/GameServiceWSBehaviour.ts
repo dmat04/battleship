@@ -84,7 +84,7 @@ const handleAuthMessage = (
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
   const { roomID, username } = ws.getUserData();
   const decoded = messageDecoder.decode(message);
-  const parsedMessage = MessageParser.ParseMessage(decoded);
+  const parsedMessage = MessageParser.ParseClientMessage(decoded);
 
   if (!parsedMessage) {
     const response: ErrorMessage = {
