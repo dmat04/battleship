@@ -10,7 +10,6 @@
     "lint": "eslint .",
     "start:dev": "NODE_ENV=development nodemon src/index.ts",
     "build": "tsc",
-    "test": "jest"
   },
   "keywords": [],
   "author": "",
