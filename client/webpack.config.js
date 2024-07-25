@@ -2,11 +2,7 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
 
-// const workDir = path.resolve(fileURLToPath(import.meta.url), '..')
 const outDir = path.resolve(import.meta.dirname, "build/");
-// const tsconfig = path.resolve(workDir, 'tsconfig.json')
-
-console.log(outDir);
 
 export default {
   mode: "development",
@@ -21,11 +17,6 @@ export default {
       template: "./index.html",
       title: "Battleship",
     }),
-    // new ForkTsCheckerPlugin({
-    //   typescript: {
-    //     configFile: './client/tsconfig.json',
-    //   }
-    // }),
     new ForkTsCheckerPlugin({}),
   ],
   output: {
@@ -51,11 +42,9 @@ export default {
             loader: "ts-loader",
             options: {
               transpileOnly: true,
-              // configFile: tsconfig,
             },
           },
         ],
-        // include: /client/,
       },
     ],
   },
