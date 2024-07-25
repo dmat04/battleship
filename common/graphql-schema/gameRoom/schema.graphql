@@ -40,6 +40,16 @@ enum ShipOrientation {
   HORIZONTAL
 }
 
+type Coordinate {
+  x: Int!
+  y: Int!
+}
+
+input CoordinateInput {
+  x: Int!
+  y: Int!
+}
+
 type Ship {
   shipID: ID!
   type: ShipClassName!
@@ -49,15 +59,13 @@ type Ship {
 input ShipPlacementInput {
   shipID: ID!
   orientation: ShipOrientation!
-  x: Int!
-  y: Int!
+  position: CoordinateInput!
 }
 
 type PlacedShip {
   ship: Ship!
   orientation: ShipOrientation!
-  x: Int!
-  y: Int!
+  position: Coordinate!
 }
 
 type GameSettings {
