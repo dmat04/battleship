@@ -31,7 +31,7 @@ export interface ErrorMessage {
   message: string;
 }
 
-interface MoveResultMessageBase extends CellHitResult {
+export interface MoveResultMessageBase extends CellHitResult {
   currentPlayer: string;
 }
 
