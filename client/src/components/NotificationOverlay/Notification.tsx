@@ -1,15 +1,15 @@
 import { animated, useSpring } from "@react-spring/web";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { forwardRef } from "react";
 import {
   Notification as NotificationData,
   NotificationType,
-} from "../../store/notificationSlice/stateTypes";
-import { Theme } from "../assets/themes/themeDefault";
-import { assertNever } from "../../utils/typeUtils";
+} from "../../store/notificationSlice/stateTypes.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
 import CloseIcon from "../assets/icons/ic_close.svg";
-import { useAppDispatch } from "../../store/store";
-import { dismissNotification } from "../../store/notificationSlice";
+import { useAppDispatch } from "../../store/store.js";
+import { dismissNotification } from "../../store/notificationSlice/index.js";
 
 interface ContainerProps {
   theme: Theme;

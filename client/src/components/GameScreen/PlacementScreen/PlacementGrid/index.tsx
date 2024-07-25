@@ -1,14 +1,14 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
-import DraggableShip from "./DraggableShip";
+import DraggableShip from "./DraggableShip.js";
 import PlacementGridContext, {
   IPlacementGridContext,
-} from "../../../../hooks/useShipDrag/PlacementGridContext";
-import { RootState } from "../../../../store/store";
-import GameGrid from "../../../GameGrid";
-import { Theme } from "../../../assets/themes/themeDefault";
-import HintBox from "../HintBox";
+} from "../../../../hooks/useShipDrag/PlacementGridContext.js";
+import { RootState } from "../../../../store/store.js";
+import GameGrid from "../../../GameGrid/index.js";
+import { Theme } from "../../../assets/themes/themeDefault.js";
+import HintBox from "../HintBox.js";
 
 const Container = styled.div<{ theme: Theme }>`
   width: 100%;

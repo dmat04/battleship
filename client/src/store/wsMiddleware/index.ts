@@ -1,18 +1,18 @@
 import { Middleware } from "@reduxjs/toolkit";
-import type { AppDispatch } from "../store";
-import MessageParser from "./MessageParser";
+import type { AppDispatch, RootState } from "../store.js";
+import MessageParser from "@battleship/common/messages/MessageParser.js";
 import {
   ClientMessageCode,
   RoomStatusRequestMessage,
   ServerMessageCode,
-} from "./messageTypes";
+} from "@battleship/common/messages/MessageTypes.js";
 import {
   closeWSConnection,
   connectionOpened,
   messageReceived,
   openWSConnection,
   sendMessage,
-} from "./actions";
+} from "./actions.js";
 
 interface ClientSocket {
   instance: WebSocket;
@@ -31,7 +31,7 @@ const onOpenBuilder = (authCode: string, socket: ClientSocket) => () => {
 
 const onMessageBuilder =
   (dispatch: AppDispatch, socket: ClientSocket) => (event: MessageEvent) => {
-    const message = MessageParser.parseMessage(event.data);
+    const message = MessageParser.ParseServerMessage(event.data);
 
     if (message) {
       if (message.code === ServerMessageCode.AuthenticatedResponse) {
@@ -72,7 +72,7 @@ const createSocket = (
   return socket;
 };
 
-const wsMiddleware: Middleware = ({ dispatch, getState }) => {
+const wsMiddleware: Middleware = ({ dispatch, getState }: {dispatch: AppDispatch, getState: () => RootState}) => {
   let socket: ClientSocket | null = null;
 
   return (next) => (action) => {

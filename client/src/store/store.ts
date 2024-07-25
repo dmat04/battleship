@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import authReducer from "./authSlice";
-import shipPlacementReducer from "./shipPlacementSlice";
-import gameRoomReducer from "./gameRoomSlice";
-import wsMiddleware from "./wsMiddleware";
-import notificationReducer from "./notificationSlice";
-import messageListenerMiddleware from "./messageListenerMiddleware";
+import authReducer from "./authSlice.js";
+import shipPlacementReducer from "./shipPlacementSlice/index.js";
+import gameRoomReducer from "./gameRoomSlice/index.js";
+import wsMiddleware from "./wsMiddleware/index.js";
+import notificationReducer from "./notificationSlice/index.js";
+import messageListenerMiddleware from "./messageListenerMiddleware/index.js";
 
 export const store = configureStore({
   reducer: {

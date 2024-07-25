@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import SpinnerAnim from "./assets/icons/180-ring.svg";
 import CheckmarkIcon from "./assets/icons/ic_checkmark_cricle.svg";
 
@@ -20,16 +20,14 @@ const defaultProps: Props = {
   success: false,
 };
 
-const Spinner = ({ visible, success }: Props) => {
-  const Image = success ? CheckmarkIcon : SpinnerAnim;
+const Spinner = ({ visible, success }: Props = defaultProps) => {
+  const image = success ? <CheckmarkIcon /> : <SpinnerAnim />;
 
   return (
     <Container $visible={visible}>
-      <Image />
+      { image }
     </Container>
   );
 };
-
-// Spinner.defaultProps = defaultProps;
 
 export default Spinner;

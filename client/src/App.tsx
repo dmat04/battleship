@@ -1,14 +1,14 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import styled from "styled-components";
-import UserMenu from "./components/UserMenu";
-import GameRoomMenu from "./components/GameRoomMenu";
-import GameScreen from "./components/GameScreen";
-import PlacementScreen from "./components/GameScreen/PlacementScreen";
-import ActiveGameScreen from "./components/GameScreen/ActiveGameScreen";
-import NotificationOverlay from "./components/NotificationOverlay";
-import Header from "./components/Header";
-import ThemeProvider from "./components/ThemeProvider";
-import { Theme } from "./components/assets/themes/themeDefault";
+import { styled } from "styled-components";
+import UserMenu from "./components/UserMenu/index.jsx";
+import GameRoomMenu from "./components/GameRoomMenu/index.jsx";
+import GameScreen from "./components/GameScreen/index.jsx";
+import PlacementScreen from "./components/GameScreen/PlacementScreen/index.jsx";
+import ActiveGameScreen from "./components/GameScreen/ActiveGameScreen/index.jsx";
+import NotificationOverlay from "./components/NotificationOverlay/index.jsx";
+import Header from "./components/Header/index.jsx";
+import ThemeProvider from "./components/ThemeProvider/index.jsx";
+import { Theme } from "./components/assets/themes/themeDefault.js";
 
 const ScreenContainer = styled.div`
   display: grid;

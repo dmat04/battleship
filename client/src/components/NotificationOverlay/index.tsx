@@ -1,10 +1,10 @@
-import styled, { useTheme } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { animated, useTransition } from "@react-spring/web";
 import { useMemo } from "react";
-import { useAppSelector } from "../../store/store";
-import { Theme } from "../assets/themes/themeDefault";
-import NotificationComponent from "./Notification";
-import { Notification as NotificationData } from "../../store/notificationSlice/stateTypes";
+import { useAppSelector } from "../../store/store.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import NotificationComponent from "./Notification.js";
+import { Notification as NotificationData } from "../../store/notificationSlice/stateTypes.js";
 
 const Container = styled.div<{ theme: Theme }>`
   position: fixed;
@@ -23,6 +23,12 @@ const NotificationAnimationContainer = styled(animated.div)`
   overflow: hidden;
 `;
 
+interface TransitionProps {
+  opacity: number;
+  height: number;
+  marginBottom: string;
+}
+
 const NotificationOverlay = () => {
   const theme = useTheme() as Theme;
   const notifications = useAppSelector(
@@ -33,12 +39,12 @@ const NotificationOverlay = () => {
     [],
   );
 
-  const notificationTransitions = useTransition<NotificationData, any>(
+  const notificationTransitions = useTransition<NotificationData, TransitionProps>(
     notifications,
     {
       keys: (item: NotificationData) => item.id,
       from: { opacity: 0, height: 0, marginBottom: "0rem" },
-      enter: (item: NotificationData) => async (next: Function) =>
+      enter: (item: NotificationData) => (next: (config: TransitionProps) => void) =>
         next({
           opacity: 1,
           height: notificationRefMap.get(item)?.offsetHeight ?? 0,

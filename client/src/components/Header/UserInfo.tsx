@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import IconLogout from "../assets/icons/ic_logout.svg";
 import IconUser from "../assets/icons/ic_account_circe.svg";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import { Theme } from "../assets/themes/themeDefault";
-import { logout } from "../../store/authSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import { logout } from "../../store/authSlice.js";
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
@@ -40,7 +40,7 @@ const UserInfo = () => {
   if (!auth) return null;
 
   const doLogout = () => {
-    dispatch(logout());
+    void dispatch(logout());
   };
 
   return (

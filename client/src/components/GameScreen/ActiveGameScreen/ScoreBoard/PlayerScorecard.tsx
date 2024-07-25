@@ -1,15 +1,15 @@
-import styled, { useTheme } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { useEffect, useMemo } from "react";
 import { Controller, Lookup, animated, useTransition } from "@react-spring/web";
-import TurnTimer from "./TurnTimer";
-import type { Owner } from ".";
-import { Ship, PlacedShip } from "../../../../__generated__/graphql";
+import TurnTimer from "./TurnTimer.js";
+import type { Owner } from "./index.js";
+import { Ship, PlacedShip } from "@battleship/common/types/__generated__/types.generated.js";
 import {
   ScoreState,
   GameRoomIsReady,
-} from "../../../../store/gameRoomSlice/stateTypes";
-import { useAppSelector } from "../../../../store/store";
-import { Theme } from "../../../assets/themes/themeDefault";
+} from "../../../../store/gameRoomSlice/stateTypes.js";
+import { useAppSelector } from "../../../../store/store.js";
+import { Theme } from "../../../assets/themes/themeDefault.js";
 
 export type ShipScoreItem = Ship & { sunken: boolean };
 
@@ -81,7 +81,11 @@ const mapScoreItems = (availableShips: Ship[], sunkenShips: PlacedShip[]) => {
   return score;
 };
 
-const getScoreItemStyle = (item: ShipScoreItem, theme: Theme) => ({
+interface ScoreItemTransitionProps {
+  background: string;
+}
+
+const getScoreItemStyle = (item: ShipScoreItem, theme: Theme): ScoreItemTransitionProps => ({
   background: item.sunken ? theme.colors.scoreRed : theme.colors.scoreGreen,
 });
 
@@ -117,7 +121,7 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     return [];
   }, [gameSettings?.availableShips, score.sunkenShips]);
 
-  const [animatedScoreItems, transitionApi] = useTransition<ShipScoreItem, any>(
+  const [animatedScoreItems, transitionApi] = useTransition<ShipScoreItem, object>(
     scoreItems,
     () => ({
       keys: (item: ShipScoreItem) =>
@@ -129,9 +133,9 @@ const PlayerScorecard = ({ owner, username }: Props) => {
   );
 
   useEffect(() => {
-    transitionApi.start(
+    void transitionApi.start(
       (_: number, transitionItem: Controller<Lookup<ShipScoreItem>>) =>
-        getScoreItemStyle(transitionItem.item, theme),
+        getScoreItemStyle(transitionItem.item as ShipScoreItem, theme),
     );
   }, [theme, scoreItems]);
 

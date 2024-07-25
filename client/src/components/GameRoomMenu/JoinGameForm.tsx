@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useState } from "react";
-import TextInput from "../TextInput";
-import { Theme } from "../assets/themes/themeDefault";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import { joinGameRoom } from "../../store/gameRoomSlice/thunks";
-import Button from "../Button";
+import TextInput from "../TextInput.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { joinGameRoom } from "../../store/gameRoomSlice/thunks.js";
+import Button from "../Button.js";
 
 const Container = styled.form<{ theme: Theme }>`
   display: grid;

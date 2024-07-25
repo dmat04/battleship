@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
-import styled from "styled-components";
-import PlacementGrid from "./PlacementGrid";
-import { submitPlacement } from "../../../store/shipPlacementSlice/thunks";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
-import Button from "../../Button";
-import { Theme } from "../../assets/themes/themeDefault";
+import { styled } from "styled-components";
+import PlacementGrid from "./PlacementGrid/index.js";
+import { submitPlacement } from "../../../store/shipPlacementSlice/thunks.js";
+import { useAppDispatch, useAppSelector } from "../../../store/store.js";
+import Button from "../../Button.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(90vw, 30rem);
@@ -37,7 +37,7 @@ const PlacementScreen = () => {
   if (shipPlacementState.shipStates.length === 0) return null;
 
   const handleSubmit = () => {
-    dispatch(submitPlacement(roomID));
+    void dispatch(submitPlacement(roomID));
   };
 
   return (

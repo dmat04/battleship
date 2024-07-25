@@ -1,4 +1,4 @@
-import styled, { useTheme } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import React, {
   forwardRef,
   useCallback,
@@ -8,13 +8,13 @@ import React, {
   useRef,
 } from "react";
 import { animated, easings, useSpring } from "@react-spring/web";
-import { Theme } from "./assets/themes/themeDefault";
-import MenuItemLabel from "./MemuItemLabel";
+import { Theme } from "./assets/themes/themeDefault.js";
+import MenuItemLabel from "./MemuItemLabel.js";
 import CollapsibleContainer, {
   CollapsibleAPI,
   CollapsibleState,
-} from "./CollapsibleContainer";
-import { assertNever } from "../utils/typeUtils";
+} from "./CollapsibleContainer.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
 
 const Container = styled(animated.div)<{ theme: Theme }>`
   width: 100%;
@@ -78,10 +78,10 @@ const CollapsibleButton = forwardRef<
     useEffect(() => {
       switch (collapsibleRef.current?.getState()) {
         case "open":
-          springApi.start({ to: springExpanded });
+          void springApi.start({ to: springExpanded });
           break;
         default:
-          springApi.start({ to: springCollapsed });
+          void springApi.start({ to: springCollapsed });
       }
     }, [theme, springApi, springCollapsed, springExpanded]);
 
@@ -116,10 +116,10 @@ const CollapsibleButton = forwardRef<
       (state: CollapsibleState) => {
         switch (state) {
           case "open":
-            springApi.start({ to: springExpanded });
+            void springApi.start({ to: springExpanded });
             break;
           case "closed":
-            springApi.start({ to: springCollapsed });
+            void springApi.start({ to: springCollapsed });
             break;
           default:
             assertNever(state);
@@ -131,13 +131,13 @@ const CollapsibleButton = forwardRef<
     );
 
     const handlePointerEnter = useCallback(() => {
-      springApi.start({ to: springExpanded });
+      void springApi.start({ to: springExpanded });
     }, [springApi, springExpanded]);
 
     const handlePointerLeave = useCallback(() => {
       if (collapsibleRef.current?.getState() === "open") return;
 
-      springApi.start({ to: springCollapsed });
+      void springApi.start({ to: springCollapsed });
     }, [springApi, springCollapsed]);
 
     return (

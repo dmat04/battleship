@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { CREATE_ROOM, JOIN_ROOM } from "../../graphql/mutations";
-import { GET_GAME_SETTINGS } from "../../graphql/queries";
-import Dependencies from "../../utils/Dependencies";
-import { openWSConnection } from "../wsMiddleware/actions";
+import { CREATE_ROOM, JOIN_ROOM } from "../../graphql/mutations.js";
+import { GET_GAME_SETTINGS } from "../../graphql/queries.js";
+import Dependencies from "../../utils/Dependencies.js";
+import { openWSConnection } from "../wsMiddleware/actions.js";
 
 export const fetchGameSettings = createAsyncThunk(
   "gameRoom/fetchSettings",

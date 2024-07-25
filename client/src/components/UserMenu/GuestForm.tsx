@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import TextInput from "../TextInput";
-import { Theme } from "../assets/themes/themeDefault";
-import useUsernameChecker from "../../hooks/useUsernameChecker";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import { guestLogin } from "../../store/authSlice";
-import Spinner from "../Spinner";
-import Button from "../Button";
+import { styled } from "styled-components";
+import TextInput from "../TextInput.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import useUsernameChecker from "../../hooks/useUsernameChecker.js";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { guestLogin } from "../../store/authSlice.js";
+import Spinner from "../Spinner.js";
+import Button from "../Button.js";
 
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
@@ -46,9 +46,9 @@ const GuestForm = ({ disabled }: Props) => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (ev) => {
     ev.preventDefault();
     if (username.length === 0) {
-      dispatch(guestLogin(null));
+      void dispatch(guestLogin(null));
     } else if (isValid) {
-      dispatch(guestLogin(username));
+      void dispatch(guestLogin(username));
     }
   };
 

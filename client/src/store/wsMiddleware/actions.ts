@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import type { ClientMessage, ServerMessage } from "./messageTypes";
+import type { ClientMessage, ServerMessage } from "@battleship/common/messages/MessageTypes.js";
 
 export interface WSConnectionArgs {
   roomID: string;

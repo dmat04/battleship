@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { useAppSelector } from "../../../../store/store";
-import { Theme } from "../../../assets/themes/themeDefault";
-import PlayerScorecard from "./PlayerScorecard";
+import { styled } from "styled-components";
+import { useAppSelector } from "../../../../store/store.js";
+import { Theme } from "../../../assets/themes/themeDefault.js";
+import PlayerScorecard from "./PlayerScorecard.js";
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: score;

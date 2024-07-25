@@ -1,6 +1,6 @@
-import { LoginResult } from "../__generated__/graphql";
-import { ThemePreference } from "../components/ThemeProvider/ThemePreferenceContext";
-import { isString, isObject } from "@battleship/common/utils/typeUtils";
+import { LoginResult } from "@battleship/common/types/__generated__/types.generated.js";
+import { ThemePreference } from "../components/ThemeProvider/ThemePreferenceContext.js";
+import { isString, isObject } from "@battleship/common/utils/typeUtils.js";
 
 const KEY_AUTH_TOKEN = "KEY_AUTH_TOKEN";
 const KEY_THEME = "KEY_THEME";

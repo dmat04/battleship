@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { ThemeType } from "../assets/themes/themeDefault";
+import { ThemeType } from "../assets/themes/themeDefault.js";
 
 export type ThemePreference = ThemeType | "system";
 

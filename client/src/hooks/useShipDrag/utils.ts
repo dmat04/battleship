@@ -1,7 +1,8 @@
-import { Coordinates, GridState } from "../../store/shipPlacementSlice/types";
+import { Coordinate } from "@battleship/common/types/__generated__/types.generated.js";
+import { GridState } from "../../store/shipPlacementSlice/types.js";
 
 export const calculateTranslation = (
-  startPos: Coordinates,
+  startPos: Coordinate,
   ev: React.PointerEvent,
   shipRect: DOMRect,
   containerRect: DOMRect,
@@ -31,7 +32,7 @@ export const calculateGridPosition = (
   dx: number,
   dy: number,
 ): {
-  gridPosition: Coordinates;
+  gridPosition: Coordinate;
   dxSnapped: number;
   dySnapped: number;
 } => {
@@ -54,5 +55,5 @@ export const calculateGridPosition = (
   };
 };
 
-export const isWithinGrid = ({ x, y }: Coordinates, grid: GridState) =>
+export const isWithinGrid = ({ x, y }: Coordinate, grid: GridState) =>
   x >= 0 && x < grid.columns && y >= 0 && y < grid.rows;

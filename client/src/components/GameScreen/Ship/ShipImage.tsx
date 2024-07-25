@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { animated } from "@react-spring/web";
-import { ShipOrientation } from "../../../__generated__/graphql";
-import { Theme } from "../../assets/themes/themeDefault";
+import { ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
 
 const getPath = (shipSize: number, vertical: boolean) => {
   switch (shipSize) {
@@ -57,7 +57,7 @@ const SvgPath = styled(animated.path)<{ theme: Theme }>`
 interface Props {
   shipSize: number;
   shipOrientation: ShipOrientation;
-  pathStyle: any;
+  pathStyle: React.CSSProperties;
 }
 
 const ShipImage = ({ shipSize, shipOrientation, pathStyle }: Props) => {

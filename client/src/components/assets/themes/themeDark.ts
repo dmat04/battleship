@@ -1,4 +1,4 @@
-import themeDefault, { Theme } from "./themeDefault";
+import themeDefault, { Theme } from "./themeDefault.js";
 
 const themeDark: Theme = {
   ...themeDefault,

@@ -1,10 +1,9 @@
-import { GameSettings, PlacedShip } from "../../__generated__/graphql";
-import { Coordinates } from "../shipPlacementSlice/types";
+import { Coordinate, GameSettings, PlacedShip } from "@battleship/common/types/__generated__/types.generated.js";
 
 export interface ScoreState {
-  missedCells: Coordinates[];
-  hitCells: Coordinates[];
-  inaccessibleCells: Coordinates[];
+  missedCells: Coordinate[];
+  hitCells: Coordinate[];
+  inaccessibleCells: Coordinate[];
   sunkenShips: PlacedShip[];
 }
 

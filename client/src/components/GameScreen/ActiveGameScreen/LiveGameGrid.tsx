@@ -1,17 +1,19 @@
 /* eslint-disable object-curly-newline */
-import styled, { useTheme } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { animated, useTransition } from "@react-spring/web";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { PlacedShip } from "../../../__generated__/graphql";
-import { opponentCellClicked } from "../../../store/gameRoomSlice";
-import { GameRoomIsReady } from "../../../store/gameRoomSlice/stateTypes";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
-import { assertNever } from "../../../utils/typeUtils";
-import GameGrid from "../../GameGrid";
-import { Theme } from "../../assets/themes/themeDefault";
-import { calculateGridPosition } from "./utils";
-import Ship from "../Ship";
-import { Coordinates } from "../../../store/shipPlacementSlice/types";
+import {
+  PlacedShip,
+  Coordinate,
+} from "@battleship/common/types/__generated__/types.generated.js";
+import { opponentCellClicked } from "../../../store/gameRoomSlice/index.js";
+import { GameRoomIsReady } from "../../../store/gameRoomSlice/stateTypes.js";
+import { useAppDispatch, useAppSelector } from "../../../store/store.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import GameGrid from "../../GameGrid/index.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
+import { calculateGridPosition } from "./utils.js";
+import Ship from "../Ship/index.js";
 
 const Container = styled.div<{ $owner: Props["owner"]; $active: boolean }>`
   grid-area: ${(props) => props.$owner};
@@ -27,6 +29,22 @@ const Cell = styled(animated.div)<{ $col: number; $row: number; theme: Theme }>`
 
 interface Props {
   owner: "player" | "opponent";
+}
+
+interface CellTransitionProps {
+  opacity?: number;
+  scale?: number;
+  background?: string;
+  zIndex?: number;
+}
+
+interface ShipTransitionProps {
+  opacity?: number;
+  scale?: number;
+  background?: string;
+  fill?: string;
+  stroke?: string;
+  zIndex?: number;
 }
 
 const LiveGameGrid = ({ owner }: Props) => {
@@ -85,55 +103,55 @@ const LiveGameGrid = ({ owner }: Props) => {
       if (owner === "player") return;
 
       const coords = calculateGridPosition(ev, gridRef.current, settings);
-      if (coords) dispatch(opponentCellClicked(coords));
+      if (coords) void dispatch(opponentCellClicked(coords));
     },
     [dispatch, settings, owner],
   );
 
-  const [hitTransition, hitTransitionApi] = useTransition<Coordinates, any>(
-    gridState?.hitCells ?? [],
-    () => ({
-      keys: (coord: Coordinates) => `${owner}-hit-${coord.x}-${coord.y}`,
-      from: {
-        opacity: 0.5,
-        scale: 0.66,
+  const [hitTransition, hitTransitionApi] = useTransition<
+    Coordinate,
+    CellTransitionProps
+  >(gridState?.hitCells ?? [], () => ({
+    keys: (coord: Coordinate) => `${owner}-hit-${coord.x}-${coord.y}`,
+    from: {
+      opacity: 0.5,
+      scale: 0.66,
+      background: colors.hitCellHighlight,
+      zIndex: 10,
+    },
+    enter: [
+      {
+        opacity: 1,
+        scale: 1.2,
         background: colors.hitCellHighlight,
         zIndex: 10,
       },
-      enter: [
-        {
-          opacity: 1,
-          scale: 1.2,
-          background: colors.hitCellHighlight,
-          zIndex: 10,
-        },
-        { scale: 1, background: colors.hitCell, zIndex: 1 },
-      ],
-    }),
-  );
+      { scale: 1, background: colors.hitCell, zIndex: 1 },
+    ],
+  }));
 
-  const [missTransition, missTransitionApi] = useTransition<Coordinates, any>(
-    gridState?.missedCells ?? [],
-    () => ({
-      keys: (coord: Coordinates) => `${owner}-miss-${coord.x}-${coord.y}`,
-      from: {
-        opacity: 0.5,
-        scale: 0.66,
-        background: colors.missedCell,
-        zIndex: 10,
-      },
-      enter: [
-        { opacity: 1, scale: 1.2, zIndex: 10 },
-        { scale: 1, zIndex: 1 },
-      ],
-    }),
-  );
+  const [missTransition, missTransitionApi] = useTransition<
+    Coordinate,
+    CellTransitionProps
+  >(gridState?.missedCells ?? [], () => ({
+    keys: (coord: Coordinate) => `${owner}-miss-${coord.x}-${coord.y}`,
+    from: {
+      opacity: 0.5,
+      scale: 0.66,
+      background: colors.missedCell,
+      zIndex: 10,
+    },
+    enter: [
+      { opacity: 1, scale: 1.2, zIndex: 10 },
+      { scale: 1, zIndex: 1 },
+    ],
+  }));
 
   const [inaccessibleTransition, inaccessibleTransitionApi] = useTransition<
-    Coordinates,
-    any
+    Coordinate,
+    CellTransitionProps
   >(gridState?.inaccessibleCells ?? [], () => ({
-    keys: (coord: Coordinates) => `${owner}-empty-${coord.x}-${coord.y}`,
+    keys: (coord: Coordinate) => `${owner}-empty-${coord.x}-${coord.y}`,
     from: {
       opacity: 0,
       scale: 0.66,
@@ -143,48 +161,48 @@ const LiveGameGrid = ({ owner }: Props) => {
     enter: { opacity: 1, scale: 1, background: colors.missedCell, zIndex: 1 },
   }));
 
-  const [shipTransition, shipTransitionApi] = useTransition<PlacedShip, any>(
-    gridState?.sunkenShips ?? [],
-    () => ({
-      keys: (ship: PlacedShip) => `${owner}-ship-${ship.x}-${ship.y}`,
-      from: {
-        opacity: 1,
+  const [shipTransition, shipTransitionApi] = useTransition<
+    PlacedShip,
+    ShipTransitionProps
+  >(gridState?.sunkenShips ?? [], () => ({
+    keys: (ship: PlacedShip) => `${owner}-ship-${ship.position.x}-${ship.position.y}`,
+    from: {
+      opacity: 1,
+      scale: 1,
+      background: "transparent",
+      fill: colors.shipFill,
+      stroke: colors.shipStroke,
+      zIndex: 20,
+    },
+    enter: () => async (next: (config: ShipTransitionProps) => Promise<void>) => {
+      await next({
+        scale: 1.2,
+        fill: colors.sunkShipHighlight,
+        stroke: colors.sunkShipHighlight,
+      });
+      await next({
         scale: 1,
-        background: "transparent",
-        fill: colors.shipFill,
-        stroke: colors.shipStroke,
-        zIndex: 20,
-      },
-      enter: () => async (next: Function) => {
-        await next({
-          scale: 1.2,
-          fill: colors.sunkShipHighlight,
-          stroke: colors.sunkShipHighlight,
-        });
-        await next({
-          scale: 1,
-          fill: colors.sunkShipFill,
-          stroke: colors.sunkShipStroke,
-        });
-        await next({
-          zIndex: 1,
-          background: colors.missedCell,
-        });
-        inaccessibleTransitionApi.start();
-      },
-    }),
-  );
+        fill: colors.sunkShipFill,
+        stroke: colors.sunkShipStroke,
+      });
+      await next({
+        zIndex: 1,
+        background: colors.missedCell,
+      });
+      void inaccessibleTransitionApi.start();
+    },
+  }));
 
   useEffect(() => {
-    hitTransitionApi.start();
+    void hitTransitionApi.start();
   }, [gridState?.hitCells]);
 
   useEffect(() => {
-    missTransitionApi.start();
+    void missTransitionApi.start();
   }, [gridState?.missedCells]);
 
   useEffect(() => {
-    shipTransitionApi.start();
+    void shipTransitionApi.start();
   }, [gridState?.sunkenShips]);
 
   useEffect(() => {
@@ -219,11 +237,11 @@ const LiveGameGrid = ({ owner }: Props) => {
         rows={boardHeight}
         columns={boardWidth}
       >
-        {shipTransition(({ fill, stroke, ...style }, item) => (
+        {shipTransition(({ fill, stroke, ...style }: ShipTransitionProps, item) => (
           <Ship
             ref={() => {}}
-            col={item.x}
-            row={item.y}
+            col={item.position.x}
+            row={item.position.y}
             size={item.ship.size}
             orientation={item.orientation}
             containerStyle={{ ...style }}
@@ -243,8 +261,8 @@ const LiveGameGrid = ({ owner }: Props) => {
           <Ship
             ref={() => {}}
             key={ship.ship.shipID}
-            col={ship.x}
-            row={ship.y}
+            col={ship.position.x}
+            row={ship.position.y}
             size={ship.ship.size}
             orientation={ship.orientation}
           />

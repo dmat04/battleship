@@ -5,8 +5,8 @@ import {
   ShipOrientation,
   PlacedShip,
   GameRoomStatus,
-} from "../../__generated__/graphql";
-import { Coordinates } from "../shipPlacementSlice/types";
+  Coordinate,
+} from "@battleship/common/types/__generated__/types.generated.js";
 import {
   GameStartedMessage,
   MoveResultMessageBase,
@@ -14,8 +14,8 @@ import {
   OwnMoveResultMessage,
   ServerMessage,
   ServerMessageCode,
-} from "../wsMiddleware/messageTypes";
-import { assertNever } from "../../utils/typeUtils";
+} from "@battleship/common/messages/MessageTypes.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
 import {
   PlayerStatus,
   ScoreState,
@@ -25,13 +25,13 @@ import {
   GameResult,
   initialState,
   GameIsInProgress,
-} from "./stateTypes";
+} from "./stateTypes.js";
 
-const isEqual = (a: Coordinates, b: Coordinates) => a.x === b.x && a.y === b.y;
+const isEqual = (a: Coordinate, b: Coordinate) => a.x === b.x && a.y === b.y;
 
 const isWithinShip = (
-  { x, y }: Coordinates,
-  { ship, x: shipX, y: shipY, orientation }: PlacedShip,
+  { x, y }: Coordinate,
+  { ship, position: { x: shipX, y: shipY }, orientation }: PlacedShip,
 ): boolean => {
   switch (orientation) {
     case ShipOrientation.Horizontal:
@@ -46,10 +46,10 @@ const isWithinShip = (
 const getShipSurroundingCells = (
   placedShip: PlacedShip,
   settings: GameSettings | null,
-): Coordinates[] => {
+): Coordinate[] => {
   if (!settings) return [];
 
-  const { ship, orientation, x, y } = placedShip;
+  const { ship, orientation, position: { x, y } } = placedShip;
   const xStart = Math.max(0, x - 1);
   const yStart = Math.max(0, y - 1);
 
@@ -66,7 +66,7 @@ const getShipSurroundingCells = (
   const cells = [];
   for (let col = xStart; col <= xEnd; col += 1) {
     for (let row = yStart; row <= yEnd; row += 1) {
-      const coord: Coordinates = { x: col, y: row };
+      const coord: Coordinate = { x: col, y: row };
       if (!isWithinShip(coord, placedShip)) cells.push(coord);
     }
   }
@@ -79,7 +79,7 @@ const applyMoveResult = (
   state: SliceStateActive,
   score: ScoreState,
 ) => {
-  const { x, y, hit, shipSunk, currentPlayer } = message;
+  const { position: { x, y }, hit, shipSunk, currentPlayer } = message;
 
   state.currentPlayer = currentPlayer;
 
@@ -249,7 +249,7 @@ export const processRematchAction = (state: SliceState) => {
 
 export const canHitOpponentCell = (
   state: SliceState,
-  cell: Coordinates,
+  cell: Coordinate,
 ): boolean => {
   if (!GameRoomIsReady(state)) return false;
 

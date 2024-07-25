@@ -2,11 +2,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   ShipsPlacedResult,
   ShipPlacementInput,
-} from "../../__generated__/graphql";
-import { PLACE_SHIPS } from "../../graphql/mutations";
-import Dependencies from "../../utils/Dependencies";
-import type { AppDispatch, RootState } from "../store";
-import { resetShips } from ".";
+  PlaceShipsMutation,
+} from "@battleship/common/types/__generated__/types.generated.js";
+import { PLACE_SHIPS } from "../../graphql/mutations.js";
+import Dependencies from "../../utils/Dependencies.js";
+import type { AppDispatch, RootState } from "../store.js";
+import { resetShips } from "./index.js";
 
 export const submitPlacement = createAsyncThunk<
   // eslint-disable-next-line @typescript-eslint/indent
@@ -34,11 +35,13 @@ export const submitPlacement = createAsyncThunk<
   const shipPlacements: ShipPlacementInput[] = shipStates.map((shipState) => ({
     shipID: shipState.ship.shipID,
     orientation: shipState.orientation,
-    x: shipState.position?.x ?? 0,
-    y: shipState.position?.y ?? 0,
+    position: {
+      x: shipState.position?.x ?? 0,
+      y: shipState.position?.y ?? 0,
+    },
   }));
 
-  const result = await Dependencies.getApolloClient()?.mutate({
+  const result = await Dependencies.getApolloClient()?.mutate<PlaceShipsMutation>({
     mutation: PLACE_SHIPS,
     variables: {
       roomId,

@@ -1,5 +1,5 @@
-import { ShipClassName, ShipOrientation } from "../../__generated__/graphql";
-import { PlayerStatus, SliceStateActive } from "./stateTypes";
+import { ShipClassName, ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
+import { PlayerStatus, SliceStateActive } from "./stateTypes.js";
 
 const stubScore = {
   hitCells: [
@@ -26,8 +26,10 @@ const stubScore = {
         type: ShipClassName.Cruiser,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 0,
-      y: 3,
+      position: {
+        x: 0,
+        y: 3,
+      },
     },
     {
       ship: {
@@ -36,8 +38,10 @@ const stubScore = {
         type: ShipClassName.Destroyer,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 7,
-      y: 2,
+      position: {
+        x: 7,
+        y: 2,
+      },
     },
     {
       ship: {
@@ -46,8 +50,10 @@ const stubScore = {
         type: ShipClassName.Submarine,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 1,
-      y: 7,
+      position: {
+        x: 1,
+        y: 7,
+      },
     },
   ],
   inaccessibleCells: [
@@ -147,8 +153,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Carrier,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 0,
-      y: 1,
+      position: {
+        x: 0,
+        y: 1,
+      },
     },
     {
       ship: {
@@ -157,8 +165,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Battleship,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 6,
-      y: 0,
+      position: {
+        x: 6,
+        y: 0,
+      },
     },
     {
       ship: {
@@ -167,8 +177,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Cruiser,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 0,
-      y: 3,
+      position: {
+        x: 0,
+        y: 3,
+      },
     },
     {
       ship: {
@@ -177,8 +189,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Destroyer,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 7,
-      y: 2,
+      position: {
+        x: 7,
+        y: 2,
+      },
     },
     {
       ship: {
@@ -187,8 +201,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Destroyer,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 4,
-      y: 5,
+      position: {
+        x: 4,
+        y: 5,
+      },
     },
     {
       ship: {
@@ -197,8 +213,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Submarine,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 1,
-      y: 7,
+      position: {
+        x: 1,
+        y: 7,
+      },
     },
     {
       ship: {
@@ -207,8 +225,10 @@ const stateStub: SliceStateActive = {
         type: ShipClassName.Submarine,
       },
       orientation: ShipOrientation.Horizontal,
-      x: 8,
-      y: 7,
+      position: {
+        x: 8,
+        y: 7,
+      },
     },
   ],
   playerScore: stubScore,

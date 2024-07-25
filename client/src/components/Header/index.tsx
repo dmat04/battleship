@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import HeroBanner from "./HeroBanner";
-import ThemeToggle from "./ThemeToggle";
-import { Theme } from "../assets/themes/themeDefault";
-import UserInfo from "./UserInfo";
+import { styled } from "styled-components";
+import HeroBanner from "./HeroBanner.js";
+import ThemeToggle from "./ThemeToggle.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import UserInfo from "./UserInfo.js";
 
 const Container = styled.div<{ theme: Theme }>`
   grid-area: header;

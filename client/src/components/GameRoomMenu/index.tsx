@@ -1,14 +1,14 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import { Theme } from "../assets/themes/themeDefault";
-import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer";
-import MenuItemLabel from "../MemuItemLabel";
-import JoinGameForm from "./JoinGameForm";
-import { createGameRoom } from "../../store/gameRoomSlice/thunks";
-import Button from "../Button";
-import CollapsibleButton from "../CollapsibleButton";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer.js";
+import MenuItemLabel from "../MemuItemLabel.js";
+import JoinGameForm from "./JoinGameForm.js";
+import { createGameRoom } from "../../store/gameRoomSlice/thunks.js";
+import Button from "../Button.js";
+import CollapsibleButton from "../CollapsibleButton.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -35,7 +35,7 @@ const GameRoomMenu = () => {
     if (loadingNewRoom) return;
 
     collapsible.current?.setState("closed");
-    dispatch(createGameRoom());
+    void dispatch(createGameRoom());
   };
 
   if (!auth?.accessToken) {

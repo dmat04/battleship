@@ -1,13 +1,13 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useEffect, useRef } from "react";
-import { PlayerStatus } from "../../../store/gameRoomSlice/stateTypes";
-import { useAppSelector } from "../../../store/store";
-import OpponentStatus from "./OpponentStatus";
-import InviteCode from "./InviteCode";
-import { Theme } from "../../assets/themes/themeDefault";
+import { PlayerStatus } from "../../../store/gameRoomSlice/stateTypes.js";
+import { useAppSelector } from "../../../store/store.js";
+import OpponentStatus from "./OpponentStatus.js";
+import InviteCode from "./InviteCode.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
 import CollapsibleContainer, {
   CollapsibleAPI,
-} from "../../CollapsibleContainer";
+} from "../../CollapsibleContainer.js";
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;

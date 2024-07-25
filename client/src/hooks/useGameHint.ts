@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import localStorageUtils from "../utils/localStorageUtils";
+import localStorageUtils from "../utils/localStorageUtils.js";
 
 const GAME_HINTS = [
   "Place your ships by dragging them onto the grid.",

@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useEffect } from "react";
 import { animated, useSpring } from "@react-spring/web";
-import type { Owner } from ".";
-import { useAppSelector } from "../../../../store/store";
-import { Theme } from "../../../assets/themes/themeDefault";
+import type { Owner } from "./index.js";
+import { useAppSelector } from "../../../../store/store.js";
+import { Theme } from "../../../assets/themes/themeDefault.js";
 
 const Container = styled(animated.div)<{ $owner: Owner; theme: Theme }>`
   position: relative;
@@ -34,7 +34,7 @@ const TurnTimer = ({ owner }: Props) => {
   }));
 
   useEffect(() => {
-    timerSpringApi.start({
+    void timerSpringApi.start({
       from: { width: "100%" },
       to: { width: "0%" },
       config: {

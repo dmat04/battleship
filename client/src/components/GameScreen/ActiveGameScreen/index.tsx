@@ -1,11 +1,11 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import GameOverModal from "./GameOverModal";
-import { useAppSelector } from "../../../store/store";
-import { Theme } from "../../assets/themes/themeDefault";
-import LiveGameGrid from "./LiveGameGrid";
-import Scoreboard from "./ScoreBoard";
+import GameOverModal from "./GameOverModal/index.js";
+import { useAppSelector } from "../../../store/store.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
+import LiveGameGrid from "./LiveGameGrid.js";
+import Scoreboard from "./ScoreBoard/index.js";
 
 const Container = styled.div<{ theme: Theme }>`
   display: grid;

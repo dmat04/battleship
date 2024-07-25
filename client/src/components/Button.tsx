@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { CSSProperties } from "react";
-import { Theme } from "./assets/themes/themeDefault";
-import Spinner from "./Spinner";
+import { Theme } from "./assets/themes/themeDefault.js";
+import Spinner from "./Spinner.js";
 
 export type ButtonVariant = "primary" | "warning" | "danger";
 

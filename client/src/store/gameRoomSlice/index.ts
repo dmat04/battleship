@@ -1,22 +1,25 @@
 /* eslint-disable no-param-reassign */
 import { UnknownAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PlayerStatus, SliceState, initialState } from "./stateTypes";
+import { Coordinate } from "@battleship/common/types/__generated__/types.generated.js";
+import {
+  ClientMessageCode,
+  ShootMessage,
+} from "@battleship/common/messages/MessageTypes.js";
+import { PlayerStatus, SliceState, initialState } from "./stateTypes.js";
 import {
   processMessageReceived,
   canHitOpponentCell,
   processRoomStatus,
   processRematchAction,
-} from "./utils";
-import { Coordinates } from "../shipPlacementSlice/types";
-import type { AppDispatch, RootState } from "../store";
+} from "./utils.js";
+import type { AppDispatch, RootState } from "../store.js";
 import {
   sendMessage,
   messageReceived,
   connectionOpened,
-} from "../wsMiddleware/actions";
-import { ClientMessageCode, ShootMessage } from "../wsMiddleware/messageTypes";
-import { submitPlacement } from "../shipPlacementSlice/thunks";
-import { createGameRoom, joinGameRoom, fetchGameSettings } from "./thunks";
+} from "../wsMiddleware/actions.js";
+import { submitPlacement } from "../shipPlacementSlice/thunks.js";
+import { createGameRoom, joinGameRoom, fetchGameSettings } from "./thunks.js";
 
 const isRoomFullfilledAction = (
   action: UnknownAction,
@@ -27,15 +30,17 @@ const isRoomFullfilledAction = (
 export const opponentCellClicked = createAsyncThunk<
   // eslint-disable-next-line @typescript-eslint/indent
   void,
-  Coordinates,
+  Coordinate,
   { dispatch: AppDispatch; state: RootState }
->("gameRoom/opponentCellClicked", async (cell: Coordinates, thunkAPI) => {
+>("gameRoom/opponentCellClicked", (cell: Coordinate, thunkAPI) => {
   const gameState = thunkAPI.getState().gameRoom;
   if (canHitOpponentCell(gameState, cell)) {
     const message: ShootMessage = {
       code: ClientMessageCode.Shoot,
-      x: cell.x,
-      y: cell.y,
+      position: {
+        x: cell.x,
+        y: cell.y,
+      },
     };
 
     thunkAPI.dispatch(sendMessage(message));

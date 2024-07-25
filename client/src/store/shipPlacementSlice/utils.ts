@@ -5,14 +5,14 @@ import {
   GridState,
   ShipState,
   SliceState,
-  Coordinates,
-} from "./types";
+} from "./types.js";
 import {
+  Coordinate,
   GameSettings,
   Ship,
   ShipOrientation,
-} from "../../__generated__/graphql";
-import { assertNever } from "../../utils/typeUtils";
+} from "@battleship/common/types/__generated__/types.generated.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
 
 const minmax = (min: number, value: number, max: number): number =>
   // eslint-disable-next-line implicit-arrow-linebreak
@@ -21,7 +21,7 @@ const minmax = (min: number, value: number, max: number): number =>
 export const canPlaceShip = (
   grid: GridState,
   shipState: ShipState,
-  { x, y }: Coordinates,
+  { x, y }: Coordinate,
   orientation: ShipOrientation = shipState.orientation,
 ): boolean => {
   const { columns, rows, cellStates } = grid;
@@ -64,7 +64,7 @@ export const canPlaceShip = (
 
 const fillGrid = (
   { cellStates }: GridState,
-  { x, y }: Coordinates,
+  { x, y }: Coordinate,
   orientation: ShipOrientation,
   size: number,
   value: Ship["shipID"] | null,
@@ -116,7 +116,7 @@ const populateGridWithShip = (grid: GridState, shipState: ShipState): void => {
 const placeShip = (
   state: SliceState,
   shipIndex: number,
-  { x, y }: Coordinates,
+  { x, y }: Coordinate,
   orientation: ShipOrientation | null = null,
 ) => {
   const oldState = state.shipStates[shipIndex];
@@ -292,9 +292,9 @@ export const initializeState = (gameSettings: GameSettings): SliceState => {
   shipStates.sort((a, b) => b.ship.size - a.ship.size);
   const nonPlacedIDs = shipStates.map((state) => state.ship.shipID);
 
-  const cellStates: null[][] = new Array(gameSettings.boardHeight);
+  const cellStates: Array<Array<null>> = new Array<Array<null>>(gameSettings.boardHeight);
   for (let i = 0; i < gameSettings.boardHeight; i += 1) {
-    cellStates[i] = new Array(gameSettings.boardWidth).fill(null);
+    cellStates[i] = new Array<null>(gameSettings.boardWidth).fill(null);
   }
 
   const grid: GridState = {

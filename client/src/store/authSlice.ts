@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { LoginResult } from "../__generated__/graphql";
-import LocalStorage from "../utils/localStorageUtils";
-import { GUEST_LOGIN } from "../graphql/mutations";
-import { CHECK_USERNAME } from "../graphql/queries";
-import Dependencies from "../utils/Dependencies";
-import type { AppDispatch, RootState } from "./store";
-import { PushTransientNotification } from "./notificationSlice";
-import { NotificationType } from "./notificationSlice/stateTypes";
-import { clearRoom } from "./gameRoomSlice";
-import { closeWSConnection } from "./wsMiddleware/actions";
+import { GuestLoginMutation, LoginResult } from "@battleship/common/types/__generated__/types.generated.js";
+import LocalStorage from "../utils/localStorageUtils.js";
+import { GUEST_LOGIN } from "../graphql/mutations.js";
+import { CHECK_USERNAME } from "../graphql/queries.js";
+import Dependencies from "../utils/Dependencies.js";
+import type { AppDispatch, RootState } from "./store.js";
+import { PushTransientNotification } from "./notificationSlice/index.js";
+import { NotificationType } from "./notificationSlice/stateTypes.js";
+import { clearRoom } from "./gameRoomSlice/index.js";
+import { closeWSConnection } from "./wsMiddleware/actions.js";
 
 export const guestLogin = createAsyncThunk<
   // eslint-disable-next-line @typescript-eslint/indent
@@ -17,7 +17,7 @@ export const guestLogin = createAsyncThunk<
   string | null,
   { dispatch: AppDispatch; state: RootState }
 >("auth/guestLogin", async (username: string | null, thunkAPI) => {
-  const result = await Dependencies.getApolloClient()?.mutate({
+  const result = await Dependencies.getApolloClient()?.mutate<GuestLoginMutation>({
     mutation: GUEST_LOGIN,
     fetchPolicy: "no-cache",
     variables: {
@@ -42,7 +42,7 @@ export const guestLogin = createAsyncThunk<
   });
 });
 
-export const checkUsername = createAsyncThunk(
+export const checkUsername: unknown = createAsyncThunk(
   "auth/checkUsername",
   async (username: string) =>
     Dependencies.getApolloClient()?.query({
@@ -55,7 +55,6 @@ export const checkUsername = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk<
-  // eslint-disable-next-line @typescript-eslint/indent
   undefined,
   undefined,
   { dispatch: AppDispatch; state: RootState }

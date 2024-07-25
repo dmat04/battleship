@@ -1,19 +1,14 @@
-import { Ship, ShipOrientation } from "../../__generated__/graphql";
-
-export interface Coordinates {
-  x: number;
-  y: number;
-}
+import { Coordinate, Ship, ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
 
 export interface PlaceShipArgs {
   shipID: Ship["shipID"];
-  position: Coordinates;
+  position: Coordinate;
 }
 
 export interface ShipState {
   ship: Ship;
   orientation: ShipOrientation;
-  position: Coordinates | null;
+  position: Coordinate | null;
 }
 
 export interface GridState {

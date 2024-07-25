@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { PlayerStatus } from "../../../store/gameRoomSlice/stateTypes";
-import { useAppSelector } from "../../../store/store";
-import { assertNever } from "../../../utils/typeUtils";
-import Spinner from "../../Spinner";
-import { Theme } from "../../assets/themes/themeDefault";
+import { styled } from "styled-components";
+import { PlayerStatus } from "../../../store/gameRoomSlice/stateTypes.js";
+import { useAppSelector } from "../../../store/store.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import Spinner from "../../Spinner.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;

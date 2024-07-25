@@ -2,22 +2,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { useSpring } from "@react-spring/web";
 import { useTheme } from "styled-components";
-import type { RootState } from "../../store/store";
-import { Coordinates } from "../../store/shipPlacementSlice/types";
-import useBoundingRects from "../useBoundingRects";
-import { canPlaceShip } from "../../store/shipPlacementSlice/utils";
+import { Coordinate } from "@battleship/common/types/__generated__/types.generated.js";
+import type { RootState } from "../../store/store.js";
+import useBoundingRects from "../useBoundingRects.js";
+import { canPlaceShip } from "../../store/shipPlacementSlice/utils.js";
 import {
   placeShip,
   resetShip,
   rotateShip,
-} from "../../store/shipPlacementSlice";
+} from "../../store/shipPlacementSlice/index.js";
 import {
   calculateGridPosition,
   calculateTranslation,
   isWithinGrid,
-} from "./utils";
-import PlacementGridContext from "./PlacementGridContext";
-import { Theme } from "../../components/assets/themes/themeDefault";
+} from "./utils.js";
+import PlacementGridContext from "./PlacementGridContext.js";
+import { Theme } from "../../components/assets/themes/themeDefault.js";
 
 interface UseShipDragArgs {
   id: string;
@@ -99,11 +99,11 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
   );
 
   useEffect(() => {
-    imageSpringAPI.start({ to: imageSpringStart });
+    void imageSpringAPI.start({ to: imageSpringStart });
   }, [imageSpringAPI, imageSpringStart]);
 
   const pointerId = useRef<number | null>(null);
-  const startPos = useRef<Coordinates>({ x: 0, y: 0 });
+  const startPos = useRef<Coordinate>({ x: 0, y: 0 });
 
   const onPointerDown = useCallback(
     (ev: React.PointerEvent) => {
@@ -112,7 +112,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       startPos.current.x = ev.clientX;
       startPos.current.y = ev.clientY;
 
-      containerSpringAPI.start({
+      void containerSpringAPI.start({
         to: {
           scale: 1.2,
           zIndex: 1000,
@@ -170,8 +170,8 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
         dispatch(placeShip({ position: gridPosition, shipID: id }));
       }
 
-      containerSpringAPI.start({ to: containerSpringStart });
-      imageSpringAPI.start({ to: imageSpringStart });
+      void containerSpringAPI.start({ to: containerSpringStart });
+      void imageSpringAPI.start({ to: imageSpringStart });
     },
     [
       id,
@@ -223,13 +223,13 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
           : theme.colors.shipBorderError;
       }
 
-      containerSpringAPI.start({
+      void containerSpringAPI.start({
         to: {
           x: dx,
           y: dy,
         },
       });
-      imageSpringAPI.start({ to: { stroke: borderColor } });
+      void imageSpringAPI.start({ to: { stroke: borderColor } });
     },
     [
       containerRect,

@@ -1,10 +1,10 @@
 import { Middleware } from "@reduxjs/toolkit";
-import { messageReceived } from "../wsMiddleware/actions";
-import { ServerMessageCode } from "../wsMiddleware/messageTypes";
-import { NotificationType } from "../notificationSlice/stateTypes";
-import type { AppDispatch, RootState } from "../store";
-import { PushTransientNotification } from "../notificationSlice";
-import { assertNever } from "../../utils/typeUtils";
+import { messageReceived } from "../wsMiddleware/actions.js";
+import { ServerMessageCode } from "@battleship/common/messages/MessageTypes.js";
+import { NotificationType } from "../notificationSlice/stateTypes.js";
+import type { AppDispatch, RootState } from "../store.js";
+import { PushTransientNotification } from "../notificationSlice/index.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
 
 const messageListenerMiddleware: Middleware =
   ({

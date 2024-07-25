@@ -1,11 +1,11 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useCallback, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { Theme } from "../assets/themes/themeDefault";
-import { CollapsibleAPI } from "../CollapsibleContainer";
-import GuestForm from "./GuestForm";
-import { useAppSelector } from "../../store/store";
-import CollapsibleButton from "../CollapsibleButton";
+import { Theme } from "../assets/themes/themeDefault.js";
+import { CollapsibleAPI } from "../CollapsibleContainer.js";
+import GuestForm from "./GuestForm.js";
+import { useAppSelector } from "../../store/store.js";
+import CollapsibleButton from "../CollapsibleButton.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;

@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { Theme } from "../../assets/themes/themeDefault";
+import { styled } from "styled-components";
+import { Theme } from "../../assets/themes/themeDefault.js";
 import IconInfo from "../../assets/icons/ic_info.svg";
-import useGameHint from "../../../hooks/useGameHint";
-import Button from "../../Button";
+import useGameHint from "../../../hooks/useGameHint.js";
+import Button from "../../Button.js";
 
 const HintContainer = styled.div<{ theme: Theme }>`
   --tooltip-arrow-size: 12px;

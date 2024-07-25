@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { Theme } from "../assets/themes/themeDefault";
+import { styled } from "styled-components";
+import { Theme } from "../assets/themes/themeDefault.js";
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 75rem);

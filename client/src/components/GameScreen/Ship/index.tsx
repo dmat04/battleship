@@ -1,8 +1,9 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { SpringValues, animated } from "@react-spring/web";
 import { forwardRef } from "react";
-import ShipImage from "./ShipImage";
-import { ShipOrientation } from "../../../__generated__/graphql";
+import ShipImage from "./ShipImage.js";
+import { ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
+
 
 interface ContainerProps {
   $row: number;
@@ -35,7 +36,7 @@ interface ShipProps {
   imageStyle?:
     | React.CSSProperties
     | SpringValues<{ [key: symbol]: string | number }>;
-  listeners?: Record<string, Function>;
+  listeners?: Record<string, React.EventHandler<React.SyntheticEvent>>;
 }
 
 const Ship = forwardRef<HTMLDivElement, ShipProps>(
@@ -63,16 +64,10 @@ const Ship = forwardRef<HTMLDivElement, ShipProps>(
       <ShipImage
         shipSize={size}
         shipOrientation={orientation}
-        pathStyle={imageStyle}
+        pathStyle={imageStyle ?? {}}
       />
     </ShipContainer>
   ),
 );
-
-Ship.defaultProps = {
-  containerStyle: undefined,
-  imageStyle: undefined,
-  listeners: undefined,
-};
 
 export default Ship;

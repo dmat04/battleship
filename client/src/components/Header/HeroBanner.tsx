@@ -1,6 +1,6 @@
-import styled, { keyframes, useTheme } from "styled-components";
-import { Theme } from "../assets/themes/themeDefault";
-import Logo from "./Logo";
+import { styled, keyframes, useTheme } from "styled-components";
+import { Theme } from "../assets/themes/themeDefault.js";
+import Logo from "./Logo.js";
 
 const bgAnim = (width: number, offset: number) => keyframes`
   0% {

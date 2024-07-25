@@ -1,12 +1,12 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
-import themeDefault, { ThemeType } from "../assets/themes/themeDefault";
-import themeDark from "../assets/themes/themeDark";
+import themeDefault, { ThemeType } from "../assets/themes/themeDefault.js";
+import themeDark from "../assets/themes/themeDark.js";
 import {
   ThemePreference,
   ThemePreferenceContext,
-} from "./ThemePreferenceContext";
-import localStorageUtils from "../../utils/localStorageUtils";
+} from "./ThemePreferenceContext.js";
+import localStorageUtils from "../../utils/localStorageUtils.js";
 
 type MediaQueryResult = MediaQueryList | MediaQueryListEvent;
 
@@ -23,7 +23,7 @@ const initialTheme: ThemeType =
     ? initialUserPreference
     : initialSystemTheme;
 
-const ThemeProvider = ({ children }: React.PropsWithChildren<{}>) => {
+const ThemeProvider = ({ children }: React.PropsWithChildren) => {
   const [systemPreference, setSystemPreference] =
     useState<ThemeType>(initialSystemTheme);
   const [userPreference, setUserPreference] = useState<ThemePreference>(

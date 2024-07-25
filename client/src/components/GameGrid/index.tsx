@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import React, { forwardRef, useMemo } from "react";
-import { Theme } from "../assets/themes/themeDefault";
+import { Theme } from "../assets/themes/themeDefault.js";
 
 const Cell = styled.div<{ $col: number; $row: number; theme: Theme }>`
   border-width: ${(props) => props.theme.gameGridLineThickness};

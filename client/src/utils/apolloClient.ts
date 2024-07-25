@@ -5,7 +5,7 @@ import {
   InMemoryCache,
   concat,
 } from "@apollo/client";
-import Dependencies from "./Dependencies";
+import Dependencies from "./Dependencies.js";
 
 const createApolloClient = () => {
   const httpLink = new HttpLink({ uri: "http://localhost:4000" });

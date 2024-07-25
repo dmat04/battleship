@@ -1,11 +1,10 @@
-import { GameSettings } from "../../../__generated__/graphql";
-import { Coordinates } from "../../../store/shipPlacementSlice/types";
+import { Coordinate, GameSettings } from "@battleship/common/types/__generated__/types.generated.js";
 
 export const calculateGridPosition = (
   ev: React.MouseEvent<HTMLDivElement, MouseEvent>,
   gridElement: HTMLDivElement | null,
   settings: GameSettings | null | undefined,
-): Coordinates | undefined => {
+): Coordinate | undefined => {
   if (!gridElement || !settings) return undefined;
 
   const { clientX, clientY } = ev;

@@ -5,9 +5,9 @@ import {
   SliceState,
   PermanentNotificationArgs,
   TransientData,
-} from "./stateTypes";
-import { processRemoveNotification } from "./utils";
-import type { AppDispatch, RootState } from "../store";
+} from "./stateTypes.js";
+import { processRemoveNotification } from "./utils.js";
+import type { AppDispatch, RootState } from "../store.js";
 
 const MIN_TIMEOUT = 5000;
 

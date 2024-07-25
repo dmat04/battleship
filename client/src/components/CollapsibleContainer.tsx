@@ -1,4 +1,4 @@
-import styled, { ThemeContext } from "styled-components";
+import { styled, ThemeContext } from "styled-components";
 import React, {
   forwardRef,
   useCallback,
@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { animated, useSpring } from "@react-spring/web";
-import themeDefault from "./assets/themes/themeDefault";
+import themeDefault from "./assets/themes/themeDefault.js";
 
 const Container = styled(animated.div)`
   width: 100%;
@@ -52,7 +52,7 @@ const CollapsibleContainer = forwardRef<
         height:
           initialState === "closed"
             ? "0px"
-            : (`${childrenContainerRef.current?.offsetHeight}px` ?? "0px"),
+            : `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
         opacity: initialState === "closed" ? 0 : 1,
       },
       config: { duration: theme.durationTransitionDefault },
@@ -65,7 +65,7 @@ const CollapsibleContainer = forwardRef<
         if (collapsed === collapsibleState.current) return;
 
         if (collapsibleState.current === "open") {
-          springAPI.start({
+          void springAPI.start({
             from: {
               height: `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
               opacity: 1,
@@ -76,7 +76,7 @@ const CollapsibleContainer = forwardRef<
             },
           });
         } else {
-          springAPI.start({
+          void springAPI.start({
             from: {
               height: "0px",
               opacity: 0,

@@ -1,18 +1,18 @@
-import styled, { keyframes } from "styled-components";
-import { clearRoom, rematch } from "../../../../store/gameRoomSlice";
-import { GameResult } from "../../../../store/gameRoomSlice/stateTypes";
-import { useAppSelector, useAppDispatch } from "../../../../store/store";
+import { styled, keyframes } from "styled-components";
+import { clearRoom, rematch } from "../../../../store/gameRoomSlice/index.js";
+import { GameResult } from "../../../../store/gameRoomSlice/stateTypes.js";
+import { useAppSelector, useAppDispatch } from "../../../../store/store.js";
 import {
   closeWSConnection,
   sendMessage,
-} from "../../../../store/wsMiddleware/actions";
+} from "../../../../store/wsMiddleware/actions.js";
 import {
   RoomStatusRequestMessage,
   ClientMessageCode,
-} from "../../../../store/wsMiddleware/messageTypes";
-import { assertNever } from "../../../../utils/typeUtils";
-import Button from "../../../Button";
-import { Theme } from "../../../assets/themes/themeDefault";
+} from "@battleship/common/messages/MessageTypes.js";
+import { assertNever } from "@battleship/common/utils/typeUtils.js";
+import Button from "../../../Button.js";
+import { Theme } from "../../../assets/themes/themeDefault.js";
 
 const Blur = keyframes`
   from {

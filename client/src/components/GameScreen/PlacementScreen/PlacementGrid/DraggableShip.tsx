@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useRef } from "react";
-import { ShipOrientation } from "../../../../__generated__/graphql";
-import useShipDrag from "../../../../hooks/useShipDrag";
-import Ship from "../../Ship";
+import { ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
+import useShipDrag from "../../../../hooks/useShipDrag/index.js";
+import Ship from "../../Ship/index.js";
 
 const NavySpacerContainer = styled.div<{
   $shipSize: number;

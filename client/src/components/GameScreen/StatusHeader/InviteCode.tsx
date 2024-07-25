@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { useAppSelector } from "../../../store/store";
-import { Theme } from "../../assets/themes/themeDefault";
+import { styled } from "styled-components";
+import { useAppSelector } from "../../../store/store.js";
+import { Theme } from "../../assets/themes/themeDefault.js";
 
 const Container = styled.div<{ theme: Theme }>`
   width: min(100%, 30rem);

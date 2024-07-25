@@ -1,5 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import type { Store } from "../store/store";
+import type { Store } from "../store/store.js";
 
 class Dependencies {
   private static instance: Dependencies | undefined = undefined;

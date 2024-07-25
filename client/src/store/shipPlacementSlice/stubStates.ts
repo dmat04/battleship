@@ -1,5 +1,5 @@
-import { ShipOrientation, ShipClassName } from "../../__generated__/graphql";
-import { SliceState } from "./types";
+import { ShipOrientation, ShipClassName } from "@battleship/common/types/__generated__/types.generated.js";
+import { SliceState } from "./types.js";
 
 export const placedState: SliceState = {
   placedIDs: [

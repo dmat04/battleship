@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useRef } from "react";
 import IconContrast from "../assets/icons/ic_contrast.svg";
 import IconDark from "../assets/icons/ic_dark_mode.svg";
@@ -7,9 +7,9 @@ import IconDevice from "../assets/icons/ic_devices.svg";
 import {
   ThemePreference,
   useThemePreference,
-} from "../ThemeProvider/ThemePreferenceContext";
-import { Theme } from "../assets/themes/themeDefault";
-import CollapsibleContainer, { CollapsibleAPI } from "../CollapsibleContainer";
+} from "../ThemeProvider/ThemePreferenceContext.js";
+import { Theme } from "../assets/themes/themeDefault.js";
+import CollapsibleContainer, { CollapsibleAPI } from "../CollapsibleContainer.js";
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
