@@ -16,44 +16,58 @@ export const validPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 4,
+        position: {
+          x: 7,
+          y: 4
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: 9,
+        position: {
+          x: 7,
+          y: 9
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 9,
+        position: {
+          x: 0,
+          y: 9
+        }
       },
     ],
   },
@@ -63,44 +77,58 @@ export const validPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 9,
+        position: {
+          x: 3,
+          y: 9
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 3,
+        position: {
+          x: 8,
+          y: 3
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 0,
+        position: {
+          x: 0,
+          y: 0
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 6,
+        position: {
+          x: 0,
+          y: 6
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 9,
+        position: {
+          x: 0,
+          y: 9
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Horizontal,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Horizontal,
-        x: 9,
-        y: 9,
+        position: {
+          x: 9,
+          y: 9
+        }
       },
     ],
   },
@@ -113,44 +141,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 4,
+        position: {
+          x: 7,
+          y: 4
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: 9,
+        position: {
+          x: 7,
+          y: 9
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 8,
+        position: {
+          x: 8,
+          y: 8
+        }
       },
     ],
   },
@@ -160,44 +202,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 5,
-        y: 9,
+        position: {
+          x: 5,
+          y: 9
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 9,
+        position: {
+          x: 0,
+          y: 9
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 6,
+        position: {
+          x: 0,
+          y: 6
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 0,
+        position: {
+          x: 0,
+          y: 0
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 4,
+        position: {
+          x: 0,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 4,
-        y: 9,
+        position: {
+          x: 4,
+          y: 9
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 2,
+        position: {
+          x: 0,
+          y: 2
+        }
       },
     ],
   },
@@ -207,44 +263,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 0,
+        position: {
+          x: 4,
+          y: 0
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 6,
+        position: {
+          x: 9,
+          y: 6
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 3,
+        position: {
+          x: 9,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 0,
+        position: {
+          x: 2,
+          y: 0
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 0,
+        position: {
+          x: 1,
+          y: 0
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 0,
+        position: {
+          x: 9,
+          y: 0
+        }
       },
     ],
   },
@@ -254,44 +324,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 4,
+        position: {
+          x: 2,
+          y: 4
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 5,
+        position: {
+          x: 3,
+          y: 5
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 3,
+        position: {
+          x: 7,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 3,
+        position: {
+          x: 2,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 5,
-        y: 3,
+        position: {
+          x: 5,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 3,
+        position: {
+          x: 4,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 5,
+        position: {
+          x: 2,
+          y: 5
+        }
       },
     ],
   },
@@ -301,44 +385,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 6,
+        position: {
+          x: 7,
+          y: 6
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: 9,
+        position: {
+          x: 7,
+          y: 9
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 8,
+        position: {
+          x: 8,
+          y: 8
+        }
       },
     ],
   },
@@ -348,44 +446,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 6,
-        y: 9,
+        position: {
+          x: 6,
+          y: 9
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 9,
+        position: {
+          x: 0,
+          y: 9
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 6,
+        position: {
+          x: 0,
+          y: 6
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 0,
+        position: {
+          x: 0,
+          y: 0
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 4,
+        position: {
+          x: 0,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 4,
-        y: 9,
+        position: {
+          x: 4,
+          y: 9
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 2,
+        position: {
+          x: 0,
+          y: 2
+        }
       },
     ],
   },
@@ -395,44 +507,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 0,
+        position: {
+          x: 4,
+          y: 0
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 7,
+        position: {
+          x: 9,
+          y: 7
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 3,
+        position: {
+          x: 9,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 0,
+        position: {
+          x: 2,
+          y: 0
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 0,
+        position: {
+          x: 1,
+          y: 0
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 0,
+        position: {
+          x: 9,
+          y: 0
+        }
       },
     ],
   },
@@ -442,44 +568,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 4,
+        position: {
+          x: 2,
+          y: 4
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 5,
+        position: {
+          x: 3,
+          y: 5
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 3,
+        position: {
+          x: 7,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 3,
+        position: {
+          x: 2,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 6,
-        y: 3,
+        position: {
+          x: 6,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 3,
+        position: {
+          x: 4,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 5,
+        position: {
+          x: 2,
+          y: 5
+        }
       },
     ],
   },
@@ -489,38 +629,50 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 4,
+        position: {
+          x: 2,
+          y: 4
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 5,
+        position: {
+          x: 3,
+          y: 5
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 3,
+        position: {
+          x: 7,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 3,
+        position: {
+          x: 2,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 3,
+        position: {
+          x: 4,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 5,
+        position: {
+          x: 2,
+          y: 5
+        }
       },
     ],
   },
@@ -530,50 +682,66 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 4,
+        position: {
+          x: 2,
+          y: 4
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 5,
+        position: {
+          x: 3,
+          y: 5
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 3,
+        position: {
+          x: 7,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 3,
+        position: {
+          x: 2,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 5,
-        y: 3,
+        position: {
+          x: 5,
+          y: 3
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 8,
+        position: {
+          x: 4,
+          y: 8
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Horizontal,
-        x: 4,
-        y: 3,
+        position: {
+          x: 4,
+          y: 3
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Horizontal,
-        x: 2,
-        y: 5,
+        position: {
+          x: 2,
+          y: 5
+        }
       },
     ],
   },
@@ -583,44 +751,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 10,
-        y: 1,
+        position: {
+          x: 10,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 4,
+        position: {
+          x: 7,
+          y: 4
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: 9,
+        position: {
+          x: 7,
+          y: 9
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 8,
+        position: {
+          x: 8,
+          y: 8
+        }
       },
     ],
   },
@@ -630,44 +812,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 4,
+        position: {
+          x: 7,
+          y: 4
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: -1,
+        position: {
+          x: 7,
+          y: -1
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 8,
+        position: {
+          x: 8,
+          y: 8
+        }
       },
     ],
   },
@@ -677,44 +873,58 @@ export const invalidPlacements: PlacementTestData[] = [
       {
         shipID: "CARRIER-0",
         orientation: ShipOrientation.Vertical,
-        x: 9,
-        y: 1,
+        position: {
+          x: 9,
+          y: 1
+        }
       },
       {
         shipID: "BATTLESHIP-0",
         orientation: ShipOrientation.Vertical,
-        x: 7,
-        y: 4,
+        position: {
+          x: 7,
+          y: 4
+        }
       },
       {
         shipID: "CRUISER-0",
         orientation: ShipOrientation.Horizontal,
-        x: 7,
-        y: 9,
+        position: {
+          x: 7,
+          y: 9
+        }
       },
       {
         shipID: "DESTROYER-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 1,
+        position: {
+          x: 3,
+          y: 1
+        }
       },
       {
         shipID: "DESTROYER-1",
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 4,
+        position: {
+          x: 3,
+          y: 4
+        }
       },
       {
         shipID: "SUBMARINE-0",
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
       {
         shipID: "SUBMARINE-1",
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 8,
+        position: {
+          x: 8,
+          y: 8
+        }
       },
     ],
   },

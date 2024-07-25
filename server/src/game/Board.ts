@@ -8,7 +8,7 @@ import {
   ShipPlacementInput,
   ShipOrientation,
 } from "@battleship/common/types/__generated__/types.generated.js";
-import type { CellHitResult } from '@battleship/common/types/GameTypes.js';
+import type { CellHitResult } from "@battleship/common/types/GameTypes.js";
 
 export enum CellState {
   Empty = 1,
@@ -117,8 +117,10 @@ class Board {
 
       return {
         ship,
-        x: shipPlacement.x,
-        y: shipPlacement.y,
+        position: {
+          x: shipPlacement.position.x,
+          y: shipPlacement.position.y,
+        },
         orientation: shipPlacement.orientation,
       };
     });
@@ -153,7 +155,11 @@ class Board {
     settings: GameSettings,
   ): boolean => {
     // Destructure the member properties
-    const { ship, orientation, x, y } = placement;
+    const {
+      ship,
+      orientation,
+      position: { x, y },
+    } = placement;
 
     // Check that the whole ship is within bounds according to its orientation.
     // The coordinates (x, y) of the ship mark the topmost part of the ship when
@@ -205,7 +211,11 @@ class Board {
     settings: GameSettings,
   ): boolean => {
     // Destructure the placement values
-    const { ship, x, y, orientation } = shipPlacement;
+    const {
+      ship,
+      orientation,
+      position: { x, y },
+    } = shipPlacement;
     const { boardWidth, boardHeight } = settings;
 
     // Calculate the bounds within which no other ship
@@ -226,7 +236,7 @@ class Board {
       const rowArray = playerBoard[row];
 
       for (let col = xStart; col <= xEnd; col += 1) {
-        if (rowArray[col] !== CellState.Empty as number) {
+        if (rowArray[col] !== (CellState.Empty as number)) {
           return false;
         }
       }
@@ -254,7 +264,10 @@ class Board {
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
-    const { ship, x, y } = shipPlacement;
+    const {
+      ship,
+      position: { x, y },
+    } = shipPlacement;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
@@ -291,7 +304,10 @@ class Board {
     settings: GameSettings,
   ): void => {
     // Destructure the placement values
-    const { ship, x, y } = shipPlacement;
+    const {
+      ship,
+      position: { x, y },
+    } = shipPlacement;
 
     // Check for ship overlap before placing the ship
     if (!Board.checkOverlap(playerBoard, shipPlacement, settings)) {
@@ -408,8 +424,8 @@ class Board {
       // Check that the ship placement is within board bounds
       if (!Board.checkPosition(placement, settings)) {
         errors.push(
-          `${placement.ship.type} at (${placement.x}, ${placement.y}) ` +
-          `${placement.orientation.charAt(0)} - out of bounds`,
+          `${placement.ship.type} at (${placement.position.x}, ${placement.position.y}) ` +
+            `${placement.orientation.charAt(0)} - out of bounds`,
         );
       }
 
@@ -419,8 +435,8 @@ class Board {
       } catch {
         // If ship placement failed, ship overlap has been detected.
         errors.push(
-          `${placement.ship.type} at (${placement.x}, ${placement.y}) ` +
-          `${placement.orientation.charAt(0)} - ship overlap`,
+          `${placement.ship.type} at (${placement.position.x}, ${placement.position.y}) ` +
+            `${placement.orientation.charAt(0)} - ship overlap`,
         );
       }
     });
@@ -502,7 +518,11 @@ class Board {
     const ships = player === Player.Player1 ? this.p1Ships : this.p2Ships;
 
     const found = ships.find((shipState) => {
-      const { x, y, orientation, ship } = shipState.shipPlacement;
+      const {
+        position: { x, y },
+        orientation,
+        ship,
+      } = shipState.shipPlacement;
 
       switch (orientation) {
         case ShipOrientation.Horizontal:
@@ -574,8 +594,10 @@ class Board {
       hit: false,
       gameWon: false,
       shipSunk: undefined,
-      x,
-      y,
+      position: {
+        x,
+        y,
+      },
     };
 
     // If a ship has been hit...
@@ -621,7 +643,9 @@ class Board {
     targetBoard.forEach((row, idx) => {
       if (
         row.some(
-          (cell) => cell === CellState.Empty as number || cell === CellState.Populated as number,
+          (cell) =>
+            cell === (CellState.Empty as number) ||
+            cell === (CellState.Populated as number),
         )
       ) {
         hittableRows.push(idx);
@@ -642,7 +666,10 @@ class Board {
     // filter out all column indices which are 'hittable'
     const hittableColumns: number[] = [];
     row.forEach((cell, idx) => {
-      if (cell === CellState.Empty as number || cell === CellState.Populated as number) {
+      if (
+        cell === (CellState.Empty as number) ||
+        cell === (CellState.Populated as number)
+      ) {
         hittableColumns.push(idx);
       }
     });

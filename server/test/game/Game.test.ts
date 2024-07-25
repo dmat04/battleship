@@ -75,8 +75,10 @@ describe("A game in progress", () => {
     const result = gameSubject.makeMove(firstPlayer, 5, 5);
     const currentPlayer = gameSubject.getCurrentPlayer();
     const expectedResult: CellHitResult = {
-      x: 5,
-      y: 5,
+      position: {
+        x: 5,
+        y: 5,
+      },
       hit: false,
       gameWon: false,
     };
@@ -91,8 +93,10 @@ describe("A game in progress", () => {
     const currentPlayer = gameSubject.getCurrentPlayer();
 
     const expectedResult: CellHitResult = {
-      x: 0,
-      y: 0,
+      position: {
+        x: 0,
+        y: 0,
+      },
       hit: true,
       gameWon: false,
     };
@@ -151,8 +155,10 @@ describe("A finished game", () => {
     // move, now 'secondPlayer' needs to make the first move.
     const firstMove = gameSubject.makeMove(secondPlayer, 9, 0);
     expect(firstMove).toEqual({
-      x: 9,
-      y: 0,
+      position: {
+        x: 9,
+        y: 0,
+      },
       hit: false,
       gameWon: false,
     });

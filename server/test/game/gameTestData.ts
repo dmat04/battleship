@@ -4,44 +4,58 @@ export const p1Placements: ShipPlacementInput[] = [
   {
     shipID: "CARRIER-0",
     orientation: ShipOrientation.Vertical,
-    x: 9,
-    y: 1,
+    position: {
+      x: 9,
+      y: 1
+    }
   },
   {
     shipID: "BATTLESHIP-0",
     orientation: ShipOrientation.Vertical,
-    x: 7,
-    y: 4,
+    position: {
+      x: 7,
+      y: 4
+    }
   },
   {
     shipID: "CRUISER-0",
     orientation: ShipOrientation.Horizontal,
-    x: 7,
-    y: 9,
+    position: {
+      x: 7,
+      y: 9
+    }
   },
   {
     shipID: "DESTROYER-0",
     orientation: ShipOrientation.Vertical,
-    x: 1,
-    y: 1,
+    position: {
+      x: 1,
+      y: 1
+    }
   },
   {
     shipID: "DESTROYER-1",
     orientation: ShipOrientation.Horizontal,
-    x: 3,
-    y: 4,
+    position: {
+      x: 3,
+      y: 4
+    }
   },
   {
     shipID: "SUBMARINE-0",
     orientation: ShipOrientation.Vertical,
-    x: 3,
-    y: 2,
+    position: {
+      x: 3,
+      y: 2
+    }
   },
   {
     shipID: "SUBMARINE-1",
     orientation: ShipOrientation.Vertical,
-    x: 0,
-    y: 9,
+    position: {
+      x: 0,
+      y: 9
+    }
   },
 ];
 
@@ -49,44 +63,58 @@ export const p2Placements: ShipPlacementInput[] = [
   {
     shipID: "CARRIER-0",
     orientation: ShipOrientation.Horizontal,
-    x: 3,
-    y: 9,
+    position: {
+      x: 3,
+      y: 9
+    }
   },
   {
     shipID: "BATTLESHIP-0",
     orientation: ShipOrientation.Vertical,
-    x: 8,
-    y: 3,
+    position: {
+      x: 8,
+      y: 3
+    }
   },
   {
     shipID: "CRUISER-0",
     orientation: ShipOrientation.Horizontal,
-    x: 0,
-    y: 0,
+    position: {
+      x: 0,
+      y: 0
+    }
   },
   {
     shipID: "DESTROYER-0",
     orientation: ShipOrientation.Vertical,
-    x: 0,
-    y: 6,
+    position: {
+      x: 0,
+      y: 6
+    }
   },
   {
     shipID: "DESTROYER-1",
     orientation: ShipOrientation.Horizontal,
-    x: 0,
-    y: 9,
+    position: {
+      x: 0,
+      y: 9
+    }
   },
   {
     shipID: "SUBMARINE-0",
     orientation: ShipOrientation.Horizontal,
-    x: 8,
-    y: 1,
+    position: {
+      x: 8,
+      y: 1
+    }
   },
   {
     shipID: "SUBMARINE-1",
     orientation: ShipOrientation.Horizontal,
-    x: 9,
-    y: 9,
+    position: {
+      x: 9,
+      y: 9
+    }
   },
 ];
 
@@ -99,8 +127,10 @@ export const moves = [
     x: 0,
     y: 3,
     result: {
-      x: 0,
-      y: 3,
+      position: {
+        x: 0,
+        y: 3
+      },
       hit: false,
       gameWon: false,
     },
@@ -110,8 +140,10 @@ export const moves = [
     x: 0,
     y: 0,
     result: {
-      x: 0,
-      y: 0,
+      position: {
+        x: 0,
+        y: 0
+      },
       hit: false,
       gameWon: false,
     },
@@ -121,8 +153,10 @@ export const moves = [
     x: 0,
     y: 9,
     result: {
-      x: 0,
-      y: 9,
+      position: {
+        x: 0,
+        y: 9
+      },
       hit: true,
       gameWon: false,
     },
@@ -132,8 +166,10 @@ export const moves = [
     x: 1,
     y: 8,
     result: {
-      x: 1,
-      y: 8,
+      position: {
+        x: 1,
+        y: 8
+      },
       hit: false,
       gameWon: false,
     },
@@ -143,8 +179,10 @@ export const moves = [
     x: 1,
     y: 0,
     result: {
-      x: 1,
-      y: 0,
+      position: {
+        x: 1,
+        y: 0
+      },
       hit: false,
       gameWon: false,
     },
@@ -154,8 +192,10 @@ export const moves = [
     x: 2,
     y: 8,
     result: {
-      x: 2,
-      y: 8,
+      position: {
+        x: 2,
+        y: 8
+      },
       hit: false,
       gameWon: false,
     },
@@ -165,8 +205,10 @@ export const moves = [
     x: 1,
     y: 1,
     result: {
-      x: 1,
-      y: 1,
+      position: {
+        x: 1,
+        y: 1
+      },
       hit: true,
       gameWon: false,
     },
@@ -176,8 +218,10 @@ export const moves = [
     x: 1,
     y: 2,
     result: {
-      x: 1,
-      y: 2,
+      position: {
+        x: 1,
+        y: 2
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -187,8 +231,10 @@ export const moves = [
           size: 2,
         },
         orientation: ShipOrientation.Vertical,
-        x: 1,
-        y: 1,
+        position: {
+          x: 1,
+          y: 1
+        }
       },
     },
   },
@@ -197,8 +243,10 @@ export const moves = [
     x: 3,
     y: 2,
     result: {
-      x: 3,
-      y: 2,
+      position: {
+        x: 3,
+        y: 2
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -208,8 +256,10 @@ export const moves = [
           size: 1,
         },
         orientation: ShipOrientation.Vertical,
-        x: 3,
-        y: 2,
+        position: {
+          x: 3,
+          y: 2
+        }
       },
     },
   },
@@ -218,8 +268,10 @@ export const moves = [
     x: 3,
     y: 1,
     result: {
-      x: 3,
-      y: 1,
+      position: {
+        x: 3,
+        y: 1
+      },
       hit: false,
       gameWon: false,
     },
@@ -229,8 +281,10 @@ export const moves = [
     x: 3,
     y: 8,
     result: {
-      x: 3,
-      y: 8,
+      position: {
+        x: 3,
+        y: 8
+      },
       hit: false,
       gameWon: false,
     },
@@ -240,8 +294,10 @@ export const moves = [
     x: 3,
     y: 0,
     result: {
-      x: 3,
-      y: 0,
+      position: {
+        x: 3,
+        y: 0
+      },
       hit: false,
       gameWon: false,
     },
@@ -251,8 +307,10 @@ export const moves = [
     x: 0,
     y: 0,
     result: {
-      x: 0,
-      y: 0,
+      position: {
+        x: 0,
+        y: 0
+      },
       hit: true,
       gameWon: false,
     },
@@ -262,8 +320,10 @@ export const moves = [
     x: 1,
     y: 0,
     result: {
-      x: 1,
-      y: 0,
+      position: {
+        x: 1,
+        y: 0
+      },
       hit: true,
       gameWon: false,
     },
@@ -273,8 +333,10 @@ export const moves = [
     x: 2,
     y: 0,
     result: {
-      x: 2,
-      y: 0,
+      position: {
+        x: 2,
+        y: 0
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -284,8 +346,10 @@ export const moves = [
           size: 3,
         },
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 0,
+        position: {
+          x: 0,
+          y: 0
+        }
       },
     },
   },
@@ -294,8 +358,10 @@ export const moves = [
     x: 8,
     y: 1,
     result: {
-      x: 8,
-      y: 1,
+      position: {
+        x: 8,
+        y: 1
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -305,8 +371,10 @@ export const moves = [
           size: 1,
         },
         orientation: ShipOrientation.Horizontal,
-        x: 8,
-        y: 1,
+        position: {
+          x: 8,
+          y: 1
+        }
       },
     },
   },
@@ -315,8 +383,10 @@ export const moves = [
     x: 8,
     y: 3,
     result: {
-      x: 8,
-      y: 3,
+      position: {
+        x: 8,
+        y: 3
+      },
       hit: true,
       gameWon: false,
     },
@@ -326,8 +396,10 @@ export const moves = [
     x: 8,
     y: 4,
     result: {
-      x: 8,
-      y: 4,
+      position: {
+        x: 8,
+        y: 4
+      },
       hit: true,
       gameWon: false,
     },
@@ -337,8 +409,10 @@ export const moves = [
     x: 8,
     y: 5,
     result: {
-      x: 8,
-      y: 5,
+      position: {
+        x: 8,
+        y: 5
+      },
       hit: true,
       gameWon: false,
     },
@@ -348,8 +422,10 @@ export const moves = [
     x: 8,
     y: 6,
     result: {
-      x: 8,
-      y: 6,
+      position: {
+        x: 8,
+        y: 6
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -359,8 +435,10 @@ export const moves = [
           size: 4,
         },
         orientation: ShipOrientation.Vertical,
-        x: 8,
-        y: 3,
+        position: {
+          x: 8,
+          y: 3
+        }
       },
     },
   },
@@ -369,8 +447,10 @@ export const moves = [
     x: 0,
     y: 6,
     result: {
-      x: 0,
-      y: 6,
+      position: {
+        x: 0,
+        y: 6
+      },
       hit: true,
       gameWon: false,
     },
@@ -380,8 +460,10 @@ export const moves = [
     x: 0,
     y: 7,
     result: {
-      x: 0,
-      y: 7,
+      position: {
+        x: 0,
+        y: 7
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -391,8 +473,10 @@ export const moves = [
           size: 2,
         },
         orientation: ShipOrientation.Vertical,
-        x: 0,
-        y: 6,
+        position: {
+          x: 0,
+          y: 6
+        }
       },
     },
   },
@@ -401,8 +485,10 @@ export const moves = [
     x: 1,
     y: 9,
     result: {
-      x: 1,
-      y: 9,
+      position: {
+        x: 1,
+        y: 9
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -412,8 +498,10 @@ export const moves = [
           size: 2,
         },
         orientation: ShipOrientation.Horizontal,
-        x: 0,
-        y: 9,
+        position: {
+          x: 0,
+          y: 9
+        }
       },
     },
   },
@@ -422,8 +510,10 @@ export const moves = [
     x: 4,
     y: 9,
     result: {
-      x: 4,
-      y: 9,
+      position: {
+        x: 4,
+        y: 9
+      },
       hit: true,
       gameWon: false,
     },
@@ -433,8 +523,10 @@ export const moves = [
     x: 5,
     y: 9,
     result: {
-      x: 5,
-      y: 9,
+      position: {
+        x: 5,
+        y: 9
+      },
       hit: true,
       gameWon: false,
     },
@@ -444,8 +536,10 @@ export const moves = [
     x: 6,
     y: 9,
     result: {
-      x: 6,
-      y: 9,
+      position: {
+        x: 6,
+        y: 9
+      },
       hit: true,
       gameWon: false,
     },
@@ -455,8 +549,10 @@ export const moves = [
     x: 7,
     y: 9,
     result: {
-      x: 7,
-      y: 9,
+      position: {
+        x: 7,
+        y: 9
+      },
       hit: true,
       gameWon: false,
     },
@@ -466,8 +562,10 @@ export const moves = [
     x: 9,
     y: 9,
     result: {
-      x: 9,
-      y: 9,
+      position: {
+        x: 9,
+        y: 9
+      },
       hit: true,
       gameWon: false,
       shipSunk: {
@@ -477,8 +575,10 @@ export const moves = [
           size: 1,
         },
         orientation: ShipOrientation.Horizontal,
-        x: 9,
-        y: 9,
+        position: {
+          x: 9,
+          y: 9
+        }
       },
     },
   },
@@ -487,8 +587,10 @@ export const moves = [
     x: 3,
     y: 9,
     result: {
-      x: 3,
-      y: 9,
+      position: {
+        x: 3,
+        y: 9
+      },
       hit: true,
       gameWon: true,
       shipSunk: {
@@ -498,8 +600,10 @@ export const moves = [
           size: 5,
         },
         orientation: ShipOrientation.Horizontal,
-        x: 3,
-        y: 9,
+        position: {
+          x: 3,
+          y: 9
+        }
       },
     },
   },

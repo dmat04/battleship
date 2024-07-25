@@ -577,7 +577,7 @@ const handleShootMessage = (
   const { playerData, opponentData } = getActivePlayerData(room, player);
 
   try {
-    const { x, y } = message;
+    const { position: { x, y } } = message;
     const result = room.gameInstance.makeMove(playerData.user.username, x, y);
     const currentPlayer = room.gameInstance.getCurrentPlayer();
 
