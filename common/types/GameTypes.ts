@@ -1,8 +1,7 @@
-import type { PlacedShip } from './__generated__/types.generated.js'
+import type { Coordinate, PlacedShip } from './__generated__/types.generated.js'
 
 export interface CellHitResult {
-  x: number,
-  y: number,
+  position: Coordinate,
   hit: boolean,
   gameWon: boolean,
   shipSunk?: PlacedShip,

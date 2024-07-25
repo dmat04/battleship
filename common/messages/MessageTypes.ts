@@ -1,5 +1,5 @@
 import type { CellHitResult } from '../types/GameTypes.js' 
-import { GameRoomStatus } from '../types/__generated__/types.generated.js';
+import { Coordinate, GameRoomStatus } from '../types/__generated__/types.generated.js';
 
 export enum ClientMessageCode {
   Shoot = "Shoot",
@@ -18,8 +18,7 @@ export enum ServerMessageCode {
 
 export interface ShootMessage {
   code: ClientMessageCode.Shoot;
-  x: number;
-  y: number;
+  position: Coordinate;
 }
 
 export interface RoomStatusRequestMessage {

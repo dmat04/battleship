@@ -1,12 +1,18 @@
 import { isBoolean, isInteger, isObject, isString } from "lodash";
 import { assertNever } from "../utils/typeUtils.js";
 import * as MessageTypes from "./MessageTypes.js";
-import { GameRoomStatus, PlacedShip, Ship, ShipClassName, ShipOrientation } from "../types/__generated__/types.generated.js";
+import { Coordinate, GameRoomStatus, PlacedShip, Ship, ShipClassName, ShipOrientation } from "../types/__generated__/types.generated.js";
+
+const isCoordinate = (obj: object): obj is Coordinate => {
+  const typed = obj as Coordinate;
+
+  return isInteger(typed.x) && isInteger(typed.y);
+}
 
 const isShootMessage = (message: object): message is MessageTypes.ShootMessage => {
   const typed = message as MessageTypes.ShootMessage;
 
-  if (!isInteger(typed.x) || !isInteger(typed.y)) {
+  if (!isCoordinate(typed.position)) {
     return false;
   }
 
@@ -43,7 +49,7 @@ const isShip = (obj: object): obj is Ship => {
 const isPlacedShip = (obj: object): obj is PlacedShip => {
   const typed = obj as PlacedShip;
 
-  if (!isInteger(typed.x) || !isInteger(typed.y)) {
+  if (!isCoordinate(typed.position)) {
     return false;
   }
 
@@ -89,7 +95,7 @@ const isMoveResultMessage = (
 ): message is MessageTypes.MoveResultMessageBase => {
   const typed = message as MessageTypes.MoveResultMessageBase;
 
-  if (!isInteger(typed.x) || !isInteger(typed.y)) return false;
+  if (!isCoordinate(typed.position)) return false;
   if (!isBoolean(typed.hit) || !isBoolean(typed.gameWon)) return false;
   if (!isString(typed.currentPlayer)) return false;
 
@@ -148,7 +154,9 @@ const isOpponentDisconectedMessage = (
   return code === MessageTypes.ServerMessageCode.OpponentDisconnected;
 };
 
-const ParseClientMessage = (jsonMessage: string): MessageTypes.ClientMessage | undefined => {
+const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | undefined => {
+  if (!isString(jsonMessage)) return undefined;
+
   let message: unknown = null;
 
   try {
@@ -181,7 +189,9 @@ const ParseClientMessage = (jsonMessage: string): MessageTypes.ClientMessage | u
   }
 };
 
-const ParseServerMessage = (jsonMessage: string): MessageTypes.ServerMessage | undefined => {
+const ParseServerMessage = (jsonMessage: unknown): MessageTypes.ServerMessage | undefined => {
+  if (!isString(jsonMessage)) return undefined;
+  
   let message: unknown = null;
 
   try {
