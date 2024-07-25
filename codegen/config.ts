@@ -45,7 +45,7 @@ const config: CodegenConfig = {
         {
           add: {
             content: [
-              `import * as Types from "@battleship/common/types/__generated__/types.generated";`,
+              `import * as Types from "@battleship/common/types/__generated__/types.generated.js";`,
             ]
           },
         },
