@@ -1,4 +1,5 @@
-import { isBoolean, isInteger, isObject, isString } from "lodash";
+import _ from "lodash";
+// import { isBoolean, isInteger, isObject, isString } from "lodash";
 import { assertNever } from "../utils/typeUtils.js";
 import * as MessageTypes from "./MessageTypes.js";
 import { Coordinate, GameRoomStatus, PlacedShip, Ship, ShipClassName, ShipOrientation } from "../types/__generated__/types.generated.js";
@@ -6,7 +7,7 @@ import { Coordinate, GameRoomStatus, PlacedShip, Ship, ShipClassName, ShipOrient
 const isCoordinate = (obj: object): obj is Coordinate => {
   const typed = obj as Coordinate;
 
-  return isInteger(typed.x) && isInteger(typed.y);
+  return _.isInteger(typed.x) && _.isInteger(typed.y);
 }
 
 const isShootMessage = (message: object): message is MessageTypes.ShootMessage => {
@@ -25,17 +26,17 @@ const isShootMessage = (message: object): message is MessageTypes.ShootMessage =
 
 const isErrorMessage = (message: object): message is MessageTypes.ErrorMessage => {
   const typed = message as MessageTypes.ErrorMessage;
-  return typed.code === MessageTypes.ServerMessageCode.Error && isString(typed.message);
+  return typed.code === MessageTypes.ServerMessageCode.Error && _.isString(typed.message);
 };
 
 const isShip = (obj: object): obj is Ship => {
   const typed = obj as Ship;
 
-  if (!isString(typed.shipID)) {
+  if (!_.isString(typed.shipID)) {
     return false;
   }
 
-  if (!isInteger(typed.size)) {
+  if (!_.isInteger(typed.size)) {
     return false;
   }
 
@@ -75,15 +76,15 @@ const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
     playerSocketConnected,
   } = obj as GameRoomStatus;
 
-  if (currentPlayer && !isString(currentPlayer)) return false;
-  if (opponent && !isString(opponent)) return false;
+  if (currentPlayer && !_.isString(currentPlayer)) return false;
+  if (opponent && !_.isString(opponent)) return false;
 
   if (
-    !isString(player) ||
-    !isBoolean(playerShipsPlaced) ||
-    !isBoolean(playerSocketConnected) ||
-    !isBoolean(opponentShipsPlaced) ||
-    !isBoolean(opponentSocketConnected)
+    !_.isString(player) ||
+    !_.isBoolean(playerShipsPlaced) ||
+    !_.isBoolean(playerSocketConnected) ||
+    !_.isBoolean(opponentShipsPlaced) ||
+    !_.isBoolean(opponentSocketConnected)
   )
     return false;
 
@@ -96,8 +97,8 @@ const isMoveResultMessage = (
   const typed = message as MessageTypes.MoveResultMessageBase;
 
   if (!isCoordinate(typed.position)) return false;
-  if (!isBoolean(typed.hit) || !isBoolean(typed.gameWon)) return false;
-  if (!isString(typed.currentPlayer)) return false;
+  if (!_.isBoolean(typed.hit) || !_.isBoolean(typed.gameWon)) return false;
+  if (!_.isString(typed.currentPlayer)) return false;
 
   const { shipSunk } = typed;
   if (shipSunk !== undefined && !isPlacedShip(shipSunk)) return false;
@@ -143,7 +144,7 @@ const isGameStartedMessage = (
 ): message is MessageTypes.GameStartedMessage => {
   const { code, playsFirst } = message as MessageTypes.GameStartedMessage;
 
-  return code === MessageTypes.ServerMessageCode.GameStarted && isString(playsFirst);
+  return code === MessageTypes.ServerMessageCode.GameStarted && _.isString(playsFirst);
 };
 
 const isOpponentDisconectedMessage = (
@@ -155,7 +156,7 @@ const isOpponentDisconectedMessage = (
 };
 
 const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | undefined => {
-  if (!isString(jsonMessage)) return undefined;
+  if (!_.isString(jsonMessage)) return undefined;
 
   let message: unknown = null;
 
@@ -190,7 +191,7 @@ const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | 
 };
 
 const ParseServerMessage = (jsonMessage: unknown): MessageTypes.ServerMessage | undefined => {
-  if (!isString(jsonMessage)) return undefined;
+  if (!_.isString(jsonMessage)) return undefined;
   
   let message: unknown = null;
 
@@ -200,7 +201,7 @@ const ParseServerMessage = (jsonMessage: unknown): MessageTypes.ServerMessage | 
     return undefined;
   }
 
-  if (!isObject(message)) {
+  if (!_.isObject(message)) {
     return undefined;
   }
 
