@@ -3,6 +3,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
 
 const outDir = path.resolve(import.meta.dirname, "build/");
+const batteshipDir = path.resolve(import.meta.dirname, "../");
+
 
 export default {
   mode: "development",
@@ -50,6 +52,11 @@ export default {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    alias: {
+      "@battleship/server": path.resolve(batteshipDir, "/server/src"),
+      "@battleship/common": path.resolve(batteshipDir, "/common"),
+      "@battleship/client": path.resolve(batteshipDir, "/client/src"),
+    }
   },
   optimization: {
     emitOnErrors: false,
