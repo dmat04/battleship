@@ -52,7 +52,7 @@ const CollapsibleContainer = forwardRef<
         height:
           initialState === "closed"
             ? "0px"
-            : `${childrenContainerRef.current?.offsetHeight ?? 0}px`,
+            : `${childrenContainerRef.current?.offsetHeight}px`,
         opacity: initialState === "closed" ? 0 : 1,
       },
       config: { duration: theme.durationTransitionDefault },
