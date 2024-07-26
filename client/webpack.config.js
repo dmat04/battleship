@@ -13,6 +13,10 @@ export default {
   devServer: {
     static: "./build",
     hot: true,
+    historyApiFallback: true,
+    client: {
+      overlay: true,
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -24,6 +28,7 @@ export default {
   output: {
     filename: "[name][contenthash].js",
     path: outDir,
+    publicPath: "/",
     clean: true,
   },
   module: {
