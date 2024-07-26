@@ -2,11 +2,12 @@
   "name": "@battleship/client",
   "version": "1.0.0",
   "type": "module",
+  "browser": "./src/index.tsx",
   "scripts": {
     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "webpack server --open",
-    "build": "webpack"
+    "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",

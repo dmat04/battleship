@@ -51,11 +51,17 @@ export default {
     ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: [".tsx", ".ts", ".js", ".jsx"],
+    extensionAlias: {
+      ".js": [".tsx", ".ts", ".js", ".jsx"],
+      ".jsx": [".tsx", ".ts", ".js", ".jsx"],
+      ".ts": [".tsx", ".ts", ".js", ".jsx"],
+      ".tsx": [".tsx", ".ts", ".js", ".jsx"],
+    },
     alias: {
-      "@battleship/server": path.resolve(batteshipDir, "/server/src"),
-      "@battleship/common": path.resolve(batteshipDir, "/common"),
-      "@battleship/client": path.resolve(batteshipDir, "/client/src"),
+      "@battleship/server/": path.resolve(batteshipDir, "/server/src"),
+      "@battleship/common/": path.resolve(batteshipDir, "/common"),
+      "@battleship/client/": path.resolve(batteshipDir, "/client/src"),
     }
   },
   optimization: {
