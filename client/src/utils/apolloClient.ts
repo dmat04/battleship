@@ -21,7 +21,7 @@ const createApolloClient = () => {
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: localStorage.getItem("token") || null,
+        authorization: `Bearer ${token}`,
       },
     }));
 
