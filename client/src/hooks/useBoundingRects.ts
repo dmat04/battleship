@@ -22,7 +22,6 @@ const useBoundingRects = (
       window.visualViewport?.removeEventListener("resize", updateRects);
       window.removeEventListener("scrollend", updateRects);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
   return rects;
