@@ -7,17 +7,16 @@ import {
   TransientData,
 } from "./stateTypes.js";
 import { processRemoveNotification } from "./utils.js";
-import type { AppDispatch, RootState } from "../store.js";
+import type { ThunkAPI } from "../store.js";
 
 const MIN_TIMEOUT = 5000;
 
 export const dismissNotification = createAction<string>("notification/dismiss");
 
 export const PushPermanentNotification = createAsyncThunk<
-  // eslint-disable-next-line @typescript-eslint/indent
   Notification,
   PermanentNotificationArgs,
-  { dispatch: AppDispatch; state: RootState }
+  ThunkAPI
 >("notification/addPermanent", (args, thunkAPI) => {
   const { message, type } = args;
 
@@ -31,10 +30,9 @@ export const PushPermanentNotification = createAsyncThunk<
 });
 
 export const PushTransientNotification = createAsyncThunk<
-  // eslint-disable-next-line @typescript-eslint/indent
   Notification,
   TransientNotificationArgs,
-  { dispatch: AppDispatch; state: RootState }
+  ThunkAPI
 >("notification/addTransient", (args, thunkAPI) => {
   const { message, type, timeoutArg } = args;
 

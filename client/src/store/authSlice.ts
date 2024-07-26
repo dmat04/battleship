@@ -5,7 +5,7 @@ import LocalStorage from "../utils/localStorageUtils.js";
 import { GUEST_LOGIN } from "../graphql/mutations.js";
 import { CHECK_USERNAME } from "../graphql/queries.js";
 import Dependencies from "../utils/Dependencies.js";
-import type { AppDispatch, RootState } from "./store.js";
+import type { ThunkAPI } from "./store.js";
 import { PushTransientNotification } from "./notificationSlice/index.js";
 import { NotificationType } from "./notificationSlice/stateTypes.js";
 import { clearRoom } from "./gameRoomSlice/index.js";
@@ -15,7 +15,7 @@ export const guestLogin = createAsyncThunk<
   // eslint-disable-next-line @typescript-eslint/indent
   LoginResult | undefined,
   string | null,
-  { dispatch: AppDispatch; state: RootState }
+  ThunkAPI
 >("auth/guestLogin", async (username: string | null, thunkAPI) => {
   const result = await Dependencies.getApolloClient()?.mutate<GuestLoginMutation>({
     mutation: GUEST_LOGIN,
@@ -57,7 +57,7 @@ export const checkUsername: unknown = createAsyncThunk(
 export const logout = createAsyncThunk<
   undefined,
   undefined,
-  { dispatch: AppDispatch; state: RootState }
+  ThunkAPI
 >("auth/logout", (_, thunkAPI) => {
   // TODO: invalidate access token on the server
   LocalStorage.clearAccessToken();

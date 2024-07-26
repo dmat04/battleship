@@ -6,14 +6,13 @@ import {
 } from "@battleship/common/types/__generated__/types.generated.js";
 import { PLACE_SHIPS } from "../../graphql/mutations.js";
 import Dependencies from "../../utils/Dependencies.js";
-import type { AppDispatch, RootState } from "../store.js";
+import type { ThunkAPI } from "../store.js";
 import { resetShips } from "./index.js";
 
 export const submitPlacement = createAsyncThunk<
-  // eslint-disable-next-line @typescript-eslint/indent
   ShipsPlacedResult | undefined,
   string,
-  { dispatch: AppDispatch; state: RootState }
+  ThunkAPI
 >("shipPlacement/submit", async (roomId: string, thunkAPI) => {
   const { shipStates } = thunkAPI.getState().shipPlacement;
 

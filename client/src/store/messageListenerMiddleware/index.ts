@@ -40,7 +40,7 @@ const messageListenerMiddleware: Middleware =
               ? "Game started - make the first move"
               : `Game started - ${playsFirst} makes the first move`;
 
-          dispatch(
+          void dispatch(
             PushTransientNotification({
               type: NotificationType.Info,
               message: notification,
@@ -51,7 +51,7 @@ const messageListenerMiddleware: Middleware =
         }
         case ServerMessageCode.OpponentDisconnected:
           if (!state.gameRoom.gameStarted) {
-            dispatch(
+            void dispatch(
               PushTransientNotification({
                 type: NotificationType.Warning,
                 message: "The opponent has disconnected",
