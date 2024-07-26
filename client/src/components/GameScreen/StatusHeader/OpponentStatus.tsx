@@ -44,7 +44,7 @@ const OpponentStatus = () => {
   return (
     <Container>
       <Label>{message}</Label>
-      <Spinner success={success} />
+      <Spinner visible success={success} />
     </Container>
   );
 };

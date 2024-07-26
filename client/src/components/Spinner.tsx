@@ -11,16 +11,11 @@ const Container = styled.div<{ $visible?: boolean }>`
 `;
 
 interface Props {
-  visible?: boolean;
+  visible: boolean;
   success?: boolean;
 }
 
-const defaultProps: Props = {
-  visible: true,
-  success: false,
-};
-
-const Spinner = ({ visible, success }: Props = defaultProps) => {
+const Spinner = ({ visible, success }: Props) => {
   const image = success ? <CheckmarkIcon /> : <SpinnerAnim />;
 
   return (
