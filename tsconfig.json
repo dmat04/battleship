@@ -13,7 +13,10 @@
       "@battleship/common/*": ["./common"],
       "@battleship/server/*": ["./server"],
       "@battleship/client/*": ["./client"],      
-    }
+    },
+    "types": [
+      "vitest/globals", "@testing-library/jest-dom", "vitest"
+    ]
   },
   "ts-node": {
     "transpileOnly": false,
