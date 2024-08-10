@@ -8,8 +8,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start:dev": "NODE_ENV=development nodemon src/index.ts",
-    "build": "tsc"
+    "start:dev": "NODE_ENV=development dotenvx run -f .env.development -- nodemon src/index.ts",
+    "build": "dotenvx run -f .env.production -- tsc"
   },
   "keywords": [],
   "author": "",

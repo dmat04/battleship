@@ -1,12 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable prefer-destructuring */
-import dotenv from "dotenv";
 import {
   isParsableAsInt,
   isString,
 } from "@battleship/common/utils/typeUtils.js";
-
-dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
 
 // Assert that the needed environment variables are present and
 // of the right types
