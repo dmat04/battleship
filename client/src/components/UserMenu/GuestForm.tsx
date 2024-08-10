@@ -4,7 +4,7 @@ import { Theme } from "../assets/themes/themeDefault.js";
 import useUsernameChecker from "../../hooks/useUsernameChecker.js";
 import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import { guestLogin } from "../../store/authSlice.js";
-import Spinner from "../Spinner.js";
+import Spinner from "../Spinner/Spinner.js";
 import Button from "../Button.js";
 
 const Container = styled.form<{ theme: Theme }>`
