@@ -92,7 +92,7 @@ const wsMiddleware: Middleware = ({ dispatch, getState }: {dispatch: AppDispatch
       const { roomID, wsAuthCode } = action.payload;
 
       const uriEncodedUsername = encodeURIComponent(username);
-      const url = `ws://localhost:5000/game/${roomID}/${uriEncodedUsername}`;
+      const url = `${process.env.WS_URL}/game/${roomID}/${uriEncodedUsername}`;
       socket = createSocket(url, wsAuthCode, dispatch);
     } else if (sendMessage.match(action)) {
       if (!socket) {
