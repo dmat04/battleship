@@ -1,10 +1,10 @@
 import path from "path";
+import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
 
 const outDir = path.resolve(import.meta.dirname, "build/");
 const batteshipDir = path.resolve(import.meta.dirname, "../");
-
 
 export default {
   mode: "development",
@@ -24,6 +24,7 @@ export default {
       title: "Battleship",
     }),
     new ForkTsCheckerPlugin({}),
+    new webpack.EnvironmentPlugin(['API_URL', 'WS_URL']),
   ],
   output: {
     filename: "[name][contenthash].js",
