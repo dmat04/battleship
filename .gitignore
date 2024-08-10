@@ -1,8 +1,6 @@
-.env
 .DS_Store
 node_modules
 **/build
 **/dist
 /test/coverage
-.env.production
-.env.development
+.env.keys
