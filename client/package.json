@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint .",
     "test": "vitest -c ./vitest.config.js",
-    "start:dev": "webpack server --open",
-    "build": "webpack --config webpack.config.js"
+    "start:dev": "dotenvx run -- webpack server --open",
+    "build": "dotenvx run -- webpack"
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
