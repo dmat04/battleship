@@ -1,0 +1,17 @@
+services:
+  frontend:
+    image: battleship-client-dev
+    secrets:
+      - source: client-env-key
+        target: /usr/src/app/client/.env.keys
+    build:
+      dockerfile: client/dev.Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 8080:8080
+    container_name: battleship-client-dev
+
+secrets:
+  client-env-key:
+    file: client/.env.keys

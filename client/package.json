@@ -5,7 +5,7 @@
   "browser": "./src/index.tsx",
   "scripts": {
     "lint": "eslint .",
-    "test": "vitest -c ./vitest.config.js",
+    "test": "vitest run -c ./vitest.config.js",
     "start:dev": "dotenvx run -- webpack server --open",
     "build": "dotenvx run -- webpack"
   },
