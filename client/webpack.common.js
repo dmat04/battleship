@@ -7,17 +7,7 @@ const outDir = path.resolve(import.meta.dirname, "build/");
 const batteshipDir = path.resolve(import.meta.dirname, "../");
 
 export default {
-  mode: "development",
   entry: "./src/index.tsx",
-  devtool: "inline-source-map",
-  devServer: {
-    static: "./build",
-    hot: true,
-    historyApiFallback: true,
-    client: {
-      overlay: true,
-    }
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html",

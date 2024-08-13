@@ -25,6 +25,12 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ["**/*.config.js", "**/*.config.ts", "**/build/", "**/test/setup.js"],
+    ignores: [
+      "**/*.config.js",
+      "**/*.config.ts",
+      "**/build/",
+      "**/test/setup.js",
+      "**/webpack.*.js",
+    ],
   },
 );
