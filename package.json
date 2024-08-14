@@ -1,21 +1,20 @@
 {
   "name": "battleship",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "description": "Battleship game server/client",
   "workspaces": [
-    "common/",
-    "server/",
-    "client/"
+    "packages/common",
+    "packages/server",
+    "packages/client"
   ],
   "scripts": {
     "lint": "eslint .",
     "format": "prettier . --write",
-    "codegen": "graphql-codegen --config ./codegen/config.ts",
-    "test": "vitest --watch=false"
+    "codegen": "graphql-codegen --config ./codegen/config.ts"
   },
   "dependencies": {
-    "@apollo/server": "^4.10.4",
     "@dotenvx/dotenvx": "^1.7.0",
     "@graphql-codegen/typescript-react-apollo": "^4.3.0",
     "graphql": "^16.9.0",
@@ -37,7 +36,6 @@
     "eslint-plugin-react": "^7.34.4",
     "prettier": "^3.3.3",
     "replace-in-file": "^8.1.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "typescript-eslint": "^7.16.1",
     "vitest": "^2.0.4"

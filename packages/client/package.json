@@ -7,8 +7,12 @@
     "lint": "eslint .",
     "test": "vitest run -c ./vitest.config.js",
     "start:dev": "dotenvx run -- webpack server --open --config webpack.dev.js",
-    "build": "dotenvx run -- webpack --config webpack.prod.js"
+    "build": "rm -rf ./buld && npm run build --workspace=@battleship/common && dotenvx run -- webpack --config webpack.prod.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "@apollo/client": "^3.10.8",
     "@battleship/common": "^1.0.0",

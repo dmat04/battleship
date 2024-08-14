@@ -4,7 +4,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
 
 const outDir = path.resolve(import.meta.dirname, "build/");
-const batteshipDir = path.resolve(import.meta.dirname, "../");
+const battleshipPackagesDir = path.resolve(import.meta.dirname, "../");
 
 export default {
   entry: "./src/index.tsx",
@@ -55,9 +55,9 @@ export default {
       ".tsx": [".tsx", ".ts", ".js", ".jsx"],
     },
     alias: {
-      "@battleship/server/": path.resolve(batteshipDir, "/server/src"),
-      "@battleship/common/": path.resolve(batteshipDir, "/common"),
-      "@battleship/client/": path.resolve(batteshipDir, "/client/src"),
+      "@battleship/server/": path.resolve(battleshipPackagesDir, "server/build"),
+      "@battleship/common/": path.resolve(battleshipPackagesDir, "common/build"),
+      "@battleship/client/": path.resolve(battleshipPackagesDir, "client/build"),
     }
   },
   optimization: {

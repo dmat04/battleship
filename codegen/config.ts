@@ -17,7 +17,7 @@ const config: CodegenConfig = {
         {
           add: {
             content: [
-              `import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";`
+              `import type { ApolloContext } from "../../utils/ApolloContext.js";`
             ]
           },
         },

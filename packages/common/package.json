@@ -1,0 +1,16 @@
+{
+  "name": "@battleship/common",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./*.js": "./build/*.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "build": "rm -rf ./build && tsc --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "build",
+    "tsBuildInfoFile": "build/.tsbuildinfo",
+  },
+  "exclude": ["test"],
+  "references": [
+    { "path": "../common/" }
+  ]
+}

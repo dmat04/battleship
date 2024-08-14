@@ -8,9 +8,10 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "test": "vitest run",
     "start:dev": "NODE_ENV=development dotenvx run -f .env.development -- nodemon src/index.ts",
     "build": "rm -rf ./build && dotenvx run -f .env.production -- tsc --build",
-    "start:prod": "NODE_ENV=production dotenvx run -f .env.production -- node build/src/index.js"
+    "start:prod": "NODE_ENV=production dotenvx run -f .env.production -- node build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,7 @@
   "description": "",
   "dependencies": {
     "@battleship/common": "^1.0.0",
+    "@apollo/server": "^4.10.4",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
@@ -33,6 +35,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mongoose-unique-validator": "^1.0.9",
     "@types/node": "^20.14.11",
+    "ts-node": "^10.9.2",
     "nodemon": "^3.1.4",
     "tsconfig-paths": "^4.2.0"
   }
