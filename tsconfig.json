@@ -18,5 +18,6 @@
   },
   "ts-node": {
     "transpileOnly": false,
+    "esm": true
   }
 }

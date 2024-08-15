@@ -5,7 +5,7 @@
     "outDir": "build",
     "tsBuildInfoFile": "build/.tsbuildinfo",
   },
-  "exclude": ["test"],
+  "exclude": ["test", "build"],
   "references": [
     { "path": "../common/" }
   ]
