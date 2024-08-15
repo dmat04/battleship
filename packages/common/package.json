@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./*.js": "./build/*.js"
+    "./*": "./build/*"
   },
   "scripts": {
     "lint": "eslint .",
