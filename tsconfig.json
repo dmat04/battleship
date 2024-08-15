@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./packages",
     "paths": {
-      "@battleship/common/*": ["common/build/*"]
+      "@battleship/common/*": ["common/src/*"]
     },
     "types": [
       "vitest/globals", "@testing-library/jest-dom", "vitest"
