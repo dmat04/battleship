@@ -1,23 +1,30 @@
+import path from "path";
 import { CodegenConfig } from "@graphql-codegen/cli";
 import { defineConfig } from "@eddeee888/gcg-typescript-resolver-files";
 
+const projectRootDir = process.cwd();
+const schemaDir = path.relative(projectRootDir, "graphql-schema")
+const commonPackage = path.relative(projectRootDir, "packages/common")
+const clientPackage = path.relative(projectRootDir, "packages/client")
+const serverPackage = path.relative(projectRootDir, "packages/server")
+
 const config: CodegenConfig = {
-  schema: "./common/graphql-schema/**/schema.graphql",
-  documents: "./client/src/graphql/*.ts",
+  schema: `${schemaDir}/**/schema.graphql`,
+  documents: `${clientPackage}/src/graphql/*.ts`,
   hooks: {
     afterOneFileWrite: ["prettier --write"],
     beforeDone: [
-      "del ./server/src/graphql/__generated__/resolverTypes.generated.ts",
+      `del ${serverPackage}/src/graphql/__generated__/resolverTypes.generated.ts`,
       "node --loader ts-node/esm ./codegen/fixImports.ts"
     ]
   },
   generates: {
-    "./common/types/__generated__/types.generated.ts": {
+    [`${commonPackage}/src/types/__generated__/types.generated.ts`]: {
       plugins: [
         {
           add: {
             content: [
-              `import type { ApolloContext } from "../../utils/ApolloContext.js";`
+              `import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";`
             ]
           },
         },
@@ -40,7 +47,7 @@ const config: CodegenConfig = {
         },
       ],
     },
-    "./client/src/graphql/__generated__/operationHooks.ts": {
+    [`${clientPackage}/src/graphql/__generated__/operationHooks.ts`]: {
       plugins: [
         {
           add: {
@@ -56,20 +63,12 @@ const config: CodegenConfig = {
         },
       ],
     },
-    "./server/src/graphql/__generated__": defineConfig({
+    [`${serverPackage}/src/graphql/__generated__`]: defineConfig({
       mode: "merged",
       resolverTypesPath: "./resolverTypes.generated.ts",
       resolverRelativeTargetDir: "../resolvers",
       resolverMainFileMode: "merged",
       emitLegacyCommonJSImports: false,
-      add: {
-        './resolverTypes.generated.ts': {
-          content: [
-            `import * as Types from "@battleship/common/types/__generated__/types.generated.js";`,
-            `import type { ApolloContext } from "@battleship/common/utils/ApolloContext.js";`
-          ],
-        }
-      },
       typesPluginsConfig: {
         enumsAsTypes: false,
         namespacedImportName: "Types",
