@@ -13,7 +13,12 @@ export default {
       template: "./index.html",
       title: "Battleship",
     }),
-    new ForkTsCheckerPlugin({}),
+    new ForkTsCheckerPlugin({
+      typescript: {
+        build: true,
+        mode: "write-references"
+      }
+    }),
     new webpack.EnvironmentPlugin(['API_URL', 'WS_URL']),
   ],
   output: {
@@ -38,9 +43,6 @@ export default {
         use: [
           {
             loader: "ts-loader",
-            options: {
-              transpileOnly: true,
-            },
           },
         ],
       },
@@ -49,15 +51,16 @@ export default {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx"],
     extensionAlias: {
-      ".js": [".tsx", ".ts", ".js", ".jsx"],
-      ".jsx": [".tsx", ".ts", ".js", ".jsx"],
-      ".ts": [".tsx", ".ts", ".js", ".jsx"],
-      ".tsx": [".tsx", ".ts", ".js", ".jsx"],
+      // ".js": [".tsx", ".ts", ".js", ".jsx"],
+      // ".jsx": [".tsx", ".ts", ".js", ".jsx"],
+      // ".ts": [".tsx", ".ts", ".js", ".jsx"],
+      // ".tsx": [".tsx", ".ts", ".js", ".jsx"],
+      ".js": [".js", ".tsx", ".ts"],
+      ".jsx": [".jsx", ".tsx"],
     },
     alias: {
-      "@battleship/server/": path.resolve(battleshipPackagesDir, "server/build"),
-      "@battleship/common/": path.resolve(battleshipPackagesDir, "common/build"),
-      "@battleship/client/": path.resolve(battleshipPackagesDir, "client/build"),
+      "@battleship/common/": path.resolve(battleshipPackagesDir, "common/src"),
+      "@battleship/client/": path.resolve(battleshipPackagesDir, "client/src"),
     }
   },
   optimization: {
