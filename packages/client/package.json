@@ -6,8 +6,9 @@
   "scripts": {
     "lint": "eslint .",
     "test": "vitest run -c ./vitest.config.js",
-    "start:dev": "dotenvx run -- webpack server --open --config webpack.dev.js",
-    "build": "rm -rf ./buld && npm run build --workspace=@battleship/common && dotenvx run -- webpack --config webpack.prod.js"
+    "start:dev": "dotenvx run -- webpack serve --open --config webpack.dev.js",
+    "build": "npm run clean && npm run build --workspace=@battleship/common && dotenvx run -- webpack --config webpack.prod.js",
+    "clean": "rm -rf ./build"
   },
   "keywords": [],
   "author": "",
