@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./*": "./build/*"
+    "./*": "./src/*",
+    "./*.js": "./build/*.js"
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "rm -rf ./build && tsc --build"
+    "build": "npm run clean && tsc --build",
+    "clean": "rm -rf ./build"
   },
   "keywords": [],
   "author": "",
