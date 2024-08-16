@@ -13,9 +13,10 @@ export default tseslint.config(
       sourceType: "module",
       parserOptions: {
         project: [
-          "packages/client/tsconfig.json",
-          "packages/server/tsconfig.eslint.json",
-          "packages/common/tsconfig.json",
+          "./tsconfig.json",
+          "./packages/common/tsconfig.json",
+          "./packages/client/tsconfig.json",
+          "./packages/server/tsconfig.eslint.json",
         ],
         tsconfigRootDir: import.meta.dirname,
       },
@@ -31,7 +32,8 @@ export default tseslint.config(
       "**/build/",
       "**/test/setup.js",
       "**/webpack.*.js",
-      "**/*.generated.ts"
+      "**/*.generated.ts",
+      "db/mongo-init.js"
     ],
   },
 );
