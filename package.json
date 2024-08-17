@@ -12,7 +12,11 @@
   "scripts": {
     "lint": "eslint .",
     "format": "prettier . --write",
-    "codegen": "graphql-codegen --config ./codegen/config.ts"
+    "codegen": "graphql-codegen --config ./codegen/config.ts",
+    "compose:up:dev": "NODE_ENV=development dotenvx run -f packages/server/.env.development -- docker compose -f docker-compose.dev.yml up",
+    "compose:down:dev": "docker compose -f docker-compose.dev.yml down",
+    "compose:up:prod": "NODE_ENV=production dotenvx run -f packages/server/.env.production -- docker compose -f docker-compose.yml up",
+    "compose:down:prod": "docker compose -f docker-compose.yml down"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.7.0",
