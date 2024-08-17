@@ -3,15 +3,27 @@ services:
     image: battleship-client-dev
     secrets:
       - source: client-env-key
-        target: /usr/src/app/client/.env.keys
+        target: /usr/src/app/packages/client/.env.keys
     build:
-      dockerfile: client/dev.Dockerfile
+      dockerfile: packages/client/dev.Dockerfile
     volumes:
       - ./:/usr/src/app
     ports:
       - 8080:8080
     container_name: battleship-client-dev
+  mongo:
+    image: mongo
+    environment:
+      - DB_DATABASE_NAME
+      - DB_USER_USERNAME
+      - DB_USER_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_DATABASE
+    volumes:
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./db/data/dev:/data/db
 
 secrets:
   client-env-key:
-    file: client/.env.keys
+    file: packages/client/.env.keys
