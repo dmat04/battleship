@@ -38,9 +38,24 @@ if (!isString(process.env.JWT_SECRET)) {
   JWT_SECRET missing or invalid`);
 }
 
-if (!isString(process.env.MONGODB_URI)) {
+if (!isString(process.env.MONGODB_SERVER)) {
   throw new Error(`Server configuration error: environment var 
-  MONGODB_URI missing or invalid`);
+  MONGODB_SERVER missing or invalid`);
+}
+
+if (!isString(process.env.DB_DATABASE_NAME)) {
+  throw new Error(`Server configuration error: environment var 
+  DB_DATABASE_NAME missing or invalid`);
+}
+
+if (!isString(process.env.DB_USER_USERNAME)) {
+  throw new Error(`Server configuration error: environment var 
+  DB_USER_USERNAME missing or invalid`);
+}
+
+if (!isString(process.env.DB_USER_PASSWORD)) {
+  throw new Error(`Server configuration error: environment var 
+  DB_USER_PASSWORD missing or invalid`);
 }
 
 if (
@@ -63,7 +78,10 @@ const WS_AUTH_TICKET_LIFETIME_SECONDS: number = Number.parseInt(
 const JWT_SECRET: string = process.env.JWT_SECRET;
 const PORT: number = Number.parseInt(process.env.PORT, 10);
 const WS_PORT: number = Number.parseInt(process.env.WS_PORT, 10);
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_SERVER: string = process.env.MONGODB_SERVER;
+const DB_DATABASE_NAME: string = process.env.DB_DATABASE_NAME;
+const DB_USER_USERNAME: string = process.env.DB_USER_USERNAME;
+const DB_USER_PASSWORD: string = process.env.DB_USER_PASSWORD;
 const PWD_HASH_SALT_ROUNDS = Number.parseInt(
   process.env.PWD_HASH_SALT_ROUNDS,
   10,
@@ -75,6 +93,9 @@ export default {
   JWT_SECRET,
   PORT,
   WS_PORT,
-  MONGODB_URI,
+  MONGODB_SERVER,
+  DB_DATABASE_NAME,
+  DB_USER_USERNAME,
+  DB_USER_PASSWORD,
   PWD_HASH_SALT_ROUNDS,
 };
