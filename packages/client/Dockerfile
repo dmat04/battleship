@@ -1,17 +1,19 @@
 FROM node:20 AS base
 
 WORKDIR /usr/src/app
-COPY . .
+COPY --chown=node:node . .
 
 FROM base AS test
 RUN npm ci --include=dev
+USER node
 RUN --mount=type=secret,id=dotenvx-key,required=true,target=client/.env.keys \
   npm run test --workspace=@battleship/client
 
-FROM base AS prod
+FROM base AS build
 RUN npm ci
+USER node
 RUN --mount=type=secret,id=dotenvx-key,required=true,target=client/.env.keys \
   npm run build --workspace=@battleship/client
 
-FROM nginx:1.25-alpine
-COPY --from=prod  /usr/src/app/client/build /usr/share/nginx/html
+FROM nginx:1.25-alpine AS prod
+COPY --from=build  /usr/src/app/packages/client/build /usr/share/nginx/html
