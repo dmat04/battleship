@@ -29,10 +29,14 @@ uWS
 const start = async () => {
   const mongoUrl =
     "mongodb://" +
-    `${config.DB_USER_USERNAME}:${config.DB_USER_PASSWORD}` +
+    encodeURIComponent(config.DB_USER_USERNAME) +
+    ":" +
+    encodeURIComponent(config.DB_USER_PASSWORD) +
     "@" +
-    `${config.MONGODB_SERVER}/${config.DB_DATABASE_NAME}`;
-  
+    encodeURIComponent(config.MONGODB_SERVER) +
+    "/" + 
+    encodeURIComponent(config.DB_DATABASE_NAME);
+
   mongoose.set("strictQuery", false);
   try {
     await mongoose.connect(mongoUrl);
