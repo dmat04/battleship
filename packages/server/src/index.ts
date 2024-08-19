@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { expressMiddleware } from "@apollo/server/express4";
 import express from "express";
 import uWS from "uWebSockets.js";

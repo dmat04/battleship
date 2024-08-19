@@ -24,6 +24,9 @@ export default tseslint.config(
     plugins: {
       pluginReact,
     },
+    rules: {
+      "no-console": "warn",
+    }
   },
   {
     ignores: [

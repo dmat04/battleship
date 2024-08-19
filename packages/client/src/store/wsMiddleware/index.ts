@@ -47,10 +47,12 @@ const onMessageBuilder =
   };
 
 const onError = (event: Event) => {
+  // eslint-disable-next-line no-console
   console.log("socket error", event);
 };
 
 const onCLose = (event: CloseEvent) => {
+  // eslint-disable-next-line no-console
   console.log("socket closed", event.reason);
 };
 
