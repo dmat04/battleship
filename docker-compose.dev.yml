@@ -5,10 +5,11 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - 8000:8000
+      - 8080:8080
     depends_on:
       - frontend
       - backend
+      - mongo
 
   mongo:
     image: mongo
@@ -35,6 +36,8 @@ services:
       - 8080
     volumes:
       - ./:/usr/src/app
+    depends_on:
+      - backend
 
   backend:
     image: battleship-server-dev
@@ -46,6 +49,7 @@ services:
         target: /usr/src/app/packages/server/.env.keys
     expose:
       - $PORT
+      - $WS_PORT
     volumes:
       - ./:/usr/src/app
     depends_on:
