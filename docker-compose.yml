@@ -1,0 +1,58 @@
+services:
+  nginx:
+    image: nginx:1.20.1
+    container_name: battleship-reverse-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 80:8080
+    depends_on:
+      - frontend
+      - backend
+      - mongo
+
+  mongo:
+    image: mongo
+    environment:
+      - DB_DATABASE_NAME
+      - DB_USER_USERNAME
+      - DB_USER_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_DATABASE
+    volumes:
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./db/data/prod:/data/db
+
+  frontend:
+    image: battleship-client-prod
+    build:
+      dockerfile: packages/client/Dockerfile
+    container_name: battleship-client
+    secrets:
+      - source: client-env-key
+        target: /usr/src/app/packages/client/.env.keys
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
+
+  backend:
+    image: battleship-server-prod
+    build:
+      dockerfile: packages/server/Dockerfile
+    container_name: battleship-server-prod
+    secrets:
+      - source: server-env-key
+        target: /usr/src/app/packages/server/.env.keys
+    expose:
+      - $PORT
+      - $WS_PORT
+    depends_on:
+      - mongo
+  
+secrets:
+  client-env-key:
+    file: packages/client/.env.keys
+  server-env-key:
+    file: packages/server/.env.keys
