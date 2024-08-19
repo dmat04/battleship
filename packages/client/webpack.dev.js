@@ -8,6 +8,7 @@ export default merge(common, {
     static: "./build",
     hot: true,
     historyApiFallback: true,
+    allowedHosts: 'all',
     client: {
       overlay: true,
     },
