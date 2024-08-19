@@ -6,13 +6,13 @@ COPY --chown=node:node . .
 FROM base AS test
 RUN npm ci --include=dev
 USER node
-RUN --mount=type=secret,id=dotenvx-key,required=true,target=client/.env.keys \
+RUN --mount=type=secret,id=dotenvx-key,target=client/.env.keys \
   npm run test --workspace=@battleship/client
 
 FROM base AS build
 RUN npm ci
 USER node
-RUN --mount=type=secret,id=dotenvx-key,required=true,target=client/.env.keys \
+RUN --mount=type=secret,id=dotenvx-key,target=client/.env.keys \
   npm run build --workspace=@battleship/client
 
 FROM nginx:1.25-alpine AS prod
