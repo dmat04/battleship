@@ -30,8 +30,7 @@ services:
       dockerfile: packages/client/dev.Dockerfile
     container_name: battleship-client-dev
     secrets:
-      - source: client-env-key
-        target: /usr/src/app/packages/client/.env.keys
+      - client-env-key
     expose:
       - 8080
     volumes:

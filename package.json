@@ -15,7 +15,7 @@
     "codegen": "graphql-codegen --config ./codegen/config.ts",
     "compose:up:dev": "NODE_ENV=development dotenvx run -f packages/server/.env.development -- docker compose -f docker-compose.dev.yml up",
     "compose:down:dev": "docker compose -f docker-compose.dev.yml down",
-    "compose:up:prod": "NODE_ENV=production dotenvx run -f packages/server/.env.production -- docker compose -f docker-compose.yml up",
+    "compose:up:prod": "NODE_ENV=production dotenvx run -f packages/server/.env.production -- docker compose -f docker-compose.yml up --build ",
     "compose:down:prod": "docker compose -f docker-compose.yml down"
   },
   "dependencies": {

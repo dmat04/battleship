@@ -1,11 +1,11 @@
 services:
   nginx:
     image: nginx:1.20.1
-    container_name: battleship-reverse-proxy
+    container_name: battleship-reverse-proxy-prod
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - 80
+      - 80:80
     depends_on:
       - frontend
       - backend
@@ -13,6 +13,7 @@ services:
 
   mongo:
     image: mongo
+    container_name: battleship-mongo-prod
     environment:
       - DB_DATABASE_NAME
       - DB_USER_USERNAME
@@ -27,11 +28,11 @@ services:
   frontend:
     image: battleship-client-prod
     build:
+      no_cache: true
       dockerfile: packages/client/Dockerfile
-    container_name: battleship-client
-    secrets:
-      - source: client-env-key
-        target: /usr/src/app/packages/client/.env.keys
+      secrets:
+      - client-env-key
+    container_name: battleship-client-prod
     expose:
       - 80
     depends_on:
@@ -40,7 +41,10 @@ services:
   backend:
     image: battleship-server-prod
     build:
+      no_cache: true
       dockerfile: packages/server/Dockerfile
+      secrets:
+        - server-env-key
     container_name: battleship-server-prod
     secrets:
       - source: server-env-key
