@@ -10,7 +10,7 @@ export default {
   entry: "./src/index.tsx",
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./index.html",
+      template: "assets/index.html",
       title: "Battleship",
     }),
     new ForkTsCheckerPlugin({
@@ -51,10 +51,6 @@ export default {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx"],
     extensionAlias: {
-      // ".js": [".tsx", ".ts", ".js", ".jsx"],
-      // ".jsx": [".tsx", ".ts", ".js", ".jsx"],
-      // ".ts": [".tsx", ".ts", ".js", ".jsx"],
-      // ".tsx": [".tsx", ".ts", ".js", ".jsx"],
       ".js": [".js", ".tsx", ".ts"],
       ".jsx": [".jsx", ".tsx"],
     },
