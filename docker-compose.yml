@@ -37,6 +37,8 @@ services:
       secrets:
       - client-env-key
     container_name: battleship-client-prod
+    volumes:
+      - ./packages/client/assets/nginx.conf:/etc/nginx/nginx.conf:ro
     expose:
       - 80
     depends_on:
