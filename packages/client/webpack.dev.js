@@ -9,6 +9,9 @@ export default merge(common, {
     hot: true,
     historyApiFallback: true,
     allowedHosts: 'all',
+    devMiddleware: {
+      writeToDisk: true,
+    },
     client: {
       overlay: true,
     },

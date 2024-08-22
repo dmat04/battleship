@@ -2,6 +2,7 @@ import path from "path";
 import webpack from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerPlugin from "fork-ts-checker-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
 const outDir = path.resolve(import.meta.dirname, "build/");
 const battleshipPackagesDir = path.resolve(import.meta.dirname, "../");
@@ -10,7 +11,7 @@ export default {
   entry: "./src/index.tsx",
   plugins: [
     new HtmlWebpackPlugin({
-      template: "assets/index.html",
+      template: "build_assets/index.html",
       title: "Battleship",
     }),
     new ForkTsCheckerPlugin({
@@ -20,6 +21,13 @@ export default {
       }
     }),
     new webpack.EnvironmentPlugin(['API_URL', 'WS_URL']),
+    new CopyPlugin({
+      patterns: [{
+        from: 'favicons/*',
+        to: './',
+        context: 'build_assets/'
+      }]
+    })
   ],
   output: {
     filename: "[name][contenthash].js",
