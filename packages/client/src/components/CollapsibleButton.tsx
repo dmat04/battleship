@@ -13,7 +13,7 @@ import MenuItemLabel from "./MemuItemLabel.js";
 import CollapsibleContainer, {
   CollapsibleAPI,
   CollapsibleState,
-} from "./CollapsibleContainer.js";
+} from "./CollapsibleContainer/index.js";
 import { assertNever } from "@battleship/common/utils/typeUtils.js";
 
 const Container = styled(animated.div)<{ theme: Theme }>`

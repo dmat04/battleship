@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { useCallback, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Theme } from "../assets/themes/themeDefault.js";
-import { CollapsibleAPI } from "../CollapsibleContainer.js";
+import { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 import GuestForm from "./GuestForm.js";
 import { useAppSelector } from "../../store/store.js";
 import CollapsibleButton from "../CollapsibleButton.js";

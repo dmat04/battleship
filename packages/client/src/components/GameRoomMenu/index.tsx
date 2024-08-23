@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import { Theme } from "../assets/themes/themeDefault.js";
-import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer.js";
+import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer/index.js";
 import MenuItemLabel from "../MemuItemLabel.js";
 import JoinGameForm from "./JoinGameForm.js";
 import { createGameRoom } from "../../store/gameRoomSlice/thunks.js";

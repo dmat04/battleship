@@ -7,7 +7,7 @@ import InviteCode from "./InviteCode.js";
 import { Theme } from "../../assets/themes/themeDefault.js";
 import CollapsibleContainer, {
   CollapsibleAPI,
-} from "../../CollapsibleContainer.js";
+} from "../../CollapsibleContainer/index.js";
 
 const Container = styled.div<{ theme: Theme }>`
   display: flex;

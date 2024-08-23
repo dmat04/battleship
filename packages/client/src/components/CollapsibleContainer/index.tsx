@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { animated, useSpring } from "@react-spring/web";
-import themeDefault from "./assets/themes/themeDefault.js";
+import themeDefault from "../assets/themes/themeDefault.js";
 
 const Container = styled(animated.div)`
   width: 100%;

@@ -9,7 +9,7 @@ import {
   useThemePreference,
 } from "../ThemeProvider/ThemePreferenceContext.js";
 import { Theme } from "../assets/themes/themeDefault.js";
-import CollapsibleContainer, { CollapsibleAPI } from "../CollapsibleContainer.js";
+import CollapsibleContainer, { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 
 const Container = styled.div<{ theme: Theme }>`
   --padding: ${(props) => props.theme.paddingMin};
