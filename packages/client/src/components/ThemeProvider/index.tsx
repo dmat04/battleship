@@ -1,5 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
+import { Helmet } from "react-helmet";
 import themeDefault, { ThemeType } from "../assets/themes/themeDefault.js";
 import themeDark from "../assets/themes/themeDark.js";
 import {
@@ -105,6 +106,10 @@ const ThemeProvider = ({ children }: React.PropsWithChildren) => {
   return (
     <ThemePreferenceContext.Provider value={themePreferenceContextValue}>
       <StyledComponentsThemeProvider theme={themeObject}>
+        <Helmet>
+          <meta name="theme-color" content={themeObject.colors.surfaceTertiary}/>
+          <meta name="color-scheme" content={theme}/>
+        </Helmet>
         {children}
       </StyledComponentsThemeProvider>
     </ThemePreferenceContext.Provider>
