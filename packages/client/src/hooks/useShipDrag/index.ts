@@ -53,6 +53,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
       scale: 1,
       zIndex: 5,
       filter: "drop-shadow(rgba(0, 0, 0, 0.2) 0px 0px 0px)",
+      cursor: "grab"
     }),
     [],
   );
@@ -117,6 +118,7 @@ const useShipDrag = ({ id, shipContainerRef }: UseShipDragArgs) => {
           scale: 1.2,
           zIndex: 1000,
           filter: `drop-shadow(${theme.boxShadow})`,
+          cursor: "grabbing"
         },
       });
     },
