@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { styled } from "styled-components";
+import { Helmet } from "react-helmet";
 import UserMenu from "./components/UserMenu/index.jsx";
 import GameRoomMenu from "./components/GameRoomMenu/index.jsx";
 import GameScreen from "./components/GameScreen/index.jsx";
@@ -45,6 +46,10 @@ const TempFooter = styled.footer<{ theme: Theme }>`
 const App = () => {
   return (
     <ThemeProvider>
+      <Helmet>
+        <title>Battleship</title>
+      </Helmet>
+
       <div className="App">
         <BrowserRouter>
           <ScreenContainer>
