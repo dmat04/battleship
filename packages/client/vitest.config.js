@@ -1,11 +1,12 @@
-import { mergeConfig, defineProject } from "vitest/config";
+import { mergeConfig, defineProject, defineConfig } from "vitest/config";
 import rootConfig from "../../vitest.config";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from "typescript";
 
 export default mergeConfig(
   rootConfig,
-  defineProject({
+  defineConfig({
     plugins: [
       react(),
       svgr({
@@ -15,6 +16,11 @@ export default mergeConfig(
       globals: true,
       environment: "jsdom",
       setupFiles: "./test/setup.js",
+      coverage: {
+        enabled: true,
+        all: false,
+        reportsDirectory: './test/coverage'
+      }
     },
   }),
 );
