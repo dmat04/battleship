@@ -44,10 +44,10 @@ const UserInfo = () => {
   };
 
   return (
-    <Container>
-      <IconUser width={24} height={24} />
+    <Container data-testid="container">
+      <IconUser width={24} height={24} data-testid="icon-user" />
       {auth.username}
-      <LogoutButton onClick={doLogout}>
+      <LogoutButton onClick={doLogout} data-testid="button-logout">
         <IconLogout width={24} height={24} />
       </LogoutButton>
     </Container>
