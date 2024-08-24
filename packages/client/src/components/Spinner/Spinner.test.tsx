@@ -1,6 +1,7 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Spinner from "./Spinner.js";
+import React from "react";
 
 describe("The spinner component", () => {
   it("Displays a spinner animation when rendered", () => {

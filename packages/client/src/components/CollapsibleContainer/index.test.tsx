@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import CollapsibleContainer, { CollapsibleAPI, CollapsibleState } from "./index.js";
 import React from "react";

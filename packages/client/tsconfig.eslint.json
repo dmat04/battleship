@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": [
+      "node", "vitest", "vitest/globals", "@testing-library/jest-dom"
+    ]
+  },
+  "references": [
+    { "path": "../common/" },
+    { "path": "./" }
+  ]
+}

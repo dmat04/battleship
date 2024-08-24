@@ -1,8 +1,8 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { renderWithStoreProvider } from "../../../test/utils.js";
-import { RootState } from "client/src/store/store.js";
+import { RootState } from "../../store/store.js";
 import {
   noUser,
   userAuthenticated,
