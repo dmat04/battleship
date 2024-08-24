@@ -6,7 +6,7 @@
     "tsBuildInfoFile": "build/.tsbuildinfo",
     "jsx": "react-jsx",
   },
-  "exclude": ["test", "build"],
+  "exclude": ["test", "**/*.test.tsx", "build"],
   "references": [
     { "path": "../common/" }
   ]

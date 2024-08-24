@@ -2,7 +2,6 @@ import { mergeConfig, defineProject, defineConfig } from "vitest/config";
 import rootConfig from "../../vitest.config";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from "typescript";
 
 export default mergeConfig(
   rootConfig,
@@ -20,7 +19,7 @@ export default mergeConfig(
         enabled: true,
         all: false,
         reportsDirectory: './test/coverage'
-      }
+      },
     },
   }),
 );
