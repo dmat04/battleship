@@ -6,27 +6,48 @@ import themeDefault, {
   Theme,
 } from "../src/components/assets/themes/themeDefault.js";
 import { ThemeProvider } from "styled-components";
-
+import {
+  RouteObject,
+  RouterProvider,
+  createMemoryRouter,
+} from "react-router-dom";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>;
+  routerRoutes?: RouteObject[];
   store?: Store;
   theme?: Theme;
 }
 
+const defaultRoutes: RouteObject[] = [
+  {
+    path: "/",
+    element: <></>,
+  },
+];
+
 export const renderWithStoreProvider = (
   ui: React.ReactElement,
-  extendedRenderOptions: ExtendedRenderOptions = { },
+  extendedRenderOptions: ExtendedRenderOptions = {},
 ) => {
   const {
     preloadedState = {},
+    routerRoutes = defaultRoutes,
     store = setupStore(preloadedState),
     ...renderOptions
   } = extendedRenderOptions;
 
+  const router = createMemoryRouter(routerRoutes, {
+    initialEntries: ["/"],
+    initialIndex: 0,
+  });
+
   const Wrapper = ({ children }: PropsWithChildren) => (
     <ThemeProvider theme={extendedRenderOptions.theme ?? themeDefault}>
-      <Provider store={store}>{children}</Provider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+        {children}
+      </Provider>
     </ThemeProvider>
   );
 
