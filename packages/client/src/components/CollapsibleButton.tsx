@@ -39,6 +39,7 @@ const CollapsibleButton = forwardRef<
       onCollapsedStateChange,
       initialState,
       children,
+      ...rest
     }: React.PropsWithChildren<Props>,
     ref,
   ) => {
@@ -147,6 +148,7 @@ const CollapsibleButton = forwardRef<
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         style={springStyles}
+        { ...rest }
       >
         <MenuItemLabel ref={labelRef}>{label}</MenuItemLabel>
         <CollapsibleContainer

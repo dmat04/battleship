@@ -3,7 +3,10 @@ import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import { Theme } from "../assets/themes/themeDefault.js";
-import { CollapsibleAPI, CollapsibleState } from "../CollapsibleContainer/index.js";
+import {
+  CollapsibleAPI,
+  CollapsibleState,
+} from "../CollapsibleContainer/index.js";
 import MenuItemLabel from "../MemuItemLabel.js";
 import JoinGameForm from "./JoinGameForm.js";
 import { createGameRoom } from "../../store/gameRoomSlice/thunks.js";
@@ -47,8 +50,13 @@ const GameRoomMenu = () => {
   }
 
   return (
-    <MenuContainer>
-      <Button variant="primary" loading={loadingNewRoom} onClick={startNewGame}>
+    <MenuContainer data-testid="container-game-room-menu">
+      <Button
+        variant="primary"
+        loading={loadingNewRoom}
+        onClick={startNewGame}
+        data-testid="button-start-game"
+      >
         <MenuItemLabel>Start a new game</MenuItemLabel>
       </Button>
 
@@ -57,6 +65,7 @@ const GameRoomMenu = () => {
         label="Join a game"
         initialState="closed"
         onCollapsedStateChange={(state) => setCollapsibleOpen(state)}
+        data-testid="button-join-game"
       >
         <JoinGameForm disabled={collapsibleOpen === "closed"} />
       </CollapsibleButton>
