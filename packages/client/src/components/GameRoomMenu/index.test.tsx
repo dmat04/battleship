@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, afterEach, describe, expect, it } from "vitest";
-import { fireEvent, screen } from "@testing-library/react";
+import { RouteObject } from "react-router-dom";
+import { act, fireEvent, screen } from "@testing-library/react";
 import { setupServer } from "msw/node";
+import { WS } from "vitest-websocket-mock";
 import React from "react";
 import { renderWithStoreProvider } from "../../../test/utils.js";
 import { RootState } from "../../store/store.js";
@@ -9,16 +11,12 @@ import {
   userAuthenticated,
 } from "../../../test/reduxStateData/authSliceTestdata.js";
 import { initialState } from "../../store/gameRoomSlice/stateTypes.js";
-import GameRoomMenu from "./index.js";
-import { RouteObject } from "react-router-dom";
 import { gameRoomCreated } from "../../../test/reduxStateData/gameRoomSliceTestdata.js";
 import { createRoomHandler } from "../../../test/gqlRequestMocks/createRoomHandler.js";
-import createApolloClient from "../../utils/apolloClient.js";
-import Dependencies from "../../utils/Dependencies.js";
-import { getGameSettingsHandler } from "client/test/gqlRequestMocks/getGameSettingsHandler.js";
-import { WS } from "vitest-websocket-mock";
+import { getGameSettingsHandler } from "../../../test/gqlRequestMocks/getGameSettingsHandler.js";
 import { ROOM_ID } from "../../../test/reduxStateData/gameRoomSliceTestdata.js";
 import { PLAYER_NAME } from "../../../test/reduxStateData/authSliceTestdata.js";
+import GameRoomMenu from "./index.js";
 
 const routerRoutes: RouteObject[] = [
   {
@@ -35,19 +33,16 @@ const routerRoutes: RouteObject[] = [
   },
 ];
 
-const apolloClient = createApolloClient();
-Dependencies.setApolloClient(apolloClient);
-
-const server = setupServer(createRoomHandler, getGameSettingsHandler);
+const apiServer = setupServer(createRoomHandler, getGameSettingsHandler);
 
 describe("The GameRoomMenu component", () => {
   beforeAll(() =>
-    server.listen({
+    apiServer.listen({
       onUnhandledRequest: "warn",
     }),
   );
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
+  afterEach(() => apiServer.resetHandlers());
+  afterAll(() => apiServer.close());
 
   it("redirects to a login screen when no user is authenticated", () => {
     const preloadedState: Partial<RootState> = {
@@ -97,9 +92,9 @@ describe("The GameRoomMenu component", () => {
   });
 
   it("redirects to the getReady screen after selecting the start new game menu item", async () => {
-    process.env.WS_URL = "ws://localhost:5000/";
-
-    const ws = new WS(`${process.env.WS_URL}/game/${ROOM_ID}/${PLAYER_NAME}`);
+    const wsServer = new WS(
+      `${process.env.WS_URL}/game/${ROOM_ID}/${PLAYER_NAME}`,
+    );
 
     const preloadedState: Partial<RootState> = {
       auth: userAuthenticated,
@@ -113,14 +108,16 @@ describe("The GameRoomMenu component", () => {
 
     const container = screen.getByTestId("container-game-room-menu");
     const startGameButton = screen.getByTestId("button-start-game");
-    fireEvent.click(startGameButton);
 
-    await ws.connected;
+    await act(async () => {
+      fireEvent.click(startGameButton);
+      await wsServer.connected;
+    });
 
     expect(await screen.findByText("getReady")).toBeInTheDocument();
     expect(container).not.toBeInTheDocument();
 
-    ws.close();
+    wsServer.close();
     WS.clean();
   });
 });
