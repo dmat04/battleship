@@ -77,7 +77,6 @@ const config: CodegenConfig = {
       },
       mergeSchema: false,
     }),
-
   },
 };
 

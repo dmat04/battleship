@@ -11,7 +11,7 @@ export const CHECK_USERNAME = gql(`
 `);
 
 export const GET_GAME_SETTINGS = gql(`
-  query GameSettings($gameId: ID!) {
+  query gameSettings($gameId: ID!) {
     gameSettings(gameId: $gameId) {
       boardHeight
       boardWidth
