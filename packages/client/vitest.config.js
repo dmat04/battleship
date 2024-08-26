@@ -15,6 +15,10 @@ export default mergeConfig(
       globals: true,
       environment: "jsdom",
       setupFiles: "./test/setup.ts",
+      env: {
+        API_URL: "",
+        WS_URL: "ws://localhost:5000/",
+      },
       coverage: {
         enabled: true,
         all: false,
