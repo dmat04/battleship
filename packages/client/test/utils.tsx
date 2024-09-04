@@ -11,6 +11,7 @@ import {
   RouterProvider,
   createMemoryRouter,
 } from "react-router-dom";
+import mockWSMiddleware from "./mockWSMiddleware.js";
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   preloadedState?: Partial<RootState>;
@@ -33,7 +34,7 @@ export const renderWithStoreProvider = (
   const {
     preloadedState = {},
     routerRoutes = defaultRoutes,
-    store = setupStore(preloadedState),
+    store = setupStore(preloadedState, mockWSMiddleware),
     ...renderOptions
   } = extendedRenderOptions;
 
