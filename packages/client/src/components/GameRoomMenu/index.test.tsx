@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, afterEach, describe, expect, it } from "vitest";
 import { RouteObject } from "react-router-dom";
 import { act, fireEvent, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { setupServer } from "msw/node";
-import { WS } from "vitest-websocket-mock";
 import React from "react";
 import { renderWithStoreProvider } from "../../../test/utils.js";
 import { RootState } from "../../store/store.js";
@@ -14,8 +14,6 @@ import { initialState } from "../../store/gameRoomSlice/stateTypes.js";
 import { gameRoomCreated } from "../../../test/reduxStateData/gameRoomSliceTestdata.js";
 import { createRoomHandler } from "../../../test/gqlRequestMocks/createRoomHandler.js";
 import { getGameSettingsHandler } from "../../../test/gqlRequestMocks/getGameSettingsHandler.js";
-import { ROOM_ID } from "../../../test/reduxStateData/gameRoomSliceTestdata.js";
-import { PLAYER_NAME } from "../../../test/reduxStateData/authSliceTestdata.js";
 import GameRoomMenu from "./index.js";
 
 const routerRoutes: RouteObject[] = [
@@ -92,10 +90,6 @@ describe("The GameRoomMenu component", () => {
   });
 
   it("redirects to the getReady screen after selecting the start new game menu item", async () => {
-    const wsServer = new WS(
-      `${process.env.WS_URL}/game/${ROOM_ID}/${PLAYER_NAME}`,
-    );
-
     const preloadedState: Partial<RootState> = {
       auth: userAuthenticated,
       gameRoom: initialState,
@@ -109,15 +103,9 @@ describe("The GameRoomMenu component", () => {
     const container = screen.getByTestId("container-game-room-menu");
     const startGameButton = screen.getByTestId("button-start-game");
 
-    await act(async () => {
-      fireEvent.click(startGameButton);
-      await wsServer.connected;
-    });
+    await act(() => fireEvent.click(startGameButton));
 
     expect(await screen.findByText("getReady")).toBeInTheDocument();
     expect(container).not.toBeInTheDocument();
-
-    wsServer.close();
-    WS.clean();
   });
 });

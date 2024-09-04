@@ -8,7 +8,10 @@ import {
 } from "../src/store/wsMiddleware/actions.js";
 import { AppDispatch, RootState } from "../src/store/store.js";
 
-const openSocket = ({ gameRoom }: RootState, dispatch: AppDispatch): WebSocket => {
+const openSocket = (
+  { gameRoom }: RootState,
+  dispatch: AppDispatch,
+): WebSocket => {
   const url = `${process.env.WS_URL}/game/${gameRoom.roomID}/${gameRoom.playerName}`;
 
   const socket = new WebSocket(url);
