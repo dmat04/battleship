@@ -6,12 +6,14 @@ import App from "./App.js";
 import { setupStore } from "./store/store.js";
 import createApolloClient from "./utils/apolloClient.js";
 import Dependencies from "./utils/Dependencies.js";
+import wsMiddleware from "./store/wsMiddleware/index.js";
+import messageListenerMiddleware from "./store/messageListenerMiddleware/index.js";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 
-const store = setupStore();
+const store = setupStore({}, wsMiddleware, messageListenerMiddleware);
 
 Dependencies.setStore(store);
 
