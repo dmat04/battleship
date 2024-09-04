@@ -267,10 +267,10 @@ export const playerWSOpened: Partial<SliceStateActive> = {
   playerStatus: PlayerStatus.Connected,
 };
 
-export const initialRoomStatusReceived: Partial<SliceStateActive> = {
+export const initialRoomStatusReceived = {
   playerName: PLAYER_NAME,
   currentPlayer: PLAYER_NAME,
-};
+} as const;
 
 export const playerShipsPlaced: Partial<SliceStateActive> = {
   playerShips,
