@@ -236,7 +236,7 @@ const stubScore = {
   ],
 };
 
-export const gameRoomCreated: SliceStateInactive = {
+export const gameRoomCreated = {
   roomID: ROOM_ID,
   gameSettings: undefined,
   playerStatus: PlayerStatus.Disconnected,
@@ -252,7 +252,12 @@ export const gameRoomCreated: SliceStateInactive = {
   opponentScore: { ...emptyScore },
   gameResult: null,
   requestStatus: requestStatusIdle,
-}
+} as const;
+
+export const gameRoomJoined = {
+  ...gameRoomCreated,
+  inviteCode: undefined,
+} as const;
 
 export const gameSettingsFetched: Partial<SliceStateActive> = {
   gameSettings

@@ -18,7 +18,7 @@ const Label = styled.p<{ theme: Theme }>`
   text-align: center;
 `;
 
-const OpponentStatus = () => {
+const OpponentStatus = (props: object | undefined) => {
   const { opponentStatus, opponentName } = useAppSelector(
     (state) => state.gameRoom,
   );
@@ -42,7 +42,7 @@ const OpponentStatus = () => {
   }
 
   return (
-    <Container>
+    <Container { ...props }>
       <Label>{message}</Label>
       <Spinner visible success={success} />
     </Container>

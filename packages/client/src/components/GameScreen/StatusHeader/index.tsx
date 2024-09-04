@@ -42,10 +42,10 @@ const StatusHeader = () => {
         initialState={inviteCode ? "open" : "closed"}
         ref={inviteCodeCollapsible}
       >
-        <InviteCode />
+        <InviteCode data-testid="container-invite-code"/>
       </CollapsibleContainer>
       <CollapsibleContainer initialState="open" ref={opponentStatusCollapsible}>
-        <OpponentStatus />
+        <OpponentStatus data-testid="container-opponent-status"/>
       </CollapsibleContainer>
     </Container>
   );

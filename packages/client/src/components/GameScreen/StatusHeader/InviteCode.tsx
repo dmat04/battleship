@@ -15,13 +15,13 @@ const Highlight = styled.span`
   font-weight: bolder;
 `;
 
-const InviteCode = () => {
+const InviteCode = (props: object | undefined) => {
   const { inviteCode } = useAppSelector((state) => state.gameRoom);
 
   if (!inviteCode) return null;
 
   return (
-    <Container>
+    <Container { ...props }>
       <p>
         Game invite code:&nbsp;
         <Highlight>{inviteCode}</Highlight>
