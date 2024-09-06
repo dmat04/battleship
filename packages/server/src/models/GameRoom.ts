@@ -1,5 +1,5 @@
 import { WebSocket } from "uWebSockets.js";
-import type { User } from "../services/dbModels/UserDbModel.js";
+import type { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
 import type { WSData } from "./WSData.js";
 import Game from "../game/Game.js";
 import { ShipPlacementInput, GameSettings } from "@battleship/common/types/__generated__/types.generated.js";

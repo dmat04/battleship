@@ -6,10 +6,9 @@ import UserDbModel, { User } from "./UserDbModel.js";
  */
 
 /**
- * Interface to extend the genereci User interface
- * with the usernameExists method and the expiresAt field
+ * Interface to extend the generic User interface
+ * with the expiresAt field
  */
-// TODO: take a look at https://mongoosejs.com/docs/typescript/statics-and-methods.html
 export interface GuestUser extends User {
   readonly expiresAt: Date;
 }

@@ -7,10 +7,9 @@ import config from "../utils/config.js";
 import ValidationError from "./errors/ValidationError.js";
 import EntityNotFoundError from "./errors/EntityNotFoundError.js";
 import AuthenticationError from "./errors/AuthenticationError.js";
-import UserDbModel from "./dbModels/UserDbModel.js";
-import GuestUserDbModel from "./dbModels/GuestUserDbModel.js";
-import RegisteredUserDbModel from "./dbModels/RegisteredUserDbModel.js";
-import type { User } from "./dbModels/UserDbModel.js";
+import UserDbModel, { type User } from "@battleship/common/dbModels/Users/UserDbModel.js";
+import GuestUserDbModel from "@battleship/common/dbModels/Users/GuestUserDbModel.js";
+import RegisteredUserDbModel from "@battleship/common/dbModels/Users/RegisteredUserDbModel.js";
 import {
   UsernameQueryResult,
   LoginResult,

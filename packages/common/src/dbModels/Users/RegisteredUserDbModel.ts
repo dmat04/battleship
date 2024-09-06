@@ -7,10 +7,8 @@ import UserDbModel, { User } from "./UserDbModel.js";
 
 /**
  * Interface to extend the generic User interface
- * with the usernameExists method and passwordHash member
+ * with the passwordHash member
  */
-// TODO: take a look at https://mongoosejs.com/docs/typescript/statics-and-methods.html
-
 export interface RegisteredUser extends User {
   readonly passwordHash: string;
 }
