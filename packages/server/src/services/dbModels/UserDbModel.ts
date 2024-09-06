@@ -28,7 +28,8 @@ export interface User {
 }
 
 interface UserModel extends Model<User> {
-  usernameExists: typeof usernameExists;
+  // usernameExists: typeof usernameExists;
+  usernameExists: (username: string) => Promise<boolean>;
 }
 
 /**
