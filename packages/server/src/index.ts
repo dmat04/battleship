@@ -5,11 +5,10 @@ import uWS from "uWebSockets.js";
 import mongoose from "mongoose";
 import http from "http";
 import cors from "cors";
-
 import config from "./utils/config.js";
-import { contextFn } from "@battleship/common/utils/ApolloContext.js";
 import createApolloServer from "./middleware/ApolloMiddleware.js";
 import WSBehaviour from "./ws/GameServiceWSBehaviour.js";
+import { contextFn } from "./middleware/ApolloAuthMiddleware.js";
 
 const app = express();
 const httpServer = http.createServer(app);

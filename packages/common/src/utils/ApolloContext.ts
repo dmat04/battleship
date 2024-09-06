@@ -1,33 +1,5 @@
-import { GraphQLError } from "graphql";
-import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
+import { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
 
 export interface ApolloContext {
-  authToken: string | null;
+  user: User | null;
 }
-
-export const assertAuthorized = (context: ApolloContext): string => {
-  const token = context.authToken;
-
-  if (!token) {
-    throw new GraphQLError("Acess token missing in request header", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  }
-
-  return token;
-};
-
-export const contextFn = async (
-  args: ExpressContextFunctionArgument,
-): Promise<ApolloContext> => {
-  const { authorization } = args.req.headers;
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return Promise.resolve({
-      authToken: authorization.replace("Bearer ", ""),
-    });
-  }
-
-  return Promise.resolve({
-    authToken: null,
-  });
-};
