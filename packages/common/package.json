@@ -9,10 +9,14 @@
   "scripts": {
     "lint": "eslint .",
     "build": "npm run clean && tsc --build",
-    "clean": "rm -rf ./build"
+    "clean": "rm -rf ./build",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "mongodb-memory-server": "^10.0.0"
+  }
 }
