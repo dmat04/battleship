@@ -34,7 +34,8 @@ export interface RegisteredUser extends User {
   readonly kind: UserKind.RegisteredUser;
   readonly passwordHash: string;
   readonly email: string;
-  readonly emailConfirmed: boolean;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  emailConfirmed: Boolean;
 }
 
 /**
@@ -46,8 +47,6 @@ export interface GithubUser extends User {
   readonly refreshToken: string;
 }
 
-type UsernameChecker = (username: string, kind: UserKind) => Promise<boolean>;
-
 /**
  * Method to check if a User document exists with a given username.
  * This method is added as a static member to each of the two user
@@ -57,7 +56,7 @@ type UsernameChecker = (username: string, kind: UserKind) => Promise<boolean>;
  * @returns true if a User exists with the given username, false otherwise.
  */
 // eslint-disable-next-line arrow-body-style
-export const usernameExists: UsernameChecker = async (
+export const usernameExists = async (
   username: string,
   kind: UserKind,
 ): Promise<boolean> => {
@@ -68,24 +67,24 @@ export const usernameExists: UsernameChecker = async (
  * Mongoose Model interfaces
  */
 interface UserModel extends Model<User> {
-  usernameExists: UsernameChecker;
+  usernameExists: (username: string, kind: UserKind) => Promise<boolean>;
 }
 
 export interface GuestUserModel extends Model<GuestUser> {
-  usernameExists: UsernameChecker;
+  usernameExists: (username: string) => Promise<boolean>;
 }
 
 export interface RegisteredUserModel extends Model<RegisteredUser> {
-  usernameExists: UsernameChecker;
+  usernameExists: (username: string) => Promise<boolean>;
 }
 
 export interface GithubUserModel extends Model<GithubUser> {
-  usernameExists: UsernameChecker;
+  usernameExists: (username: string) => Promise<boolean>;
 }
 
 // Define options for the base user schema, specifies the property
 // name ("kind") to be used as the discriminator type property
-const baseSchemaOptions = { 
+const baseSchemaOptions = {
   discriminatorKey: "kind",
 };
 
@@ -100,7 +99,7 @@ const userSchema = new Schema<User, UserModel>(
       immutable: true,
       trim: true,
       minLength: [5, "Username must be at least 5 characters long"],
-      match: /[\w\d-]+/,
+      match: /^[\w\d-]+$/,
     },
   },
   baseSchemaOptions,
@@ -109,12 +108,6 @@ const userSchema = new Schema<User, UserModel>(
 // Create a compound unique index on the username and kind fields
 // (ensures usernames are unique per user-kind).
 userSchema.index({ username: 1, kind: 1 }, { unique: true });
-
-// Add the usernameExists method as a static method on the userSchema
-userSchema.static("usernameExists", usernameExists);
-
-// Apply the mongoose-unique-valiator plugin
-userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 
 // Define the schema for the Guest user specific fields
 const guestUserSchema = new Schema<GuestUser, GuestUserModel>({
@@ -132,7 +125,6 @@ const registeredUserSchema = new Schema<RegisteredUser, RegisteredUserModel>({
   },
   emailConfirmed: {
     type: Boolean,
-    required: true,
     default: false,
   },
 });
@@ -142,6 +134,24 @@ const githubUserSchema = new Schema<GithubUser, GithubUserModel>({
   githubId: { type: String, required: true, unique: true },
   refreshToken: { type: String, required: true },
 });
+
+// Add the usernameExists method as a static methods each Schema
+userSchema.static("usernameExists", usernameExists);
+guestUserSchema.static("usernameExists", async (username: string) =>
+  usernameExists(username, UserKind.GuestUser),
+);
+registeredUserSchema.static("usernameExists", async (username: string) =>
+  usernameExists(username, UserKind.RegisteredUser),
+);
+githubUserSchema.static("usernameExists", async (username: string) =>
+  usernameExists(username, UserKind.GithubUser),
+);
+
+// Apply the mongoose-unique-valiator plugin to each Schema
+userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+guestUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+registeredUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+githubUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 
 // Build the generic User model, keep it private
 const UserDbModel = model<User, UserModel>("User", userSchema);
