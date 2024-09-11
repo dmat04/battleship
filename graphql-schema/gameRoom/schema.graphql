@@ -76,11 +76,13 @@ type GameSettings {
 }
 
 type GameRoomStatus {
-  player: String!
+  playerName: String!
+  playerID: ID!
   playerShipsPlaced: Boolean!
   playerSocketConnected: Boolean!
-  opponent: String
+  opponentName: String
+  opponentID: ID
   opponentShipsPlaced: Boolean!
   opponentSocketConnected: Boolean!
-  currentPlayer: String
+  currentPlayerID: ID
 }

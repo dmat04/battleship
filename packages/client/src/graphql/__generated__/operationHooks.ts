@@ -212,13 +212,15 @@ export const PlaceShipsDocument = gql`
   mutation placeShips($roomId: ID!, $shipPlacements: [ShipPlacementInput!]!) {
     placeShips(roomID: $roomId, shipPlacements: $shipPlacements) {
       gameRoomStatus {
-        currentPlayer
-        opponent
-        opponentShipsPlaced
-        opponentSocketConnected
-        player
+        playerName
+        playerID
         playerShipsPlaced
         playerSocketConnected
+        opponentName
+        opponentID
+        opponentShipsPlaced
+        opponentSocketConnected
+        currentPlayerID
       }
       placedShips {
         orientation

@@ -45,11 +45,13 @@ export type CoordinateInput = {
 
 export type GameRoomStatus = {
   __typename?: "GameRoomStatus";
-  currentPlayer?: Maybe<Scalars["String"]["output"]>;
-  opponent?: Maybe<Scalars["String"]["output"]>;
+  currentPlayerID?: Maybe<Scalars["ID"]["output"]>;
+  opponentID?: Maybe<Scalars["ID"]["output"]>;
+  opponentName?: Maybe<Scalars["String"]["output"]>;
   opponentShipsPlaced: Scalars["Boolean"]["output"];
   opponentSocketConnected: Scalars["Boolean"]["output"];
-  player: Scalars["String"]["output"];
+  playerID: Scalars["ID"]["output"];
+  playerName: Scalars["String"]["output"];
   playerShipsPlaced: Scalars["Boolean"]["output"];
   playerSocketConnected: Scalars["Boolean"]["output"];
 };
@@ -342,12 +344,17 @@ export type GameRoomStatusResolvers<
   ParentType extends
     ResolversParentTypes["GameRoomStatus"] = ResolversParentTypes["GameRoomStatus"],
 > = {
-  currentPlayer?: Resolver<
+  currentPlayerID?: Resolver<
+    Maybe<ResolversTypes["ID"]>,
+    ParentType,
+    ContextType
+  >;
+  opponentID?: Resolver<Maybe<ResolversTypes["ID"]>, ParentType, ContextType>;
+  opponentName?: Resolver<
     Maybe<ResolversTypes["String"]>,
     ParentType,
     ContextType
   >;
-  opponent?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   opponentShipsPlaced?: Resolver<
     ResolversTypes["Boolean"],
     ParentType,
@@ -358,7 +365,8 @@ export type GameRoomStatusResolvers<
     ParentType,
     ContextType
   >;
-  player?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  playerID?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  playerName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   playerShipsPlaced?: Resolver<
     ResolversTypes["Boolean"],
     ParentType,
@@ -621,13 +629,15 @@ export type PlaceShipsMutation = {
     __typename?: "ShipsPlacedResult";
     gameRoomStatus: {
       __typename?: "GameRoomStatus";
-      currentPlayer?: string | null;
-      opponent?: string | null;
-      opponentShipsPlaced: boolean;
-      opponentSocketConnected: boolean;
-      player: string;
+      playerName: string;
+      playerID: string;
       playerShipsPlaced: boolean;
       playerSocketConnected: boolean;
+      opponentName?: string | null;
+      opponentID?: string | null;
+      opponentShipsPlaced: boolean;
+      opponentSocketConnected: boolean;
+      currentPlayerID?: string | null;
     };
     placedShips: Array<{
       __typename?: "PlacedShip";
