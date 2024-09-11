@@ -5,15 +5,15 @@ import uniqueValidator from "mongoose-unique-validator";
  * Enum of User account types
  */
 export enum UserKind {
-  GuestUser = "GUEST_USER",
-  RegisteredUser = "REGISTERED_USER",
-  GithubUser = "GITHUB_USER",
+  GuestUser = "GuestUser",
+  RegisteredUser = "RegisteredUser",
+  GithubUser = "GithubUser",
 }
 
 /**
  * Document interface base
  */
-interface User {
+export interface User {
   readonly id: string;
   readonly username: string;
   readonly kind: UserKind;
@@ -56,7 +56,7 @@ export interface GithubUser extends User {
  * @returns true if a User exists with the given username, false otherwise.
  */
 // eslint-disable-next-line arrow-body-style
-export const usernameExists = async (
+const usernameExists = async (
   username: string,
   kind: UserKind,
 ): Promise<boolean> => {
@@ -158,7 +158,7 @@ const UserDbModel = model<User, UserModel>("User", userSchema);
 
 // Build the Guest user model as a discriminated model on the generic User model,
 // passing the appropriate value for the discriminator property ("kind").
-export const GuestUserDbModel = UserDbModel.discriminator<
+const GuestUserDbModel = UserDbModel.discriminator<
   GuestUser,
   GuestUserModel
 >(UserKind.GuestUser, guestUserSchema, {
@@ -167,7 +167,7 @@ export const GuestUserDbModel = UserDbModel.discriminator<
 
 // Build the Registered user model as a discriminated model on the generic User model,
 // passing the appropriate value for the discriminator property ("kind").
-export const RegisteredUserDbModel = UserDbModel.discriminator<
+const RegisteredUserDbModel = UserDbModel.discriminator<
   RegisteredUser,
   RegisteredUserModel
 >(UserKind.RegisteredUser, registeredUserSchema, {
@@ -176,9 +176,19 @@ export const RegisteredUserDbModel = UserDbModel.discriminator<
 
 // Build the Github user model as a discriminated model on the generic User model,
 // passing the appropriate value for the discriminator property ("kind").
-export const GithubUserDbModel = UserDbModel.discriminator<
+const GithubUserDbModel = UserDbModel.discriminator<
   GithubUser,
   GithubUserModel
 >(UserKind.GithubUser, githubUserSchema, {
   value: UserKind.GithubUser,
 });
+
+export const userIdExists = async (id: Schema.Types.ObjectId) => {
+  return (await UserDbModel.findById(id).exec()) !== null;
+}
+
+export default {
+  Guest: GuestUserDbModel,
+  Registered: RegisteredUserDbModel,
+  Github: GithubUserDbModel,
+};
