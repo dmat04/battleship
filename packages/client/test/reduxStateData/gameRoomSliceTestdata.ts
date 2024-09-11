@@ -1,8 +1,11 @@
-import { GameSettings, PlacedShip, ShipClassName, ShipOrientation } from "@battleship/common/types/__generated__/types.generated.js";
-import { PlayerStatus, ScoreState, SliceStateActive, SliceStateInactive } from "../../src/store/gameRoomSlice/stateTypes.js";
-import { PLAYER_NAME } from "./authSliceTestdata.js";
+import { GameSettings, PlacedShip, ShipClassName, ShipOrientation, Player } from "@battleship/common/types/__generated__/types.generated.js";
+import { PlayerStatus, ScoreState, SliceStateActive } from "../../src/store/gameRoomSlice/stateTypes.js";
+import { PLAYER } from "./authSliceTestdata.js";
 
-export const OPPONENT_NAME = "OpponentName";
+export const OPPONENT: Player = {
+  id: "OpponentNameUserID",
+  username: "OpponentName",
+};
 export const INVITE_CODE = "123456";
 export const WS_AUTH_CODE = "WebsocketAuthToken";
 export const ROOM_ID = "RoomID";
@@ -268,8 +271,8 @@ export const playerWSOpened: Partial<SliceStateActive> = {
 };
 
 export const initialRoomStatusReceived = {
-  playerName: PLAYER_NAME,
-  currentPlayer: PLAYER_NAME,
+  player: PLAYER,
+  currentPlayerID: PLAYER.id,
 } as const;
 
 export const playerShipsPlaced: Partial<SliceStateActive> = {
@@ -278,7 +281,7 @@ export const playerShipsPlaced: Partial<SliceStateActive> = {
 };
 
 export const opponentJoined: Partial<SliceStateActive> = {
-  opponentName: OPPONENT_NAME,
+  opponent: OPPONENT,
 };
 
 export const opponentWSOpened: Partial<SliceStateActive> = {
@@ -297,15 +300,15 @@ export const gameInProgressState: SliceStateActive = {
     loadingNewRoom: false,
     loadingSettings: false,
   },
-  playerName: PLAYER_NAME,
-  opponentName: OPPONENT_NAME,
+  player: PLAYER,
+  opponent: OPPONENT,
   playerStatus: PlayerStatus.Ready,
   opponentStatus: PlayerStatus.Ready,
   gameStarted: true,
   round: 10,
   gameResult: null,
   gameSettings,
-  currentPlayer: OPPONENT_NAME,
+  currentPlayerID: OPPONENT.id,
   playerShips,
   playerScore: stubScore,
   opponentScore: stubScore,
