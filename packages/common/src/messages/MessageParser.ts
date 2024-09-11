@@ -118,7 +118,7 @@ const isMoveResultMessage = (
 
   if (!isCoordinate(typed.position)) return false;
   if (!_.isBoolean(typed.hit) || !_.isBoolean(typed.gameWon)) return false;
-  if (!_.isString(typed.currentPlayer)) return false;
+  if (!_.isString(typed.currentPlayerID)) return false;
 
   const { shipSunk } = typed;
   if (shipSunk !== undefined && !isPlacedShip(shipSunk)) return false;
@@ -163,11 +163,11 @@ const isAuthenticatedResponseMessage = (
 const isGameStartedMessage = (
   message: object,
 ): message is MessageTypes.GameStartedMessage => {
-  const { code, playsFirst } = message as MessageTypes.GameStartedMessage;
+  const { code, playsFirstID } = message as MessageTypes.GameStartedMessage;
 
   return (
     code === MessageTypes.ServerMessageCode.GameStarted &&
-    _.isString(playsFirst)
+    _.isString(playsFirstID)
   );
 };
 

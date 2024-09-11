@@ -31,7 +31,7 @@ export interface ErrorMessage {
 }
 
 export interface MoveResultMessageBase extends CellHitResult {
-  currentPlayer: string;
+  currentPlayerID: string;
 }
 
 export interface OpponentMoveResultMessage extends MoveResultMessageBase {
@@ -53,7 +53,7 @@ export interface AuthenticatedResponseMessage {
 
 export interface GameStartedMessage {
   code: ServerMessageCode.GameStarted;
-  playsFirst: string;
+  playsFirstID: string;
 }
 
 export interface OpponentDisconnectedMessage {
