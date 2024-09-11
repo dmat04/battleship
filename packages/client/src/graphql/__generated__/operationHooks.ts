@@ -9,6 +9,7 @@ export const GuestLoginDocument = gql`
       accessToken
       expiresAt
       username
+      userID
     }
   }
 `;
@@ -61,6 +62,7 @@ export const RegisteredLoginDocument = gql`
       accessToken
       expiresAt
       username
+      userID
     }
   }
 `;

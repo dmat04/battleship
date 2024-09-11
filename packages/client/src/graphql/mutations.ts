@@ -6,6 +6,7 @@ export const GUEST_LOGIN = gql(`
       accessToken
       expiresAt
       username
+      userID
     }
   }
 `);
@@ -16,6 +17,7 @@ export const REGISTERED_LOGIN = gql(`
       accessToken
       expiresAt
       username
+      userID
     }
   }
 `);
