@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import { useAppSelector } from "../../../../store/store.js";
+import { GameRoomIsReady } from "../../../../store/gameRoomSlice/stateTypes.js";
 import { Theme } from "../../../assets/themes/themeDefault.js";
 import PlayerScorecard from "./PlayerScorecard.js";
 
@@ -15,14 +16,14 @@ export type Owner = "player" | "opponent";
 const Scoreboard = () => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
 
-  if (!gameRoom.gameStarted) return null;
+  if (!GameRoomIsReady(gameRoom) || !gameRoom.gameStarted) return null;
 
   return (
     <Container>
-      <PlayerScorecard owner="player" username={gameRoom.playerName ?? ""} />
+      <PlayerScorecard owner="player" ownerDetails={gameRoom.player} />
       <PlayerScorecard
         owner="opponent"
-        username={gameRoom.opponentName ?? ""}
+        ownerDetails={gameRoom.opponent}
       />
     </Container>
   );

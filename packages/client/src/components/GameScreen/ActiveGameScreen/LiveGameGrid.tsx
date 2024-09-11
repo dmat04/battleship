@@ -53,15 +53,15 @@ const LiveGameGrid = ({ owner }: Props) => {
   const theme = useTheme() as Theme;
   const { colors } = theme;
 
-  const { gameStarted, currentPlayer } = useAppSelector(
+  const { gameStarted, currentPlayerID } = useAppSelector(
     (state) => state.gameRoom,
   );
-  const ownerName = useAppSelector((state) => {
+  const ownerID = useAppSelector((state) => {
     switch (owner) {
       case "player":
-        return state.gameRoom.playerName;
+        return state.gameRoom.player?.id;
       case "opponent":
-        return state.gameRoom.opponentName;
+        return state.gameRoom.opponent?.id;
       default:
         return assertNever(owner);
     }
@@ -227,7 +227,7 @@ const LiveGameGrid = ({ owner }: Props) => {
     boardHeight: 10,
   };
 
-  const active = gameStarted && currentPlayer !== ownerName;
+  const active = gameStarted && currentPlayerID !== ownerID;
 
   return (
     <Container $owner={owner} $active={active}>

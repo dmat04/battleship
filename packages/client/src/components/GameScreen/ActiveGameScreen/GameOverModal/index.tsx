@@ -89,23 +89,23 @@ const CardFooter = styled.div<{ theme: Theme }>`
 `;
 
 const GameOverModal = () => {
-  const { gameResult, opponentName } = useAppSelector(
+  const { gameResult, opponent } = useAppSelector(
     (state) => state.gameRoom,
   );
   const dispatch = useAppDispatch();
   let message = "";
 
-  if (!gameResult || !opponentName) return null;
+  if (!gameResult || !opponent) return null;
 
   switch (gameResult) {
     case GameResult.PlayerWon:
       message = "Congratulations, you won!";
       break;
     case GameResult.OpponentWon:
-      message = `${opponentName} has won.\nBetter luck next time.`;
+      message = `${opponent.username} has won.\nBetter luck next time.`;
       break;
     case GameResult.OpponentDisconnected:
-      message = `${opponentName} has quit, you win!`;
+      message = `${opponent.username} has quit, you win!`;
       break;
     default:
       assertNever(gameResult);

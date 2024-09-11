@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { Controller, Lookup, animated, useTransition } from "@react-spring/web";
 import TurnTimer from "./TurnTimer.js";
 import type { Owner } from "./index.js";
-import { Ship, PlacedShip } from "@battleship/common/types/__generated__/types.generated.js";
+import { Ship, PlacedShip, Player } from "@battleship/common/types/__generated__/types.generated.js";
 import {
   ScoreState,
   GameRoomIsReady,
@@ -91,10 +91,10 @@ const getScoreItemStyle = (item: ShipScoreItem, theme: Theme): ScoreItemTransiti
 
 export interface Props {
   owner: Owner;
-  username: string;
+  ownerDetails: Player;
 }
 
-const PlayerScorecard = ({ owner, username }: Props) => {
+const PlayerScorecard = ({ owner, ownerDetails }: Props) => {
   const gameRoom = useAppSelector((state) => state.gameRoom);
   const theme = useTheme() as Theme;
 
@@ -109,10 +109,8 @@ const PlayerScorecard = ({ owner, username }: Props) => {
     score = owner === "player" ? gameRoom.playerScore : gameRoom.opponentScore;
   }
 
-  const { gameSettings, currentPlayer } = gameRoom;
-  const ownerName =
-    owner === "player" ? gameRoom.playerName : gameRoom.opponentName;
-
+  const { gameSettings, currentPlayerID } = gameRoom;
+  
   const scoreItems: ShipScoreItem[] = useMemo(() => {
     if (gameSettings?.availableShips) {
       return mapScoreItems(gameSettings.availableShips, score.sunkenShips);
@@ -141,13 +139,13 @@ const PlayerScorecard = ({ owner, username }: Props) => {
 
   if (!gameSettings) return null;
 
-  const active = currentPlayer === ownerName;
+  const active = currentPlayerID === ownerDetails.id;
 
   return (
     <Container $owner={owner}>
       {active && <TurnTimer owner={owner} />}
 
-      <PlayerName $owner={owner}>{username}</PlayerName>
+      <PlayerName $owner={owner}>{ownerDetails.username}</PlayerName>
 
       <PlayerScoreContainer $owner={owner}>
         {animatedScoreItems((style, item) => (
