@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import { WS } from "vitest-websocket-mock";
 import React from "react";
 import {
-  OPPONENT_NAME,
+  OPPONENT,
   gameRoomCreated,
   gameRoomJoined,
   gameSettings,
@@ -18,34 +18,34 @@ import {
   RoomStatusResponseMessage,
   ServerMessageCode,
 } from "@battleship/common/messages/MessageTypes.js";
-import { PLAYER_NAME } from "../../../../test/reduxStateData/authSliceTestdata.js";
+import { PLAYER } from "../../../../test/reduxStateData/authSliceTestdata.js";
 
 describe("The StatusHeader component", () => {
   describe("displays the invite code when the user has created the game room", () => {
     it.each([
       {
         opponentStatus: PlayerStatus.Disconnected,
-        opponentName: undefined,
+        opponent: undefined,
         message: "waiting for an opponent to connect",
       },
       {
         opponentStatus: PlayerStatus.Connected,
-        opponentName: OPPONENT_NAME,
-        message: `${OPPONENT_NAME} connected, waiting`,
+        opponent: OPPONENT,
+        message: `${OPPONENT.username} connected, waiting`,
       },
       {
         opponentStatus: PlayerStatus.Ready,
-        opponentName: OPPONENT_NAME,
-        message: `${OPPONENT_NAME} ready`,
+        opponent: OPPONENT,
+        message: `${OPPONENT.username} ready`,
       },
     ])(
       "and the correct opponent status message when the opponent status is $opponentStatus",
-      ({ opponentStatus, opponentName, message }) => {
+      ({ opponentStatus, opponent, message }) => {
         const preloadedState: Partial<RootState> = {
           gameRoom: {
             ...gameRoomCreated,
             opponentStatus,
-            opponentName,
+            opponent,
           },
         };
 
@@ -72,27 +72,27 @@ describe("The StatusHeader component", () => {
     it.each([
       {
         opponentStatus: PlayerStatus.Disconnected,
-        opponentName: undefined,
+        opponent: undefined,
         message: "waiting for an opponent to connect",
       },
       {
         opponentStatus: PlayerStatus.Connected,
-        opponentName: OPPONENT_NAME,
-        message: `${OPPONENT_NAME} connected, waiting`,
+        opponent: OPPONENT,
+        message: `${OPPONENT.username} connected, waiting`,
       },
       {
         opponentStatus: PlayerStatus.Ready,
-        opponentName: OPPONENT_NAME,
-        message: `${OPPONENT_NAME} ready`,
+        opponent: OPPONENT,
+        message: `${OPPONENT.username} ready`,
       },
     ])(
       "and the correct opponent status message when the opponent status is $opponentStatus",
-      ({ opponentStatus, opponentName, message }) => {
+      ({ opponentStatus, opponent, message }) => {
         const preloadedState: Partial<RootState> = {
           gameRoom: {
             ...gameRoomJoined,
             opponentStatus,
-            opponentName,
+            opponent,
           },
         };
 
@@ -116,14 +116,14 @@ describe("The StatusHeader component", () => {
 
   it("updates the displayed content whenever the room status updates", async () => {
     const wsServer = new WS(
-      `${process.env.WS_URL}/game/${gameRoomCreated.roomID}/${PLAYER_NAME}`,
+      `${process.env.WS_URL}/game/${gameRoomCreated.roomID}/${PLAYER.id}`,
       { jsonProtocol: true },
     );
 
     const preloadedState: Partial<RootState> = {
       gameRoom: {
         ...gameRoomCreated,
-        playerName: PLAYER_NAME,
+        player: PLAYER,
         playerStatus: PlayerStatus.Connected,
         gameSettings,
       },
@@ -147,11 +147,11 @@ describe("The StatusHeader component", () => {
     const opponentJoinedMessage: RoomStatusResponseMessage = {
       code: ServerMessageCode.RoomStatusResponse,
       roomStatus: {
-        currentPlayer: PLAYER_NAME,
-        opponent: OPPONENT_NAME,
+        currentPlayerID: PLAYER.id,
+        opponent: OPPONENT,
         opponentShipsPlaced: false,
         opponentSocketConnected: false,
-        player: PLAYER_NAME,
+        player: PLAYER,
         playerShipsPlaced: false,
         playerSocketConnected: true,
       },
@@ -161,17 +161,17 @@ describe("The StatusHeader component", () => {
     await waitFor(() => expect(inviteCodeContainer).not.toBeVisible());
     expect(opponentStatusContainer).toBeVisible();
     expect(opponentStatusContainer.textContent).toMatch(
-      new RegExp(`${OPPONENT_NAME} connected, waiting`, "i"),
+      new RegExp(`${OPPONENT.username} connected, waiting`, "i"),
     );
 
     const opponentReadyMessage: RoomStatusResponseMessage = {
       code: ServerMessageCode.RoomStatusResponse,
       roomStatus: {
-        currentPlayer: PLAYER_NAME,
-        opponent: OPPONENT_NAME,
+        currentPlayerID: PLAYER.id,
+        opponent: OPPONENT,
         opponentShipsPlaced: true,
         opponentSocketConnected: true,
-        player: PLAYER_NAME,
+        player: PLAYER,
         playerShipsPlaced: false,
         playerSocketConnected: true,
       },
@@ -181,12 +181,12 @@ describe("The StatusHeader component", () => {
     expect(inviteCodeContainer).not.toBeVisible();
     expect(opponentStatusContainer).toBeVisible();
     expect(opponentStatusContainer.textContent).toMatch(
-      new RegExp(`${OPPONENT_NAME} ready`, "i"),
+      new RegExp(`${OPPONENT.username} ready`, "i"),
     );
 
     const gameStartedMessage: GameStartedMessage = {
       code: ServerMessageCode.GameStarted,
-      playsFirst: PLAYER_NAME,
+      playsFirstID: PLAYER.id,
     };
     act(() => wsServer?.send(gameStartedMessage));
 
