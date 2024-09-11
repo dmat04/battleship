@@ -1,16 +1,25 @@
 import _ from "lodash";
-// import { isBoolean, isInteger, isObject, isString } from "lodash";
 import { assertNever } from "../utils/typeUtils.js";
 import * as MessageTypes from "./MessageTypes.js";
-import { Coordinate, GameRoomStatus, PlacedShip, Ship, ShipClassName, ShipOrientation } from "../types/__generated__/types.generated.js";
+import {
+  Coordinate,
+  GameRoomStatus,
+  PlacedShip,
+  Ship,
+  ShipClassName,
+  ShipOrientation,
+  Player,
+} from "../types/__generated__/types.generated.js";
 
 const isCoordinate = (obj: object): obj is Coordinate => {
   const typed = obj as Coordinate;
 
   return _.isInteger(typed.x) && _.isInteger(typed.y);
-}
+};
 
-const isShootMessage = (message: object): message is MessageTypes.ShootMessage => {
+const isShootMessage = (
+  message: object,
+): message is MessageTypes.ShootMessage => {
   const typed = message as MessageTypes.ShootMessage;
 
   if (!isCoordinate(typed.position)) {
@@ -24,9 +33,14 @@ const isShootMessage = (message: object): message is MessageTypes.ShootMessage =
   return true;
 };
 
-const isErrorMessage = (message: object): message is MessageTypes.ErrorMessage => {
+const isErrorMessage = (
+  message: object,
+): message is MessageTypes.ErrorMessage => {
   const typed = message as MessageTypes.ErrorMessage;
-  return typed.code === MessageTypes.ServerMessageCode.Error && _.isString(typed.message);
+  return (
+    typed.code === MessageTypes.ServerMessageCode.Error &&
+    _.isString(typed.message)
+  );
 };
 
 const isShip = (obj: object): obj is Ship => {
@@ -65,22 +79,28 @@ const isPlacedShip = (obj: object): obj is PlacedShip => {
   return true;
 };
 
+const isPlayer = (obj: object): obj is Player => {
+  const { id, username } = obj as Player;
+
+  return _.isString(id) && _.isString(username);
+};
+
 const isGameRoomStatus = (obj: object): obj is GameRoomStatus => {
   const {
-    currentPlayer,
-    opponent,
-    opponentShipsPlaced,
-    opponentSocketConnected,
     player,
     playerShipsPlaced,
     playerSocketConnected,
+    opponent,
+    opponentShipsPlaced,
+    opponentSocketConnected,
+    currentPlayerID,
   } = obj as GameRoomStatus;
 
-  if (currentPlayer && !_.isString(currentPlayer)) return false;
-  if (opponent && !_.isString(opponent)) return false;
+  if (currentPlayerID && !_.isString(currentPlayerID)) return false;
+  if (opponent && !isPlayer(opponent)) return false;
 
   if (
-    !_.isString(player) ||
+    !isPlayer(player) ||
     !_.isBoolean(playerShipsPlaced) ||
     !_.isBoolean(playerSocketConnected) ||
     !_.isBoolean(opponentShipsPlaced) ||
@@ -123,7 +143,8 @@ const isOwnMoveResultMessage = (
 const isRoomStatusResponseMessage = (
   message: object,
 ): message is MessageTypes.RoomStatusResponseMessage => {
-  const { code, roomStatus } = message as MessageTypes.RoomStatusResponseMessage;
+  const { code, roomStatus } =
+    message as MessageTypes.RoomStatusResponseMessage;
 
   return (
     code === MessageTypes.ServerMessageCode.RoomStatusResponse &&
@@ -144,7 +165,10 @@ const isGameStartedMessage = (
 ): message is MessageTypes.GameStartedMessage => {
   const { code, playsFirst } = message as MessageTypes.GameStartedMessage;
 
-  return code === MessageTypes.ServerMessageCode.GameStarted && _.isString(playsFirst);
+  return (
+    code === MessageTypes.ServerMessageCode.GameStarted &&
+    _.isString(playsFirst)
+  );
 };
 
 const isOpponentDisconectedMessage = (
@@ -155,7 +179,9 @@ const isOpponentDisconectedMessage = (
   return code === MessageTypes.ServerMessageCode.OpponentDisconnected;
 };
 
-const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | undefined => {
+const ParseClientMessage = (
+  jsonMessage: unknown,
+): MessageTypes.ClientMessage | undefined => {
   if (!_.isString(jsonMessage)) return undefined;
 
   let message: unknown = null;
@@ -174,11 +200,16 @@ const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | 
     return undefined;
   }
 
-  if (!Object.values(MessageTypes.ClientMessageCode).includes(message.code as MessageTypes.ClientMessageCode)) {
+  if (
+    !Object.values(MessageTypes.ClientMessageCode).includes(
+      message.code as MessageTypes.ClientMessageCode,
+    )
+  ) {
     return undefined;
   }
 
-  const code: MessageTypes.ClientMessageCode = message.code as MessageTypes.ClientMessageCode;
+  const code: MessageTypes.ClientMessageCode =
+    message.code as MessageTypes.ClientMessageCode;
 
   switch (code) {
     case MessageTypes.ClientMessageCode.Shoot:
@@ -190,9 +221,11 @@ const ParseClientMessage = (jsonMessage: unknown): MessageTypes.ClientMessage | 
   }
 };
 
-const ParseServerMessage = (jsonMessage: unknown): MessageTypes.ServerMessage | undefined => {
+const ParseServerMessage = (
+  jsonMessage: unknown,
+): MessageTypes.ServerMessage | undefined => {
   if (!_.isString(jsonMessage)) return undefined;
-  
+
   let message: unknown = null;
 
   try {
