@@ -68,6 +68,11 @@ type PlacedShip {
   position: Coordinate!
 }
 
+type Player {
+  id: ID!
+  username: String!
+}
+
 type GameSettings {
   boardWidth: Int!
   boardHeight: Int!
@@ -76,12 +81,10 @@ type GameSettings {
 }
 
 type GameRoomStatus {
-  playerName: String!
-  playerID: ID!
+  player: Player!
   playerShipsPlaced: Boolean!
   playerSocketConnected: Boolean!
-  opponentName: String
-  opponentID: ID
+  opponent: Player
   opponentShipsPlaced: Boolean!
   opponentSocketConnected: Boolean!
   currentPlayerID: ID

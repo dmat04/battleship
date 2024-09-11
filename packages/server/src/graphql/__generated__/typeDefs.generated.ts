@@ -597,6 +597,37 @@ export const typeDefs = {
     },
     {
       kind: "ObjectTypeDefinition",
+      name: { kind: "Name", value: "Player" },
+      interfaces: [],
+      directives: [],
+      fields: [
+        {
+          kind: "FieldDefinition",
+          name: { kind: "Name", value: "id" },
+          arguments: [],
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          },
+          directives: [],
+        },
+        {
+          kind: "FieldDefinition",
+          name: { kind: "Name", value: "username" },
+          arguments: [],
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+          directives: [],
+        },
+      ],
+    },
+    {
+      kind: "ObjectTypeDefinition",
       name: { kind: "Name", value: "GameSettings" },
       interfaces: [],
       directives: [],
@@ -660,24 +691,14 @@ export const typeDefs = {
       fields: [
         {
           kind: "FieldDefinition",
-          name: { kind: "Name", value: "playerName" },
+          name: { kind: "Name", value: "player" },
           arguments: [],
           type: {
             kind: "NonNullType",
             type: {
               kind: "NamedType",
-              name: { kind: "Name", value: "String" },
+              name: { kind: "Name", value: "Player" },
             },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "playerID" },
-          arguments: [],
-          type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
           },
           directives: [],
         },
@@ -709,16 +730,9 @@ export const typeDefs = {
         },
         {
           kind: "FieldDefinition",
-          name: { kind: "Name", value: "opponentName" },
+          name: { kind: "Name", value: "opponent" },
           arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "opponentID" },
-          arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Player" } },
           directives: [],
         },
         {

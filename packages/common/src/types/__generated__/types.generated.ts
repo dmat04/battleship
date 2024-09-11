@@ -46,12 +46,10 @@ export type CoordinateInput = {
 export type GameRoomStatus = {
   __typename?: "GameRoomStatus";
   currentPlayerID?: Maybe<Scalars["ID"]["output"]>;
-  opponentID?: Maybe<Scalars["ID"]["output"]>;
-  opponentName?: Maybe<Scalars["String"]["output"]>;
+  opponent?: Maybe<Player>;
   opponentShipsPlaced: Scalars["Boolean"]["output"];
   opponentSocketConnected: Scalars["Boolean"]["output"];
-  playerID: Scalars["ID"]["output"];
-  playerName: Scalars["String"]["output"];
+  player: Player;
   playerShipsPlaced: Scalars["Boolean"]["output"];
   playerSocketConnected: Scalars["Boolean"]["output"];
 };
@@ -109,6 +107,12 @@ export type PlacedShip = {
   orientation: ShipOrientation;
   position: Coordinate;
   ship: Ship;
+};
+
+export type Player = {
+  __typename?: "Player";
+  id: Scalars["ID"]["output"];
+  username: Scalars["String"]["output"];
 };
 
 export type Query = {
@@ -295,6 +299,7 @@ export type ResolversTypes = {
   LoginResult: ResolverTypeWrapper<LoginResult>;
   Mutation: ResolverTypeWrapper<{}>;
   PlacedShip: ResolverTypeWrapper<PlacedShip>;
+  Player: ResolverTypeWrapper<Player>;
   Query: ResolverTypeWrapper<{}>;
   RoomCreatedResult: ResolverTypeWrapper<RoomCreatedResult>;
   RoomJoinedResult: ResolverTypeWrapper<RoomJoinedResult>;
@@ -319,6 +324,7 @@ export type ResolversParentTypes = {
   LoginResult: LoginResult;
   Mutation: {};
   PlacedShip: PlacedShip;
+  Player: Player;
   Query: {};
   RoomCreatedResult: RoomCreatedResult;
   RoomJoinedResult: RoomJoinedResult;
@@ -349,12 +355,7 @@ export type GameRoomStatusResolvers<
     ParentType,
     ContextType
   >;
-  opponentID?: Resolver<Maybe<ResolversTypes["ID"]>, ParentType, ContextType>;
-  opponentName?: Resolver<
-    Maybe<ResolversTypes["String"]>,
-    ParentType,
-    ContextType
-  >;
+  opponent?: Resolver<Maybe<ResolversTypes["Player"]>, ParentType, ContextType>;
   opponentShipsPlaced?: Resolver<
     ResolversTypes["Boolean"],
     ParentType,
@@ -365,8 +366,7 @@ export type GameRoomStatusResolvers<
     ParentType,
     ContextType
   >;
-  playerID?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  playerName?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  player?: Resolver<ResolversTypes["Player"], ParentType, ContextType>;
   playerShipsPlaced?: Resolver<
     ResolversTypes["Boolean"],
     ParentType,
@@ -464,6 +464,16 @@ export type PlacedShipResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PlayerResolvers<
+  ContextType = ApolloContext,
+  ParentType extends
+    ResolversParentTypes["Player"] = ResolversParentTypes["Player"],
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<
   ContextType = ApolloContext,
   ParentType extends
@@ -556,6 +566,7 @@ export type Resolvers<ContextType = ApolloContext> = {
   LoginResult?: LoginResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   PlacedShip?: PlacedShipResolvers<ContextType>;
+  Player?: PlayerResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RoomCreatedResult?: RoomCreatedResultResolvers<ContextType>;
   RoomJoinedResult?: RoomJoinedResultResolvers<ContextType>;
@@ -629,15 +640,13 @@ export type PlaceShipsMutation = {
     __typename?: "ShipsPlacedResult";
     gameRoomStatus: {
       __typename?: "GameRoomStatus";
-      playerName: string;
-      playerID: string;
       playerShipsPlaced: boolean;
       playerSocketConnected: boolean;
-      opponentName?: string | null;
-      opponentID?: string | null;
       opponentShipsPlaced: boolean;
       opponentSocketConnected: boolean;
       currentPlayerID?: string | null;
+      player: { __typename?: "Player"; id: string; username: string };
+      opponent?: { __typename?: "Player"; id: string; username: string } | null;
     };
     placedShips: Array<{
       __typename?: "PlacedShip";

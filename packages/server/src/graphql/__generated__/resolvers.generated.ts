@@ -14,6 +14,7 @@ import { GameRoomStatus } from "./../resolvers/GameRoomStatus.js";
 import { GameSettings } from "./../resolvers/GameSettings.js";
 import { LoginResult } from "./../resolvers/LoginResult.js";
 import { PlacedShip } from "./../resolvers/PlacedShip.js";
+import { Player } from "./../resolvers/Player.js";
 import { RoomCreatedResult } from "./../resolvers/RoomCreatedResult.js";
 import { RoomJoinedResult } from "./../resolvers/RoomJoinedResult.js";
 import { Ship } from "./../resolvers/Ship.js";
@@ -39,6 +40,7 @@ export const resolvers: Resolvers = {
   GameSettings: GameSettings,
   LoginResult: LoginResult,
   PlacedShip: PlacedShip,
+  Player: Player,
   RoomCreatedResult: RoomCreatedResult,
   RoomJoinedResult: RoomJoinedResult,
   Ship: Ship,
