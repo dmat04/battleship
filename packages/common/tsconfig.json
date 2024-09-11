@@ -6,5 +6,5 @@
     "outDir": "build",
     "tsBuildInfoFile": "build/.tsbuildinfo",
   },
-  "exclude": ["build"]
+  "exclude": ["build", "**/*.test.ts", "test"],
 }
