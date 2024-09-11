@@ -33,12 +33,12 @@ const messageListenerMiddleware: Middleware =
         case ServerMessageCode.AuthenticatedResponse:
           break;
         case ServerMessageCode.GameStarted: {
-          const { playerName } = state.gameRoom;
-          const { playsFirst } = message;
+          const { player, opponent } = state.gameRoom;
+          const { playsFirstID } = message;
           const notification =
-            playsFirst === playerName
+            playsFirstID === player?.id
               ? "Game started - make the first move"
-              : `Game started - ${playsFirst} makes the first move`;
+              : `Game started - ${opponent?.username ?? 'the opponent'} makes the first move`;
 
           void dispatch(
             PushTransientNotification({

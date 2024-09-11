@@ -84,17 +84,15 @@ const wsMiddleware: Middleware = ({ dispatch, getState }: {dispatch: AppDispatch
         return next(action);
       }
 
-      const auth = getState().auth.loginResult;
-      const username = auth?.username;
-      if (!username) {
+      const loginDetails = getState().auth.loginResult;
+      const userID = loginDetails?.userID;
+      if (!userID) {
         // TODO: dispatch an error
         return next(action);
       }
 
       const { roomID, wsAuthCode } = action.payload;
-
-      const uriEncodedUsername = encodeURIComponent(username);
-      const url = `${process.env.WS_URL}/game/${roomID}/${uriEncodedUsername}`;
+      const url = `${process.env.WS_URL}/game/${roomID}/${userID}`;
       socket = createSocket(url, wsAuthCode, dispatch);
     } else if (sendMessage.match(action)) {
       if (!socket) {
