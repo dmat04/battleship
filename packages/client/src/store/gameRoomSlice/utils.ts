@@ -79,9 +79,9 @@ const applyMoveResult = (
   state: SliceStateActive,
   score: ScoreState,
 ) => {
-  const { position: { x, y }, hit, shipSunk, currentPlayer } = message;
+  const { position: { x, y }, hit, shipSunk, currentPlayerID } = message;
 
-  state.currentPlayer = currentPlayer;
+  state.currentPlayerID = currentPlayerID;
 
   if (shipSunk) {
     score.sunkenShips.push(shipSunk);
@@ -156,9 +156,13 @@ export const processRoomStatus = (
   state: SliceState,
   roomStatus: GameRoomStatus,
 ) => {
-  state.playerName = roomStatus.player;
-  state.opponentName = roomStatus.opponent ?? undefined;
-  state.currentPlayer = roomStatus.currentPlayer ?? undefined;
+  state.currentPlayerID = roomStatus.currentPlayerID ?? undefined;
+  state.player = { ...roomStatus.player };
+  if (roomStatus.opponent ) {
+    state.opponent = { ...roomStatus.opponent };
+  } else {
+    state.opponent = undefined;
+  }
 
   if (roomStatus.playerShipsPlaced && roomStatus.playerSocketConnected) {
     state.playerStatus = PlayerStatus.Ready;
@@ -181,7 +185,7 @@ const processGameStartedMessage = (
   state: SliceState,
   message: GameStartedMessage,
 ) => {
-  state.currentPlayer = message.playsFirst;
+  state.currentPlayerID = message.playsFirstID;
   state.gameStarted = true;
 };
 
@@ -253,7 +257,7 @@ export const canHitOpponentCell = (
 ): boolean => {
   if (!GameRoomIsReady(state)) return false;
 
-  if (state.currentPlayer !== state.playerName) return false;
+  if (state.currentPlayerID !== state.player.id) return false;
 
   const { opponentScore } = state;
 

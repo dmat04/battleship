@@ -95,8 +95,14 @@ const stateStub: SliceStateActive = {
     loadingNewRoom: false,
     loadingSettings: false,
   },
-  playerName: "PlayerName",
-  opponentName: "OpponentName",
+  player: {
+    id: "PlayerNameUserID",
+    username: "PlayerName",
+  },
+  opponent: {
+    id: "OpponentNameUserID",
+    username: "OpponentName",
+  },
   playerStatus: PlayerStatus.Ready,
   opponentStatus: PlayerStatus.Ready,
   gameStarted: true,
@@ -144,7 +150,7 @@ const stateStub: SliceStateActive = {
       },
     ],
   },
-  currentPlayer: "OpponentName",
+  currentPlayerID: "OpponentNameUserID",
   playerShips: [
     {
       ship: {

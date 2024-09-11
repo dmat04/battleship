@@ -1,4 +1,4 @@
-import { Coordinate, GameSettings, PlacedShip } from "@battleship/common/types/__generated__/types.generated.js";
+import { Coordinate, GameSettings, PlacedShip, Player } from "@battleship/common/types/__generated__/types.generated.js";
 
 export interface ScoreState {
   missedCells: Coordinate[];
@@ -24,9 +24,9 @@ export interface SliceStateInactive {
   gameSettings?: GameSettings;
   playerStatus: PlayerStatus;
   opponentStatus: PlayerStatus;
-  playerName?: string;
-  opponentName?: string;
-  currentPlayer?: string;
+  player?: Player;
+  opponent?: Player;
+  currentPlayerID?: string;
   playerShips?: PlacedShip[];
   inviteCode: string | undefined;
   gameStarted: boolean;
@@ -50,9 +50,9 @@ export const GameRoomIsReady = (
   return (
     state.roomID !== undefined &&
     state.gameSettings !== undefined &&
-    state.playerName !== undefined &&
-    state.opponentName !== undefined &&
-    state.currentPlayer !== undefined &&
+    state.player !== undefined &&
+    state.opponent !== undefined &&
+    state.currentPlayerID !== undefined &&
     state.playerShips !== undefined &&
     state.opponentStatus === PlayerStatus.Ready &&
     state.playerStatus === PlayerStatus.Ready
@@ -80,9 +80,9 @@ export const initialState: SliceStateInactive = {
   gameSettings: undefined,
   playerStatus: PlayerStatus.Disconnected,
   opponentStatus: PlayerStatus.Disconnected,
-  playerName: undefined,
-  opponentName: undefined,
-  currentPlayer: undefined,
+  player: undefined,
+  opponent: undefined,
+  currentPlayerID: undefined,
   playerShips: undefined,
   inviteCode: undefined,
   gameStarted: false,
