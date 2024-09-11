@@ -12,7 +12,7 @@ const openSocket = (
   { gameRoom }: RootState,
   dispatch: AppDispatch,
 ): WebSocket => {
-  const url = `${process.env.WS_URL}/game/${gameRoom.roomID}/${gameRoom.playerName}`;
+  const url = `${process.env.WS_URL}/game/${gameRoom.roomID}/${gameRoom.player?.id}`;
 
   const socket = new WebSocket(url);
 
