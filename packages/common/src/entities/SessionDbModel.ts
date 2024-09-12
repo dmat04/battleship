@@ -1,5 +1,5 @@
 import { Model, Schema, model } from "mongoose";
-import { User, userIdExists } from "@battleship/common/dbModels/UserDbModels.js";
+import { User, userIdExists } from "@battleship/common/entities/UserDbModels.js";
 
 export interface Session {
   readonly id: string;

@@ -56,9 +56,9 @@ export interface GithubUser extends User {
  * @returns true if a User exists with the given username, false otherwise.
  */
 // eslint-disable-next-line arrow-body-style
-const usernameExists = async (
+export const usernameExists = async (
   username: string,
-  kind: UserKind,
+  kind?: UserKind,
 ): Promise<boolean> => {
   return (await UserDbModel.exists({ username, kind })) !== null;
 };
@@ -82,11 +82,30 @@ export interface GithubUserModel extends Model<GithubUser> {
   usernameExists: (username: string) => Promise<boolean>;
 }
 
-// Define options for the base user schema, specifies the property
-// name ("kind") to be used as the discriminator type property
-const baseSchemaOptions = {
-  discriminatorKey: "kind",
+const toObjectOptions = {
+  versionKey: false,
+  flattenObjectIds: true,
+  transform: (_: unknown, ret: Record<string, unknown>) => {
+    ret.id = ret._id;
+    delete ret._id;
+    return ret;
+  }
 };
+
+const USERNAME_MIN_LENGTH = 5;
+const USERNAME_REGEX = new RegExp(/^[\w\d-]+$/);
+
+export const usernameValidator = (username: string) => {
+  if (username.length < USERNAME_MIN_LENGTH) {
+    throw new Error(`Username must contain at least ${USERNAME_MIN_LENGTH} characters`)
+  }
+
+  if (!USERNAME_REGEX.test(username)) {
+    throw new Error("Username may only contain alphanumeric characters, '_' or '-'");
+  }
+
+  return true;
+}
 
 /**
  * Mongoose Schema for the generic User, only defines the usename property.
@@ -98,11 +117,16 @@ const userSchema = new Schema<User, UserModel>(
       required: [true, "Username missing"],
       immutable: true,
       trim: true,
-      minLength: [5, "Username must be at least 5 characters long"],
-      match: /^[\w\d-]+$/,
+      validate: {
+        validator: usernameValidator,
+        message: "Username is to short or contains prohibited characters",
+      },
     },
   },
-  baseSchemaOptions,
+  {
+    discriminatorKey: "kind",
+    toObject: toObjectOptions,
+  },
 );
 
 // Create a compound unique index on the username and kind fields
@@ -110,30 +134,45 @@ const userSchema = new Schema<User, UserModel>(
 userSchema.index({ username: 1, kind: 1 }, { unique: true });
 
 // Define the schema for the Guest user specific fields
-const guestUserSchema = new Schema<GuestUser, GuestUserModel>({
-  expiresAt: { type: Date, required: true },
-});
+const guestUserSchema = new Schema<GuestUser, GuestUserModel>(
+  {
+    expiresAt: { type: Date, required: true },
+  },
+  {
+    toObject: toObjectOptions,
+  },
+);
 
 // Define the schema for the Registered user specific fields
-const registeredUserSchema = new Schema<RegisteredUser, RegisteredUserModel>({
-  passwordHash: { type: String, required: true },
-  email: {
-    type: String,
-    required: [true, "Email address missing"],
-    unique: true,
-    match: /^\S+@\S+$/,
+const registeredUserSchema = new Schema<RegisteredUser, RegisteredUserModel>(
+  {
+    passwordHash: { type: String, required: true },
+    email: {
+      type: String,
+      required: [true, "Email address missing"],
+      unique: true,
+      match: /^\S+@\S+$/,
+    },
+    emailConfirmed: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emailConfirmed: {
-    type: Boolean,
-    default: false,
+  {
+    toObject: toObjectOptions,
   },
-});
+);
 
 // Define the schema for the Github user specific fields
-const githubUserSchema = new Schema<GithubUser, GithubUserModel>({
-  githubId: { type: String, required: true, unique: true },
-  refreshToken: { type: String, required: true },
-});
+const githubUserSchema = new Schema<GithubUser, GithubUserModel>(
+  {
+    githubId: { type: String, required: true, unique: true },
+    refreshToken: { type: String, required: true },
+  },
+  {
+    toObject: toObjectOptions,
+  },
+);
 
 // Add the usernameExists method as a static methods each Schema
 userSchema.static("usernameExists", usernameExists);
@@ -150,7 +189,9 @@ githubUserSchema.static("usernameExists", async (username: string) =>
 // Apply the mongoose-unique-valiator plugin to each Schema
 userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 guestUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
-registeredUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+registeredUserSchema.plugin(uniqueValidator, {
+  message: "{PATH} must be unique",
+});
 githubUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 
 // Build the generic User model, keep it private
@@ -158,12 +199,13 @@ const UserDbModel = model<User, UserModel>("User", userSchema);
 
 // Build the Guest user model as a discriminated model on the generic User model,
 // passing the appropriate value for the discriminator property ("kind").
-const GuestUserDbModel = UserDbModel.discriminator<
-  GuestUser,
-  GuestUserModel
->(UserKind.GuestUser, guestUserSchema, {
-  value: UserKind.GuestUser,
-});
+const GuestUserDbModel = UserDbModel.discriminator<GuestUser, GuestUserModel>(
+  UserKind.GuestUser,
+  guestUserSchema,
+  {
+    value: UserKind.GuestUser,
+  },
+);
 
 // Build the Registered user model as a discriminated model on the generic User model,
 // passing the appropriate value for the discriminator property ("kind").
@@ -185,10 +227,15 @@ const GithubUserDbModel = UserDbModel.discriminator<
 
 export const userIdExists = async (id: Schema.Types.ObjectId) => {
   return (await UserDbModel.findById(id).exec()) !== null;
-}
+};
+
+export const findUserById = (id: string) => {
+  return UserDbModel.findById(id).exec();
+};
 
 export default {
-  Guest: GuestUserDbModel,
-  Registered: RegisteredUserDbModel,
-  Github: GithubUserDbModel,
+  User: UserDbModel,
+  GuestUser: GuestUserDbModel,
+  RegisteredUser: RegisteredUserDbModel,
+  GithubUser: GithubUserDbModel,
 };

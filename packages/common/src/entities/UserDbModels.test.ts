@@ -1,44 +1,23 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
-import User, { UserKind } from "./UserDbModels.js";
+import Model, { UserKind } from "./UserDbModels.js";
+import { setup, teardown } from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
   GITHUB_USERS,
 } from "../../test/testUsers.js";
 
-let mongoServer: MongoMemoryServer | null = null;
-let mongoURL: string | null = null;
-
 beforeEach(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  mongoURL = mongoServer.getUri();
-  await mongoose.connect(mongoURL);
-
-  const modelInitPromises = [
-    User.Guest.init(),
-    User.Registered.init(),
-    User.Github.init(),
-  ];
-  await Promise.all(modelInitPromises);
-
-  const dataInitPromises = [
-    User.Guest.create(GUEST_USERS),
-    User.Registered.create(REGISTERED_USERS),
-    User.Github.create(GITHUB_USERS),
-  ];
-  await Promise.all(dataInitPromises);
+  await setup();
 });
 
 afterEach(async () => {
-  await mongoose.disconnect();
-  await mongoServer?.stop();
+  await teardown();
 });
 
 describe("The GuestUser mongoose model", () => {
   it("retrieves all existing guest users", async () => {
-    const guestUsers = await User.Guest.find({});
+    const guestUsers = await Model.GuestUser.find({});
     expect(new Set(guestUsers)).toMatchObject(new Set(GUEST_USERS));
   });
 
@@ -46,13 +25,13 @@ describe("The GuestUser mongoose model", () => {
     const expiresAt = new Date();
     const username = "TestGuestUser";
 
-    await User.Guest.create({
+    await Model.GuestUser.create({
       username,
       expiresAt,
     });
 
-    const document = await User.Guest.findOne({ username });
-    const count = await User.Guest.countDocuments({});
+    const document = await Model.GuestUser.findOne({ username });
+    const count = await Model.GuestUser.countDocuments({});
 
     expect(document?.id).toBeDefined;
     expect(document?.username).toEqual(username);
@@ -64,7 +43,7 @@ describe("The GuestUser mongoose model", () => {
     const expiresAt = new Date();
     const { username } = GUEST_USERS[0];
 
-    const user = new User.Guest({
+    const user = new Model.GuestUser({
       username,
       expiresAt,
     });
@@ -81,7 +60,7 @@ describe("The GuestUser mongoose model", () => {
   ])(
     "throws a validation error when atempting to save an invalid document",
     async (username, expiresAt) => {
-      const user = new User.Guest({
+      const user = new Model.GuestUser({
         username,
         expiresAt,
       });
@@ -94,12 +73,12 @@ describe("The GuestUser mongoose model", () => {
     const expiresAt = new Date();
     const { username } = REGISTERED_USERS[0];
 
-    await User.Guest.create({
+    await Model.GuestUser.create({
       username,
       expiresAt,
     });
 
-    const user = await User.Guest.findOne({ username });
+    const user = await Model.GuestUser.findOne({ username });
 
     expect(user?.id).toBeDefined;
     expect(user?.username).toEqual(username);
@@ -116,7 +95,7 @@ describe("The GuestUser mongoose model", () => {
   ])(
     "the static usernameExists method works correctly for GuestUsers",
     async (username, exists) => {
-      await expect(User.Guest.usernameExists(username)).resolves.toEqual(
+      await expect(Model.GuestUser.usernameExists(username)).resolves.toEqual(
         exists,
       );
     },
@@ -125,7 +104,7 @@ describe("The GuestUser mongoose model", () => {
 
 describe("The RegisteredUser mongoose model", () => {
   it("retrieves all existing registered users", async () => {
-    const registeredUsers = await User.Registered.find({});
+    const registeredUsers = await Model.RegisteredUser.find({});
     expect(new Set(registeredUsers)).toMatchObject(new Set(REGISTERED_USERS));
   });
 
@@ -135,15 +114,15 @@ describe("The RegisteredUser mongoose model", () => {
     const email = "reguser@domain.com";
     const emailConfirmed = false;
 
-    await User.Registered.create({
+    await Model.RegisteredUser.create({
       username,
       passwordHash,
       email,
       emailConfirmed,
     });
 
-    const document = await User.Registered.findOne({ username });
-    const count = await User.Registered.countDocuments({});
+    const document = await Model.RegisteredUser.findOne({ username });
+    const count = await Model.RegisteredUser.countDocuments({});
 
     expect(document?.id).toBeDefined;
     expect(document?.username).toEqual(username);
@@ -159,7 +138,7 @@ describe("The RegisteredUser mongoose model", () => {
     const email = "reguser@domain.com";
     const emailConfirmed = false;
 
-    const user = new User.Registered({
+    const user = new Model.RegisteredUser({
       username,
       passwordHash,
       email,
@@ -200,7 +179,7 @@ describe("The RegisteredUser mongoose model", () => {
   ])(
     "throws a validation error when atempting to save an invalid document",
     async (username, passwordHash, email, emailConfirmed) => {
-      const user = new User.Registered({
+      const user = new Model.RegisteredUser({
         username,
         passwordHash,
         email,
@@ -217,14 +196,14 @@ describe("The RegisteredUser mongoose model", () => {
     const email = "reguser@domain.com";
     const emailConfirmed = false;
 
-    await User.Registered.create({
+    await Model.RegisteredUser.create({
       username,
       passwordHash,
       email,
       emailConfirmed,
     });
 
-    const user = await User.Registered.findOne({ username });
+    const user = await Model.RegisteredUser.findOne({ username });
 
     expect(user?.id).toBeDefined;
     expect(user?.username).toEqual(username);
@@ -242,7 +221,7 @@ describe("The RegisteredUser mongoose model", () => {
   ])(
     "the static usernameExists method works correctly for RegisteredUsers",
     async (username, exists) => {
-      await expect(User.Registered.usernameExists(username)).resolves.toEqual(
+      await expect(Model.RegisteredUser.usernameExists(username)).resolves.toEqual(
         exists,
       );
     },
@@ -251,7 +230,7 @@ describe("The RegisteredUser mongoose model", () => {
 
 describe("The GithubUser mongoose model", () => {
   it("retrieves all existing github users", async () => {
-    const githubUsers = await User.Github.find({});
+    const githubUsers = await Model.GithubUser.find({});
     expect(new Set(githubUsers)).toMatchObject(new Set(GITHUB_USERS));
   });
 
@@ -260,14 +239,14 @@ describe("The GithubUser mongoose model", () => {
     const githubId = "testGithubId";
     const refreshToken = "testGithubRefreshToken";
 
-    await User.Github.create({
+    await Model.GithubUser.create({
       username,
       githubId,
       refreshToken,
     });
 
-    const document = await User.Github.findOne({ username });
-    const count = await User.Github.countDocuments({});
+    const document = await Model.GithubUser.findOne({ username });
+    const count = await Model.GithubUser.countDocuments({});
 
     expect(document?.id).toBeDefined;
     expect(document?.username).toEqual(username);
@@ -281,7 +260,7 @@ describe("The GithubUser mongoose model", () => {
     const githubId = "testGithubId";
     const refreshToken = "testGithubRefreshToken";
 
-    const user = new User.Github({
+    const user = new Model.GithubUser({
       username,
       githubId,
       refreshToken,
@@ -303,7 +282,7 @@ describe("The GithubUser mongoose model", () => {
   ])(
     "throws a validation error when atempting to save an invalid document",
     async (username, githubId, refreshToken) => {
-      const user = new User.Github({
+      const user = new Model.GithubUser({
         username,
         githubId,
         refreshToken,
@@ -318,13 +297,13 @@ describe("The GithubUser mongoose model", () => {
     const githubId = "testGithubId";
     const refreshToken = "testGithubRefreshToken";
 
-    await User.Github.create({
+    await Model.GithubUser.create({
       username,
       githubId,
       refreshToken,
     });
 
-    const user = await User.Github.findOne({ username });
+    const user = await Model.GithubUser.findOne({ username });
 
     expect(user?.id).toBeDefined;
     expect(user?.username).toEqual(username);
@@ -342,9 +321,13 @@ describe("The GithubUser mongoose model", () => {
   ])(
     "the static usernameExists method works correctly for GithubUsers",
     async (username, exists) => {
-      await expect(User.Github.usernameExists(username)).resolves.toEqual(
+      await expect(Model.GithubUser.usernameExists(username)).resolves.toEqual(
         exists,
       );
     },
   );
+});
+
+describe("The User model utility methods", () => {
+  it.todo("test the exported util methods");
 });
