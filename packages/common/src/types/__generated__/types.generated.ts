@@ -66,6 +66,7 @@ export type LoginResult = {
   __typename?: "LoginResult";
   accessToken: Scalars["String"]["output"];
   expiresAt: Scalars["String"]["output"];
+  userID: Scalars["ID"]["output"];
   username: Scalars["String"]["output"];
 };
 
@@ -403,6 +404,7 @@ export type LoginResultResolvers<
 > = {
   accessToken?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   expiresAt?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  userID?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   username?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -586,6 +588,7 @@ export type GuestLoginMutation = {
     accessToken: string;
     expiresAt: string;
     username: string;
+    userID: string;
   } | null;
 };
 
@@ -601,6 +604,7 @@ export type RegisteredLoginMutation = {
     accessToken: string;
     expiresAt: string;
     username: string;
+    userID: string;
   } | null;
 };
 
