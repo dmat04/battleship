@@ -111,7 +111,7 @@ describe("The UserRepository", () => {
     expect(typeof error).toBe("undefined");
   });
 
-  it.each([...ALL_USERS])("returns false when checking that a taken username is available", async ({ username, kind }) => {
+  it.each([...ALL_USERS])("returns false when checking if a taken username is available", async ({ username, kind }) => {
     const available = await UserRepository.usernameAvailable(username, kind);
     
     expect(available).toBeFalsy();
@@ -122,7 +122,7 @@ describe("The UserRepository", () => {
     [REGISTERED_USERS[0].username, UserKind.GithubUser],
     [GITHUB_USERS[0].username, UserKind.GuestUser],
     ["someNonExistingUsername", UserKind.GuestUser],
-  ])("returns true when checking that a taken username is available", async (username, kind) => {
+  ])("returns true when checking if an available username is available", async (username, kind) => {
     const available = await UserRepository.usernameAvailable(username, kind);
     
     expect(available).toBeTruthy();
