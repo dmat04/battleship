@@ -1,4 +1,4 @@
-import { GuestUser, UserKind, RegisteredUser, GithubUser } from "../src/dbModels/UserDbModels.js";
+import { GuestUser, UserKind, RegisteredUser, GithubUser } from "../src/entities/UserDbModels.js";
 
 export const GUEST_USERS: Omit<GuestUser, "id">[] = [
   {
@@ -31,3 +31,9 @@ export const GITHUB_USERS: Omit<GithubUser, "id">[] = [
     refreshToken: "SomeGithubRefreshToken",
   },
 ];
+
+export const ALL_USERS = [
+  ...GUEST_USERS,
+  ...REGISTERED_USERS,
+  ...GITHUB_USERS,
+]
