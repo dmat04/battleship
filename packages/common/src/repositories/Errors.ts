@@ -26,7 +26,7 @@ export class ValidationError extends Error {
   } = {};
 
   constructor(mongooseError: MongooseError.ValidationError) {
-    super();
+    super(mongooseError.message);
 
     Object.entries(mongooseError.errors).forEach(([prop, err]) => {
       if (err instanceof MongooseError.ValidatorError) {
