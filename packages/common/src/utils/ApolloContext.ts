@@ -1,4 +1,4 @@
-import { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
+import { User } from "@battleship/common/dbModels/UserDbModels.js";
 
 export interface ApolloContext {
   user: User | null;
