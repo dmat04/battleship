@@ -1,11 +1,14 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import Model, { UserKind } from "./UserDbModels.js";
+import { describe, expect, it, beforeEach, afterEach, assert } from "vitest";
+import mongoose from "mongoose";
+import Model, { UserKind, userExists } from "./UserDbModels.js";
 import { setup, teardown } from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
   GITHUB_USERS,
+  ALL_USERS,
 } from "../../test/testUsers.js";
+import UserDbModels from "./UserDbModels.js";
 
 beforeEach(async () => {
   await setup();
@@ -285,5 +288,23 @@ describe("The GithubUser mongoose model", () => {
 });
 
 describe("The User model utility methods", () => {
-  it.todo("test the exported util methods");
+  describe("the userExists utility", () => {
+    it.each([
+      ...ALL_USERS
+    ])("returns true when checking an existing user id", async ({ username, kind }) => {
+      const entity = await UserDbModels.User.findOne({ username, kind}).exec();
+      
+      assert(entity)
+      assert(entity._id);
+
+      const exists = await userExists(entity._id);
+
+      expect(exists).toBeTruthy();
+    });
+
+    it("returns false when checking a non-existing user id", async () => {
+      const exists = await userExists(new mongoose.Types.ObjectId());
+      expect(exists).toBeFalsy();
+    });
+  });
 });

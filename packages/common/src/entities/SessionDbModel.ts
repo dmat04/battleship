@@ -1,5 +1,5 @@
-import { Model, Schema, model } from "mongoose";
-import { User, userIdExists } from "@battleship/common/entities/UserDbModels.js";
+import { Model, Schema, model, Types } from "mongoose";
+import { User, userExists } from "@battleship/common/entities/UserDbModels.js";
 
 export interface Session {
   readonly id: string;
@@ -12,7 +12,7 @@ const sessionSchema = new Schema<Session, Model<Session>>({
     ref: "User",
     required: true,
     validate: {
-      validator: (id: Schema.Types.ObjectId) => userIdExists(id),
+      validator: (id: Types.ObjectId) => userExists(id),
       message: "No User with provided id exists",
     }
   },

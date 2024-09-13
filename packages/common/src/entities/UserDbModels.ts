@@ -1,4 +1,4 @@
-import { Model, Schema, model } from "mongoose";
+import { Model, Schema, model, Types } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
 /**
@@ -178,12 +178,8 @@ const GithubUserDbModel = UserDbModel.discriminator<
   value: UserKind.GithubUser,
 });
 
-export const userIdExists = async (id: Schema.Types.ObjectId) => {
+export const userExists = async (id: Types.ObjectId) => {
   return (await UserDbModel.findById(id).exec()) !== null;
-};
-
-export const findUserById = (id: string) => {
-  return UserDbModel.findById(id).exec();
 };
 
 export default {
