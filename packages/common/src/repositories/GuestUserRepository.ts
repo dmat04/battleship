@@ -40,18 +40,9 @@ const create = async (username: string, expiresAt: Date): Promise<GuestUser> => 
   }
 };
 
-const deleteById = async (id: string): Promise<GuestUser> => {
-  const deleted = await Models.GuestUser.findByIdAndDelete(id).exec();
-
-  if (!deleted) throw new EntityNotFoundError("GuestUser", id);
-
-  return deleted.toObject();
-};
-
 export default {
   getAll,
   getById,
   getByUsername,
   create,
-  deleteById,
 };

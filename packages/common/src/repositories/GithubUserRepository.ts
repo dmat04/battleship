@@ -40,18 +40,9 @@ const create = async (username: string, githubId: string, refreshToken: string):
   }
 };
 
-const deleteById = async (id: string): Promise<GithubUser> => {
-  const deleted = await Models.GithubUser.findByIdAndDelete(id).exec();
-
-  if (!deleted) throw new EntityNotFoundError("GithubUser", id);
-
-  return deleted.toObject();
-};
-
 export default {
   getAll,
   getById,
   getByUsername,
   create,
-  deleteById,
 };

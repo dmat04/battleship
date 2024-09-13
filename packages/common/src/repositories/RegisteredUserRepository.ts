@@ -40,18 +40,9 @@ const create = async (username: string, passwordHash: string, email: string): Pr
   }
 };
 
-const deleteById = async (id: string): Promise<RegisteredUser> => {
-  const deleted = await Models.RegisteredUser.findByIdAndDelete(id).exec();
-
-  if (!deleted) throw new EntityNotFoundError("RegisteredUser", id);
-
-  return deleted.toObject();
-};
-
 export default {
   getAll,
   getById,
   getByUsername,
   create,
-  deleteById,
 };

@@ -4,6 +4,7 @@ import Models, {
   usernameValidator,
 } from "../entities/UserDbModels.js";
 import { EntityNotFoundError } from "./Errors.js";
+import SessionRepository from "./SessionRepository.js";
 
 const getAll = async (): Promise<User[]> => {
   const users = await Models.User.find({}).exec();
@@ -50,10 +51,23 @@ const usernameAvailable = async (
   return user === null;
 };
 
+const deleteById = async (id: string): Promise<User> => {
+  const deleted = await Models.User.findByIdAndDelete(id).exec();
+
+  if (!deleted) throw new EntityNotFoundError("GithubUser", id);
+
+  const plainDeleted = deleted.toObject();
+
+  void SessionRepository.deleteAllForUser(plainDeleted.id);
+
+  return plainDeleted;
+};
+
 export default {
   getAll,
   getById,
   getByUsernameAndKind,
   validateUsername,
   usernameAvailable,
+  deleteById,
 };
