@@ -45,7 +45,7 @@ const deleteById = async (id: string): Promise<GuestUser> => {
 
   if (!deleted) throw new EntityNotFoundError("GuestUser", id);
 
-  return deleted?.toObject();
+  return deleted.toObject();
 };
 
 export default {
