@@ -85,21 +85,6 @@ describe("The GuestUser mongoose model", () => {
     expect(user?.expiresAt).toEqual(expiresAt);
     expect(user?.kind).toEqual(UserKind.GuestUser);
   });
-
-  it.each([
-    [GUEST_USERS[0].username, true],
-    [GUEST_USERS[1].username, true],
-    [REGISTERED_USERS[0].username, false],
-    [GITHUB_USERS[0].username, false],
-    ["CompletelyNewUsername", false],
-  ])(
-    "the static usernameExists method works correctly for GuestUsers",
-    async (username, exists) => {
-      await expect(Model.GuestUser.usernameExists(username)).resolves.toEqual(
-        exists,
-      );
-    },
-  );
 });
 
 describe("The RegisteredUser mongoose model", () => {
@@ -212,20 +197,6 @@ describe("The RegisteredUser mongoose model", () => {
     expect(user?.emailConfirmed).toEqual(emailConfirmed);
     expect(user?.kind).toEqual(UserKind.RegisteredUser);
   });
-
-  it.each([
-    [REGISTERED_USERS[0].username, true],
-    [GUEST_USERS[0].username, false],
-    [GITHUB_USERS[0].username, false],
-    ["CompletelyNewUsername", false],
-  ])(
-    "the static usernameExists method works correctly for RegisteredUsers",
-    async (username, exists) => {
-      await expect(Model.RegisteredUser.usernameExists(username)).resolves.toEqual(
-        exists,
-      );
-    },
-  );
 });
 
 describe("The GithubUser mongoose model", () => {
@@ -311,21 +282,6 @@ describe("The GithubUser mongoose model", () => {
     expect(user?.refreshToken).toEqual(refreshToken);
     expect(user?.kind).toEqual(UserKind.GithubUser);
   });
-
-  it.each([
-    [GITHUB_USERS[0].username, true],
-    [REGISTERED_USERS[0].username, false],
-    [GUEST_USERS[0].username, false],
-    [GUEST_USERS[1].username, false],
-    ["CompletelyNewUsername", false],
-  ])(
-    "the static usernameExists method works correctly for GithubUsers",
-    async (username, exists) => {
-      await expect(Model.GithubUser.usernameExists(username)).resolves.toEqual(
-        exists,
-      );
-    },
-  );
 });
 
 describe("The User model utility methods", () => {
