@@ -1,7 +1,7 @@
 extend type Mutation {
   guestLogin(username: String): LoginResult
   registeredLogin(username: String!, password: String!): LoginResult
-  registerUser(username: String!, password: String!): LoginResult
+  registerUser(username: String!, password: String!, email: String!): LoginResult
 }
 
 extend type Query {

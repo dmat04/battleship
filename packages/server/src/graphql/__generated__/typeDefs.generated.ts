@@ -242,6 +242,18 @@ export const typeDefs = {
               },
               directives: [],
             },
+            {
+              kind: "InputValueDefinition",
+              name: { kind: "Name", value: "email" },
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "String" },
+                },
+              },
+              directives: [],
+            },
           ],
           type: {
             kind: "NamedType",

@@ -94,6 +94,7 @@ export type MutationPlaceShipsArgs = {
 };
 
 export type MutationRegisterUserArgs = {
+  email: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
   username: Scalars["String"]["input"];
 };
@@ -441,7 +442,7 @@ export type MutationResolvers<
     Maybe<ResolversTypes["LoginResult"]>,
     ParentType,
     ContextType,
-    RequireFields<MutationRegisterUserArgs, "password" | "username">
+    RequireFields<MutationRegisterUserArgs, "email" | "password" | "username">
   >;
   registeredLogin?: Resolver<
     Maybe<ResolversTypes["LoginResult"]>,
