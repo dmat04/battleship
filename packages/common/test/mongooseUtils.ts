@@ -1,16 +1,19 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import UserModel from "../src/entities/UserDbModels.js"
+import SessionModel from "../src/entities/SessionDbModel.js";
 import { GUEST_USERS, REGISTERED_USERS, GITHUB_USERS } from "./testUsers.js";
 
 let mongoServer: MongoMemoryServer | null = null;
 let mongoURL: string | null = null;
 
-export const setup = async () => {
+export const setupConnection = async () => {
   mongoServer = await MongoMemoryServer.create();
   mongoURL = mongoServer.getUri();
   await mongoose.connect(mongoURL);
+}
 
+export const setupUsers = async () => {
   const modelInitPromises = [
     UserModel.User.init(),
     UserModel.GuestUser.init(),
@@ -27,7 +30,22 @@ export const setup = async () => {
   await Promise.all(dataInitPromises);
 };
 
-export const teardown = async () => {
+export const setupSessions = async (sessionsPerUser: number) => {
+  await SessionModel.init();
+  const users = await UserModel.User.find({}).exec();
+
+  const createPromises: Promise<unknown>[] = []
+
+  users.forEach(({ _id }) => {
+    const documents = new Array(sessionsPerUser);
+    documents.fill({ user: _id });
+    createPromises.push(SessionModel.create(documents));
+  });
+
+  await Promise.all(createPromises);
+}
+
+export const teardownConnection = async () => {
   await mongoose.disconnect();
   await mongoServer?.stop();
 };
