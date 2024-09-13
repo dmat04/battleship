@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, assert } from "vitest";
 import mongoose from "mongoose";
 import Model, { UserKind, userExists } from "./UserDbModels.js";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import { setupConnection, teardownConnection, setupUsers } from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -11,11 +11,12 @@ import {
 import UserDbModels from "./UserDbModels.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The GuestUser mongoose model", () => {

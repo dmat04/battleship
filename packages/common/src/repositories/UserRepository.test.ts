@@ -1,6 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import {
+  setupConnection,
+  teardownConnection,
+  setupUsers,
+} from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -12,11 +16,12 @@ import UserDbModels, { User, UserKind } from "../entities/UserDbModels.js";
 import { EntityNotFoundError } from "./Errors.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The UserRepository", () => {
@@ -81,20 +86,15 @@ describe("The UserRepository", () => {
     },
   );
 
-  it.each([
-    "",
-    "a",
-    "!a",
-    "abc!def",
-    " asdccs",
-    "           ",
-    ""
-  ])("returns an error message when validating an invalid username", (username) => {
-    const error = UserRepository.validateUsername(username);
-    
-    expect(typeof error).toBe("string");
-    expect((error as string).length).toBeGreaterThan(0);
-  });
+  it.each(["", "a", "!a", "abc!def", " asdccs", "           ", ""])(
+    "returns an error message when validating an invalid username",
+    (username) => {
+      const error = UserRepository.validateUsername(username);
+
+      expect(typeof error).toBe("string");
+      expect((error as string).length).toBeGreaterThan(0);
+    },
+  );
 
   it.each([
     "abcde",
@@ -104,27 +104,65 @@ describe("The UserRepository", () => {
     "012ab",
     "01-abc",
     "01_abc",
-    "---_-"
+    "---_-",
   ])("returns undefined when validating a valid username", (username) => {
     const error = UserRepository.validateUsername(username);
-    
+
     expect(typeof error).toBe("undefined");
   });
 
-  it.each([...ALL_USERS])("returns false when checking if a taken username is available", async ({ username, kind }) => {
-    const available = await UserRepository.usernameAvailable(username, kind);
-    
-    expect(available).toBeFalsy();
-  });
+  it.each([...ALL_USERS])(
+    "returns false when checking if a taken username is available",
+    async ({ username, kind }) => {
+      const available = await UserRepository.usernameAvailable(username, kind);
+
+      expect(available).toBeFalsy();
+    },
+  );
 
   it.each([
     [GUEST_USERS[0].username, UserKind.RegisteredUser],
     [REGISTERED_USERS[0].username, UserKind.GithubUser],
     [GITHUB_USERS[0].username, UserKind.GuestUser],
     ["someNonExistingUsername", UserKind.GuestUser],
-  ])("returns true when checking if an available username is available", async (username, kind) => {
-    const available = await UserRepository.usernameAvailable(username, kind);
-    
-    expect(available).toBeTruthy();
+  ])(
+    "returns true when checking if an available username is available",
+    async (username, kind) => {
+      const available = await UserRepository.usernameAvailable(username, kind);
+
+      expect(available).toBeTruthy();
+    },
+  );
+
+  it.each([...ALL_USERS])(
+    "successfully deletes an existing user",
+    async (user) => {
+      const mongooseEntity = (await UserDbModels.User.findOne({
+        username: user.username,
+        kind: user.kind,
+      }).exec()) as User;
+
+      const countBefore = await UserDbModels.User.countDocuments().exec();
+      const deleted = await UserRepository.deleteById(mongooseEntity.id);
+      expect(mongooseEntity).toMatchObject(deleted);
+
+      const afterDeletion = await UserDbModels.User.findById(deleted.id).exec();
+      expect(afterDeletion).toBe(null);
+
+      const countAfter = await UserDbModels.User.countDocuments().exec();
+      expect(countAfter).toBe(countBefore - 1);
+    },
+  );
+
+  it("throws an EntityNotFoundError when deleting a non-existing user", async () => {
+    expect.hasAssertions();
+
+    const id = new mongoose.Types.ObjectId();
+
+    try {
+      await UserRepository.deleteById(id.toString());
+    } catch (err) {
+      expect(err).toBeInstanceOf(EntityNotFoundError);
+    }
   });
 });

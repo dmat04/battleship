@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
 import Model, { GithubUser, GuestUser, RegisteredUser } from "./UserDbModels.js";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import { setupConnection, teardownConnection, setupUsers } from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -10,11 +10,12 @@ import {
 import SessionDbModel from "./SessionDbModel.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The Session mongoose model", () => {

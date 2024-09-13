@@ -1,6 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import {
+  setupConnection,
+  teardownConnection,
+  setupUsers,
+} from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -12,11 +16,12 @@ import UserDbModels, { User, UserKind } from "../entities/UserDbModels.js";
 import { EntityNotFoundError, ValidationError } from "./Errors.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The GithubUserRepository", () => {
@@ -139,7 +144,12 @@ describe("The GithubUserRepository", () => {
     ["abcdef!", "someGithubId", "someRefreshToken", "username"],
     ["          ", "someGithubId", "someRefreshToken", "username"],
     ["CompletelyNewUsername_0-1", "", "someRefreshToken", "githubId"],
-    ["CompletelyNewUsername_0-1", GITHUB_USERS[0].githubId, "someRefreshToken", "githubId"],
+    [
+      "CompletelyNewUsername_0-1",
+      GITHUB_USERS[0].githubId,
+      "someRefreshToken",
+      "githubId",
+    ],
     ["CompletelyNewUsername_0-1", "someGithubId", "", "refreshToken"],
   ])(
     "throws a ValidationError when attempting to create a github user with invalid data",
@@ -155,51 +165,6 @@ describe("The GithubUserRepository", () => {
           invalidProperty,
         );
         expect(validationError.message).toMatch("validation");
-      }
-    },
-  );
-
-  it("successfully deletes an existing github user", async () => {
-    const mongooseEntity = (await UserDbModels.User.findOne({
-      username: GITHUB_USERS[0].username,
-      kind: UserKind.GithubUser,
-    }).exec()) as User;
-
-    const deleted = await GithubUserRepository.deleteById(
-      mongooseEntity.id,
-    );
-    expect(mongooseEntity).toMatchObject(deleted);
-
-    const afterDeletion = await UserDbModels.User.findById(deleted.id).exec();
-    expect(afterDeletion).toBe(null);
-  });
-
-  it("throws an EntityNotFoundError when deleting a non-existing github user", async () => {
-    expect.hasAssertions();
-
-    const id = new mongoose.Types.ObjectId();
-
-    try {
-      await GithubUserRepository.deleteById(id.toString());
-    } catch (err) {
-      expect(err).toBeInstanceOf(EntityNotFoundError);
-    }
-  });
-
-  it.each([...ALL_USERS.filter((u) => u.kind !== UserKind.GithubUser)])(
-    "throws an EntityNotFoundError when deleting a non-github user",
-    async ({ username, kind }) => {
-      expect.hasAssertions();
-
-      const userEntity = (await UserDbModels.User.findOne({
-        username,
-        kind,
-      }).exec()) as User;
-
-      try {
-        await GithubUserRepository.deleteById(userEntity.id);
-      } catch (err) {
-        expect(err).toBeInstanceOf(EntityNotFoundError);
       }
     },
   );

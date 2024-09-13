@@ -1,6 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import {
+  setupConnection,
+  setupUsers,
+  teardownConnection,
+} from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -12,11 +16,12 @@ import UserDbModels, { User, UserKind } from "../entities/UserDbModels.js";
 import { EntityNotFoundError, ValidationError } from "./Errors.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The RegisteredUserRepository", () => {
@@ -134,7 +139,12 @@ describe("The RegisteredUserRepository", () => {
   );
 
   it.each([
-    [REGISTERED_USERS[0].username, "passwordHash", "username@domain.com", "username"],
+    [
+      REGISTERED_USERS[0].username,
+      "passwordHash",
+      "username@domain.com",
+      "username",
+    ],
     ["", "passwordHash", "username@domain.com", "username"],
     ["abc", "passwordHash", "username@domain.com", "username"],
     ["abcdef!", "passwordHash", "username@domain.com", "username"],
@@ -160,51 +170,6 @@ describe("The RegisteredUserRepository", () => {
           invalidProperty,
         );
         expect(validationError.message).toMatch("validation");
-      }
-    },
-  );
-
-  it("successfully deletes an existing registered user", async () => {
-    const mongooseEntity = (await UserDbModels.User.findOne({
-      username: REGISTERED_USERS[0].username,
-      kind: UserKind.RegisteredUser,
-    }).exec()) as User;
-
-    const deleted = await RegisteredUserRepository.deleteById(
-      mongooseEntity.id,
-    );
-    expect(mongooseEntity).toMatchObject(deleted);
-
-    const afterDeletion = await UserDbModels.User.findById(deleted.id).exec();
-    expect(afterDeletion).toBe(null);
-  });
-
-  it("throws an EntityNotFoundError when deleting a non-existing registered user", async () => {
-    expect.hasAssertions();
-
-    const id = new mongoose.Types.ObjectId();
-
-    try {
-      await RegisteredUserRepository.deleteById(id.toString());
-    } catch (err) {
-      expect(err).toBeInstanceOf(EntityNotFoundError);
-    }
-  });
-
-  it.each([...ALL_USERS.filter((u) => u.kind !== UserKind.RegisteredUser)])(
-    "throws an EntityNotFoundError when deleting a non-registered user",
-    async ({ username, kind }) => {
-      expect.hasAssertions();
-
-      const userEntity = (await UserDbModels.User.findOne({
-        username,
-        kind,
-      }).exec()) as User;
-
-      try {
-        await RegisteredUserRepository.deleteById(userEntity.id);
-      } catch (err) {
-        expect(err).toBeInstanceOf(EntityNotFoundError);
       }
     },
   );

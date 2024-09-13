@@ -1,6 +1,10 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { setup, teardown } from "../../test/mongooseUtils.js";
+import {
+  setupConnection,
+  teardownConnection,
+  setupUsers,
+} from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
   REGISTERED_USERS,
@@ -12,11 +16,12 @@ import UserDbModels, { User, UserKind } from "../entities/UserDbModels.js";
 import { EntityNotFoundError, ValidationError } from "./Errors.js";
 
 beforeEach(async () => {
-  await setup();
+  await setupConnection();
+  await setupUsers();
 });
 
 afterEach(async () => {
-  await teardown();
+  await teardownConnection();
 });
 
 describe("The GuestUserRepository", () => {
@@ -56,20 +61,24 @@ describe("The GuestUserRepository", () => {
       expect(err).toBeInstanceOf(EntityNotFoundError);
     }
   });
-  
-  it.each([
-    ...(ALL_USERS.filter(u => u.kind !== UserKind.GuestUser))
-  ])("throws an EntityNotFoundError when fetching a non-guest user", async ({ username, kind }) => {
-    expect.hasAssertions();
 
-    const userEntity = await UserDbModels.User.findOne({ username, kind }).exec() as User;
+  it.each([...ALL_USERS.filter((u) => u.kind !== UserKind.GuestUser)])(
+    "throws an EntityNotFoundError when fetching a non-guest user",
+    async ({ username, kind }) => {
+      expect.hasAssertions();
 
-    try {
-      await GuestUserRepository.getById(userEntity.id);
-    } catch (err) {
-      expect(err).toBeInstanceOf(EntityNotFoundError);
-    }
-  });
+      const userEntity = (await UserDbModels.User.findOne({
+        username,
+        kind,
+      }).exec()) as User;
+
+      try {
+        await GuestUserRepository.getById(userEntity.id);
+      } catch (err) {
+        expect(err).toBeInstanceOf(EntityNotFoundError);
+      }
+    },
+  );
 
   it.each([...GUEST_USERS])(
     "fetches a guest user by their username",
@@ -146,43 +155,4 @@ describe("The GuestUserRepository", () => {
       }
     },
   );
-
-  it("successfully deletes an existing guest user", async () => {
-    const mongooseEntity = (await UserDbModels.User.findOne({
-      username: GUEST_USERS[0].username,
-      kind: UserKind.GuestUser,
-    }).exec()) as User;
-
-    const deleted = await GuestUserRepository.deleteById(mongooseEntity.id);
-    expect(mongooseEntity).toMatchObject(deleted);
-
-    const afterDeletion = await UserDbModels.User.findById(deleted.id).exec();
-    expect(afterDeletion).toBe(null);
-  });
-
-  it("throws an EntityNotFoundError when deleting a non-existing guest user", async () => {
-    expect.hasAssertions();
-
-    const id = new mongoose.Types.ObjectId();
-
-    try {
-      await GuestUserRepository.deleteById(id.toString());
-    } catch (err) {
-      expect(err).toBeInstanceOf(EntityNotFoundError);
-    }
-  });
-
-  it.each([
-    ...(ALL_USERS.filter(u => u.kind !== UserKind.GuestUser))
-  ])("throws an EntityNotFoundError when deleting a non-guest user", async ({ username, kind }) => {
-    expect.hasAssertions();
-
-    const userEntity = await UserDbModels.User.findOne({ username, kind }).exec() as User;
-
-    try {
-      await GuestUserRepository.deleteById(userEntity.id);
-    } catch (err) {
-      expect(err).toBeInstanceOf(EntityNotFoundError);
-    }
-  });
 });
