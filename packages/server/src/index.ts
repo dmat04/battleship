@@ -16,7 +16,7 @@ const apolloServer = createApolloServer(httpServer);
 
 uWS
   .App()
-  .ws("/game/:gameId/:username", WSBehaviour)
+  .ws("/game/:gameId/:userId", WSBehaviour)
   .listen(config.WS_PORT, (token) => {
     if (token) {
       console.log(`WS server listening on port ${config.WS_PORT}`);
