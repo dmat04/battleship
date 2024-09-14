@@ -1,9 +1,10 @@
 import { Model, Schema, model, Types } from "mongoose";
-import { User, userExists } from "@battleship/common/entities/UserDbModels.js";
+import { User, expiresAtValidator, userExists } from "@battleship/common/entities/UserDbModels.js";
 
 export interface Session {
   readonly id: string;
   readonly user: User;
+  readonly expiresAt: Date;
 }
 
 const toObjectOptions = {
@@ -26,6 +27,14 @@ const sessionSchema = new Schema<Session, Model<Session>>(
         validator: (id: Types.ObjectId) => userExists(id),
         message: "No User with provided id exists",
       },
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: expiresAtValidator,
+        message: (props) => props.reason?.message ?? "{PATH} is invalid",
+      }
     },
   },
   {
