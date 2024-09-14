@@ -1,34 +1,34 @@
 import { GraphQLError } from "graphql";
 import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import { ApolloContext } from "@battleship/common/utils/ApolloContext.js";
-import AuthService from "../services/AuthService.js";
-import { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
+import SessionService from "../services/SessionService.js";
+import { Session } from "@battleship/common/entities/SessionDbModel.js";
 
-export const assertAuthorized = (context: ApolloContext): User => {
-  const { user } = context;
+export const assertAuthorized = (context: ApolloContext): Session => {
+  const { session } = context;
 
-  if (!user) {
+  if (!session) {
     throw new GraphQLError("Acess token missing or expired", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
-  return user;
+  return session;
 };
 
 export const contextFn = async ({
   req,
 }: ExpressContextFunctionArgument): Promise<ApolloContext> => {
   const { authorization } = req.headers;
-  if (!authorization) return { user: null };
+  if (!authorization) return { session: null };
 
   if (authorization.startsWith("Bearer ")) {
     try {
-      const user = await AuthService.getUserFromToken(
+      const session = await SessionService.getSessionFromToken(
         authorization.replace("Bearer ", ""),
       );
       return {
-        user,
+        session,
       };
     } catch {
       throw new GraphQLError("Acess token missing or expired", {
