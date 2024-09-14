@@ -1,10 +1,6 @@
 import { GraphQLError, GraphQLFormattedError } from "graphql";
-import { Error as MongooseError } from "mongoose";
-import EntityNotFoundError from "../services/errors/EntityNotFoundError.js";
+import { EntityNotFoundError, ValidationError } from "@battleship/common/repositories/Errors.js";
 import AuthenticationError from "../services/errors/AuthenticationError.js";
-import ValidationError, {
-  objectIsErrorDetails,
-} from "../services/errors/ValidationError.js";
 
 enum ErrorCodes {
   Validation = "VALIDATION_FAILED",
@@ -30,7 +26,7 @@ const ApolloErrorFormatter = (
   }
 
   if (originalError instanceof EntityNotFoundError) {
-    editedError.message = `No '${originalError.entityType}' with id=${originalError.entityIdentifier} found`;
+    editedError.message = originalError.message
     extensions.code = ErrorCodes.BadInput;
   } else if (originalError instanceof AuthenticationError) {
     editedError.message = originalError.message;
@@ -39,20 +35,9 @@ const ApolloErrorFormatter = (
   } else if (originalError instanceof ValidationError) {
     editedError.message = "Input data invalid";
     extensions.code = ErrorCodes.Validation;
-    const { cause } = originalError;
-
-    if (objectIsErrorDetails(cause)) {
-      extensions.validationErrors = [cause];
-    } else if (cause instanceof MongooseError.ValidationError) {
-      extensions.validationErrors = Object.entries(cause.errors).map(
-        ([path, mongErr]) => ({
-          property: path,
-          errorKind: mongErr.kind,
-          value: JSON.stringify(mongErr.value),
-          message: mongErr.message,
-        }),
-      );
-    }
+    extensions.invalidProperties = {
+      ...originalError.invalidProperties
+    };
   }
 
   return {
