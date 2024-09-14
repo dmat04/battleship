@@ -1,5 +1,5 @@
-import { User } from "@battleship/common/dbModels/UserDbModels.js";
+import { Session } from "../entities/SessionDbModel.js";
 
 export interface ApolloContext {
-  user: User | null;
+  session: Session | null;
 }
