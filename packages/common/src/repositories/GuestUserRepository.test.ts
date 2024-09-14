@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
+import { addDays, addMinutes, subHours } from "date-fns"
 import mongoose from "mongoose";
 import {
   setupConnection,
@@ -110,9 +111,9 @@ describe("The GuestUserRepository", () => {
   );
 
   it.each([
-    [REGISTERED_USERS[0].username, new Date()],
-    [GITHUB_USERS[0].username, new Date()],
-    ["CompletelyNewUsername_0-1", new Date()],
+    [REGISTERED_USERS[0].username, addDays<Date>(new Date(), 1)],
+    [GITHUB_USERS[0].username, addDays<Date>(new Date(), 1)],
+    ["CompletelyNewUsername_0-1", addDays<Date>(new Date(), 1)],
   ])(
     "successfully saves a new guest user with valid data",
     async (username, expiresAt) => {
@@ -133,11 +134,14 @@ describe("The GuestUserRepository", () => {
   );
 
   it.each([
-    [GUEST_USERS[0].username, new Date(), "username"],
-    ["", new Date(), "username"],
-    ["abc", new Date(), "username"],
-    ["abcdef!", new Date(), "username"],
-    ["          ", new Date(), "username"],
+    [GUEST_USERS[0].username, addDays<Date>(new Date(), 1), "username"],
+    ["", addDays<Date>(new Date(), 1), "username"],
+    ["abc", addDays<Date>(new Date(), 1), "username"],
+    ["abcdef!", addDays<Date>(new Date(), 1), "username"],
+    ["          ", addDays<Date>(new Date(), 1), "username"],
+    ["abcdef123", new Date(), "expiresAt"],
+    ["abcdef123", addMinutes<Date>(new Date(), 1), "expiresAt"],
+    ["abcdef123", subHours<Date>(new Date(), 1), "expiresAt"],
   ])(
     "throws a ValidationError when attempting to create a guest user with invalid data",
     async (username, expiresAt, invalidProperty) => {
