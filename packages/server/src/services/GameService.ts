@@ -1,23 +1,17 @@
 import { randomUUID } from "crypto";
 import { WebSocket } from "uWebSockets.js";
-import AuthService from "./AuthService.js";
 import DefaultSettings from "../game/DefaultSettings.js";
-import ValidationError from "./errors/ValidationError.js";
-import EntityNotFoundError from "./errors/EntityNotFoundError.js";
-import type {
-  ActiveGameRoom,
-  ActivePlayerData,
-  GameRoom,
-  PlayerData,
-} from "../models/GameRoom.js";
-import { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
-import { WSData } from "../models/WSData.js";
-import Board from "../game/Board.js";
 import {
   getPlayerData,
   gameRoomIsActive,
   getActivePlayerData,
-} from "../models/GameRoom.js";
+  type ActiveGameRoom,
+  type ActivePlayerData,
+  type GameRoom,
+  type PlayerData,
+} from "./models/GameRoom.js";
+import { WSData } from "./models/WSData.js";
+import Board from "../game/Board.js";
 import {
   ClientMessage,
   ClientMessageCode,
@@ -33,6 +27,7 @@ import {
 import {
   GameRoomStatus,
   GameSettings,
+  Player,
   RoomCreatedResult,
   RoomJoinedResult,
   ShipPlacementInput,
@@ -42,6 +37,13 @@ import { CellHitResult } from "@battleship/common/types/GameTypes.js";
 import { assertNever } from "@battleship/common/utils/typeUtils.js";
 import Game, { GameState } from "../game/Game.js";
 import GameplayError from "../game/GameplayError.js";
+import { User } from "@battleship/common/entities/UserDbModels.js";
+import {
+  EntityNotFoundError,
+  ValidationError,
+} from "@battleship/common/repositories/Errors.js";
+import SessionService from "./SessionService.js";
+import ServiceError from "./errors/ServiceError.js";
 
 /**
  * Registry of open game rooms, indexed by game Id's
@@ -146,8 +148,8 @@ const createNewRoom = (user: User): RoomCreatedResult => {
 
   gameRooms.set(id, room);
 
-  const wsAuthCode = AuthService.encodeWSToken({
-    username: user.username,
+  const wsAuthCode = SessionService.encodeWSToken({
+    userID: user.id,
     roomID: id,
   });
 
@@ -160,23 +162,40 @@ const createNewRoom = (user: User): RoomCreatedResult => {
 
 const getRoomStatusInternal = (
   room: GameRoom,
-  player: string,
+  userID: string,
 ): GameRoomStatus => {
-  const { playerData, opponentData } = getPlayerData(room, player);
+  const { playerData, opponentData } = getPlayerData(room, userID);
+
+  if (!playerData) {
+    throw new ServiceError("Player data missing");
+  }
+
+  const player: Player = {
+    id: playerData.user.id,
+    username: playerData.user.username,
+  };
+
+  let opponent: Player | undefined = undefined;
+  if (opponentData) {
+    opponent = {
+      id: opponentData.user.id,
+      username: opponentData.user.username,
+    };
+  }
 
   return {
-    player: playerData?.user.username ?? "",
+    player,
     playerShipsPlaced: playerData?.shipPlacements !== undefined,
     playerSocketConnected: playerData?.socket !== undefined,
-    opponent: opponentData?.user.username,
+    opponent,
     opponentShipsPlaced: opponentData?.shipPlacements !== undefined,
     opponentSocketConnected: opponentData?.socket !== undefined,
-    currentPlayer: room.gameInstance?.getCurrentPlayer(),
+    currentPlayerID: room.gameInstance?.getCurrentPlayer(),
   };
 };
 
 const sendMoveResultResponse = (
-  currentPlayer: string,
+  currentPlayerID: string,
   moveResult: CellHitResult,
   player: ActivePlayerData,
   opponent: ActivePlayerData,
@@ -184,13 +203,13 @@ const sendMoveResultResponse = (
   const ownResponse: OwnMoveResultMessage = {
     ...moveResult,
     code: ServerMessageCode.OwnMoveResult,
-    currentPlayer,
+    currentPlayerID,
   };
 
   const opponentResponse: OpponentMoveResultMessage = {
     ...moveResult,
     code: ServerMessageCode.OpponentMoveResult,
-    currentPlayer,
+    currentPlayerID,
   };
 
   player.socket.send(JSON.stringify(ownResponse));
@@ -200,14 +219,22 @@ const sendMoveResultResponse = (
 const turnTimeExpired = (room: ActiveGameRoom) => {
   const { turnTimer, gameInstance } = room;
 
-  let currentPlayer = gameInstance.getCurrentPlayer();
-  const { playerData, opponentData } = getActivePlayerData(room, currentPlayer);
+  let currentPlayerID = gameInstance.getCurrentPlayer();
+  const { playerData, opponentData } = getActivePlayerData(
+    room,
+    currentPlayerID,
+  );
 
   try {
-    const moveResult = gameInstance.makeRandomMove(currentPlayer);
-    currentPlayer = gameInstance.getCurrentPlayer();
+    const moveResult = gameInstance.makeRandomMove(currentPlayerID);
+    currentPlayerID = gameInstance.getCurrentPlayer();
 
-    sendMoveResultResponse(currentPlayer, moveResult, playerData, opponentData);
+    sendMoveResultResponse(
+      currentPlayerID,
+      moveResult,
+      playerData,
+      opponentData,
+    );
     turnTimer.refresh();
   } catch (error) {
     if (error instanceof GameplayError) {
@@ -232,7 +259,7 @@ const attemptToStartGame = (room: GameRoom) => {
 
   const message: GameStartedMessage = {
     code: ServerMessageCode.GameStarted,
-    playsFirst: gameInstance.getCurrentPlayer(),
+    playsFirstID: gameInstance.getCurrentPlayer(),
   };
 
   const encoded = JSON.stringify(message);
@@ -330,8 +357,8 @@ const joinWithInviteCode = (
     gameRoom.gameSettings,
   );
 
-  const wsAuthCode = AuthService.encodeWSToken({
-    username: user.username,
+  const wsAuthCode = SessionService.encodeWSToken({
+    userID: user.id,
     roomID: gameRoom.id,
   });
 
@@ -365,14 +392,14 @@ const getGameSettings = (roomID: string): GameSettings => {
  * @param roomID Id of the game room.
  * @returns The status of the specified game room.
  */
-const getRoomStatus = (roomID: string, player: string): GameRoomStatus => {
+const getRoomStatus = (roomID: string, userID: string): GameRoomStatus => {
   const room = getRoom(roomID);
 
   if (!room) {
     throw new Error("Game room not found");
   }
 
-  return getRoomStatusInternal(room, player);
+  return getRoomStatusInternal(room, userID);
 };
 
 /**
@@ -405,12 +432,15 @@ const placeShips = (
     room.gameSettings,
   );
   if (errors || !placedShips) {
-    throw new ValidationError({
-      property: "shipPlacements",
-      errorKind: "gameInput",
-      value: JSON.stringify(shipPlacements),
-      message: `Invalid ship placements: ${errors?.join("; ")}`,
-    });
+    throw new ValidationError([
+      {
+        propertyName: "shipPlacements",
+        error: {
+          value: JSON.stringify(shipPlacements),
+          message: `Invalid ship placements: ${errors?.join("; ")}`,
+        },
+      },
+    ]);
   }
 
   // Select the correct player data
@@ -447,7 +477,7 @@ const placeShips = (
  * @param username Username of the user requesting the websocket upgrade.
  * @param gameID Id of the Game for which a websocket connection is being opened.
  */
-const clientSocketRequested = (username: string, gameID: string): void => {
+const clientSocketRequested = (userID: string, gameID: string): void => {
   // try to find the game for the given gameId
   const room = getRoom(gameID);
 
@@ -456,11 +486,11 @@ const clientSocketRequested = (username: string, gameID: string): void => {
   }
 
   // Select the correct player data
-  const { playerData } = getPlayerData(room, username);
+  const { playerData } = getPlayerData(room, userID);
 
   // Throw an error if no playerData instance is selected
   if (!playerData) {
-    throw new Error(`User '${username}' is not part of game room id=${gameID}`);
+    throw new Error(`User id='${userID}' is not part of game room id=${gameID}`);
   }
 
   // Throw an error if the user has already opened a websocket connection
@@ -483,7 +513,7 @@ const clientSocketRequested = (username: string, gameID: string): void => {
  */
 const clientSocketAuthenticated = (
   roomID: string,
-  username: string,
+  userID: string,
   socket: WebSocket<WSData>,
 ) => {
   const room = getRoom(roomID);
@@ -493,17 +523,17 @@ const clientSocketAuthenticated = (
   }
 
   // Select the correct player data
-  const { playerData } = getPlayerData(room, username);
+  const { playerData } = getPlayerData(room, userID);
 
   if (!playerData) {
     throw new Error(
-      `Game error - ${username} doesn't seem to be part of game ${roomID}`,
+      `Game error - id=${userID} doesn't seem to be part of game ${roomID}`,
     );
   }
 
   if (playerData.socket) {
     throw new Error(
-      `Connection already established for ${username} on game ${roomID}`,
+      `Connection already established for id=${userID} on game ${roomID}`,
     );
   }
 
@@ -528,18 +558,18 @@ const clientSocketAuthenticated = (
  * @param roomID Id of the room for in which a players socket was closed
  * @param username Username of the payer whoose socket was closed
  */
-const clientSocketClosed = (roomID: string, username: string): void => {
+const clientSocketClosed = (roomID: string, userID: string): void => {
   const room = getRoom(roomID);
 
   if (!room) {
     throw new Error("Game room not found");
   }
 
-  const { playerData, opponentData } = getPlayerData(room, username);
+  const { playerData, opponentData } = getPlayerData(room, userID);
 
   if (!playerData) {
     throw new Error(
-      `Game error - ${username} doesn't seem to be part of game ${roomID}`,
+      `Game error - id=${userID} doesn't seem to be part of game ${roomID}`,
     );
   }
 
@@ -559,10 +589,10 @@ const clientSocketClosed = (roomID: string, username: string): void => {
 
 const handleShootMessage = (
   room: GameRoom,
-  player: string,
+  playerID: string,
   message: ShootMessage,
 ) => {
-  const { playerData: maybePlayerData } = getPlayerData(room, player);
+  const { playerData: maybePlayerData } = getPlayerData(room, playerID);
 
   if (!gameRoomIsActive(room)) {
     const response: ErrorMessage = {
@@ -574,10 +604,12 @@ const handleShootMessage = (
     return;
   }
 
-  const { playerData, opponentData } = getActivePlayerData(room, player);
+  const { playerData, opponentData } = getActivePlayerData(room, playerID);
 
   try {
-    const { position: { x, y } } = message;
+    const {
+      position: { x, y },
+    } = message;
     const result = room.gameInstance.makeMove(playerData.user.username, x, y);
     const currentPlayer = room.gameInstance.getCurrentPlayer();
 
@@ -608,10 +640,10 @@ const handleShootMessage = (
   }
 };
 
-const handleRoomStatusRequestMessage = (room: GameRoom, player: string) => {
-  const { playerData } = getPlayerData(room, player);
+const handleRoomStatusRequestMessage = (room: GameRoom, playerID: string) => {
+  const { playerData } = getPlayerData(room, playerID);
 
-  const roomStatus = getRoomStatusInternal(room, player);
+  const roomStatus = getRoomStatusInternal(room, playerID);
 
   if (roomStatus && playerData?.socket) {
     const response: RoomStatusResponseMessage = {
@@ -625,7 +657,7 @@ const handleRoomStatusRequestMessage = (room: GameRoom, player: string) => {
 
 const handleClientMessage = (
   roomID: string,
-  player: string,
+  userID: string,
   message: ClientMessage,
 ) => {
   const room = getRoom(roomID);
@@ -638,10 +670,10 @@ const handleClientMessage = (
 
   switch (code) {
     case ClientMessageCode.Shoot:
-      handleShootMessage(room, player, message);
+      handleShootMessage(room, userID, message);
       break;
     case ClientMessageCode.RoomStatusRequest:
-      handleRoomStatusRequestMessage(room, player);
+      handleRoomStatusRequestMessage(room, userID);
       break;
     default:
       assertNever(code);
