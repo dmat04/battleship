@@ -1,15 +1,16 @@
 import { GuestUser, UserKind, RegisteredUser, GithubUser } from "../src/entities/UserDbModels.js";
+import { addDays } from "date-fns";
 
 export const GUEST_USERS: Omit<GuestUser, "id">[] = [
   {
     username: "UserA",
     kind: UserKind.GuestUser,
-    expiresAt: new Date(),
+    expiresAt: addDays<Date>(new Date(), 1),
   },
   {
     username: "SomeGuestUser",
     kind: UserKind.GuestUser,
-    expiresAt: new Date(),
+    expiresAt: addDays<Date>(new Date(), 1),
   },
 ];
 

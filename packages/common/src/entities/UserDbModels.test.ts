@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach, assert } from "vitest";
+import { addDays, addMinutes } from "date-fns"
 import mongoose from "mongoose";
 import Model, { UserKind, userExists } from "./UserDbModels.js";
 import { setupConnection, teardownConnection, setupUsers } from "../../test/mongooseUtils.js";
@@ -26,7 +27,7 @@ describe("The GuestUser mongoose model", () => {
   });
 
   it("successfully saves a valid document", async () => {
-    const expiresAt = new Date();
+    const expiresAt = addDays(new Date(), 1);
     const username = "TestGuestUser";
 
     await Model.GuestUser.create({
@@ -44,7 +45,7 @@ describe("The GuestUser mongoose model", () => {
   });
 
   it("throws a validation error when saving a guest user with an existing username", async () => {
-    const expiresAt = new Date();
+    const expiresAt = addDays(new Date(), 1);
     const { username } = GUEST_USERS[0];
 
     const user = new Model.GuestUser({
@@ -56,11 +57,12 @@ describe("The GuestUser mongoose model", () => {
   });
 
   it.each([
-    ["a", new Date()],
-    ["", new Date()],
-    ["abcdef!", new Date()],
-    [undefined, new Date()],
-    ["abcdef", undefined],
+    ["a", addDays<Date>(new Date(), 1)],
+    ["", addDays<Date>(new Date(), 1)],
+    ["abcdef!", addDays<Date>(new Date(), 1)],
+    [undefined, addDays<Date>(new Date(), 1)],
+    ["abcdef", new Date()],
+    ["abcdef", addMinutes<Date>(new Date(), 1)],
   ])(
     "throws a validation error when atempting to save an invalid document",
     async (username, expiresAt) => {
@@ -74,7 +76,7 @@ describe("The GuestUser mongoose model", () => {
   );
 
   it("successfully saves a guest user when another type of user with the same username exists", async () => {
-    const expiresAt = new Date();
+    const expiresAt = addDays(new Date(), 1);
     const { username } = REGISTERED_USERS[0];
 
     await Model.GuestUser.create({

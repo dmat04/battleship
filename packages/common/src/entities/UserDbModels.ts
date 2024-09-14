@@ -54,7 +54,7 @@ const toObjectOptions = {
     ret.id = ret._id;
     delete ret._id;
     return ret;
-  }
+  },
 };
 
 const USERNAME_MIN_LENGTH = 5;
@@ -62,15 +62,29 @@ const USERNAME_REGEX = new RegExp(/^[\w\d-]+$/);
 
 export const usernameValidator = (username: string) => {
   if (username.length < USERNAME_MIN_LENGTH) {
-    throw new Error(`Username must contain at least ${USERNAME_MIN_LENGTH} characters`)
+    throw new Error(
+      `{PATH} must contain at least ${USERNAME_MIN_LENGTH} characters`,
+    );
   }
 
   if (!USERNAME_REGEX.test(username)) {
-    throw new Error("Username may only contain alphanumeric characters, '_' or '-'");
+    throw new Error(
+      "{PATH} may only contain alphanumeric characters, '_' or '-'",
+    );
   }
 
   return true;
-}
+};
+
+const MIN_EXPIRATION_DURATION_MS = 1000 * 60 * 60; // 1 hour
+
+export const expiresAtValidator = (expiresAt: Date) => {
+  if (expiresAt.getTime() - Date.now() < MIN_EXPIRATION_DURATION_MS) {
+    throw new Error("{PATH} must be at least 1 hour after current time");
+  }
+
+  return true;
+};
 
 /**
  * Mongoose Schema for the generic User, only defines the usename property.
@@ -84,7 +98,7 @@ const userSchema = new Schema<User, Model<User>>(
       trim: true,
       validate: {
         validator: usernameValidator,
-        message: "Username is to short or contains prohibited characters",
+        message: (props) => props.reason?.message ?? "{PATH} is invalid",
       },
     },
   },
@@ -101,7 +115,14 @@ userSchema.index({ username: 1, kind: 1 }, { unique: true });
 // Define the schema for the Guest user specific fields
 const guestUserSchema = new Schema<GuestUser, Model<GuestUser>>(
   {
-    expiresAt: { type: Date, required: true },
+    expiresAt: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: expiresAtValidator,
+        message: (props) => props.reason?.message ?? "{PATH} is invalid",
+      },
+    },
   },
   {
     toObject: toObjectOptions,
@@ -116,7 +137,7 @@ const registeredUserSchema = new Schema<RegisteredUser, Model<RegisteredUser>>(
       type: String,
       required: [true, "Email address missing"],
       unique: true,
-      match: /^\S+@\S+$/,
+      match: [/^\S+@\S+$/, "Email address is invalid"],
     },
     emailConfirmed: {
       type: Boolean,
@@ -143,9 +164,11 @@ const githubUserSchema = new Schema<GithubUser, Model<GithubUser>>(
 userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 guestUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
 registeredUserSchema.plugin(uniqueValidator, {
-  message: "{PATH} must be unique",
+  message: "{PATH} is already registered",
 });
-githubUserSchema.plugin(uniqueValidator, { message: "{PATH} must be unique" });
+githubUserSchema.plugin(uniqueValidator, {
+  message: "{PATH} is already registered",
+});
 
 // Build the generic User model, keep it private
 const UserDbModel = model<User, Model<User>>("User", userSchema);
