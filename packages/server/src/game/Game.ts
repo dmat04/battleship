@@ -45,23 +45,23 @@ class Game {
   private playsFirst: string | null = null;
 
   // The current player - the player who can make the next move
-  private currentPlayer: string;
+  private currentPlayerID: string;
 
-  private player1: string;
+  private player1ID: string;
 
-  private player2: string;
+  private player2ID: string;
 
   /**
    * Game constructor.
    *
-   * @param player1 Name of Player 1 (makes the first move)
-   * @param player2 Name of Player 2
+   * @param player1ID Id of Player 1 (makes the first move)
+   * @param player2ID Id of Player 2
    * @param settings The GameSettings which will dictate the Board dimension and
    *                 the numbers of available ships
    */
   constructor(
-    player1: string,
-    player2: string,
+    player1ID: string,
+    player2ID: string,
     settings: GameSettings = DefaultSettings,
   ) {
     // set the initial state to Created
@@ -70,25 +70,25 @@ class Game {
     this.board = new Board(settings);
     // initialize the round number and current player
     this.round = 0;
-    this.player1 = player1;
-    this.player2 = player2;
-    this.currentPlayer = player1;
-    this.playsFirst = player1;
+    this.player1ID = player1ID;
+    this.player2ID = player2ID;
+    this.currentPlayerID = player1ID;
+    this.playsFirst = player1ID;
   }
 
   /**
-   * Check that the given player username may perform a move.
+   * Check that the given player id may perform a move.
    * Throws if the game state is not 'InProgress' or it isn't
    * the specified players turn.
    */
-  private assertCanMakeMove = (player: string): void => {
+  private assertCanMakeMove = (playerID: string): void => {
     // Check that the Game is in the appropriate state
     if (this.state !== GameState.InProgress) {
       throw new Error("Game error - game is not in progress");
     }
 
     // Check that it is the specified players move
-    if (player !== this.currentPlayer) {
+    if (playerID !== this.currentPlayerID) {
       throw new GameplayError("Game error - not the players turn");
     }
   };
@@ -106,8 +106,8 @@ class Game {
     // If a hit is made, the current player gets another round, ...
     if (!moveResult.hit) {
       // .. otherwise move on to the next player
-      this.currentPlayer =
-        this.currentPlayer === this.player1 ? this.player2 : this.player1;
+      this.currentPlayerID =
+        this.currentPlayerID === this.player1ID ? this.player2ID : this.player1ID;
     }
   };
 
@@ -164,18 +164,18 @@ class Game {
    * If the result of the move is a Hit, the current player has another turn,
    * otherwise the opposing player makes their next move.
    *
-   * @param player The name of the player making the move
+   * @param playerID The id of the player making the move
    * @param x The x coordinate of the opposing players grid to hit
    * @param y The y coordinate of the opposing players grid to hit
    * @returns A MoveResult indicating the result of the move.
    */
-  makeMove = (player: string, x: number, y: number): CellHitResult => {
-    this.assertCanMakeMove(player);
+  makeMove = (playerID: string, x: number, y: number): CellHitResult => {
+    this.assertCanMakeMove(playerID);
 
     // Perform the cell hit - this will throw if coords are out of
     // bounds, or cell has already been hit
     const result = this.board.hitCell(
-      player === this.player1 ? Player.Player1 : Player.Player2,
+      playerID === this.player1ID ? Player.Player1 : Player.Player2,
       x,
       y,
     );
@@ -187,12 +187,12 @@ class Game {
     return result;
   };
 
-  makeRandomMove = (player: string): CellHitResult => {
-    this.assertCanMakeMove(player);
+  makeRandomMove = (playerID: string): CellHitResult => {
+    this.assertCanMakeMove(playerID);
 
     // Perform the cell hit
     const result = this.board.hitRandomCell(
-      player === this.player1 ? Player.Player1 : Player.Player2,
+      playerID === this.player1ID ? Player.Player1 : Player.Player2,
     );
 
     this.advanceRound(result);
@@ -219,8 +219,8 @@ class Game {
     this.state = GameState.Created;
     this.round = 0;
     this.playsFirst =
-      this.playsFirst === this.player1 ? this.player2 : this.player1;
-    this.currentPlayer = this.playsFirst;
+      this.playsFirst === this.player1ID ? this.player2ID : this.player1ID;
+    this.currentPlayerID = this.playsFirst;
   };
 
   /**
@@ -228,7 +228,7 @@ class Game {
    *
    * @returns The current Player
    */
-  getCurrentPlayer = (): string => this.currentPlayer;
+  getCurrentPlayer = (): string => this.currentPlayerID;
 
   /**
    * Get the current Game state.
