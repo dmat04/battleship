@@ -11,6 +11,7 @@ import { ALL_USERS } from "../../test/testUsers.js";
 import SessionDbModel from "../entities/SessionDbModel.js";
 import SessionRepository from "./SessionRepository.js";
 import { EntityNotFoundError, ValidationError } from "./Errors.js";
+import { addDays, addHours, addMinutes, subHours, subMinutes } from "date-fns";
 
 const SESSIONS_PER_USER = 2;
 
@@ -74,7 +75,10 @@ describe("The SessionRepository", () => {
       assert(userDocument);
       const plainUser = userDocument.toObject();
 
-      const session = await SessionRepository.create(plainUser.id);
+      const session = await SessionRepository.create(
+        plainUser.id,
+        addHours(new Date(), 2),
+      );
       expect(typeof session.id).toBe("string");
       expect(session.user).toMatchObject(plainUser);
 
@@ -83,16 +87,44 @@ describe("The SessionRepository", () => {
     },
   );
 
-  it("throws a ValidationError when creating a Session for a non-existing user", async () => {
-    expect.hasAssertions();
+  it.each([[new mongoose.Types.ObjectId().toString()], [""]])(
+    "throws a ValidationError when creating a Session for an invalid user id",
+    async (user) => {
+      expect.hasAssertions();
 
-    const id = new mongoose.Types.ObjectId();
-    try {
-      await SessionRepository.create(id.toString());
-    } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
-    }
-  });
+      try {
+        await SessionRepository.create(user, addDays(new Date(), 1));
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationError);
+        const validationError = err as ValidationError;
+        expect(validationError.invalidProperties).toHaveProperty("user");
+        expect(validationError.message).toMatch("validation");
+      }
+    },
+  );
+
+  it.each([
+    [new Date()],
+    [addMinutes<Date>(new Date(), 1)],
+    [subMinutes<Date>(new Date(), 1)],
+    [subHours<Date>(new Date(), 1)],
+  ])(
+    "throws a ValidationError when creating a Session with an invalid expiration time",
+    async (expiresAt) => {
+      expect.hasAssertions();
+
+      const user = (await UserDbModels.User.findOne({}).exec())?._id.toString() ?? "";
+
+      try {
+        await SessionRepository.create(user, expiresAt);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationError);
+        const validationError = err as ValidationError;
+        expect(validationError.invalidProperties).toHaveProperty("expiresAt");
+        expect(validationError.message).toMatch("validation");
+      }
+    },
+  );
 
   it.each([...ALL_USERS])(
     "successfully deletes a Session using a valid session id",

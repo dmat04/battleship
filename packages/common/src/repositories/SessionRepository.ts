@@ -23,8 +23,8 @@ const getById = async (id: string): Promise<Session> => {
   return session.toObject();
 };
 
-const create = async (userId: string): Promise<Session> => {
-  const session = new SessionDbModel({ user: userId });
+const create = async (userId: string, expiresAt: Date): Promise<Session> => {
+  const session = new SessionDbModel({ user: userId, expiresAt });
 
   try {
     await session.save();
