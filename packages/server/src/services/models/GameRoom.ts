@@ -1,7 +1,7 @@
 import { WebSocket } from "uWebSockets.js";
-import type { User } from "@battleship/common/dbModels/Users/UserDbModel.js";
+import type { User } from "@battleship/common/entities/UserDbModels.js";
 import type { WSData } from "./WSData.js";
-import Game from "../game/Game.js";
+import Game from "../../game/Game.js";
 import { ShipPlacementInput, GameSettings } from "@battleship/common/types/__generated__/types.generated.js";
 
 export interface PlayerData {
@@ -33,7 +33,7 @@ export interface ActiveGameRoom extends GameRoom {
 
 export const getPlayerData = (
   room: GameRoom,
-  player: string,
+  userID: string,
 ): {
   playerData: PlayerData | undefined;
   opponentData?: PlayerData | undefined;
@@ -41,12 +41,12 @@ export const getPlayerData = (
   let playerData: PlayerData | undefined;
   let opponentData: PlayerData | undefined;
 
-  if (player === room.player1.user.username) {
+  if (userID === room.player1.user.id) {
     playerData = room.player1;
     opponentData = room.player2;
   }
 
-  if (player === room.player2?.user.username) {
+  if (userID === room.player2?.user.id) {
     playerData = room.player2;
     opponentData = room.player1;
   }
@@ -59,12 +59,12 @@ export const getPlayerData = (
 
 export const getActivePlayerData = (
   room: ActiveGameRoom,
-  player: string,
+  userID: string,
 ): {
   playerData: ActivePlayerData;
   opponentData: ActivePlayerData;
 } => {
-  if (player === room.player1.user.username) {
+  if (userID === room.player1.user.id) {
     return {
       playerData: room.player1,
       opponentData: room.player2,

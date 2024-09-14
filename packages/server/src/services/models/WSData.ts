@@ -7,6 +7,6 @@ export enum WSState {
 export interface WSData {
   state: WSState;
   roomID: string;
-  username: string;
+  userID: string;
   errorMessage?: string;
 }
