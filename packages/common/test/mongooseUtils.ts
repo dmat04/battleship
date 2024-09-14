@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import UserModel from "../src/entities/UserDbModels.js"
 import SessionModel from "../src/entities/SessionDbModel.js";
 import { GUEST_USERS, REGISTERED_USERS, GITHUB_USERS } from "./testUsers.js";
+import { addDays } from "date-fns";
 
 let mongoServer: MongoMemoryServer | null = null;
 let mongoURL: string | null = null;
@@ -38,7 +39,7 @@ export const setupSessions = async (sessionsPerUser: number) => {
 
   users.forEach(({ _id }) => {
     const documents = new Array(sessionsPerUser);
-    documents.fill({ user: _id });
+    documents.fill({ user: _id, expiresAt: addDays(new Date(), 1) });
     createPromises.push(SessionModel.create(documents));
   });
 
