@@ -1,3 +1,5 @@
+import { GuestUser, User, UserKind } from "../entities/UserDbModels.js";
+
 export const isObject = (value: unknown): value is object => {
   return typeof value === "object";
 };
@@ -16,6 +18,14 @@ export const isParsableAsInt = (value: unknown): boolean => {
   }
 
   return isInteger(value)
+}
+
+export const isGuestUser = (user: User): user is GuestUser => {
+  return (
+    user.kind === UserKind.GuestUser &&
+    "expiresAt" in user &&
+    user.expiresAt instanceof Date
+  );
 }
 
 export const assertNever = (value: never): never => {
