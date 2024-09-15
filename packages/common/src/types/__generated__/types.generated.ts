@@ -119,12 +119,17 @@ export type Player = {
 
 export type Query = {
   __typename?: "Query";
-  checkUsername: UsernameQueryResult;
+  checkGuestUsername: UsernameQueryResult;
+  checkRegisteredUsername: UsernameQueryResult;
   gameSettings: GameSettings;
   ping: Scalars["String"]["output"];
 };
 
-export type QueryCheckUsernameArgs = {
+export type QueryCheckGuestUsernameArgs = {
+  username: Scalars["String"]["input"];
+};
+
+export type QueryCheckRegisteredUsernameArgs = {
   username: Scalars["String"]["input"];
 };
 
@@ -482,11 +487,17 @@ export type QueryResolvers<
   ParentType extends
     ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
-  checkUsername?: Resolver<
+  checkGuestUsername?: Resolver<
     ResolversTypes["UsernameQueryResult"],
     ParentType,
     ContextType,
-    RequireFields<QueryCheckUsernameArgs, "username">
+    RequireFields<QueryCheckGuestUsernameArgs, "username">
+  >;
+  checkRegisteredUsername?: Resolver<
+    ResolversTypes["UsernameQueryResult"],
+    ParentType,
+    ContextType,
+    RequireFields<QueryCheckRegisteredUsernameArgs, "username">
   >;
   gameSettings?: Resolver<
     ResolversTypes["GameSettings"],
@@ -667,13 +678,27 @@ export type PlaceShipsMutation = {
   } | null;
 };
 
-export type CheckUsernameQueryVariables = Exact<{
+export type CheckGuestUsernameQueryVariables = Exact<{
   username: Scalars["String"]["input"];
 }>;
 
-export type CheckUsernameQuery = {
+export type CheckGuestUsernameQuery = {
   __typename?: "Query";
-  checkUsername: {
+  checkGuestUsername: {
+    __typename?: "UsernameQueryResult";
+    taken: boolean;
+    username: string;
+    validationError?: string | null;
+  };
+};
+
+export type CheckRegisteredUsernameQueryVariables = Exact<{
+  username: Scalars["String"]["input"];
+}>;
+
+export type CheckRegisteredUsernameQuery = {
+  __typename?: "Query";
+  checkRegisteredUsername: {
     __typename?: "UsernameQueryResult";
     taken: boolean;
     username: string;

@@ -5,7 +5,8 @@ extend type Mutation {
 }
 
 extend type Query {
-  checkUsername(username: String!): UsernameQueryResult!
+  checkGuestUsername(username: String!): UsernameQueryResult!
+  checkRegisteredUsername(username: String!): UsernameQueryResult!
 }
 
 type LoginResult {

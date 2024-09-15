@@ -287,9 +287,9 @@ export type PlaceShipsMutationOptions = Apollo.BaseMutationOptions<
   Types.PlaceShipsMutation,
   Types.PlaceShipsMutationVariables
 >;
-export const CheckUsernameDocument = gql`
-  query checkUsername($username: String!) {
-    checkUsername(username: $username) {
+export const CheckGuestUsernameDocument = gql`
+  query checkGuestUsername($username: String!) {
+    checkGuestUsername(username: $username) {
       taken
       username
       validationError
@@ -298,73 +298,155 @@ export const CheckUsernameDocument = gql`
 `;
 
 /**
- * __useCheckUsernameQuery__
+ * __useCheckGuestUsernameQuery__
  *
- * To run a query within a React component, call `useCheckUsernameQuery` and pass it any options that fit your needs.
- * When your component renders, `useCheckUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCheckGuestUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckGuestUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useCheckUsernameQuery({
+ * const { data, loading, error } = useCheckGuestUsernameQuery({
  *   variables: {
  *      username: // value for 'username'
  *   },
  * });
  */
-export function useCheckUsernameQuery(
+export function useCheckGuestUsernameQuery(
   baseOptions: Apollo.QueryHookOptions<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
   > &
     (
-      | { variables: Types.CheckUsernameQueryVariables; skip?: boolean }
+      | { variables: Types.CheckGuestUsernameQueryVariables; skip?: boolean }
       | { skip: boolean }
     ),
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
-  >(CheckUsernameDocument, options);
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
+  >(CheckGuestUsernameDocument, options);
 }
-export function useCheckUsernameLazyQuery(
+export function useCheckGuestUsernameLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
-  >(CheckUsernameDocument, options);
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
+  >(CheckGuestUsernameDocument, options);
 }
-export function useCheckUsernameSuspenseQuery(
+export function useCheckGuestUsernameSuspenseQuery(
   baseOptions?: Apollo.SuspenseQueryHookOptions<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useSuspenseQuery<
-    Types.CheckUsernameQuery,
-    Types.CheckUsernameQueryVariables
-  >(CheckUsernameDocument, options);
+    Types.CheckGuestUsernameQuery,
+    Types.CheckGuestUsernameQueryVariables
+  >(CheckGuestUsernameDocument, options);
 }
-export type CheckUsernameQueryHookResult = ReturnType<
-  typeof useCheckUsernameQuery
+export type CheckGuestUsernameQueryHookResult = ReturnType<
+  typeof useCheckGuestUsernameQuery
 >;
-export type CheckUsernameLazyQueryHookResult = ReturnType<
-  typeof useCheckUsernameLazyQuery
+export type CheckGuestUsernameLazyQueryHookResult = ReturnType<
+  typeof useCheckGuestUsernameLazyQuery
 >;
-export type CheckUsernameSuspenseQueryHookResult = ReturnType<
-  typeof useCheckUsernameSuspenseQuery
+export type CheckGuestUsernameSuspenseQueryHookResult = ReturnType<
+  typeof useCheckGuestUsernameSuspenseQuery
 >;
-export type CheckUsernameQueryResult = Apollo.QueryResult<
-  Types.CheckUsernameQuery,
-  Types.CheckUsernameQueryVariables
+export type CheckGuestUsernameQueryResult = Apollo.QueryResult<
+  Types.CheckGuestUsernameQuery,
+  Types.CheckGuestUsernameQueryVariables
+>;
+export const CheckRegisteredUsernameDocument = gql`
+  query checkRegisteredUsername($username: String!) {
+    checkRegisteredUsername(username: $username) {
+      taken
+      username
+      validationError
+    }
+  }
+`;
+
+/**
+ * __useCheckRegisteredUsernameQuery__
+ *
+ * To run a query within a React component, call `useCheckRegisteredUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckRegisteredUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckRegisteredUsernameQuery({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useCheckRegisteredUsernameQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  > &
+    (
+      | {
+          variables: Types.CheckRegisteredUsernameQueryVariables;
+          skip?: boolean;
+        }
+      | { skip: boolean }
+    ),
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  >(CheckRegisteredUsernameDocument, options);
+}
+export function useCheckRegisteredUsernameLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  >(CheckRegisteredUsernameDocument, options);
+}
+export function useCheckRegisteredUsernameSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    Types.CheckRegisteredUsernameQuery,
+    Types.CheckRegisteredUsernameQueryVariables
+  >(CheckRegisteredUsernameDocument, options);
+}
+export type CheckRegisteredUsernameQueryHookResult = ReturnType<
+  typeof useCheckRegisteredUsernameQuery
+>;
+export type CheckRegisteredUsernameLazyQueryHookResult = ReturnType<
+  typeof useCheckRegisteredUsernameLazyQuery
+>;
+export type CheckRegisteredUsernameSuspenseQueryHookResult = ReturnType<
+  typeof useCheckRegisteredUsernameSuspenseQuery
+>;
+export type CheckRegisteredUsernameQueryResult = Apollo.QueryResult<
+  Types.CheckRegisteredUsernameQuery,
+  Types.CheckRegisteredUsernameQueryVariables
 >;
 export const GameSettingsDocument = gql`
   query gameSettings($gameId: ID!) {
