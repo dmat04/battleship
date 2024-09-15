@@ -7,8 +7,11 @@ import { LoginResult } from "@battleship/common/types/__generated__/types.genera
 import RegisteredUserRepository from "@battleship/common/repositories/RegisteredUserRepository.js";
 import { User } from "@battleship/common/entities/UserDbModels.js";
 import SessionRepository from "@battleship/common/repositories/SessionRepository.js";
-import { Session } from "@battleship/common/entities/SessionDbModel.js";
+import { Session, UnpopulatedSession } from "@battleship/common/entities/SessionDbModel.js";
 import { isGuestUser } from "@battleship/common/utils/typeUtils.js";
+import UserRepository from "@battleship/common/repositories/UserRepository.js";
+import { EntityNotFoundError } from "@battleship/common/repositories/Errors.js";
+import ServiceError from "./errors/ServiceError.js";
 
 export interface WSAuthTicket {
   userID: string;
@@ -17,6 +20,12 @@ export interface WSAuthTicket {
 
 const calculateTokenExpirationDate = (): Date =>
   add(Date.now(), { seconds: config.GUEST_LIFETIME_SECONDS });
+
+const assertNotExpired = (session: Session | UnpopulatedSession): void => {
+  if (session.expiresAt.getTime() <= Date.now()) {
+    throw new AuthenticationError("token expired");
+  }
+}
 
 /**
  * Create a temporary access token for a given session.
@@ -129,18 +138,29 @@ const createSession = async (user: User): Promise<Session> => {
  * @returns An object containig the username and expiration timestamp, or
  *          throws an error if the token is invalid or already expired
  */
-const getSessionFromToken = async (token: string): Promise<Session> => {
+const getSessionFromToken = async (token: string): Promise<UnpopulatedSession> => {
   // decode the token
   const sessionID = decodeToken(token);
 
   // fetch the user using the decoded Id
   const session = await SessionRepository.getById(sessionID);
-
-  if (session.expiresAt.getTime() <= Date.now()) {
-    throw new AuthenticationError("token expired");
-  }
+  assertNotExpired(session);
 
   return session;
+};
+
+const getUserFromSession = async (session: UnpopulatedSession): Promise<User> => {
+  assertNotExpired(session);
+
+  try {
+    return UserRepository.getById(session.user.toString());
+  } catch (err) {
+    if (err instanceof EntityNotFoundError) {
+      throw new AuthenticationError("token invalid");
+    }
+
+    throw new ServiceError("Error when accessing User for Session");
+  }
 };
 
 /**
@@ -181,5 +201,6 @@ export default {
   encodeWSToken,
   decodeWSToken,
   getSessionFromToken,
+  getUserFromSession,
   loginRegisteredUser,
 };
