@@ -1,17 +1,15 @@
-import jwt, { TokenExpiredError } from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { add } from "date-fns";
 import config from "../utils/config.js";
 import AuthenticationError from "./errors/AuthenticationError.js";
 import { LoginResult } from "@battleship/common/types/__generated__/types.generated.js";
-import RegisteredUserRepository from "@battleship/common/repositories/RegisteredUserRepository.js";
-import { User } from "@battleship/common/entities/UserDbModels.js";
 import SessionRepository from "@battleship/common/repositories/SessionRepository.js";
 import { Session, UnpopulatedSession } from "@battleship/common/entities/SessionDbModel.js";
 import { isGuestUser } from "@battleship/common/utils/typeUtils.js";
 import UserRepository from "@battleship/common/repositories/UserRepository.js";
 import { EntityNotFoundError } from "@battleship/common/repositories/Errors.js";
 import ServiceError from "./errors/ServiceError.js";
+import { User } from "@battleship/common/entities/UserDbModels.js";
 
 export interface WSAuthTicket {
   userID: string;
@@ -33,7 +31,7 @@ const assertNotExpired = (session: Session | UnpopulatedSession): void => {
  * @param session session to be encoded in the access token.
  * @returns The encoded token.
  */
-const encodeToken = (session: Session): string => {
+const encodeToken = (session: Session | UnpopulatedSession): string => {
   // create the token with an expiration claim
   const token = jwt.sign(
     {
@@ -64,7 +62,7 @@ const decodeToken = (token: string): string => {
       return payload.sessionID;
     }
   } catch (jwtError) {
-    if (jwtError instanceof TokenExpiredError) {
+    if (jwtError instanceof jwt.TokenExpiredError) {
       throw new AuthenticationError("token expired");
     }
   }
@@ -116,7 +114,7 @@ const decodeWSToken = (code: string): WSAuthTicket | false => {
   }
 };
 
-const createSession = async (user: User): Promise<Session> => {
+const createSession = async (user: User): Promise<UnpopulatedSession> => {
   let expiresAt = calculateTokenExpirationDate();
 
   if (isGuestUser(user)) {
@@ -164,29 +162,13 @@ const getUserFromSession = async (session: UnpopulatedSession): Promise<User> =>
 };
 
 /**
- * Login an existing registered user.
- * If no user for the given username is found, an EntityNotFoundError is thrown,
- * if the password is incorrect, an AuthenticationError is thrown.
+ * Login an existing user.
  *
- * @param username Users username.
- * @param password Users password.
- * @returns A promise rosolving to a LoginResult, which will contain the users username and
- *          a temporary access token.
+ * @param user The User for which a Session is being created.
+ * @returns A promise rosolving to a LoginResult, which will contain the users username, id and
+ *          a temporary access token and expiration timestamp.
  */
-const loginRegisteredUser = async (
-  username: string,
-  password: string,
-): Promise<LoginResult> => {
-  // find the db user entity for the provided username
-  const user = await RegisteredUserRepository.getByUsername(username);
-
-  // if a user is found, compare the password with the saved hash
-  const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
-  if (!passwordCorrect) {
-    // if the hashes don't match, throw the appropriate error
-    throw new AuthenticationError("incorrect password");
-  }
-
+const loginUser = async (user: User): Promise<LoginResult> => {
   const session = await createSession(user);
 
   return {
@@ -202,5 +184,5 @@ export default {
   decodeWSToken,
   getSessionFromToken,
   getUserFromSession,
-  loginRegisteredUser,
+  loginUser,
 };
