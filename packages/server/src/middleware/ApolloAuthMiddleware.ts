@@ -2,9 +2,9 @@ import { GraphQLError } from "graphql";
 import type { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import { ApolloContext } from "@battleship/common/utils/ApolloContext.js";
 import SessionService from "../services/SessionService.js";
-import { Session } from "@battleship/common/entities/SessionDbModel.js";
+import { UnpopulatedSession } from "@battleship/common/entities/SessionDbModel.js";
 
-export const assertAuthorized = (context: ApolloContext): Session => {
+export const assertAuthorized = (context: ApolloContext): UnpopulatedSession => {
   const { session } = context;
 
   if (!session) {
