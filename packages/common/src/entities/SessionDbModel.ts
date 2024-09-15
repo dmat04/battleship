@@ -7,6 +7,10 @@ export interface Session {
   readonly expiresAt: Date;
 }
 
+export interface UnpopulatedSession extends Omit<Session, "user"> {
+  readonly user: Types.ObjectId;
+}
+
 const toObjectOptions = {
   versionKey: false,
   flattenObjectIds: true,

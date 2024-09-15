@@ -40,10 +40,12 @@ describe("The Session mongoose model", () => {
     });
 
     const session = await SessionDbModel.findOne({ user: user.id });
-    await session?.populate("user");
+    assert(session)
+    expect(session.id).toBeDefined;
 
-    expect(session?.id).toBeDefined;
-    expect(session?.user).toMatchObject(user);
+    expect(session.user).toBeInstanceOf(mongoose.Types.ObjectId);
+    await session.populate("user");
+    expect(session.user).toMatchObject(user);
   });
 
   it("saves a session document successfully for a regiestered user", async () => {
@@ -57,10 +59,12 @@ describe("The Session mongoose model", () => {
     });
 
     const session = await SessionDbModel.findOne({ user: user.id });
-    await session?.populate("user");
+    assert(session)
+    expect(session.id).toBeDefined;
 
-    expect(session?.id).toBeDefined;
-    expect(session?.user).toMatchObject(user);
+    expect(session.user).toBeInstanceOf(mongoose.Types.ObjectId);
+    await session.populate("user");
+    expect(session.user).toMatchObject(user);
   });
 
   it("saves a session document successfully for a github user", async () => {
@@ -74,10 +78,12 @@ describe("The Session mongoose model", () => {
     });
 
     const session = await SessionDbModel.findOne({ user: user.id });
-    await session?.populate("user");
+    assert(session)
+    expect(session.id).toBeDefined;
 
-    expect(session?.id).toBeDefined;
-    expect(session?.user).toMatchObject(user);
+    expect(session.user).toBeInstanceOf(mongoose.Types.ObjectId);
+    await session.populate("user");
+    expect(session.user).toMatchObject(user);
   });
 
   it("allows saving multiple sessions for a single user", async () => {
