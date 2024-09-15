@@ -27,12 +27,11 @@ const getByIdPopulated = async (id: string): Promise<Session> => {
   return session.toObject();
 };
 
-const create = async (userId: string, expiresAt: Date): Promise<Session> => {
+const create = async (userId: string, expiresAt: Date): Promise<UnpopulatedSession> => {
   const session = new SessionDbModel({ user: userId, expiresAt });
 
   try {
     await session.save();
-    await session.populate("user");
     return session.toObject();
   } catch (err) {
     if (err instanceof MongooseError.ValidationError) {

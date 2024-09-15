@@ -100,14 +100,14 @@ describe("The SessionRepository", () => {
       const countBefore = await SessionDbModel.countDocuments().exec();
 
       assert(userDocument);
-      const plainUser = userDocument.toObject();
-
+  
       const session = await SessionRepository.create(
-        plainUser.id,
+        userDocument._id.toString(),
         addHours(new Date(), 2),
       );
       expect(typeof session.id).toBe("string");
-      expect(session.user).toMatchObject(plainUser);
+      expect(typeof session.user).toBe("string");
+      expect(session.user).toEqual(userDocument._id.toString());
 
       const countAfter = await SessionDbModel.countDocuments().exec();
       expect(countAfter).toBe(countBefore + 1);
