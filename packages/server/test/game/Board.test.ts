@@ -11,7 +11,7 @@ const gameSettings: GameSettings[] = [
 ];
 
 describe("Board", () => {
-  test.each(gameSettings)("Constructor creates an empty board", (setting) => {
+  test.each([...gameSettings])("Constructor creates an empty board", (setting) => {
     const playerBoards = new Board(setting).getPlayerBoardCopies();
 
     playerBoards.forEach((board) => {
@@ -25,7 +25,7 @@ describe("Board", () => {
     });
   });
 
-  test.each(validPlacements)(
+  test.each([...validPlacements])(
     "Placing a valid configuration of ships populates the correct cells",
     ({ populatedCells, placements }) => {
       const gameBoard = new Board(DefaultSettings);
@@ -50,7 +50,7 @@ describe("Board", () => {
     },
   );
 
-  test.each(invalidPlacements)(
+  test.each([...invalidPlacements])(
     "Placing an invalid configuration of ships throws an error",
     ({ placements }) => {
       const gameBoard = new Board(DefaultSettings);
