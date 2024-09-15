@@ -1,4 +1,4 @@
-import { assertAuthorized } from "@battleship/common/utils/ApolloContext.js";
+import { assertAuthorized } from "../../../middleware/ApolloAuthMiddleware.js";
 import GameService from "../../../services/GameService.js";
 import type { QueryResolvers } from "@battleship/common/types/__generated__/types.generated.js";
 
