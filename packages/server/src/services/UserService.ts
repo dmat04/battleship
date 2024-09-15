@@ -12,6 +12,7 @@ import {
   UserKind,
 } from "@battleship/common/entities/UserDbModels.js";
 import ServiceError from "./errors/ServiceError.js";
+import AuthenticationError from "./errors/AuthenticationError.js";
 
 /**
  * Has minimum 8 characters in length.
@@ -87,7 +88,7 @@ const checkUsername = async (
  * @returns A Promise resolving to a GuestUser or throwing an appropriate error if the provided
  *          username is invalid in some way.
  */
-const createGuestUser = async (username: string | null): Promise<GuestUser> => {
+const createGuestUser = async (username: string | null | undefined): Promise<GuestUser> => {
   let name = username;
 
   if (!name) {
@@ -152,8 +153,35 @@ const createRegisteredUser = async (
   return user;
 };
 
+/**
+ * Authenticate registered user credentials
+ * If no user for the given username is found, an EntityNotFoundError is thrown,
+ * if the password is incorrect, an AuthenticationError is thrown.
+ *
+ * @param username Users username.
+ * @param password Users password.
+ * @returns A promise resolving to a RegisteredUser.
+ */
+const authenticateRegisteredUser = async (
+  username: string,
+  password: string,
+): Promise<RegisteredUser> => {
+  // find the db user entity for the provided username
+  const user = await RegisteredUserRepository.getByUsername(username);
+
+  // if a user is found, compare the password with the saved hash
+  const passwordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordCorrect) {
+    // if the hashes don't match, throw the appropriate error
+    throw new AuthenticationError("incorrect password");
+  }
+
+  return user;
+};
+
 export default {
   checkUsername,
   createGuestUser,
   createRegisteredUser,
+  authenticateRegisteredUser,
 };
