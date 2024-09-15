@@ -1,12 +1,16 @@
 import mongoose, { Error as MongooseError } from "mongoose";
-import SessionDbModel, { Session } from "../entities/SessionDbModel.js";
+import SessionDbModel, { Session, UnpopulatedSession } from "../entities/SessionDbModel.js";
 import { EntityNotFoundError, RepositoryError, ValidationError } from "./Errors.js";
 
-export interface UnpopulatedSession extends Omit<Session, "user"> {
-  user: string;
-}
+const getById = async (id: string): Promise<UnpopulatedSession> => {
+  const session = await SessionDbModel.findById(id).exec();
 
-const getById = async (id: string): Promise<Session> => {
+  if (!session) throw new EntityNotFoundError("User", id);
+
+  return session.toObject();
+};
+
+const getByIdPopulated = async (id: string): Promise<Session> => {
   const session = await SessionDbModel.findById(id).exec();
 
   if (!session) throw new EntityNotFoundError("User", id);
@@ -55,6 +59,7 @@ const deleteAllForUser = async (userId: string): Promise<number> => {
 
 export default {
   getById,
+  getByIdPopulated,
   create,
   deleteById,
   deleteAllForUser,

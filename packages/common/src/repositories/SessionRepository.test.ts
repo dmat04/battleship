@@ -27,6 +27,32 @@ afterEach(async () => {
 
 describe("The SessionRepository", () => {
   it.each([...ALL_USERS])(
+    "successfully retrieves a plain Session using a valid session id",
+    async (user) => {
+      const userDocument = await UserDbModels.User.findOne({
+        username: user.username,
+        kind: user.kind,
+      }).exec();
+
+      assert(userDocument);
+
+      const sessionDocuments = await SessionDbModel.find({
+        user: userDocument._id,
+      }).exec();
+      expect(sessionDocuments.length).toEqual(SESSIONS_PER_USER);
+
+      for (const sessionDocument of sessionDocuments) {
+        const session = await SessionRepository.getById(
+          sessionDocument._id.toString(),
+        );
+        expect(session.id).toEqual(sessionDocument._id.toString());
+        expect(typeof session.user).toBe("string");
+        expect(session.user).toEqual(userDocument.id);
+      }
+    },
+  );
+
+  it.each([...ALL_USERS])(
     "successfully retrieves a populated Session using a valid session id",
     async (user) => {
       const userDocument = await UserDbModels.User.findOne({
@@ -43,10 +69,11 @@ describe("The SessionRepository", () => {
       expect(sessionDocuments.length).toEqual(SESSIONS_PER_USER);
 
       for (const sessionDocument of sessionDocuments) {
-        const session = await SessionRepository.getById(
+        const session = await SessionRepository.getByIdPopulated(
           sessionDocument._id.toString(),
         );
         expect(session.id).toEqual(sessionDocument._id.toString());
+        expect(typeof session.user).toBe("object");
         expect(session.user).toMatchObject(plainUser);
       }
     },
