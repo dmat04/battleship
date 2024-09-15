@@ -1,6 +1,6 @@
 import { WebSocket, WebSocketBehavior } from "uWebSockets.js";
-import AuthService, { WSAuthTicket } from "../services/AuthService.js";
-import { WSState, type WSData } from "../models/WSData.js";
+import SessionService, { WSAuthTicket } from "../services/SessionService.js";
+import { WSState, type WSData } from "../services/models/WSData.js";
 import { assertNever } from "@battleship/common/utils/typeUtils.js";
 import MessageParser from "@battleship/common/messages/MessageParser.js";
 import { ErrorMessage, ServerMessageCode } from "@battleship/common/messages/MessageTypes.js";
@@ -44,7 +44,7 @@ const handleAuthMessage = (
 
   try {
     // try to decode the access code
-    ticket = AuthService.decodeWSToken(decoded);
+    ticket = SessionService.decodeWSToken(decoded);
   } catch {
     errorMessage = "Authentication failed - invalid token";
   }
@@ -53,7 +53,7 @@ const handleAuthMessage = (
   if (
     !ticket ||
     ticket.roomID !== wsData.roomID ||
-    ticket.username !== wsData.username
+    ticket.userID !== wsData.userID
   ) {
     errorMessage = "Authentication failed - invalid ticket";
   }
@@ -62,7 +62,7 @@ const handleAuthMessage = (
   if (ticket && errorMessage === null) {
     try {
       // let the GameService know that the socket is authenticated
-      GameService.clientSocketAuthenticated(ticket.roomID, ticket.username, ws);
+      GameService.clientSocketAuthenticated(ticket.roomID, ticket.userID, ws);
 
       // set the socket state
       wsData.state = WSState.Open;
@@ -82,7 +82,7 @@ const handleAuthMessage = (
 };
 
 const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
-  const { roomID, username } = ws.getUserData();
+  const { roomID, userID } = ws.getUserData();
   const decoded = messageDecoder.decode(message);
   const parsedMessage = MessageParser.ParseClientMessage(decoded);
 
@@ -95,7 +95,7 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
     return;
   }
 
-  GameService.handleClientMessage(roomID, username, parsedMessage);
+  GameService.handleClientMessage(roomID, userID, parsedMessage);
 };
 
 /**
@@ -104,16 +104,15 @@ const handleMessage = (ws: WebSocket<WSData>, message: ArrayBuffer): void => {
 const WsHandler: WebSocketBehavior<WSData> = {
   upgrade: (res, req, context) => {
     // this WebSocketBehaviour should be registered for routes matching the
-    // pattern '/game/:gameId/:username', so the two parameters are read from
+    // pattern '/game/:gameId/:userId', so the two parameters are read from
     // the request
-    const gameID = req.getParameter(0);
-    const encodedUsername = req.getParameter(1);
-    const username = decodeURIComponent(encodedUsername);
+    const roomID = req.getParameter(0);
+    const userID = req.getParameter(1);
 
     // do some checks before upgrading the request to websockets
     let errorMessage: string | null = null;
     try {
-      GameService.clientSocketRequested(username, gameID);
+      GameService.clientSocketRequested(userID, roomID);
     } catch (error) {
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -124,13 +123,13 @@ const WsHandler: WebSocketBehavior<WSData> = {
     }
 
     // initialize an instance of user data for the new socket
-    // the gameId, username, and opponentWs are saved per socket
+    // the gameId, userId, and opponentWs are saved per socket
     // at this point, opponentWS might be undefined (if the opponent hasn't opened
     // a ws yet)
     const socketData: WSData = {
       state: WSState.Error,
-      roomID: gameID,
-      username,
+      roomID,
+      userID,
     };
 
     if (errorMessage) {
@@ -165,7 +164,7 @@ const WsHandler: WebSocketBehavior<WSData> = {
 
   close: (ws) => {
     const data = ws.getUserData();
-    GameService.clientSocketClosed(data.roomID, data.username);
+    GameService.clientSocketClosed(data.roomID, data.userID);
   },
 
   message: (ws, message) => {
