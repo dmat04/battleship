@@ -36,7 +36,7 @@ export default tseslint.config(
       "**/test/setup.js",
       "**/webpack.*.js",
       "**/*.generated.ts",
-      "db/mongo-init.js"
+      "db/*"
     ],
   },
 );
