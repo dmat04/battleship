@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import { guestLogin } from "../../store/authSlice.js";
 import Spinner from "../Spinner/Spinner.js";
 import Button from "../Button.js";
+import { UserKind } from "@battleship/common/types/__generated__/types.generated.js";
 
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
@@ -38,6 +39,7 @@ const GuestForm = ({ disabled }: Props) => {
       "Pick a username or continue and have one picked for you",
       "Good to go!",
       "Username is taken",
+      UserKind.GuestUser,
     );
 
   const dispatch = useAppDispatch();
