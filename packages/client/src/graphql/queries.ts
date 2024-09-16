@@ -1,18 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const CHECK_GUEST_USERNAME = gql(`
-  query checkGuestUsername($username: String!) {
-    checkGuestUsername(username: $username) {
-      taken
-      username
-      validationError
-    }
-  }
-`);
-
-export const CHECK_REGISTERED_USERNAME = gql(`
-  query checkRegisteredUsername($username: String!) {
-    checkRegisteredUsername(username: $username) {
+export const CHECK__USERNAME = gql(`
+  query checkUsername($username: String!, $userKind: UserKind!) {
+    checkUsername(username: $username, userKind: $userKind) {
       taken
       username
       validationError

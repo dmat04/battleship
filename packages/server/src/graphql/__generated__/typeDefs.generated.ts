@@ -47,7 +47,7 @@ export const typeDefs = {
         },
         {
           kind: "FieldDefinition",
-          name: { kind: "Name", value: "checkGuestUsername" },
+          name: { kind: "Name", value: "checkUsername" },
           arguments: [
             {
               kind: "InputValueDefinition",
@@ -61,28 +61,14 @@ export const typeDefs = {
               },
               directives: [],
             },
-          ],
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "UsernameQueryResult" },
-            },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "checkRegisteredUsername" },
-          arguments: [
             {
               kind: "InputValueDefinition",
-              name: { kind: "Name", value: "username" },
+              name: { kind: "Name", value: "userKind" },
               type: {
                 kind: "NonNullType",
                 type: {
                   kind: "NamedType",
-                  name: { kind: "Name", value: "String" },
+                  name: { kind: "Name", value: "UserKind" },
                 },
               },
               directives: [],
@@ -804,6 +790,28 @@ export const typeDefs = {
           name: { kind: "Name", value: "currentPlayerID" },
           arguments: [],
           type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+          directives: [],
+        },
+      ],
+    },
+    {
+      kind: "EnumTypeDefinition",
+      name: { kind: "Name", value: "UserKind" },
+      directives: [],
+      values: [
+        {
+          kind: "EnumValueDefinition",
+          name: { kind: "Name", value: "GUEST_USER" },
+          directives: [],
+        },
+        {
+          kind: "EnumValueDefinition",
+          name: { kind: "Name", value: "REGISTERED_USER" },
+          directives: [],
+        },
+        {
+          kind: "EnumValueDefinition",
+          name: { kind: "Name", value: "GITHUB_USER" },
           directives: [],
         },
       ],

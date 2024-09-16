@@ -119,17 +119,13 @@ export type Player = {
 
 export type Query = {
   __typename?: "Query";
-  checkGuestUsername: UsernameQueryResult;
-  checkRegisteredUsername: UsernameQueryResult;
+  checkUsername: UsernameQueryResult;
   gameSettings: GameSettings;
   ping: Scalars["String"]["output"];
 };
 
-export type QueryCheckGuestUsernameArgs = {
-  username: Scalars["String"]["input"];
-};
-
-export type QueryCheckRegisteredUsernameArgs = {
+export type QueryCheckUsernameArgs = {
+  userKind: UserKind;
   username: Scalars["String"]["input"];
 };
 
@@ -181,6 +177,12 @@ export type ShipsPlacedResult = {
   gameRoomStatus: GameRoomStatus;
   placedShips: Array<PlacedShip>;
 };
+
+export enum UserKind {
+  GithubUser = "GITHUB_USER",
+  GuestUser = "GUEST_USER",
+  RegisteredUser = "REGISTERED_USER",
+}
 
 export type UsernameQueryResult = {
   __typename?: "UsernameQueryResult";
@@ -316,6 +318,7 @@ export type ResolversTypes = {
   ShipPlacementInput: ShipPlacementInput;
   ShipsPlacedResult: ResolverTypeWrapper<ShipsPlacedResult>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  UserKind: UserKind;
   UsernameQueryResult: ResolverTypeWrapper<UsernameQueryResult>;
 };
 
@@ -487,17 +490,11 @@ export type QueryResolvers<
   ParentType extends
     ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
-  checkGuestUsername?: Resolver<
+  checkUsername?: Resolver<
     ResolversTypes["UsernameQueryResult"],
     ParentType,
     ContextType,
-    RequireFields<QueryCheckGuestUsernameArgs, "username">
-  >;
-  checkRegisteredUsername?: Resolver<
-    ResolversTypes["UsernameQueryResult"],
-    ParentType,
-    ContextType,
-    RequireFields<QueryCheckRegisteredUsernameArgs, "username">
+    RequireFields<QueryCheckUsernameArgs, "userKind" | "username">
   >;
   gameSettings?: Resolver<
     ResolversTypes["GameSettings"],
@@ -678,27 +675,14 @@ export type PlaceShipsMutation = {
   } | null;
 };
 
-export type CheckGuestUsernameQueryVariables = Exact<{
+export type CheckUsernameQueryVariables = Exact<{
   username: Scalars["String"]["input"];
+  userKind: UserKind;
 }>;
 
-export type CheckGuestUsernameQuery = {
+export type CheckUsernameQuery = {
   __typename?: "Query";
-  checkGuestUsername: {
-    __typename?: "UsernameQueryResult";
-    taken: boolean;
-    username: string;
-    validationError?: string | null;
-  };
-};
-
-export type CheckRegisteredUsernameQueryVariables = Exact<{
-  username: Scalars["String"]["input"];
-}>;
-
-export type CheckRegisteredUsernameQuery = {
-  __typename?: "Query";
-  checkRegisteredUsername: {
+  checkUsername: {
     __typename?: "UsernameQueryResult";
     taken: boolean;
     username: string;

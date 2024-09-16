@@ -1,14 +1,6 @@
 import { Model, Schema, model, Types } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-
-/**
- * Enum of User account types
- */
-export enum UserKind {
-  GuestUser = "GuestUser",
-  RegisteredUser = "RegisteredUser",
-  GithubUser = "GithubUser",
-}
+import { UserKind } from "../types/__generated__/types.generated.js";
 
 /**
  * Document interface base

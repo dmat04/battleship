@@ -1,7 +1,6 @@
 /* This file was automatically generated. DO NOT UPDATE MANUALLY. */
 import type { Resolvers } from "@battleship/common/types/__generated__/types.generated.js";
-import { checkGuestUsername as Query_checkGuestUsername } from "./../resolvers/Query/checkGuestUsername.js";
-import { checkRegisteredUsername as Query_checkRegisteredUsername } from "./../resolvers/Query/checkRegisteredUsername.js";
+import { checkUsername as Query_checkUsername } from "./../resolvers/Query/checkUsername.js";
 import { gameSettings as Query_gameSettings } from "./../resolvers/Query/gameSettings.js";
 import { ping as Query_ping } from "./../resolvers/Query/ping.js";
 import { createRoom as Mutation_createRoom } from "./../resolvers/Mutation/createRoom.js";
@@ -23,8 +22,7 @@ import { ShipsPlacedResult } from "./../resolvers/ShipsPlacedResult.js";
 import { UsernameQueryResult } from "./../resolvers/UsernameQueryResult.js";
 export const resolvers: Resolvers = {
   Query: {
-    checkGuestUsername: Query_checkGuestUsername,
-    checkRegisteredUsername: Query_checkRegisteredUsername,
+    checkUsername: Query_checkUsername,
     gameSettings: Query_gameSettings,
     ping: Query_ping,
   },
