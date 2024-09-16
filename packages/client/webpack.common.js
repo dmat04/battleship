@@ -20,7 +20,7 @@ export default {
         mode: "write-references"
       }
     }),
-    new webpack.EnvironmentPlugin(['API_URL', 'WS_URL']),
+    new webpack.EnvironmentPlugin(['API_URL', 'WS_URL', 'GITHUB_CLIENT_ID']),
     new CopyPlugin({
       patterns: [{
         from: 'favicons/*',
