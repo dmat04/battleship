@@ -17,17 +17,24 @@ export default {
     new ForkTsCheckerPlugin({
       typescript: {
         build: true,
-        mode: "write-references"
-      }
+        mode: "write-references",
+      },
     }),
-    new webpack.EnvironmentPlugin(['API_URL', 'WS_URL', 'GITHUB_CLIENT_ID']),
+    new webpack.EnvironmentPlugin([
+      "API_URL",
+      "WS_URL",
+      "GITHUB_CLIENT_ID",
+      "GITHUB_OAUTH_REDIRECT_URL",
+    ]),
     new CopyPlugin({
-      patterns: [{
-        from: 'favicons/*',
-        to: './',
-        context: 'build_assets/'
-      }]
-    })
+      patterns: [
+        {
+          from: "favicons/*",
+          to: "./",
+          context: "build_assets/",
+        },
+      ],
+    }),
   ],
   output: {
     filename: "[name][contenthash].js",
@@ -65,7 +72,7 @@ export default {
     alias: {
       "@battleship/common/": path.resolve(battleshipPackagesDir, "common/src"),
       "@battleship/client/": path.resolve(battleshipPackagesDir, "client/src"),
-    }
+    },
   },
   optimization: {
     emitOnErrors: false,
