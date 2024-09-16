@@ -33,7 +33,7 @@ const PWD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
  */
 const generateGuestUsername = (): string => {
   const randomId = Math.random() * 100_000;
-  return `Guest#${Math.floor(randomId)}`;
+  return `Guest-${Math.floor(randomId)}`;
 };
 
 const calculateGuestExpirationDate = (): Date =>
