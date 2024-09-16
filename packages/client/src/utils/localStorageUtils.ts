@@ -5,6 +5,7 @@ import { isString, isObject } from "@battleship/common/utils/typeUtils.js";
 const KEY_AUTH_TOKEN = "KEY_AUTH_TOKEN";
 const KEY_THEME = "KEY_THEME";
 const KEY_GAME_HINTS_SEEN = "KEY_GAME_HINTS_SEEN";
+const KEY_GITHUB_OAUTH_STATE = "KEY_GITHUB_OAUTH_STATE";
 
 const isAccessToken = (value: unknown): value is LoginResult => {
   if (!isObject(value)) return false;
@@ -83,6 +84,12 @@ const hasSeenGameHints = (): boolean =>
 const setGameHintsSeen = () =>
   localStorage.setItem(KEY_GAME_HINTS_SEEN, "true");
 
+const saveGithubOAuthState = (state: string) =>
+  localStorage.setItem(KEY_GITHUB_OAUTH_STATE, state);
+
+const getGithubOAuthState = () => 
+  localStorage.getItem(KEY_GITHUB_OAUTH_STATE);
+
 export default {
   saveAccessToken,
   getAccessToken,
@@ -91,4 +98,6 @@ export default {
   getThemePreference,
   hasSeenGameHints,
   setGameHintsSeen,
+  saveGithubOAuthState,
+  getGithubOAuthState,
 };
