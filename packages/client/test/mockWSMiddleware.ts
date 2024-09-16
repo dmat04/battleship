@@ -1,5 +1,5 @@
 import { Middleware } from "@reduxjs/toolkit";
-import MessageParser from "@battleship/common/messages/MessageParser.js";
+import MessageParser from "@battleship/common/messages/MessageParser.ts";
 import {
   closeWSConnection,
   connectionOpened,

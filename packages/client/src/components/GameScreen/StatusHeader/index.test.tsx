@@ -17,7 +17,7 @@ import {
   GameStartedMessage,
   RoomStatusResponseMessage,
   ServerMessageCode,
-} from "@battleship/common/messages/MessageTypes.js";
+} from "@battleship/common/messages/MessageTypes.ts";
 import { PLAYER } from "../../../../test/reduxStateData/authSliceTestdata.js";
 
 describe("The StatusHeader component", () => {
