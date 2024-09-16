@@ -52,6 +52,7 @@ services:
     ports:
       - 5000:5000
       - 4000:4000
+      - 9229:9229   # node debug port
     volumes:
       - ./:/usr/src/app
     depends_on:
