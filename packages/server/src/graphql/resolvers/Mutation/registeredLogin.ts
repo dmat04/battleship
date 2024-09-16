@@ -5,7 +5,9 @@ import SessionService from "../../../services/SessionService.js";
 export const registeredLogin: NonNullable<
   MutationResolvers["registeredLogin"]
 > = async (_, _arg) => {
-  const user = await UserService.authenticateRegisteredUser(_arg.username, _arg.password);
+  const user = await UserService.authenticateRegisteredUser(
+    _arg.username,
+    _arg.password,
+  );
   return SessionService.loginUser(user);
-}
-  
+};

@@ -8,4 +8,4 @@ export const guestLogin: NonNullable<MutationResolvers["guestLogin"]> = async (
 ) => {
   const user = await UserService.createGuestUser(_arg.username);
   return SessionService.loginUser(user);
-}
+};
