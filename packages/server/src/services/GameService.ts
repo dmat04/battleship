@@ -289,7 +289,7 @@ const roomStatusUpdated = (room: GameRoom) => {
   if (room.player1.socket) {
     const message: RoomStatusResponseMessage = {
       code: ServerMessageCode.RoomStatusResponse,
-      roomStatus: getRoomStatusInternal(room, room.player1.user.username),
+      roomStatus: getRoomStatusInternal(room, room.player1.user.id),
     };
 
     room.player1.socket.send(JSON.stringify(message));
@@ -298,7 +298,7 @@ const roomStatusUpdated = (room: GameRoom) => {
   if (room?.player2 && room.player2.socket) {
     const message: RoomStatusResponseMessage = {
       code: ServerMessageCode.RoomStatusResponse,
-      roomStatus: getRoomStatusInternal(room, room.player2.user.username),
+      roomStatus: getRoomStatusInternal(room, room.player2.user.id),
     };
 
     room.player2.socket.send(JSON.stringify(message));
@@ -352,8 +352,8 @@ const joinWithInviteCode = (
   };
 
   gameRoom.gameInstance = new Game(
-    gameRoom.player1.user.username,
-    gameRoom.player2.user.username,
+    gameRoom.player1.user.id,
+    gameRoom.player2.user.id,
     gameRoom.gameSettings,
   );
 
@@ -444,7 +444,7 @@ const placeShips = (
   }
 
   // Select the correct player data
-  const { playerData } = getPlayerData(room, user.username);
+  const { playerData } = getPlayerData(room, user.id);
 
   // Throw an error if no playerData instance is selected
   if (!playerData) {
@@ -464,7 +464,7 @@ const placeShips = (
 
   return {
     placedShips,
-    gameRoomStatus: getRoomStatusInternal(room, user.username),
+    gameRoomStatus: getRoomStatusInternal(room, user.id),
   };
 };
 
@@ -610,7 +610,7 @@ const handleShootMessage = (
     const {
       position: { x, y },
     } = message;
-    const result = room.gameInstance.makeMove(playerData.user.username, x, y);
+    const result = room.gameInstance.makeMove(playerData.user.id, x, y);
     const currentPlayer = room.gameInstance.getCurrentPlayer();
 
     const gameState = room.gameInstance.getGameState();
