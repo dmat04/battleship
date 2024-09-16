@@ -66,6 +66,21 @@ if (
   PWD_HASH_SALT_ROUNDS missing or invalid`);
 }
 
+if (!isString(process.env.GITHUB_CLIENT_ID)) {
+  throw new Error(`Server configuration error: environment var 
+  GITHUB_CLIENT_ID missing or invalid`);
+}
+
+if (!isString(process.env.GITHUB_OAUTH_REDIRECT_URL)) {
+  throw new Error(`Server configuration error: environment var 
+   GITHUB_OAUTH_REDIRECT_URL missing or invalid`);
+}
+
+if (!isString(process.env.GITHUB_CLIENT_SECRET)) {
+  throw new Error(`Server configuration error: environment var 
+   GITHUB_CLIENT_SECRET missing or invalid`);
+}
+
 // After asserting the types of the env variables, save them as members
 const GUEST_LIFETIME_SECONDS: number = Number.parseInt(
   process.env.GUEST_LIFETIME_SECONDS,
@@ -87,6 +102,10 @@ const PWD_HASH_SALT_ROUNDS = Number.parseInt(
   10,
 );
 
+const GITHUB_CLIENT_ID: string = process.env.GITHUB_CLIENT_ID;
+const GITHUB_OAUTH_REDIRECT_URL: string = process.env.GITHUB_OAUTH_REDIRECT_URL;
+const GITHUB_CLIENT_SECRET: string = process.env.GITHUB_CLIENT_SECRET;
+
 export default {
   GUEST_LIFETIME_SECONDS,
   WS_AUTH_TICKET_LIFETIME_SECONDS,
@@ -98,4 +117,7 @@ export default {
   DB_USER_USERNAME,
   DB_USER_PASSWORD,
   PWD_HASH_SALT_ROUNDS,
+  GITHUB_CLIENT_ID,
+  GITHUB_OAUTH_REDIRECT_URL,
+  GITHUB_CLIENT_SECRET,
 };
