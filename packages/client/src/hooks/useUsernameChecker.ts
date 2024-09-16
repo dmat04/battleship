@@ -1,29 +1,29 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import _ from "lodash";
-import { useLazyQuery } from "@apollo/client";
-import { CHECK_USERNAME } from "../graphql/queries.js";
-import { CheckUsernameQuery } from "@battleship/common/types/__generated__/types.generated.js";
+import { useCheckUsernameLazyQuery } from "../graphql/__generated__/operationHooks.js";
+import { UserKind } from "@battleship/common/types/__generated__/types.generated.js";
 
 const useUsernameChecker = (
   emptyStateMessage: string,
   usernameValidMessage: string,
   usernameTakenMessage: string,
+  userKind: UserKind,
 ) => {
   const [username, setUsername] = useState<string>("");
   const [checkIsPending, setCheckIsPending] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(emptyStateMessage);
   const [isValid, setIsValid] = useState<boolean>(false);
 
-  const [checkUsername, { data, loading }] = useLazyQuery<CheckUsernameQuery>(CHECK_USERNAME, {
+  const [checkUsername, { data, loading }] = useCheckUsernameLazyQuery({
     fetchPolicy: "no-cache",
   });
 
   const requestSender = useRef<(() => void) | null>(() => {
-    void checkUsername({ variables: { username } });
+    void checkUsername({ variables: { username, userKind } });
   });
 
   useEffect(() => {
-    requestSender.current = () => void checkUsername({ variables: { username } });
+    requestSender.current = () => void checkUsername({ variables: { username, userKind } });
   }, [checkUsername, username]);
 
   const debouncedRequestSender = useMemo(() => {
