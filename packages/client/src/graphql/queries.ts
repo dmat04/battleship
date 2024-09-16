@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const CHECK__USERNAME = gql(`
+export const CHECK_USERNAME = gql(`
   query checkUsername($username: String!, $userKind: UserKind!) {
     checkUsername(username: $username, userKind: $userKind) {
       taken
