@@ -3,6 +3,7 @@ import { RouteObject } from "react-router-dom";
 import { act, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { setupServer } from "msw/node";
+import { WS } from "vitest-websocket-mock";
 import React from "react";
 import { renderWithStoreProvider } from "../../../test/utils.js";
 import { RootState } from "../../store/store.js";
@@ -15,6 +16,7 @@ import { gameRoomCreated } from "../../../test/reduxStateData/gameRoomSliceTestd
 import { createRoomHandler } from "../../../test/gqlRequestMocks/createRoomHandler.js";
 import { getGameSettingsHandler } from "../../../test/gqlRequestMocks/getGameSettingsHandler.js";
 import GameRoomMenu from "./index.js";
+import { beforeEach } from "node:test";
 
 const routerRoutes: RouteObject[] = [
   {
@@ -33,13 +35,26 @@ const routerRoutes: RouteObject[] = [
 
 const apiServer = setupServer(createRoomHandler, getGameSettingsHandler);
 
+let dummyWSServer: WS | undefined;
+
 describe("The GameRoomMenu component", () => {
   beforeAll(() =>
     apiServer.listen({
-      onUnhandledRequest: "warn",
+      onUnhandledRequest: "error",
     }),
   );
-  afterEach(() => apiServer.resetHandlers());
+
+  beforeEach(() => {
+    dummyWSServer = new WS(`${process.env.WS_URL}/game/gameID/userID`, {
+      jsonProtocol: true,
+    });
+    void dummyWSServer.connected;
+  });
+  afterEach(() => {
+    apiServer.resetHandlers();
+    dummyWSServer?.close();
+    WS.clean();
+  });
   afterAll(() => apiServer.close());
 
   it("redirects to a login screen when no user is authenticated", () => {
