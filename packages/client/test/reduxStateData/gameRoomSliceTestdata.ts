@@ -1,4 +1,4 @@
-import { GameSettings, PlacedShip, ShipClassName, ShipOrientation, Player } from "@battleship/common/types/__generated__/types.generated.js";
+import { GameSettings, PlacedShip, ShipClassName, ShipOrientation, Player } from "@battleship/common/types/__generated__/types.generated.ts";
 import { PlayerStatus, ScoreState, SliceStateActive } from "../../src/store/gameRoomSlice/stateTypes.js";
 import { PLAYER } from "./authSliceTestdata.js";
 

@@ -1,4 +1,4 @@
-import { CreateRoomMutation } from "@battleship/common/types/__generated__/types.generated.js";
+import { CreateRoomMutation } from "@battleship/common/types/__generated__/types.generated.ts";
 import { HttpResponse, graphql } from "msw";
 import {
   INVITE_CODE,
