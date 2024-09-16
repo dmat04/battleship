@@ -4,6 +4,7 @@ import { checkUsername as Query_checkUsername } from "./../resolvers/Query/check
 import { gameSettings as Query_gameSettings } from "./../resolvers/Query/gameSettings.js";
 import { ping as Query_ping } from "./../resolvers/Query/ping.js";
 import { createRoom as Mutation_createRoom } from "./../resolvers/Mutation/createRoom.js";
+import { githubLogin as Mutation_githubLogin } from "./../resolvers/Mutation/githubLogin.js";
 import { guestLogin as Mutation_guestLogin } from "./../resolvers/Mutation/guestLogin.js";
 import { joinRoom as Mutation_joinRoom } from "./../resolvers/Mutation/joinRoom.js";
 import { placeShips as Mutation_placeShips } from "./../resolvers/Mutation/placeShips.js";
@@ -28,6 +29,7 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     createRoom: Mutation_createRoom,
+    githubLogin: Mutation_githubLogin,
     guestLogin: Mutation_guestLogin,
     joinRoom: Mutation_joinRoom,
     placeShips: Mutation_placeShips,

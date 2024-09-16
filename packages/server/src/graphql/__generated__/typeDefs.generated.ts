@@ -273,6 +273,29 @@ export const typeDefs = {
           },
           directives: [],
         },
+        {
+          kind: "FieldDefinition",
+          name: { kind: "Name", value: "githubLogin" },
+          arguments: [
+            {
+              kind: "InputValueDefinition",
+              name: { kind: "Name", value: "accessCode" },
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "String" },
+                },
+              },
+              directives: [],
+            },
+          ],
+          type: {
+            kind: "NamedType",
+            name: { kind: "Name", value: "LoginResult" },
+          },
+          directives: [],
+        },
       ],
       directives: [],
       interfaces: [],

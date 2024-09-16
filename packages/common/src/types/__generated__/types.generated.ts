@@ -73,11 +73,16 @@ export type LoginResult = {
 export type Mutation = {
   __typename?: "Mutation";
   createRoom: RoomCreatedResult;
+  githubLogin?: Maybe<LoginResult>;
   guestLogin?: Maybe<LoginResult>;
   joinRoom: RoomJoinedResult;
   placeShips?: Maybe<ShipsPlacedResult>;
   registerUser?: Maybe<LoginResult>;
   registeredLogin?: Maybe<LoginResult>;
+};
+
+export type MutationGithubLoginArgs = {
+  accessCode: Scalars["String"]["input"];
 };
 
 export type MutationGuestLoginArgs = {
@@ -427,6 +432,12 @@ export type MutationResolvers<
     ResolversTypes["RoomCreatedResult"],
     ParentType,
     ContextType
+  >;
+  githubLogin?: Resolver<
+    Maybe<ResolversTypes["LoginResult"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationGithubLoginArgs, "accessCode">
   >;
   guestLogin?: Resolver<
     Maybe<ResolversTypes["LoginResult"]>,
