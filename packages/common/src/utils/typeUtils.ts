@@ -1,4 +1,5 @@
-import { GuestUser, User, UserKind } from "../entities/UserDbModels.js";
+import { GuestUser, User } from "../entities/UserDbModels.js";
+import { UserKind } from "../types/__generated__/types.generated.js";
 
 export const isObject = (value: unknown): value is object => {
   return typeof value === "object";
@@ -14,11 +15,11 @@ export const isInteger = (value: unknown): value is number => {
 
 export const isParsableAsInt = (value: unknown): boolean => {
   if (isString(value)) {
-    return !isNaN(parseInt(value))
+    return !isNaN(parseInt(value));
   }
 
-  return isInteger(value)
-}
+  return isInteger(value);
+};
 
 export const isGuestUser = (user: User): user is GuestUser => {
   return (
@@ -26,7 +27,7 @@ export const isGuestUser = (user: User): user is GuestUser => {
     "expiresAt" in user &&
     user.expiresAt instanceof Date
   );
-}
+};
 
 export const assertNever = (value: never): never => {
   throw new Error(

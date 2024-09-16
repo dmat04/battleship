@@ -2,14 +2,16 @@ import bcrypt from "bcrypt";
 import { add } from "date-fns";
 import config from "../utils/config.js";
 import { ValidationError } from "@battleship/common/repositories/Errors.js";
-import { UsernameQueryResult } from "@battleship/common/types/__generated__/types.generated.js";
+import {
+  UsernameQueryResult,
+  UserKind,
+} from "@battleship/common/types/__generated__/types.generated.js";
 import UserRepository from "@battleship/common/repositories/UserRepository.js";
 import GuestUserRepository from "@battleship/common/repositories/GuestUserRepository.js";
 import RegisteredUserRepository from "@battleship/common/repositories/RegisteredUserRepository.js";
 import {
   GuestUser,
   RegisteredUser,
-  UserKind,
 } from "@battleship/common/entities/UserDbModels.js";
 import ServiceError from "./errors/ServiceError.js";
 import AuthenticationError from "./errors/AuthenticationError.js";
@@ -88,7 +90,9 @@ const checkUsername = async (
  * @returns A Promise resolving to a GuestUser or throwing an appropriate error if the provided
  *          username is invalid in some way.
  */
-const createGuestUser = async (username: string | null | undefined): Promise<GuestUser> => {
+const createGuestUser = async (
+  username: string | null | undefined,
+): Promise<GuestUser> => {
   let name = username;
 
   if (!name) {
@@ -97,7 +101,9 @@ const createGuestUser = async (username: string | null | undefined): Promise<Gue
 
     // ...and also make sure it's available
     // eslint-disable-next-line no-await-in-loop
-    while (!(await UserRepository.usernameAvailable(name, UserKind.GuestUser))) {
+    while (
+      !(await UserRepository.usernameAvailable(name, UserKind.GuestUser))
+    ) {
       name = generateGuestUsername();
     }
   }

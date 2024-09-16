@@ -12,8 +12,9 @@ import {
   ALL_USERS,
 } from "../../test/testUsers.js";
 import UserRepository from "./UserRepository.js";
-import UserDbModels, { User, UserKind } from "../entities/UserDbModels.js";
+import UserDbModels, { User } from "../entities/UserDbModels.js";
 import { EntityNotFoundError } from "./Errors.js";
+import { UserKind } from "../types/__generated__/types.generated.js";
 
 beforeEach(async () => {
   await setupConnection();

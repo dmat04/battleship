@@ -1,8 +1,5 @@
-import Models, {
-  User,
-  UserKind,
-  usernameValidator,
-} from "../entities/UserDbModels.js";
+import Models, { User, usernameValidator } from "../entities/UserDbModels.js";
+import { UserKind } from "../types/__generated__/types.generated.js";
 import { EntityNotFoundError } from "./Errors.js";
 import SessionRepository from "./SessionRepository.js";
 
@@ -29,7 +26,7 @@ const getByUsernameAndKind = async (
   }).exec();
 
   if (!user) throw new EntityNotFoundError("User", `${kind}:${username}`);
-  
+
   return user.toObject();
 };
 

@@ -1,5 +1,10 @@
-import { GuestUser, UserKind, RegisteredUser, GithubUser } from "../src/entities/UserDbModels.js";
+import {
+  GuestUser,
+  RegisteredUser,
+  GithubUser,
+} from "../src/entities/UserDbModels.js";
 import { addDays } from "date-fns";
+import { UserKind } from "../src/types/__generated__/types.generated.js";
 
 export const GUEST_USERS: Omit<GuestUser, "id">[] = [
   {
@@ -33,8 +38,4 @@ export const GITHUB_USERS: Omit<GithubUser, "id">[] = [
   },
 ];
 
-export const ALL_USERS = [
-  ...GUEST_USERS,
-  ...REGISTERED_USERS,
-  ...GITHUB_USERS,
-]
+export const ALL_USERS = [...GUEST_USERS, ...REGISTERED_USERS, ...GITHUB_USERS];

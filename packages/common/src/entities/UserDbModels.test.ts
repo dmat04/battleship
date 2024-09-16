@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, afterEach, assert } from "vitest";
 import { addDays, addMinutes } from "date-fns"
 import mongoose from "mongoose";
-import Model, { UserKind, userExists } from "./UserDbModels.js";
+import Model, { userExists } from "./UserDbModels.js";
 import { setupConnection, teardownConnection, setupUsers } from "../../test/mongooseUtils.js";
 import {
   GUEST_USERS,
@@ -10,6 +10,7 @@ import {
   ALL_USERS,
 } from "../../test/testUsers.js";
 import UserDbModels from "./UserDbModels.js";
+import { UserKind } from "../types/__generated__/types.generated.js";
 
 beforeEach(async () => {
   await setupConnection();
