@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
     "mongoose-unique-validator": "^5.0.1",
+    "typed-rest-client": "^2.0.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.44.0"
   },
   "devDependencies": {
