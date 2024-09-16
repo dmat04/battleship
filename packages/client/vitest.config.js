@@ -20,7 +20,7 @@ export default mergeConfig(
         WS_URL: "ws://localhost:5000/",
       },
       coverage: {
-        enabled: true,
+        enabled: false,
         all: false,
         reportsDirectory: './test/coverage'
       },
