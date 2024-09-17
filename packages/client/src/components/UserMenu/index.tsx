@@ -1,13 +1,12 @@
 import { styled } from "styled-components";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { useCallback, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { Theme } from "../assets/themes/themeDefault.js";
 import { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 import GuestForm from "./GuestForm.js";
-import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { useAppSelector } from "../../store/store.js";
 import CollapsibleButton from "../CollapsibleButton.js";
-import { githubLogin } from "../../store/authSlice.js";
-import GithubLogin from "./GithubLogin.js";
+import LoginMenuItem from "./LoginMenuItem.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -26,20 +25,7 @@ interface CollapsibleHandles {
 const UserMenu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
   const [opened, setOpened] = useState<string | null>(null);
-  const dispatch = useAppDispatch();
   const { loginResult } = useAppSelector((state) => state.auth);
-
-  const [urlSearchParams] = useSearchParams();
-  const from = urlSearchParams.get("from");
-  const code = urlSearchParams.get("code");
-  const state = urlSearchParams.get("state");
-
-  useEffect(() => {
-    if (from && code && state) {
-      if (from === "github")
-        void dispatch(githubLogin({ accessCode: code, state }));
-    }
-  }, [from, code, state]);
 
   const addCollapsibleRef = useCallback(
     (key: string, handle: CollapsibleAPI | null) => {
@@ -85,14 +71,8 @@ const UserMenu = () => {
           state === "closed" ? setOpened(null) : closeOthers("login")
         }
       >
-        <form>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-          <button type="button">Log in</button>
-        </form>
+        <LoginMenuItem disabled={opened !== "login"} />
       </CollapsibleButton>
-
-      <GithubLogin />
 
       <CollapsibleButton
         label="Register"

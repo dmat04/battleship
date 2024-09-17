@@ -11,7 +11,7 @@ import { UserKind } from "@battleship/common/types/__generated__/types.generated
 const Container = styled.form<{ theme: Theme }>`
   width: 100%;
   display: grid;
-  grid-template-rows: 0.75fr 0.75fr 1fr;
+  grid-template-rows: 0.75fr 1.25fr 1fr;
   grid-template-areas:
     "username"
     "status"
@@ -75,12 +75,6 @@ const GuestForm = ({ disabled }: Props) => {
         disabled={disabled}
         loading={loginRequestPending}
       >
-        {/* {
-          loginRequestPending || loading
-            ? <Spinner visible={loading} />
-            : <div>Continue</div>
-        } */}
-        {/* <Spinner visible={loading} /> */}
         <div>Continue</div>
       </Button>
     </Container>
