@@ -11,6 +11,17 @@ export const GUEST_LOGIN = gql(`
   }
 `);
 
+export const GITHUB_LOGIN = gql(`
+  mutation githubLogin($accessCode: String!) {
+    githubLogin(accessCode: $accessCode) {
+      accessToken
+      expiresAt
+      username
+      userID
+    }
+  }
+`);
+
 export const REGISTERED_LOGIN = gql(`
   mutation registeredLogin($username: String!, $password: String!) {
     registeredLogin(username: $username, password: $password) {

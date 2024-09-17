@@ -56,6 +56,59 @@ export type GuestLoginMutationOptions = Apollo.BaseMutationOptions<
   Types.GuestLoginMutation,
   Types.GuestLoginMutationVariables
 >;
+export const GithubLoginDocument = gql`
+  mutation githubLogin($accessCode: String!) {
+    githubLogin(accessCode: $accessCode) {
+      accessToken
+      expiresAt
+      username
+      userID
+    }
+  }
+`;
+export type GithubLoginMutationFn = Apollo.MutationFunction<
+  Types.GithubLoginMutation,
+  Types.GithubLoginMutationVariables
+>;
+
+/**
+ * __useGithubLoginMutation__
+ *
+ * To run a mutation, you first call `useGithubLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGithubLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [githubLoginMutation, { data, loading, error }] = useGithubLoginMutation({
+ *   variables: {
+ *      accessCode: // value for 'accessCode'
+ *   },
+ * });
+ */
+export function useGithubLoginMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    Types.GithubLoginMutation,
+    Types.GithubLoginMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    Types.GithubLoginMutation,
+    Types.GithubLoginMutationVariables
+  >(GithubLoginDocument, options);
+}
+export type GithubLoginMutationHookResult = ReturnType<
+  typeof useGithubLoginMutation
+>;
+export type GithubLoginMutationResult =
+  Apollo.MutationResult<Types.GithubLoginMutation>;
+export type GithubLoginMutationOptions = Apollo.BaseMutationOptions<
+  Types.GithubLoginMutation,
+  Types.GithubLoginMutationVariables
+>;
 export const RegisteredLoginDocument = gql`
   mutation registeredLogin($username: String!, $password: String!) {
     registeredLogin(username: $username, password: $password) {

@@ -612,6 +612,21 @@ export type GuestLoginMutation = {
   } | null;
 };
 
+export type GithubLoginMutationVariables = Exact<{
+  accessCode: Scalars["String"]["input"];
+}>;
+
+export type GithubLoginMutation = {
+  __typename?: "Mutation";
+  githubLogin?: {
+    __typename?: "LoginResult";
+    accessToken: string;
+    expiresAt: string;
+    username: string;
+    userID: string;
+  } | null;
+};
+
 export type RegisteredLoginMutationVariables = Exact<{
   username: Scalars["String"]["input"];
   password: Scalars["String"]["input"];
