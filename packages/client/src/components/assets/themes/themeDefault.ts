@@ -3,9 +3,9 @@ export type ThemeType = "light" | "dark";
 export type Theme = typeof themeDefault;
 
 const themeDefault = {
-  paddingMin: "1rem",
-  paddingSm: "2rem",
-  paddingLg: "5rem",
+  paddingMin: "0.75rem",
+  paddingSm: "1.5rem",
+  paddingLg: "3rem",
   durationTransitionDefault: 250,
   dimensionBorderSm: "1px",
   dimensionBorder: "2px",
