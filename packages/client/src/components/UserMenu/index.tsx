@@ -1,11 +1,15 @@
 import { styled } from "styled-components";
-import { useCallback, useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { Theme } from "../assets/themes/themeDefault.js";
 import { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 import GuestForm from "./GuestForm.js";
-import { useAppSelector } from "../../store/store.js";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import CollapsibleButton from "../CollapsibleButton.js";
+import Button from "../Button.js";
+import MenuItemLabel from "../MemuItemLabel.js";
+import localStorageUtils from "../../utils/localStorageUtils.js";
+import { githubLogin } from "../../store/authSlice.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -24,7 +28,21 @@ interface CollapsibleHandles {
 const UserMenu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
   const [opened, setOpened] = useState<string | null>(null);
-  const auth = useAppSelector((state) => state.auth.loginResult);
+  const dispatch = useAppDispatch();
+  const { loginResult, githubLoginPending } = useAppSelector(
+    (state) => state.auth,
+  );
+
+  const [urlSearchParams] = useSearchParams();
+  const from = urlSearchParams.get("from");
+  const code = urlSearchParams.get("code");
+  const state = urlSearchParams.get("state");
+
+  useEffect(() => {
+    if (from && code && state) {
+      void dispatch(githubLogin({ accessCode: code, state }));
+    }
+  }, [from, code, state]);
 
   const addCollapsibleRef = useCallback(
     (key: string, handle: CollapsibleAPI | null) => {
@@ -45,7 +63,20 @@ const UserMenu = () => {
     setOpened(key);
   }, []);
 
-  if (auth?.accessToken) {
+  const githubRedirect = () => {
+    const state = crypto.randomUUID();
+    localStorageUtils.saveGithubOAuthState(state);
+
+    const url =
+      `https://github.com/login/oauth/authorize?` +
+      `client_id=${process.env.GITHUB_CLIENT_ID}` +
+      `&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URL}` +
+      `&state=${state}`;
+
+    window.location.href = url;
+  };
+
+  if (loginResult) {
     return <Navigate to="/menu" replace />;
   }
 
@@ -76,6 +107,14 @@ const UserMenu = () => {
           <button type="button">Log in</button>
         </form>
       </CollapsibleButton>
+
+      <Button
+        variant="primary"
+        onClick={githubRedirect}
+        loading={githubLoginPending}
+      >
+        <MenuItemLabel>Login with GitHub</MenuItemLabel>
+      </Button>
 
       <CollapsibleButton
         label="Register"
