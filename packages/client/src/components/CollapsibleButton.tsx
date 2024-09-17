@@ -23,6 +23,12 @@ const Container = styled(animated.div)<{ theme: Theme }>`
   overflow: clip;
 `;
 
+const ChildrenContainer = styled.div<{ theme: Theme }>`
+  width: 100%;
+  display: flex;
+  margin-top: ${(props) => props.theme.paddingSm};
+`;
+
 interface Props {
   label: string;
   onCollapsedStateChange?: (collapsed: CollapsibleState) => void;
@@ -148,7 +154,7 @@ const CollapsibleButton = forwardRef<
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         style={springStyles}
-        { ...rest }
+        {...rest}
       >
         <MenuItemLabel ref={labelRef}>{label}</MenuItemLabel>
         <CollapsibleContainer
@@ -156,7 +162,7 @@ const CollapsibleButton = forwardRef<
           onCollapsedStateChange={interceptCollapsedStateChange}
           ref={collapsibleRef}
         >
-          {children}
+          <ChildrenContainer>{children}</ChildrenContainer>
         </CollapsibleContainer>
       </Container>
     );

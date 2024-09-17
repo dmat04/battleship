@@ -57,6 +57,9 @@ const SpinnerContainer = styled.div`
 
 const ChildrenContainer = styled.div<{ $visible: boolean, theme: Theme }>`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   gap: ${(props) => props.theme.paddingMin};
   visibility: ${(props) => (props.$visible ? "visible" : "hidden")};
 `;
