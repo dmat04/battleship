@@ -6,10 +6,8 @@ import { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 import GuestForm from "./GuestForm.js";
 import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import CollapsibleButton from "../CollapsibleButton.js";
-import Button from "../Button.js";
-import MenuItemLabel from "../MemuItemLabel.js";
-import localStorageUtils from "../../utils/localStorageUtils.js";
 import { githubLogin } from "../../store/authSlice.js";
+import GithubLogin from "./GithubLogin.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -29,9 +27,7 @@ const UserMenu = () => {
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
   const [opened, setOpened] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const { loginResult, githubLoginPending } = useAppSelector(
-    (state) => state.auth,
-  );
+  const { loginResult } = useAppSelector((state) => state.auth);
 
   const [urlSearchParams] = useSearchParams();
   const from = urlSearchParams.get("from");
@@ -40,7 +36,8 @@ const UserMenu = () => {
 
   useEffect(() => {
     if (from && code && state) {
-      void dispatch(githubLogin({ accessCode: code, state }));
+      if (from === "github")
+        void dispatch(githubLogin({ accessCode: code, state }));
     }
   }, [from, code, state]);
 
@@ -62,19 +59,6 @@ const UserMenu = () => {
 
     setOpened(key);
   }, []);
-
-  const githubRedirect = () => {
-    const state = crypto.randomUUID();
-    localStorageUtils.saveGithubOAuthState(state);
-
-    const url =
-      `https://github.com/login/oauth/authorize?` +
-      `client_id=${process.env.GITHUB_CLIENT_ID}` +
-      `&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URL}` +
-      `&state=${state}`;
-
-    window.location.href = url;
-  };
 
   if (loginResult) {
     return <Navigate to="/menu" replace />;
@@ -108,13 +92,7 @@ const UserMenu = () => {
         </form>
       </CollapsibleButton>
 
-      <Button
-        variant="primary"
-        onClick={githubRedirect}
-        loading={githubLoginPending}
-      >
-        <MenuItemLabel>Login with GitHub</MenuItemLabel>
-      </Button>
+      <GithubLogin />
 
       <CollapsibleButton
         label="Register"
