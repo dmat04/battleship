@@ -90,6 +90,9 @@ const saveGithubOAuthState = (state: string) =>
 const getGithubOAuthState = () => 
   localStorage.getItem(KEY_GITHUB_OAUTH_STATE);
 
+const clearGithubOAuthState = () => 
+  localStorage.removeItem(KEY_GITHUB_OAUTH_STATE);
+
 export default {
   saveAccessToken,
   getAccessToken,
@@ -100,4 +103,5 @@ export default {
   setGameHintsSeen,
   saveGithubOAuthState,
   getGithubOAuthState,
+  clearGithubOAuthState,
 };
