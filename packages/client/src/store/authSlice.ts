@@ -1,8 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { GuestLoginMutation, LoginResult } from "@battleship/common/types/__generated__/types.generated.js";
+import {
+  GithubLoginMutation,
+  GuestLoginMutation,
+  LoginResult,
+} from "@battleship/common/types/__generated__/types.generated.js";
 import LocalStorage from "../utils/localStorageUtils.js";
-import { GUEST_LOGIN } from "../graphql/mutations.js";
+import { GITHUB_LOGIN, GUEST_LOGIN } from "../graphql/mutations.js";
 import { CHECK_USERNAME } from "../graphql/queries.js";
 import Dependencies from "../utils/Dependencies.js";
 import type { ThunkAPI } from "./store.js";
@@ -17,13 +21,14 @@ export const guestLogin = createAsyncThunk<
   string | null,
   ThunkAPI
 >("auth/guestLogin", async (username: string | null, thunkAPI) => {
-  const result = await Dependencies.getApolloClient()?.mutate<GuestLoginMutation>({
-    mutation: GUEST_LOGIN,
-    fetchPolicy: "no-cache",
-    variables: {
-      username,
-    },
-  });
+  const result =
+    await Dependencies.getApolloClient()?.mutate<GuestLoginMutation>({
+      mutation: GUEST_LOGIN,
+      fetchPolicy: "no-cache",
+      variables: {
+        username,
+      },
+    });
 
   if (result?.data?.guestLogin) {
     void thunkAPI.dispatch(
@@ -42,6 +47,45 @@ export const guestLogin = createAsyncThunk<
   });
 });
 
+export const githubLogin = createAsyncThunk<
+  LoginResult | undefined,
+  { accessCode: string; state: string },
+  ThunkAPI
+>("auth/githubLogin", async ({ accessCode, state }, thunkAPI) => {
+  const savedState = LocalStorage.getGithubOAuthState();
+
+  if (savedState !== state) {
+    return thunkAPI.rejectWithValue({
+      error: "Github login unsuccessful",
+    });
+  }
+
+  const result =
+    await Dependencies.getApolloClient()?.mutate<GithubLoginMutation>({
+      mutation: GITHUB_LOGIN,
+      fetchPolicy: "no-cache",
+      variables: {
+        accessCode,
+      },
+    });
+
+  if (result?.data?.githubLogin) {
+    void thunkAPI.dispatch(
+      PushTransientNotification({
+        type: NotificationType.Info,
+        timeoutArg: 5000,
+        message: "Github login successful",
+      }),
+    );
+
+    return result.data.githubLogin;
+  }
+
+  return thunkAPI.rejectWithValue({
+    error: "Github login unsuccessful",
+  });
+});
+
 export const checkUsername: unknown = createAsyncThunk(
   "auth/checkUsername",
   async (username: string) =>
@@ -54,26 +98,27 @@ export const checkUsername: unknown = createAsyncThunk(
     }),
 );
 
-export const logout = createAsyncThunk<
-  undefined,
-  undefined,
-  ThunkAPI
->("auth/logout", (_, thunkAPI) => {
-  // TODO: invalidate access token on the server
-  LocalStorage.clearAccessToken();
-  thunkAPI.dispatch(clearRoom());
-  thunkAPI.dispatch(closeWSConnection());
-  return undefined;
-});
+export const logout = createAsyncThunk<undefined, undefined, ThunkAPI>(
+  "auth/logout",
+  (_, thunkAPI) => {
+    // TODO: invalidate access token on the server
+    LocalStorage.clearAccessToken();
+    thunkAPI.dispatch(clearRoom());
+    thunkAPI.dispatch(closeWSConnection());
+    return undefined;
+  },
+);
 
 export interface AuthSliceState {
   loginResult: LoginResult | null;
   loginRequestPending: boolean;
+  githubLoginPending: boolean;
 }
 
 const initialState: AuthSliceState = {
   loginResult: LocalStorage.getAccessToken(),
   loginRequestPending: false,
+  githubLoginPending: false,
 };
 
 const authSlice = createSlice({
@@ -96,9 +141,27 @@ const authSlice = createSlice({
     builder.addCase(guestLogin.rejected, (state) => {
       state.loginRequestPending = false;
     });
+    builder.addCase(githubLogin.pending, (state) => {
+      state.githubLoginPending = true;
+    });
+    builder.addCase(githubLogin.fulfilled, (state, action) => {
+      LocalStorage.clearGithubOAuthState();
+      state.loginResult = action.payload ?? null;
+      state.githubLoginPending = false;
+
+      if (action.payload) {
+        LocalStorage.saveAccessToken(action.payload);
+      }
+    });
+    builder.addCase(githubLogin.rejected, (state) => {
+      LocalStorage.clearGithubOAuthState();
+      state.githubLoginPending = false;
+    });
     builder.addMatcher(logout.settled, () => ({
       loginResult: null,
       loginRequestPending: false,
+      githubOAuthState: null,
+      githubLoginPending: false,
     }));
   },
 });
