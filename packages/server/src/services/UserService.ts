@@ -81,7 +81,7 @@ const checkUsername = async (
 ): Promise<UsernameQueryResult> => {
   return {
     username,
-    taken: await UserRepository.usernameAvailable(username, userKind),
+    taken: !(await UserRepository.usernameAvailable(username, userKind)),
     validationError: UserRepository.validateUsername(username),
   };
 };
