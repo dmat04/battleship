@@ -55,13 +55,13 @@ const USERNAME_REGEX = new RegExp(/^[\w\d-]+$/);
 export const usernameValidator = (username: string) => {
   if (username.length < USERNAME_MIN_LENGTH) {
     throw new Error(
-      `{PATH} must contain at least ${USERNAME_MIN_LENGTH} characters`,
+      `Username must contain at least ${USERNAME_MIN_LENGTH} characters`,
     );
   }
 
   if (!USERNAME_REGEX.test(username)) {
     throw new Error(
-      "{PATH} may only contain alphanumeric characters, '_' or '-'",
+      "Username may only contain alphanumeric characters, '_' or '-'",
     );
   }
 
@@ -72,7 +72,7 @@ const MIN_EXPIRATION_DURATION_MS = 1000 * 60 * 60; // 1 hour
 
 export const expiresAtValidator = (expiresAt: Date) => {
   if (expiresAt.getTime() - Date.now() < MIN_EXPIRATION_DURATION_MS) {
-    throw new Error("{PATH} must be at least 1 hour after current time");
+    throw new Error("Expiration date must be at least 1 hour after current time");
   }
 
   return true;
