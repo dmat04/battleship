@@ -10,11 +10,14 @@ import UserRepository from "@battleship/common/repositories/UserRepository.js";
 import GuestUserRepository from "@battleship/common/repositories/GuestUserRepository.js";
 import RegisteredUserRepository from "@battleship/common/repositories/RegisteredUserRepository.js";
 import {
+  GithubUser,
   GuestUser,
   RegisteredUser,
 } from "@battleship/common/entities/UserDbModels.js";
 import ServiceError from "./errors/ServiceError.js";
 import AuthenticationError from "./errors/AuthenticationError.js";
+import { GithubUserResponse } from "./GithubService.js";
+import GithubUserRepository from "@battleship/common/repositories/GithubUserRepository.js";
 
 /**
  * Has minimum 8 characters in length.
@@ -185,9 +188,21 @@ const authenticateRegisteredUser = async (
   return user;
 };
 
+const createGithubUser = async (
+  githubUser: GithubUserResponse,
+  refreshToken: string,
+): Promise<GithubUser> => {
+  return GithubUserRepository.create(
+    githubUser.login,
+    githubUser.id,
+    refreshToken,
+  );
+};
+
 export default {
   checkUsername,
   createGuestUser,
   createRegisteredUser,
   authenticateRegisteredUser,
+  createGithubUser,
 };
