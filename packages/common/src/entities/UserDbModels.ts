@@ -7,7 +7,7 @@ import { UserKind } from "../types/__generated__/types.generated.js";
  */
 export interface User {
   readonly id: string;
-  readonly username: string;
+  username: string;
   readonly kind: UserKind;
 }
 
@@ -16,7 +16,7 @@ export interface User {
  */
 export interface GuestUser extends User {
   readonly kind: UserKind.GuestUser;
-  readonly expiresAt: Date;
+  expiresAt: Date;
 }
 
 /**
@@ -24,8 +24,8 @@ export interface GuestUser extends User {
  */
 export interface RegisteredUser extends User {
   readonly kind: UserKind.RegisteredUser;
-  readonly passwordHash: string;
-  readonly email: string;
+  passwordHash: string;
+  email: string;
   // eslint-disable-next-line @typescript-eslint/ban-types
   emailConfirmed: Boolean;
 }
@@ -36,7 +36,7 @@ export interface RegisteredUser extends User {
 export interface GithubUser extends User {
   readonly kind: UserKind.GithubUser;
   readonly githubId: string;
-  readonly refreshToken: string;
+  refreshToken: string;
 }
 
 const toObjectOptions = {
@@ -86,7 +86,6 @@ const userSchema = new Schema<User, Model<User>>(
     username: {
       type: String,
       required: [true, "Username missing"],
-      immutable: true,
       trim: true,
       validate: {
         validator: usernameValidator,
