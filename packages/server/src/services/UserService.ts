@@ -188,11 +188,11 @@ const authenticateRegisteredUser = async (
   return user;
 };
 
-const createGithubUser = async (
+const createOrUpdateGithubUser = async (
   githubUser: GithubUserResponse,
   refreshToken: string,
 ): Promise<GithubUser> => {
-  return GithubUserRepository.create(
+  return GithubUserRepository.createOrUpdate(
     githubUser.login,
     githubUser.id,
     refreshToken,
@@ -204,5 +204,5 @@ export default {
   createGuestUser,
   createRegisteredUser,
   authenticateRegisteredUser,
-  createGithubUser,
+  createOrUpdateGithubUser,
 };

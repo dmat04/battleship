@@ -19,7 +19,7 @@ export const githubLogin: NonNullable<
     throw new AuthenticationError("token invalid");
   }
 
-  const githubUser = await UserService.createGithubUser(
+  const githubUser = await UserService.createOrUpdateGithubUser(
     userResponse,
     accessToken.refresh_token,
   );
