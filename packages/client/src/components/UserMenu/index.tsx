@@ -1,12 +1,13 @@
 import { styled } from "styled-components";
-import { useCallback, useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { Theme } from "../assets/themes/themeDefault.js";
 import { CollapsibleAPI } from "../CollapsibleContainer/index.js";
 import GuestForm from "./GuestForm.js";
-import { useAppSelector } from "../../store/store.js";
+import { useAppDispatch, useAppSelector } from "../../store/store.js";
 import CollapsibleButton from "../CollapsibleButton.js";
 import LoginMenuItem from "./LoginMenuItem.js";
+import { githubLogin } from "../../store/authSlice.js";
 
 const MenuContainer = styled.div<{ theme: Theme }>`
   display: flex;
@@ -22,10 +23,28 @@ interface CollapsibleHandles {
   collapsible: CollapsibleAPI;
 }
 
+type MenuItem = "guest" | "login" | "register";
+
 const UserMenu = () => {
+  const [urlSearchParams] = useSearchParams();
+  const from = urlSearchParams.get("from");
+  const code = urlSearchParams.get("code");
+  const state = urlSearchParams.get("state");
+
+  const initiallyOpenItem: MenuItem | null = (from && code && state) ? "login" : null;
+
   const collapsibleRefs = useRef<CollapsibleHandles[]>([]);
-  const [opened, setOpened] = useState<string | null>(null);
+  const [opened, setOpened] = useState<MenuItem | null>(initiallyOpenItem);
+  const dispatch = useAppDispatch();
   const { loginResult } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (from && code && state) {
+      if (from === "github")
+        setOpened("login")
+        void dispatch(githubLogin({ accessCode: code, state }));
+    }
+  }, [from, code, state]);
 
   const addCollapsibleRef = useCallback(
     (key: string, handle: CollapsibleAPI | null) => {
@@ -38,7 +57,7 @@ const UserMenu = () => {
     [],
   );
 
-  const closeOthers = useCallback((key: string) => {
+  const closeOthers = useCallback((key: MenuItem) => {
     collapsibleRefs.current.forEach((handle) => {
       if (handle.key !== key) handle.collapsible.setState("closed");
     });
@@ -54,7 +73,7 @@ const UserMenu = () => {
     <MenuContainer>
       <CollapsibleButton
         label="Continue as guest"
-        initialState="closed"
+        initialState={ opened === "guest" ? "open" : "closed" }
         ref={(api) => addCollapsibleRef("guest", api)}
         onCollapsedStateChange={(state) =>
           state === "closed" ? setOpened(null) : closeOthers("guest")
@@ -65,7 +84,7 @@ const UserMenu = () => {
 
       <CollapsibleButton
         label="Login"
-        initialState="closed"
+        initialState={ opened === "login" ? "open" : "closed" }
         ref={(api) => addCollapsibleRef("login", api)}
         onCollapsedStateChange={(state) =>
           state === "closed" ? setOpened(null) : closeOthers("login")
@@ -76,7 +95,7 @@ const UserMenu = () => {
 
       <CollapsibleButton
         label="Register"
-        initialState="closed"
+        initialState={ opened === "register" ? "open" : "closed" }
         ref={(api) => addCollapsibleRef("register", api)}
         onCollapsedStateChange={(state) =>
           state === "closed" ? setOpened(null) : closeOthers("register")

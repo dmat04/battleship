@@ -1,10 +1,7 @@
-import { useSearchParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { useEffect } from "react";
 import localStorageUtils from "../../utils/localStorageUtils.js";
-import { useAppDispatch, useAppSelector } from "../../store/store.js";
+import { useAppSelector } from "../../store/store.js";
 import { useThemePreference } from "../ThemeProvider/ThemePreferenceContext.js";
-import { githubLogin } from "../../store/authSlice.js";
 import Button from "../Button.js";
 import GithubIconDark from "../assets/icons/ic_github_dark.svg";
 import GithubIconLight from "../assets/icons/ic_github_light.svg";
@@ -21,18 +18,6 @@ const Label = styled.div`
 `;
 
 const GithubLogin = () => {
-  const dispatch = useAppDispatch();
-  const [urlSearchParams] = useSearchParams();
-  const from = urlSearchParams.get("from");
-  const code = urlSearchParams.get("code");
-  const state = urlSearchParams.get("state");
-
-  useEffect(() => {
-    if (from && code && state) {
-      if (from === "github")
-        void dispatch(githubLogin({ accessCode: code, state }));
-    }
-  }, [from, code, state]);
   const { githubLoginPending } = useAppSelector((state) => state.auth);
   const { theme } = useThemePreference();
   const iconComponent =
