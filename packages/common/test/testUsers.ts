@@ -33,8 +33,14 @@ export const GITHUB_USERS: Omit<GithubUser, "id">[] = [
   {
     username: "UserC",
     kind: UserKind.GithubUser,
-    githubId: "SomeGitHubId",
-    refreshToken: "SomeGithubRefreshToken",
+    githubId: "userC_githubID",
+    refreshToken: "userC_github_refreshToken",
+  },
+  {
+    username: "UserD",
+    kind: UserKind.GithubUser,
+    githubId: "userD_githubID",
+    refreshToken: "userD_github_refreshToken",
   },
 ];
 
