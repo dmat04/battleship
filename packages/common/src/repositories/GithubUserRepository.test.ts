@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach, assert } from "vitest";
 import mongoose from "mongoose";
 import {
   setupConnection,
@@ -159,6 +159,137 @@ describe("The GithubUserRepository", () => {
 
       try {
         await GithubUserRepository.create(username, githubId, refreshToken);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationError);
+        const validationError = err as ValidationError;
+        expect(validationError.invalidProperties).toHaveProperty(
+          invalidProperty,
+        );
+        expect(validationError.message).toMatch("validation");
+      }
+    },
+  );
+
+  it("successfully saves a new github user using the createOrUpdate method", async () => {
+    const username = "aNewGithubUsername";
+    const githubId = "aNewGithubUserId";
+    const refreshToken = "someGithubRefreshToken";
+
+    const created = await GithubUserRepository.createOrUpdate(
+      username,
+      githubId,
+      refreshToken,
+    );
+
+    expect(typeof created.id).toBe("string");
+    expect(created.id.length).toBe(24);
+    expect(created.kind).toBe(UserKind.GithubUser);
+    expect(created.username).toEqual(username);
+    expect(created.githubId).toEqual(githubId);
+    expect(created.refreshToken).toEqual(refreshToken);
+
+    const mongooseEntity = (await UserDbModels.User.findById(
+      created.id,
+    ).exec()) as object;
+
+    expect(mongooseEntity).toMatchObject(created);
+  });
+
+  it("successfully updates an existing github user using the createOrUpdate method", async () => {
+    const githubId = GITHUB_USERS[0].githubId;
+    const newUsername = GITHUB_USERS[0].username + "_updated";
+    const newRefreshToken = GITHUB_USERS[0].refreshToken + "_updated";
+
+    const mongooseEntityBefore = await UserDbModels.GithubUser.findOne({
+      githubId,
+    }).exec();
+    assert(mongooseEntityBefore);
+
+    const updated = await GithubUserRepository.createOrUpdate(
+      newUsername,
+      mongooseEntityBefore.githubId,
+      newRefreshToken,
+    );
+
+    expect(updated.id).toEqual(mongooseEntityBefore._id.toString());
+    expect(updated.kind).toBe(UserKind.GithubUser);
+    expect(updated.username).toEqual(newUsername);
+    expect(updated.githubId).toEqual(githubId);
+    expect(updated.refreshToken).toEqual(newRefreshToken);
+
+    const mongooseEntityAfter = (await UserDbModels.User.findById(
+      updated.id,
+    ).exec()) as object;
+
+    expect(mongooseEntityAfter).toMatchObject(updated);
+  });
+
+  it.each([
+    [
+      GITHUB_USERS[0].username,
+      GITHUB_USERS[1].githubId,
+      "someRefreshToken",
+      "username",
+    ],
+    ["", GITHUB_USERS[0].githubId, "someRefreshToken", "username"],
+    ["abc", GITHUB_USERS[0].githubId, "someRefreshToken", "username"],
+    ["abcdef!", GITHUB_USERS[0].githubId, "someRefreshToken", "username"],
+    ["          ", GITHUB_USERS[0].githubId, "someRefreshToken", "username"],
+    [GITHUB_USERS[0].username, "", "someRefreshToken", "githubId"],
+    [GITHUB_USERS[0].username, GITHUB_USERS[0].githubId, "", "refreshToken"],
+  ])(
+    "throws a ValidationError when attempting to update a github user with invalid data",
+    async (username, githubId, refreshToken, invalidProperty) => {
+      expect.hasAssertions();
+
+      try {
+        await GithubUserRepository.createOrUpdate(
+          username,
+          githubId,
+          refreshToken,
+        );
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationError);
+        const validationError = err as ValidationError;
+        expect(validationError.invalidProperties).toHaveProperty(
+          invalidProperty,
+        );
+        expect(validationError.message).toMatch("validation");
+      }
+    },
+  );
+
+  it.each([
+    [
+      GITHUB_USERS[0].username,
+      "someNewGithubID",
+      "someRefreshToken",
+      "username",
+    ],
+    [
+      GITHUB_USERS[1].username,
+      "someNewGithubID",
+      "someRefreshToken",
+      "username",
+    ],
+    ["", "someNewGithubID", "someRefreshToken", "username"],
+    ["abc", "someNewGithubID", "someRefreshToken", "username"],
+    ["abcdef!", "someNewGithubID", "someRefreshToken", "username"],
+    ["          ", "someNewGithubID", "someRefreshToken", "username"],
+    [GITHUB_USERS[0].username, "", "someRefreshToken", "githubId"],
+    [GITHUB_USERS[0].username, "someNewGithubID", "", "refreshToken"],
+  ])(
+    "throws a ValidationError when attempting to create a new github user with " +
+      "invalid data using the createOrUpdate method",
+    async (username, githubId, refreshToken, invalidProperty) => {
+      expect.hasAssertions();
+
+      try {
+        await GithubUserRepository.createOrUpdate(
+          username,
+          githubId,
+          refreshToken,
+        );
       } catch (err) {
         expect(err).toBeInstanceOf(ValidationError);
         const validationError = err as ValidationError;

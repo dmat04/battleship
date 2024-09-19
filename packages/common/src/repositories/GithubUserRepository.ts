@@ -40,9 +40,32 @@ const create = async (username: string, githubId: string, refreshToken: string):
   }
 };
 
+const createOrUpdate = async (username: string, githubId: string, refreshToken: string): Promise<GithubUser> => {
+  let user = await Models.GithubUser.findOne({ githubId }).exec();
+
+  if (!user) {
+    user = new Models.GithubUser({ username, githubId, refreshToken });
+  } else {
+    user.username = username;
+    user.refreshToken = refreshToken;
+  }
+
+  try {
+    await user.save();
+    return user.toObject();
+  } catch (err) {
+    if (err instanceof MongooseError.ValidationError) {
+      throw new ValidationError(err);
+    } else {
+      throw new RepositoryError(err);
+    }
+  }
+};
+
 export default {
   getAll,
   getById,
   getByUsername,
   create,
+  createOrUpdate,
 };
